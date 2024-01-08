@@ -144,6 +144,7 @@
         
                         var number = this.id.substr(2); // Récupérer le numéro à partir de l'ID de l'interrupteur
                         var status = this.checked ? 1 : 0; // Vérifier l'état de l'interrupteur
+                        var selectedOptionValue = document.querySelector('input[name="optionsRadios"]:checked').value;
                         console.log(number);
                         
                         $.ajax({
@@ -155,6 +156,7 @@
                 data: {
                     number: number ,
                     status:status,
+                    selectedOptionValue: selectedOptionValue,
                     
                 },
                 success: function(response) {
@@ -187,6 +189,49 @@
                 });
             });
         });
+
+
+        $(document).ready(function() {
+    // Écouter les changements dans la sélection
+    $('input[name="optionsRadios"]').change(function() {
+      // Collecter les valeurs des champs de l'option sélectionnée
+      var selectedOption = $('input[name="optionsRadios"]:checked');
+      var selectedValues = {
+        id: selectedOption.val(),
+        // Ajoutez d'autres champs ici en fonction de vos besoins
+      };
+
+      // Ajouter les valeurs collectées comme données du formulaire
+      $('form').append('<input type="hidden" name="selectedOption" value="' + JSON.stringify(selectedValues) + '">');
+
+      // Soumettre automatiquement le formulaire lorsqu'une option est sélectionnée
+      $('form').submit();
+    });
+  });
+
+
+
+  //verifier url
+  $(document).ready(function() {
+    // Fonction pour obtenir la valeur d'un paramètre dans l'URL
+    function getParameterByName(name, url) {
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, '\\$&');
+      var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    // Obtenez la valeur de 'optionsRadios' de l'URL
+    var selectedOptionValue = getParameterByName('optionsRadios');
+
+    // Si la valeur existe, sélectionnez automatiquement l'option correspondante
+    if (selectedOptionValue !== null) {
+      $('input[name="optionsRadios"]').filter('[value="' + selectedOptionValue + '"]').prop('checked', true);
+    }
+  });
         </script>
       </div>
     </div>

@@ -12,6 +12,7 @@ class switchboul extends Model
         'id',
         'id_compagnie',
         'boul',
+        'tirage_id'
     ];
 
 }

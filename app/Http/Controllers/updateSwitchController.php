@@ -34,6 +34,7 @@ class updateSwitchController extends Controller
 
         $number = $request->input('number');
         $status = $request->input('status');
+        $tirage= $request->input('selectedOptionValue');
 
         if($status==0){
          $status= $this->deletedboul($number);
@@ -44,7 +45,7 @@ class updateSwitchController extends Controller
          
          }
         }elseif($status==1){
-          $status=$this->store($number);
+          $status=$this->store($number,$tirage);
           if($status){
             return response()->json(['number'=>$number,'statut'=> 1],200); // Réponse JSON
        
@@ -59,11 +60,12 @@ class updateSwitchController extends Controller
     }
 
 
-    public function store($id){
+    public function store($id,$tirageid){
         try {
             $blockboul = Switchboul::create([
                 'id_compagnie' => session('loginId'),
                 'boul' => $id,
+                'tirage_id'=>$tirageid,
             ]);
     
             return $blockboul; // Retourne le modèle créé en cas de succès
