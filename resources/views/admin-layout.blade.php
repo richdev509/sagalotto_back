@@ -201,17 +201,17 @@
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="collapse" href="#autorisation" aria-expanded="false"
                             aria-controls="ui-basic">
-                            <span class="menu-title">Otorize boul</span>
+                            <span class="menu-title">Boul</span>
                             <i class="menu-arrow"></i>
-                            <i class="mdi mdi-plus-circle-outline"></i>
+                            <i class="mdi mdi-earth menu-icon"></i>
                         </a>
                         <div class="collapse" id="autorisation">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link"
-                                        href="/block">Block-Unblock <i class="mdi mdi-table-row-plus-before"></i>
-                                        <i class="mdi mdi-table-row-remove"></i></a></li>
+                                        href="/block">Bloke/Debloke
+                                        </a></li>
                                 <li class="nav-item"> <a class="nav-link"
-                                        href="lister-vendeur">Lis Tiraj</a></li>
+                                        href="lister-vendeur">Sak jwe plis</a></li>
                             </ul>
                         </div>
                     </li>
