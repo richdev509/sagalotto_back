@@ -103,7 +103,7 @@
           </thead>
           <tbody>
             @php
-            $numbers = range(1, 99);
+            $numbers = range(0, 99);
         @endphp
         
         @foreach ($numbers as $number)
