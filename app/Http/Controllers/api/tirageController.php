@@ -18,7 +18,6 @@ class tirageController extends Controller
 
     public function tirage(){
 
-
     }
     
 
