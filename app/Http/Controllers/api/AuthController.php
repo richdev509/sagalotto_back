@@ -11,10 +11,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ValidatedInput;
 use Validator;
 use App\Models\vendeur;
+use App\Http\Controllers\api\verificationController as verify;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades;
-
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Contracts\Providers\Auth as ProvidersAuth;
 
 class AuthController extends Controller
@@ -22,11 +26,12 @@ class AuthController extends Controller
     /**
      * login method
      */
+   
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login'], ['tirage']]);
     }
-
+    
     public function login(Request $request)
     {
 
@@ -46,7 +51,7 @@ class AuthController extends Controller
                 ['username', '=', $request->input('username')],
                 ['android_id', '=', $request->input('id')],
             ])
-            ->first();
+                ->first();
             if (!$user) {
 
                 return response()->json([
@@ -73,26 +78,26 @@ class AuthController extends Controller
             }
             $compagnie = company::where([
                 ['id', '=', $user->compagnie_id],
-            ])->select('name','city','address','phone','logo')
-            ->first();
+            ])->select('name', 'city', 'address', 'phone', 'logo')
+                ->first();
             return $this->createNewToken($token, $compagnie);
         } catch (\Throwable $th) {
             return response()->json([
-                'status' =>false,
+                'status' => false,
                 "message" => $th->getMessage(),
 
             ], 500,);
         }
     }
     public function createNewToken($token, $compagnie)
-    {   
-        
+    {
+
         return response()->json([
             "access_token" => $token,
             "token_type" => "bearer",
-            //'expires_in' => auth()->factory()->getTTL() * 60,
+           
             'user' => auth()->user(),
-            'compagnie'=> $compagnie
+            'compagnie' => $compagnie
 
 
 
@@ -108,11 +113,40 @@ class AuthController extends Controller
 
         ]);
     }
+    public function tirage(Request $request)
+    {
+
+
+
+        try {
+            $tirage_record = DB::table('tirage_record')->where([
+
+                ['compagnie_id', '=', auth()->user()->compagnie_id],
+                ['is_active', '=', '1']
+            ])->whereTime(
+                'hour',
+                '>',
+                Carbon::now()->format('H:i:s'),
+            )->select('name', 'hour')
+                ->orderBy('hour', 'asc')
+                ->get();
+            
+            return response()->json([
+                'tirage' => $tirage_record,
+                'current_time' => Carbon::now()->format('H:i:s'),
+
+
+            ]);
+        } catch (TokenInvalidException $e) {
+            return response()->json(['erreur' => 'token pas valable'], 401);
+        } catch (TokenExpiredException $e) {
+            return response()->json(['erreur' => 'Token expiré'], 401);
+        }
+    }
+   
     public function profil()
     {
-       
-       return response()->json(auth()->user());
-    }
 
-    
+        return response()->json(auth()->user());
+    }
 }
