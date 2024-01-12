@@ -6,14 +6,17 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Controllers\api\verificationController as verify;
 
-class creer_ticketController extends Controller
+class ticketController extends Controller
 {
     public function creer_ticket(Request $request){
-        $va = $request->all();
-       
-        dd($va);
+       foreach($request->input('tirages') as $value){
+
+          $t[] = $value;
+       }
+       dd($t);
  
      
       
      }
+    
 }
