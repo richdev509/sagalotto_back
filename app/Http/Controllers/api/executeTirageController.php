@@ -17,7 +17,8 @@ class executeTirageController extends Controller
 {
 
    public $totalGains=0;
-   
+   public $gagnantsData = [];
+   public $gagnantsDataParCode = [];
    public function execute(){
     $totalGains =0;
 
@@ -40,15 +41,30 @@ class executeTirageController extends Controller
 
 // Parcours des fiches
 foreach ($fiches as $fiche) {
+
     $ficheData = json_decode($fiche->fiche_json, true);
 
+    //apel des function.
+    $this->bolete($gagnants,$ficheData,$borletePrice);
+    $this->maryaj($gagnants,$ficheData,$lotoPrices['maryaj']);
+    $this->loto3($gagnants,$ficheData,$lotoPrices['loto3']);
+    $this->loto4($gagnants,$ficheData,$lotoPrices['loto4']);
+    $this->loto5($gagnants,$ficheData,$lotoPrices['loto5']);
+    //generer codeSpecifique peut etre le code fiche fiche ici.
+
+    $this->gagnantsDataParCode[$codeSpecifique][] = $this->gagnantsData;
+
+    
 }
+//code save gagnantData ici
 
    }
 
 
    public function bolete($gagnants,$ficheData,$borletePrice){
     if (isset($ficheData['bolete'])) {
+
+        $i=1;
         foreach ($ficheData['bolete'] as $boul) {
             foreach ($boul as $cle => $valeur) {
                 if (substr($cle, 0, 4) === 'boul') {
@@ -56,7 +72,7 @@ foreach ($fiches as $fiche) {
 
                     // Vérification si la boul est gagnante
                     if (
-                        $boulGagnante == $gagnants->premyechiffre ||
+                        $boulGagnante == $gagnants->premierchiffre ||
                         $boulGagnante == $gagnants->secondchiffre ||
                         $boulGagnante == $gagnants->troisiemechiffre
                     ) {
@@ -64,6 +80,16 @@ foreach ($fiches as $fiche) {
                         $montantGagne = $boul['montant'] * $borletePrice;
                         $this->totalGains=$this->totalGains+$montantGagne;
                         // Vous pouvez maintenant utiliser $montantGagne comme nécessaire
+                        $this->gagnantsData['bolete'][] = [
+                            'boul'.$i.'' => $boul,
+                            'montant' =>$boul['montant'],
+                            
+                        ];
+                        $i=$i+1;
+                    }else{
+                        $this->gagnantsData['bolete'][] = [
+                          
+                        ];
                     }
                 }
             }
@@ -73,7 +99,7 @@ foreach ($fiches as $fiche) {
    }
 
    public function maryaj($gagnants,$ficheData,$maryajPrice){
-    if (isset($ficheData['maryaj'])) 
+   if (isset($ficheData['maryaj']) && !empty($ficheData['maryaj']))
     {
     foreach ($ficheData['maryaj'] as $fiche) {
         $boul1 = $fiche['boul1'];
@@ -81,44 +107,73 @@ foreach ($fiches as $fiche) {
     
         // Vérification si la combinaison boul1 et boul2 est gagnante
         if (
-            ($boul1 == $gagnants->premyechiffre && $boul2 == $gagnants->secondchiffre) ||
-            ($boul1 == $gagnants->premyechiffre && $boul2 == $gagnants->troisiemechiffre) ||
-            ($boul1 == $gagnants->secondchiffre && $boul2 == $gagnants->premyechiffre) ||
+            ($boul1 == $gagnants->premierchiffre && $boul2 == $gagnants->secondchiffre) ||
+            ($boul1 == $gagnants->premierchiffre && $boul2 == $gagnants->troisiemechiffre) ||
+            ($boul1 == $gagnants->secondchiffre && $boul2 == $gagnants->premierchiffre) ||
             ($boul1 == $gagnants->secondchiffre && $boul2 == $gagnants->troisiemechiffre) ||
-            ($boul1 == $gagnants->troisiemechiffre && $boul2 == $gagnants->premyechiffre) ||
+            ($boul1 == $gagnants->troisiemechiffre && $boul2 == $gagnants->premierchiffre) ||
             ($boul1 == $gagnants->troisiemechiffre && $boul2 == $gagnants->secondchiffre) 
         ) {
             // La combinaison boul1 et boul2 est gagnante, multiplier le montant par le prix de "maryaj"
             $montantGagne = $fiche['montant'] * $maryajPrice;
             $this->totalGains=$this->totalGains+$montantGagne;
+            $this->gagnantsData['maryaj'][] = [
+                'boul1' => $boul1,
+                'boul2'=>$boul2,
+                'montant' =>$fiche['montant'],
+                
+            ];
             // Vous pouvez maintenant utiliser $montantGagne comme nécessaire
+        }else{
+            $this->gagnantsData['maryaj'][] = [
+            ];
         }
+       
     }
+   }else{
+    $this->gagnantsData['maryaj'][] = [
+    ];
    }
 }
 
    public function loto3($gagnants,$ficheData,$loto3Price){
-    if(isset($ficheData)){
+    if(isset($ficheData['loto3'])&& !empty($ficheData['loto3'])){
     foreach ($ficheData['loto3'] as $fiche) {
         $boul1 = $fiche['boul1'];
     
         // Vérification si le boul1 correspond à la combinaison de unchiffre et premierchiffre
-        $combinaisonGagnante = $gagnants->unchiffre . $gagnants->premyechiffre;
+        $combinaisonGagnante = $gagnants->unchiffre . $gagnants->premierchiffre;
     
         if ($boul1 == $combinaisonGagnante) {
             // Le boul1 correspond à la combinaison gagnante, multiplier le montant par le prix de "loto3"
             $montantGagne = $fiche['montant'] * $loto3Price;
             $this->totalGains=$this->totalGains+$montantGagne;
             // Vous pouvez maintenant utiliser $montantGagne comme nécessaire
+            $this->gagnantsData['loto3'][] = [
+                'boul1' => $boul1,
+                'montant' => $fiche['montant'],
+                
+            ];
+        }else{
+            $this->gagnantsData['loto3'][] = [
+                
+            ];
         }
+      
     }
 
+   }else{
+    $this->gagnantsData['loto3'][] = [
+                
+    ];
    }
 }
 
 
 public function loto4($gagnants,$ficheData,$loto4Price){
  if(isset($ficheData['loto4'])){
+    $firsttest=0;
+    $options = [];
     foreach ($ficheData['loto4'] as $fiche) {
         $boul1 = $fiche['boul1'];
          // Vérification si le boul1 correspond à la combinaison de secondchiffre et troisiemechiffre
@@ -126,18 +181,51 @@ public function loto4($gagnants,$ficheData,$loto4Price){
     if ($boul1 == $combinaisonGagnante) {
         $montantGagne = $fiche['montant'] * $loto4Price;
         $this->totalGains=$this->totalGains+$montantGagne;
+        $firsttest=1;
     }
 
     if(isset($fiche['option2'])) {
         // L'option2 est présente, multiplier le montant par le prix de l'option2
         $montantGagne = $fiche['montant'] * $fiche['option2'];
         $this->totalGains=$this->totalGains+$montantGagne;
+        $options[] = [
+            'option2' => 'option2',
+            
+        ];
     }
     if(isset($fiche['option3'])) {
         // L'option2 est présente, multiplier le montant par le prix de l'option2
         $montantGagne = $fiche['montant'] * $fiche['option3'];
         $this->totalGains=$this->totalGains+$montantGagne;
+        $options[] = [
+            'option3' => 'option3',
+           
+        ];
     }
+
+    if($firsttest==1 && !empty($options)){
+        $this->gagnantsData['loto4'][] = [
+            'boul1' => $boul1,
+            'montant' => $fiche['montant'],
+            'options' => $options,
+        ];
+    }elseif($firsttest==1 && empty($options)){
+        $this->gagnantsData['loto4'][] = [
+            'boul1' => $boul1,
+            'montant' => $fiche['montant'],
+            
+        ];
+    }elseif($firsttest==0 && !empty($options)){
+        $this->gagnantsData['loto4'][] = [
+            'boul1' => $boul1,
+            'options' => $options,
+        ];
+    }elseif($firsttest==0 && empty($options)){
+        $this->gagnantsData['loto4'][] = [
+           
+        ];
+    }
+    
    }
  }
 
@@ -146,32 +234,67 @@ public function loto4($gagnants,$ficheData,$loto4Price){
 
 public function loto5($gagnants,$ficheData,$loto5Price){
     if(isset($ficheData)){
-
-   
+        $options = [];
+        $firsttest=0;
     foreach ($ficheData['loto5'] as $fiche) {
         $boul1 = $fiche['boul1'];
         $boul2=$fiche['boul2'];
-      $combinaisonGagnante = $gagnants->unchiffre . $gagnants->premyechiffre . $gagnants->secondchiffre;
+      $combinaisonGagnante = $gagnants->unchiffre . $gagnants->premierchiffre . $gagnants->secondchiffre;
 
       if ($boul1 . $boul2 == $combinaisonGagnante) {
     // La concaténation de 3 chiffres dans boul1 et boul2 correspond à la combinaison gagnante, multiplier le montant par le prix de "loto5"
     $montantGagne = $fiche['montant'] * $loto5Price;
-    } 
-    if (isset($fiche['option2']) && $boul1 . $boul2 == $gagnants->unchiffre . $gagnants->premyechiffre . $gagnants->troisiemechiffre) {
+    $firsttest=1;
+      }
+
+
+    if (isset($fiche['option2']) && $boul1 . $boul2 == $gagnants->unchiffre . $gagnants->premierchiffre . $gagnants->troisiemechiffre) {
     // L'option2 est présente et correspond à la combinaison gagnante, multiplier le montant par le prix de l'option2
     $montantGagne = $fiche['montant'] * $fiche['option2'];
     $this->totalGains=$this->totalGains+$montantGagne;
+    $options[] = [
+        'option2' => $fiche['option2']
+    ];
     } 
-    if (isset($fiche['option3']) && $boul1 . $boul2 == substr($gagnants->premyechiffre, -1) . $gagnants->secondchiffre . $gagnants->troisiemechiffre) {
+    if (isset($fiche['option3']) && $boul1 . $boul2 == substr($gagnants->premierchiffre, -1) . $gagnants->secondchiffre . $gagnants->troisiemechiffre) {
     // L'option3 est présente et correspond à la combinaison gagnante, multiplier le montant par le prix de l'option3
     $montantGagne = $fiche['montant'] * $fiche['option3'];
     $this->totalGains=$this->totalGains+$montantGagne;
+    $options[] = [
+        'option3' => $fiche['option3']
+    ];
     } 
-
+    if($firsttest==1 && !empty($options)){
+        $this->gagnantsData['loto5'][] = [
+            'boul1' => $boul1,
+             'boul2'=>$boul2,
+             'montant' => $fiche['montant'],
+             'options' => $options,
+        ];
+    }elseif($firsttest==1 && empty($options)){
+        $this->gagnantsData['loto4'][] = [
+            'boul1' => $boul1,
+            'boul2'=>$boul2,
+            'montant' => $fiche['montant'],
+        ];
+    }elseif($firsttest==0 && !empty($options)){
+        $this->gagnantsData['loto5'][] = [
+        'boul1' => $boul1,
+        'boul2'=>$boul2,
+        'options' => $options,
+          
+        ];
+    }elseif($firsttest==0 && empty($options)){
+        $this->gagnantsData['loto5'][] = [
+           
+        ];
     }
+  
+
+    
   }
 }
 
 
-
+}
 }
