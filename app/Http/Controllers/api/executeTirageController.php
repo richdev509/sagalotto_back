@@ -57,7 +57,16 @@ foreach ($fiches as $fiche) {
     
 }
 //code save gagnantData ici
+foreach ($this->gagnantsDataParCode as $codeSpecifique => $donneesGagnantes) {
+    // Convertissez les données gagnantes en JSON
+    $jsonGagnantsData = json_encode($donneesGagnantes);
 
+    // Enregistrez les données dans la base de données en ajoutant les autre champs necessaire
+    FichesJouer::create([
+        'code_specifique' => $codeSpecifique,
+        'json_data' => $jsonGagnantsData,
+    ]);
+}
    }
 
 
