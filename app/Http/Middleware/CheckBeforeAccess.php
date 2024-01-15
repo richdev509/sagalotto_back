@@ -26,9 +26,10 @@ class CheckBeforeAccess
             if (!auth()->user()) {
                 return response()->json([
                     'status' => 'false',
-                    'error' => 'Unauthorized'
+                    'message'=> 'Unauthorized',
+                    'code' =>'401'
         
-                ], 403);
+                ], 401);
             }
             return $next($request); // Proceed if condition is met
 

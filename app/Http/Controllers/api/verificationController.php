@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
@@ -11,59 +12,92 @@ use App\Models\tirage_record;
 class verificationController extends Controller
 {
 
-    public function verifierBoulesNonAutorisees($ficheJeux)
+    public static function verifierBoulesNonAutorisees(Request $request)
     {
-        $idCompagnie = session('idcompagnie');
+        //la varaible contenant les boules
         $boulesNonAutorisees = [];
-    
-        // Parcourir chaque type de jeu dans la fiche
-        foreach ($ficheJeux as $jeu => $tirages) {
-            // Ignorer les types de jeu sans tirages
-            if (empty($tirages)) {
-                continue;
-            }
-    
-            // Parcourir chaque tirage du jeu
-            foreach ($tirages as $tirage) {
-                // Parcourir chaque boule dans le tirage
-                foreach ($tirage as $key => $value) {
-                    if (strpos($key, "boul") !== false && $value) {
 
-                        if (!in_array($value, $boulesNonAutorisees)) {
-                        // Vérifier si la boule est bloquée
-                        $bouleBloquee = Switchboul::where('boul', $value)
-                            ->where('id_compagnie', $idCompagnie)
-                            ->exists();
-    
-                        if ($bouleBloquee) {
-                            $boulesNonAutorisees[] = $value;
-                        }
-                          }
+
+        // Parcourir les tirage
+        foreach ($request->input('tirages') as $name) {
+            //rechercher le nom de chak tirages
+            foreach ($name as $value) {
+
+                //prendre l'id du tirage
+                $tirage_id = tirage_record::where([
+                    ['compagnie_id', '=', auth()->user()->compagnie_id],
+                    ['name', '=', $value],
+
+                ])->first();
+
+                foreach ($request->input('bolete') as $boule) {
+
+
+
+                    $bouleBloquee = Switchboul::where([
+                        ['id_compagnie', auth()->user()->compagnie_id],
+                        ['tirage_id', '=', $tirage_id->id],
+                        ['boul', '=', $boule['boul1']]
+
+                    ])
+                        ->first();
+
+                    if ($bouleBloquee) {
+                        $boulesNonAutorisees[] = $boule['boul1'];
                     }
                 }
             }
         }
-    
+
         if (!empty($boulesNonAutorisees)) {
-            return [
-                'statut' => 1,
-                'message' => 'Il y a des boules bloquées.',
-                'boules_non_autorisees' => $boulesNonAutorisees,
-            ];
+            return response()->json([
+                'status' => 'false',
+                'message' =>[
+                    'info'=>'boule bloque',
+                    'boule'=>$boulesNonAutorisees,
+                
+                ],
+                'code' => '404'
+
+            ], 404,);
         } else {
-            return [
-                'statut' => 0,
-                'message' => 'Toutes les boules sont autorisées.',
-            ];
+            return '1';
         }
     }
+    public static function calculer_montant(Request $request)
+    {
+        //le montant total
+        $montant_tot = 0;
+        if (!empty($request->input('bolete'))) {
+
+            foreach ($request->input('bolete') as $montant) {
+                $montant_tot = $montant_tot + $montant['montant'];
+            }
+        }
+        if (!empty($request->input('maryaj'))) {
+            foreach ($request->input('maryaj') as $montant) {
+                $montant_tot = $montant_tot + $montant['montant'];
+            }
+        }
+        if (!empty($request->input('loto3'))) {
+            foreach ($request->input('loto3') as $montant) {
+                $montant_tot = $montant_tot + $montant['montant'];
+            }
+        }
+        if (!empty($request->input('loto4'))) {
+
+            foreach ($request->input('loto4') as $montant) {
+                $montant_tot = $montant_tot + $montant['montant'];
+            }
+        }
+        if (!empty($request->input('loto5'))) {
+            foreach ($request->input('loto5') as $montant) {
+                $montant_tot = $montant_tot + $montant['montant'];
+            }
+        }
 
 
 
-
-
-
-
+        return $montant_tot;
+    }
 }
-
-
