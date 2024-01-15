@@ -138,6 +138,7 @@ class ticketController extends Controller
                 'compagnie'=>$comp->name,
                 'bank'=> $vendeur->bank_name,
                 '#ticket'=>$ticketId,
+                'date'=>$created_at->format('d-m-y, H:i:s'),
                 'tirage'=> $tirage
             ],
             'body'=> $boule,
