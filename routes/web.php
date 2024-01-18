@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\executeTirageController;
 use App\Http\Controllers\tirageController;
 use App\Http\Controllers\updateSwitchController;
 /*
@@ -14,7 +15,7 @@ use App\Http\Controllers\updateSwitchController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+Route::get('/execute',[executeTirageController::class,'execute']);
 Route::get('/', function () {
     return view('welcome');
 });
