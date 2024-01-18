@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
-
+//use Carbon\Carbon;
 class CompanyController extends Controller
 {
     /**
@@ -92,7 +92,7 @@ class CompanyController extends Controller
                         $request->session()->put('name', $user->name);
                         $request->session()->put('logo', $user->logo);
                         notify()->success('Bienvenue  ' . $user->name);
-                        return view('admin');
+                        return redirect('/admin');
                     } else {
                         notify()->error('kont ou bloke kontakte sagacelotto');
                         return redirect('/login');
@@ -112,7 +112,21 @@ class CompanyController extends Controller
     public function admin()
     {
         if (Session('loginId')) {
-            return view('admin');
+
+            $vente = DB::table('ticket_code')->where([
+                ['compagnie_id','=', Session('loginId')]
+            ])->whereDate('ticket_code.created_at','=', Carbon::now())
+            ->join('ticket_vendu','ticket_vendu.ticket_code_id','=','ticket_code.code')
+            ->sum('amount');
+
+            $perte = DB::table('ticket_code')->where([
+                ['compagnie_id','=', Session('loginId')]
+            ])->whereDate('ticket_code.created_at','=', Carbon::now())
+            ->join('ticket_vendu','ticket_vendu.ticket_code_id','=','ticket_code.code')
+            ->sum('winning');
+            
+
+            return view('admin',['vente'=>$vente, 'perte'=>$perte]);
         } else {
             return view('login');
         }
@@ -191,9 +205,5 @@ class CompanyController extends Controller
         }
     }
 
-    public function profil(){
-        $user = user::find(1);
-        $user->password = Hash::make('123456');
-        $user->save();
-    }
+    
 }

@@ -29,9 +29,9 @@
         <!-- partial:partials/_navbar.html -->
         <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-                <a class="navbar-brand brand-logo" href="index.html"><img src="assets/images/logo.svg"
+                <a class="navbar-brand brand-logo" href="admin"><img src="assets/images/logo.svg"
                         alt="logo" /></a>
-                <a class="navbar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo-mini.svg"
+                <a class="navbar-brand brand-logo-mini" href="admin"><img src="assets/images/logo-mini.svg"
                         alt="logo" /></a>
             </div>
             <div class="navbar-menu-wrapper d-flex align-items-stretch">
@@ -215,7 +215,58 @@
                             </ul>
                         </div>
                     </li>
-
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#" aria-expanded="false"
+                            aria-controls="ui-basic">
+                            <span class="menu-title">Rapo</span>
+                           
+                            <i class="mdi mdi-chart-line menu-icon"></i>
+                        </a>
+                        
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#lo" aria-expanded="false"
+                            aria-controls="ui-basic">
+                            <span class="menu-title">Lo yo</span>
+                            <i class="menu-arrow"></i>
+                            <i class="mdi mdi-alarm menu-icon"></i>
+                        </a>
+                        <div class="collapse" id="lo">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link"
+                                        href="/block">Ajoute
+                                        </a></li>
+                                <li class="nav-item"> <a class="nav-link"
+                                        href="lister-vendeur">Lis</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#fich" aria-expanded="false"
+                            aria-controls="ui-basic">
+                            <span class="menu-title">Fich</span>
+                            <i class="menu-arrow"></i>
+                            <i class="mdi mdi-ticket menu-icon"></i>
+                        </a>
+                        <div class="collapse" id="fich">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link"
+                                        href="/block">Chache
+                                        </a></li>
+                             
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="" href="#" aria-expanded=""
+                            aria-controls="ui-basic">
+                            <span class="menu-title">Paramet</span>
+                          
+                            <i class="mdi mdi-settings-box menu-icon"></i>
+                        </a>
+                        
+                    </li>
+                  
                 </ul>
             
             </nav>

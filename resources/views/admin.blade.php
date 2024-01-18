@@ -24,8 +24,8 @@
               <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
               <h4 class="font-weight-normal mb-3">Kob ou vann jodia <i class="mdi mdi-chart-line mdi-24px float-right"></i>
               </h4>
-              <h2 class="mb-5">HG 10000</h2>
-              <h6 class="card-text">Vandè ki vann plis jodia:  <span style="font-weight: bold;">Bank #12</span></h6>
+              <h2 class="mb-5">HTG {{$vente}}</h2>
+              <!--<h6 class="card-text">Vandè ki vann plis jodia:  <span style="font-weight: bold;">Bank #12</span></h6>-->
             </div>
           </div>
         </div>
@@ -35,9 +35,7 @@
               <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
               <h4 class="font-weight-normal mb-3">Kob ou pèdi jodia <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
               </h4>
-              <h2 class="mb-5">HG 375</h2>
-              <h6 class="card-text">Vandè ki pèdi plis jodia:  <span style="font-weight: bold;">Bank #7</span></h6>
-
+              <h2 class="mb-5">HTG {{$perte}}</h2> 
             </div>
           </div>
         </div>
@@ -47,7 +45,7 @@
               <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
               <h4 class="font-weight-normal mb-3">Balans <i class="mdi mdi-diamond mdi-24px float-right"></i>
               </h4>
-              <h2 class="mb-5">HG 900</h2>
+              <h2 class="mb-5">HTG {{ $vente - $perte}}</h2>
               <h6 class="card-text"></h6>
             </div>
           </div>
