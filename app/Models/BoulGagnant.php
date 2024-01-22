@@ -9,4 +9,18 @@ class BoulGagnant extends Model
 {
     //use HasFactory;
     protected $table ="boulgagnant";
+    protected $fillable = [
+        'tirage_id',
+        'compagnie_id',
+        'unchiffre',
+        'secondchiffre',
+        'premierchiffre',
+        'troisiemechiffre',
+        'etat',
+    ];
+
+    public function tirage()
+    {
+        return $this->belongsTo(tirage::class,'tirage_id','id');
+    }
 }
