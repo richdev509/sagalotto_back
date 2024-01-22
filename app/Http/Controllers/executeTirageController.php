@@ -9,9 +9,11 @@ use App\Models\RulesOne;
 use App\Models\RulesTwo;
 use App\Models\BoulGagnant;
 use App\Models\TicketVendu;
+use App\Models\ticket_code;
+use App\Models\tirage_record;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
-
+use App\Jobs\ExecutionTirage;
 
 class executeTirageController extends Controller
 {
@@ -29,29 +31,75 @@ class executeTirageController extends Controller
     public $montantparid=[];
 
     //debut fonction
-    public function execute(){
-     $totalGains =0;
+
+    public function verification($tirage){
+
+     $tirageid=$tirage;
+     $compagnieId=session('loginId');
+     $heureTirage = tirage_record::where('tirage_id', $tirageid)->where('compagnie_id',$compagnieId)->value('hour');
+
+    // Vérifier si l'heure du serveur est supérieure ou égale à $heureTirage
+             $heureServeur = Carbon::now()->format('H:i:s');
+             
+             if (Carbon::parse($heureServeur)->gte(Carbon::parse($heureTirage))) {
+                
+             $data=$this->execute($tirageid);
+             if($data==1){
+                return $statut='1';
+             }else{
+                return $statut='-1';
+             }
+             //return response()->json(['data'=>$data,'statut'=> 1],200);
+         
+             //partie pour activer le Job
+             //$respo=dispatch(new ExecutionTirage($tirageid));
+             //return response()->json(['data'=>"Job en cours","job"=>$respo,'statut'=> 1],200); 
  
-     $compagnieId = 1;  // Remplacez cela par l'id de votre compagnie spécifique
-   
+             } else {
+             return $statut=0;
+             }
+    }
+
+    public function execute($tirage){
+
+
+     $totalGains =0;
+     $compagnieId =session('loginId'); 
+      // Remplacez cela par l'id de votre compagnie spécifique
      $borletePrice =RulesOne::where('compagnie_id', $compagnieId)->value('prix');
      $lotoNames = ['maryaj', 'loto3', 'loto4', 'loto5'];  // Remplacez cela par les noms de vos lotos spécifiques
- 
      $lotoPrices = RulesTwo::whereIn('loto_name', $lotoNames)->pluck('prix', 'loto_name');
-     
      // Étape 3: Récupération des numéros gagnants de la table 'boulgagnant'
-     $tirageName = '4';
+     $tirageName = $tirage;
  
      // Récupération des numéros gagnants pour le tirage spécifique
      $gagnants = BoulGagnant::where('compagnie_id', $compagnieId)
-     ->where('tirage_id', $tirageName)
+     ->where('tirage_id', $tirageName)->whereDate('created_at', Carbon::today())
      ->first();
- 
-     $fiches = TicketVendu::where('tirage_record_id','4')->get();
+
+     //Recupere liste des codes vendu pour le jour en question.
+     $codes = ticket_code::where('compagnie_id', $compagnieId)
+    ->whereDate('created_at', Carbon::today())
+    ->pluck('code')
+    ->toArray();
+    $fiches="";
+   if($codes){
+ // Récupérer les tickets vendus
+ $fiches= TicketVendu::whereIn('ticket_code_id', $codes)
+ ->where('tirage_record_id', $tirageName)
+ ->whereDate('created_at', Carbon::today())
+ ->get();
+   }
+   
+    
+    
  
  // Parcours des fiches
 $ficheDatas="";
 $i=1;
+if($fiches!=""){
+
+
  foreach ($fiches as $fiche) {
  $ficheData = json_decode($fiche->boule, true);
     $ficheDatas=$ficheData;
@@ -73,7 +121,11 @@ $i=1;
      if($this->havegain==1 || $this->havegainmaryaj==1 || $this->havegainloto3==1 || $this->havegainloto4==1 || $this->havegainloto5==1){
         // $this->gagnantsDataParCode[$codeSpecifique][] = $this->gagnantsData;
         //$this->gagnantsDataParCode[$codeSpecifique][] = $this->totalGains;
-        
+        $reponseRequette=TicketVendu::where('ticket_code_id',$codeSpecifique)->where('tirage_record_id',$tirage)
+            ->update([
+                'winning' => $this->totalGains,
+                'is_win' => 1,
+            ]);
         $this->totalgains[$i][]=$this->totalGains;
         $this->totalgains[$i][]=$codeSpecifique;
         $i=$i+1;
@@ -88,10 +140,17 @@ $i=1;
      
  
  }
+}
 
- return response()->json(['data'=>$this->totalgains,'montantparid'=>$this->montantparid,'statut'=> 1],200); // Réponse JSON
- 
-
+//return response()->json(['data'=>$data,'statut'=> 1],200); // Réponse JSON
+if($codes){
+   // return response()->json(['data'=>$this->totalgains,'montantparid'=>$this->montantparid,'statut'=> 1],200);
+    return $statut=1;  
+}else{
+    //return response()->json(['data'=>'Donne vide','statut'=>0],200);
+    return $statut=0;
+ }
+ //fin
     }
  
  

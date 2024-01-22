@@ -14180,7 +14180,7 @@ dl {
         .sidebar .nav .nav-item .nav-link .menu-title {
           color: inherit;
           display: inline-block;
-          font-size: 0.875rem;
+          font-size: 1rem;
           line-height: 1;
           vertical-align: middle; }
         .sidebar .nav .nav-item .nav-link .badge {
@@ -14242,7 +14242,7 @@ dl {
           color: #888;
           padding: 0.75rem 2rem 0.75rem 2rem;
           position: relative;
-          font-size: 0.8125rem;
+          font-size: 1rem;
           line-height: 1;
           height: auto;
           border-top: 0; }

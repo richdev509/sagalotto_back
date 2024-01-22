@@ -11,13 +11,14 @@ class tirageController extends Controller
     //
 
     public function create(){
-        dd('kaka voye');
-        if (Session('loginId')) {
+       return response()->json(Carbon::now()->format('H:i:s'));
+      /*  if (Session('loginId')) {
             
             return view('ajouter_tirage');
         } else {
             return view('login');
         }
+        */
 
     }
 }

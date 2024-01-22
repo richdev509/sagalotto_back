@@ -21,6 +21,12 @@
     <!-- End layout styles -->
     <link rel="shortcut icon" href="assets/images/favicon.ico" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        .menu-title{
+            font-size: 15px;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -234,10 +240,10 @@
                         <div class="collapse" id="lo">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link"
-                                        href="/block">Ajoute
+                                        href="ajout-lo">Ajoute
                                         </a></li>
                                 <li class="nav-item"> <a class="nav-link"
-                                        href="lister-vendeur">Lis</a></li>
+                                        href="lister-lo">Lis</a></li>
                             </ul>
                         </div>
                     </li>
