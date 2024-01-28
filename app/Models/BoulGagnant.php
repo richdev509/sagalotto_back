@@ -17,6 +17,7 @@ class BoulGagnant extends Model
         'premierchiffre',
         'troisiemechiffre',
         'etat',
+        'created_',
     ];
 
     public function tirage()

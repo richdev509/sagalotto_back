@@ -32,35 +32,19 @@ class executeTirageController extends Controller
 
     //debut fonction
 
-    public function verification($tirage){
+    public function verification($tirage,$date){
 
-     $tirageid=$tirage;
-     $compagnieId=session('loginId');
-     $heureTirage = tirage_record::where('tirage_id', $tirageid)->where('compagnie_id',$compagnieId)->value('hour');
-
-    // Vérifier si l'heure du serveur est supérieure ou égale à $heureTirage
-             $heureServeur = Carbon::now()->format('H:i:s');
-             
-             if (Carbon::parse($heureServeur)->gte(Carbon::parse($heureTirage))) {
-                
-             $data=$this->execute($tirageid);
+            $tirageid=$tirage;
+             $data=$this->execute($tirageid,$date);
              if($data==1){
                 return $statut='1';
              }else{
                 return $statut='-1';
              }
-             //return response()->json(['data'=>$data,'statut'=> 1],200);
-         
-             //partie pour activer le Job
-             //$respo=dispatch(new ExecutionTirage($tirageid));
-             //return response()->json(['data'=>"Job en cours","job"=>$respo,'statut'=> 1],200); 
- 
-             } else {
-             return $statut=0;
-             }
+            
     }
 
-    public function execute($tirage){
+    public function execute($tirage,$date){
 
 
      $totalGains =0;
@@ -73,13 +57,15 @@ class executeTirageController extends Controller
      $tirageName = $tirage;
  
      // Récupération des numéros gagnants pour le tirage spécifique
+     $formattedDate = Carbon::createFromFormat('m/d/Y', $date)->format('Y-m-d');
      $gagnants = BoulGagnant::where('compagnie_id', $compagnieId)
-     ->where('tirage_id', $tirageName)->whereDate('created_at', Carbon::today())
-     ->first();
+          ->where('tirage_id', $tirageName)
+          ->whereDate('created_', $formattedDate)
+          ->first();
 
      //Recupere liste des codes vendu pour le jour en question.
      $codes = ticket_code::where('compagnie_id', $compagnieId)
-    ->whereDate('created_at', Carbon::today())
+    ->whereDate('created_at', $formattedDate)
     ->pluck('code')
     ->toArray();
     $fiches="";
@@ -87,7 +73,7 @@ class executeTirageController extends Controller
  // Récupérer les tickets vendus
  $fiches= TicketVendu::whereIn('ticket_code_id', $codes)
  ->where('tirage_record_id', $tirageName)
- ->whereDate('created_at', Carbon::today())
+ ->whereDate('created_at', $formattedDate)
  ->get();
    }
    

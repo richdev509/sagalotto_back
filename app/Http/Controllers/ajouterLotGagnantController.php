@@ -8,11 +8,12 @@ use App\Http\Controllers\executeTirageController;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 use App\Models\tirage_record;
+use Illuminate\Support\Carbon;
 class ajouterLotGagnantController extends Controller
 {
     
     public function index(){
-    $list=BoulGagnant::where('compagnie_id',session('loginId'))->get();
+    $list=BoulGagnant::where('compagnie_id',session('loginId'))->orderBy('created_at', 'desc')->get();
     return view('list-lo',compact('list'));
     }
     public function ajouterlo(){
@@ -21,7 +22,10 @@ class ajouterLotGagnantController extends Controller
     }
     
     public function store(Request $request){
+
+ 
         $tirageId=$request->input('tirage');
+        $date=$request->input('date');
         $unchiffre=$request->input('unchiffre');
         $premierchiffre=$request->input('premierchiffre');
         $secondchiffre=$request->input('secondchiffre');
@@ -35,6 +39,29 @@ class ajouterLotGagnantController extends Controller
              return redirect()->back();
         }
 
+                //verifaction exist lo
+                $resultExist=$this->ifExisteLo($tirageId,$date);
+                if($resultExist){
+                    notify()->error('Lo sa existe deja');
+                    return redirect()->back();
+                }
+
+
+                //fin
+                  // Vérifier si l'heure du serveur est supérieure ou égale à $heureTirage
+                $compagnieId=session('loginId');
+                $heureTirage = tirage_record::where('tirage_id', $tirageId)->where('compagnie_id',$compagnieId)->value('hour');
+   
+     
+                $heureServeur = Carbon::now()->format('H:i:s');
+                
+                if (Carbon::parse($heureServeur)->gte(Carbon::parse($heureTirage))) {
+                    notify()->error('Le pou tiraj fenmen poko rive');
+                    return redirect()->back();
+                }
+                  //fin de la verification
+
+        $formattedDate = $date; //Carbon::createFromFormat('m-d-Y', $date)->format('Y-m-d');
         try {
             $reponseadd=BoulGagnant::create([
                 'tirage_id'=>$request->input('tirage'),
@@ -44,21 +71,22 @@ class ajouterLotGagnantController extends Controller
                 'secondchiffre'=>$secondchiffre,
                 'troisiemechiffre'=>$troisiemechiffre,
                 'etat'=>'true',
+                'created_'=>$formattedDate
             ]);
     
            if($reponseadd){
             $class=new executeTirageController();
-        $reponse=$class->verification($tirageId);
-        if($reponse=='1'){
+            $reponse=$class->verification($tirageId,$date);
+           if($reponse=='1'){
             notify()->success('Lo ajout avek sikese');
             return redirect()->back();
-        }elseif($reponse=='-1'){
+           }elseif($reponse=='-1'){
             notify()->error('Pa gen fich ki jwe pou tiraj sa');
             return redirect()->back();
-        }elseif($reponse=='0'){
+           }elseif($reponse=='0'){
             notify()->error('Le pou tiraj fenmen poko rive');
             return redirect()->back();
-        }
+           }
            
            }
         } catch (\Exception $e) {
@@ -67,20 +95,19 @@ class ajouterLotGagnantController extends Controller
             return redirect()->back();
           
         }
-           /*
-        $class=new executeTirageController();
-        $reponse=$class->verification($tirageId);
-        if($reponse=='1'){
-            return redirect()->route('ajoutlo')->with('success','Lot ajoute avek sikse, Tiraj lan fet');
-        }elseif($reponse=='-1'){
-            return redirect()->route('ajoutlo')->with('alert','wap eseye mete yon lot ki poko tire');
-        }elseif($reponse=='0'){
-            return redirect()->route('ajoutlo')->with('alert','Le pou tiraj fenmen poko rive');
-     
-        }*/
-        
+           
     }
 
+
+function ifExisteLo($id,$date){
+    $exist=BoulGagnant::where('compagnie_id',session('loginId'))->where('tirage_id',$id)->where('created_', $date)->get();
+    if($exist){
+        return true;
+    }else{
+        return false;
+    }
+  
+}
 
     function validerEntrees($tirageId, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre)
 {
@@ -113,4 +140,6 @@ class ajouterLotGagnantController extends Controller
 
     return null; // Aucune erreur de validation
 }
+
+
 }

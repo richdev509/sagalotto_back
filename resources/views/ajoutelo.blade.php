@@ -12,10 +12,16 @@
         
         <div class="card-body">
             <h4 class="card-title">Espas pou antre lo ki tire</h4>
-            <p class="card-description">Antre lo </p>
+            <p class="card-description">Mete lo ki tire yo: yon chif + pweye lo Ex:01 +dezyem lo ex:02 et twazyem lo ex:03</p>
             <form class="forms-sample" action="{{route('savelot')}}" method="POST" style="font-weight: bold;">
                 @csrf
-
+                <div class="form-group">
+                    <label for="exampleInputUsername1">Chazi dat la </label>
+                    <input type="date" name="date"   class="form-control input"  placeholder="23/12/2023" style="border-color: #1469e9;
+                        
+                    border-style: double;
+                    border-width: 1px;">
+                  </div>
                 <div class="form-group" style="margin-bottom: 10px;">
                     <label for="exampleInputUsername1">chwazi tiraj</label>
                     <select  name="tirage" class="form-control" id="select" placeholder="List tiraj" style="height: 49px;
@@ -123,6 +129,11 @@
             validerTroisiemechiffre(this);
         });
     });
+
+
+    
+
+
 
 
     
