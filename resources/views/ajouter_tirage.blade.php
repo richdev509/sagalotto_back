@@ -19,108 +19,42 @@
                   <div class="card">
                     <div class="card-body">
                       
-                      <form class="form-sample" method="post" action="ajouterVendeur">
+                      <form class="form-sample" method="post" action="ajouterTirage">
                         @csrf
                         <p class="card-description">Info sou tiraj la </p>
 
                         <div class="row">
                           <div class="col-md-6">
                             <div class="form-group row">
-                              <label class="col-sm-3 col-form-label">Seks</label>
-                              <div class="col-sm-9">
-                                <select class="form-control" name="gender" value="{{old('gender')}}">
-                                  <option>Fi</option>
-                                  <option>Gason</option>
-                                </select>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group row">
-                              <label class="col-sm-3 col-form-label">Telefon vandè a</label>
-                              <div class="col-sm-9">
-                                <input type="text" class="form-control" value="{{old('phone')}}"  placeholder="Telefon vandè a" name="phone" />
-                                <span class="error">@error('phone') 
-                                  {{$message}}
-                                 @enderror</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-6">
-                            <div class="form-group row">
-                              <label class="col-sm-3 col-form-label">Pousantaj sou vant</label>
-                              <div class="col-sm-9">
-                                <input type="number" class="form-control" value="{{old('percent')}}" placeholder="pousantaj" name="percent" />
-                                <span class="error">@error('percent') 
-                                  {{$message}}
-                                 @enderror</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group row">
-
-                             
-                              <div class="col-sm-5">
-                                <div class="form-check">
-                                  <label class="form-check-label">
-                                    <input type="checkbox" class="form-check-inpu" name="block" value="1" id="membershipRadios2"  > Bloke </label>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <p class="card-description"> Bank info </p>
-                        <div class="row">
-                          <div class="col-md-6">
-                            <div class="form-group row">
-                              <label class="col-sm-3 col-form-label">Non bank lan</label>
-                              <div class="col-sm-9">
-                                <input type="text" name="bank_name" value="{{old('bank_name')}}" class="form-control" placeholder="Egzanp: bank1" />
-                                <span class="error">@error('bank_name')
-                                    {{$message}}
-                                @enderror</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group row">
-                              <label class="col-sm-3 col-form-label">ID machin nan</label>
-                              <div class="col-sm-9">
-                                <input type="text" class="form-control" name="bank_id" vlaue="{{old('bank_id')}}" placeholder="id machin kap konekte a"/>
-                                <span class="error">@error('bank_id') 
-                                  {{$message}}
-                                 @enderror</span>
-                              </div>
                               
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div class="row">
-                          <div class="col-md-6">
-                            <div class="form-group row">
-                              <label class="col-sm-3 col-form-label">Itilizatè</label>
                               <div class="col-sm-9">
-                                <input type="text" name="username" value="{{old('username')}}"class="form-control" placeholder="470000" />
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group row">
-                              <label class="col-sm-3 col-form-label">Modepas</label>
-                              <div class="col-sm-9">
-                                <input type="password" class="form-control" value="{{old('password')}}" name="password" placeholder=""/>
-                                <span class="error">@error('password') 
+                                <label class="col-sm-3 col-form-label">Tiraj</label>
+                                <select class="form-control" name="tirage" value="{{old('tirage')}}">
+                                    @foreach ($tirage as $row)
+                                        <option>{{$row->name}}</option>
+                                        
+                                    @endforeach
+                                </select>
+                                <span class="error">@error('tirage') 
                                   {{$message}}
                                  @enderror</span>
                               </div>
                             </div>
                           </div>
-                          
-                        </div>
+                          <div class="col-md-6">
+                            <div class="form-group row">
+                              
+                              <div class="col-sm-9">
+                                <label class="col-sm-3 col-form-label">Lè lap fème</label>
+                                <input style="height:10px;" type="time" class="form-control" value="{{old('phone')}}"   name="time" />
+                                <span class="error">@error('time') 
+                                  {{$message}}
+                                 @enderror</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>                     
+                       
                         <div class="row">
                          
                          

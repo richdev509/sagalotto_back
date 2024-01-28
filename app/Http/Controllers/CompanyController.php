@@ -18,7 +18,34 @@ class CompanyController extends Controller
      */
     public function index_vendeur()
     {
-        return view('lister_vendeur');
+        if (Session('loginId')) {
+            $vendeur = user::where([
+                ['compagnie_id', '=', Session('loginId')],
+                ['is_delete', '=', 0]
+            ])->get();
+            return view('lister_vendeur',['vendeur'=>$vendeur]);
+        } else {
+            return view('login');
+        }
+    }
+
+    public function edit_vendeur(Request $request)
+    {
+        if (Session('loginId')) {
+            $vendeur = user::where([
+                ['compagnie_id', '=', Session('loginId')],
+                ['id','=', $request->input('id')],  
+                ['is_delete', '=', 0]
+            ])->first();
+            if(!$vendeur){
+                notify()->error('Gen yon ere ki pase');
+                return back();
+
+            }
+            return view('editer_vendeur',['vendeur'=>$vendeur]);
+        } else {
+            return view('login');
+        }
     }
 
     /**
@@ -205,5 +232,55 @@ class CompanyController extends Controller
         }
     }
 
-    
+    public function update_vendeur(Request $request)
+    {
+        
+         if (Session('loginId')) {
+          
+            $validator = $request->validate([
+                "name" => "required|max:50",
+                'bank_id' =>'required',
+                'phone'=>'required|numeric',
+                'percent'=>'required|max:100|numeric',
+                "bank_name" => "required|max:30",
+               
+              
+
+            ]);
+            $vendeur = user::where([
+                ['compagnie_id','=', Session('loginId')],
+                ['id','=', $request->input('id')]
+            ])->first();
+            if(!$vendeur){
+                notify()->error('vande sa pa trouve');
+                return back();
+            }
+
+            if($request->input('block') =='1'){
+                 $status = 1;
+
+            }else{
+                $status = 0;
+            }
+            $user = user::where('id',$request->input('id'))->update([
+                'name' => $request->input('name'),
+                'address' => $request->input('address'),
+                'gender' => $request->input('gender'),   
+                'phone' => $request->input('phone'),
+                //'username' => $request->input('username'),  
+                'percent' => $request->input('percent'),
+                'android_id' => $request->input('bank_id'),
+                'bank_name' => $request->input('bank_name'),
+                //'password' => Hash::make($request->input('bank_name')),
+                'is_block' => $status,
+                'created_at' => Carbon::now()
+            ]);
+            
+             notify()->success('modifikasyon an fet avek siksè');
+             return back();
+
+        } else {
+            return view('login');
+        }
+    }
 }
