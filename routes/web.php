@@ -60,15 +60,12 @@ Route::get('/block',[updateSwitchController::class, 'index']);
 
 Route::get('ajout-lo',[ajouterLotGagnantController::class,'ajouterlo'])->name('ajoutlo');
 Route::post('ajoutelos',[ajouterLotGagnantController::class, 'store'])->name('savelot');
-Route::get('lister-lo',[ajouterLotGagnantController::class,'index']);
+Route::get('lister-lo',[ajouterLotGagnantController::class,'index'])->name('listlo');
 Route::get('/block/update-switch', [updateSwitchController::class, 'updateSwitch']);
-
+Route::post('modifierlo',[ajouterLotGagnantController::class,'modifierlo'])->name('modifierlo');
 //tirage
 Route::get('ajouter-tirage', [tirageController::class,'create']);
-
 Route::post('editertirage', [tirageController::class,'update']);
-
-
 Route::get('lister-tirage', [tirageController::class,'index']);
 //end tirage
 Route::get('/contact', function () {

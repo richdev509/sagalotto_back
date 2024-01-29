@@ -13,11 +13,11 @@
         <div class="card-body">
             <h4 class="card-title">Espas pou antre lo ki tire</h4>
             <p class="card-description">Mete lo ki tire yo: yon chif + pweye lo Ex:01 +dezyem lo ex:02 et twazyem lo ex:03</p>
-            <form class="forms-sample" action="{{route('savelot')}}" method="POST" style="font-weight: bold;">
+            <form class="forms-sample" @if(isset($record)) action="{{route('modifierlo')}}"  @else action="{{route('savelot')}}" @endif method="POST" style="font-weight: bold;">
                 @csrf
                 <div class="form-group">
                     <label for="exampleInputUsername1">Chazi dat la </label>
-                    <input type="date" name="date"   class="form-control input"  placeholder="23/12/2023" style="border-color: #1469e9;
+                    <input type="date" name="date" @if(isset($record)) value="{{$record->created_}}"  style="pointer-events: none;" @endif class="form-control input"  placeholder="23/12/2023" style="border-color: #1469e9;
                         
                     border-style: double;
                     border-width: 1px;">
@@ -28,38 +28,42 @@
                     border-color: #e95d14;
                     
                     border-style: double;
-                    border-width: 1px;font-size:18px;color:#1469e9;"  required>
+                    border-width: 1px;font-size:18px;color:#1469e9; @if(isset($record)) pointer-events:none;@endif"  required>
+
+@if(isset($record))   <option value="{{$record->tirage->id}}"  >{{$record->tirage->name}}</option> @else
                         <option disabled>Lis tiraj</option>
                         
                         @foreach($list as $liste)
                         <option value="{{$liste->id}}">{{$liste->name}}</option>
                         @endforeach
+
+                        @endif
                     </select>
                   </div>
               <div class="form-group">
                 <label for="exampleInputUsername1">Yon chif </label>
-                <input type="number" name="unchiffre" maxlength="1" minlength="1" class="form-control input" id="1" placeholder="1" style="border-color: #1469e9;
+                <input type="number"  @if(isset($record)) value="{{$record->unchiffre}}" @endif name="unchiffre" maxlength="1" minlength="1" class="form-control input" id="1" placeholder="1" style="border-color: #1469e9;
                     
                 border-style: double;
                 border-width: 1px;">
               </div>
               <div class="form-group">
                 <label for="exampleInputEmail1">premye lo</label>
-                <input type="number" name="premierchiffre" maxlength="2" minlength="1" class="form-control input" id="premier" placeholder="05" style="border-color: #14e990;
+                <input type="number" @if(isset($record)) value="{{$record->premierchiffre}}" @endif name="premierchiffre" maxlength="2" minlength="1" class="form-control input" id="premier" placeholder="05" style="border-color: #14e990;
                     
                 border-style: double;
                 border-width: 1px;">
               </div>
               <div class="form-group">
                 <label for="exampleInputPassword1">dezyem lo</label>
-                <input type="number" name="secondchiffre" maxlength="2" minlength="2" class="form-control input" id="deuxieme" placeholder="06" style="border-color: #14e942;
+                <input type="number" @if(isset($record)) value="{{$record->secondchiffre}}" @endif name="secondchiffre" maxlength="2" minlength="2" class="form-control input" id="deuxieme" placeholder="06" style="border-color: #14e942;
                     
                 border-style: double;
                 border-width: 1px;">
               </div>
               <div class="form-group">
                 <label for="exampleInputConfirmPassword1">twazyem lo</label>
-                <input type="number" name="troisiemechiffre" maxlength="2" minlength="2" class="form-control input" id="troisieme" placeholder="07" style="border-color: #bbe914;
+                <input type="number" @if(isset($record)) value="{{$record->troisiemechiffre}}" @endif name="troisiemechiffre" maxlength="2" minlength="2" class="form-control input" id="troisieme" placeholder="07" style="border-color: #bbe914;
                     
                 border-style: double;
                 border-width: 1px;">
@@ -68,8 +72,12 @@
                 <label class="form-check-label">
                   <input type="checkbox" class="form-check-input">lot yo bon<i class="input-helper"></i></label>
               </div>
+              @if(isset($record))
+              <button type="mise a" class="btn btn-gradient-primary me-2">Modifye</button>
+              @else
               <button type="submit" class="btn btn-gradient-primary me-2">Ajoute</button>
-              <button class="btn btn-light">anile</button>
+              @endif
+              
             </form>
           </div>
     </div>

@@ -16,9 +16,12 @@ class ajouterLotGagnantController extends Controller
     $list=BoulGagnant::where('compagnie_id',session('loginId'))->orderBy('created_at', 'desc')->get();
     return view('list-lo',compact('list'));
     }
-    public function ajouterlo(){
+    public function ajouterlo(Request $request){
+          $id=$request->id;
+          
           $list=tirage_record::where('compagnie_id',session('loginId'))->get();
-          return view('ajoutelo',compact('list'));
+          $record=BoulGagnant::where('compagnie_id',session('loginId'))->where('created_',$id)->first();
+          return view('ajoutelo',compact('list','record'));
     }
     
     public function store(Request $request){
@@ -56,7 +59,7 @@ class ajouterLotGagnantController extends Controller
                 $heureServeur = Carbon::now()->format('H:i:s');
                 
                 if (Carbon::parse($heureServeur)->gte(Carbon::parse($heureTirage))) {
-                    notify()->error('Le pou tiraj fenmen poko rive');
+                    notify()->error('Le pou tiraj sa fenmen poko rive');
                     return redirect()->back();
                 }
                   //fin de la verification
@@ -139,6 +142,67 @@ function ifExisteLo($id,$date){
     }
 
     return null; // Aucune erreur de validation
+}
+
+
+public function modifierlo(Request $request){
+    $tirageId=$request->input('tirage');
+    $date=$request->input('date');
+    $unchiffre=$request->input('unchiffre');
+    $premierchiffre=$request->input('premierchiffre');
+    $secondchiffre=$request->input('secondchiffre');
+    $troisiemechiffre=$request->input('troisiemechiffre');
+
+    $erreurs =$this->validerEntrees($tirageId, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre);
+
+    if ($erreurs) {
+         $messagesErreur = implode(', ', $erreurs);
+         notify()->error($messagesErreur);
+         return redirect()->back();
+    }
+
+
+    $Boulgnant=BoulGagnant::where('compagnie_id',session('loginId'))->where('created_',$date);
+    if($Boulgnant){
+    try {
+        $reponseadd=$Boulgnant->update([
+            'unchiffre' => $unchiffre,
+            'premierchiffre'=>$premierchiffre,
+            'secondchiffre'=>$secondchiffre,
+            'troisiemechiffre'=>$troisiemechiffre,
+            'etat'=>'true',
+        ]);
+
+       
+       if($reponseadd){
+        $class=new executeTirageController();
+        $reponse=$class->verification($tirageId,$date);
+       if($reponse=='1'){
+        notify()->success('Lo Modifier et triyaj sikese');
+        return redirect()->back();
+       }elseif($reponse=='-1'){
+        notify()->error('Pa gen fich ki jwe pou tiraj sa');
+        return redirect()->back();
+       }elseif($reponse=='0'){
+        notify()->error('Le pou tiraj fenmen poko rive');
+        return redirect()->back();
+       }
+       
+       }
+       notify()->success('Lo Modifier e triyaj sikese');
+        return redirect()->route('listlo');
+    } catch (\Exception $e) {
+        // Gérer l'exception si la création échoue
+        notify()->error('erreur dajout',$e);
+        return redirect()->back();
+      
+    }
+
+}else{
+    notify()->error('Modification impossible');
+    return redirect()->back();
+}
+
 }
 
 
