@@ -5,6 +5,8 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>Purple Admin</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
@@ -264,12 +266,20 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="" href="#" aria-expanded=""
+                        <a class="nav-link" data-bs-toggle="collapse" href="#paramet" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Paramet</span>
-                          
+                            <i class="menu-arrow"></i>
                             <i class="mdi mdi-settings-box menu-icon"></i>
                         </a>
+                        <div class="collapse" id="paramet">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link"
+                                        href="{{route('maryajGratis')}}">Maryaj Gratis
+                                        </a></li>
+                             
+                            </ul>
+                        </div>
                         
                     </li>
                   

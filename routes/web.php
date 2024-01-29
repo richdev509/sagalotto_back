@@ -6,6 +6,7 @@ use App\Http\Controllers\executeTirageController;
 use App\Http\Controllers\tirageController;
 use App\Http\Controllers\updateSwitchController;
 use App\Http\Controllers\ajouterLotGagnantController;
+use App\Http\Controllers\parametreController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -52,15 +53,17 @@ Route::get('lister-vendeur', [CompanyController::class,'index_vendeur']);
 Route::get('/block',[updateSwitchController::class, 'index']);
 
 //espas lo
-
 Route::get('ajout-lo',[ajouterLotGagnantController::class,'ajouterlo'])->name('ajoutlo');
 Route::post('ajoutelos',[ajouterLotGagnantController::class, 'store'])->name('savelot');
 Route::get('lister-lo',[ajouterLotGagnantController::class,'index']);
-Route::get('/block/update-switch', [updateSwitchController::class, 'updateSwitch']);
-
+Route::post('/block/update-switch', [updateSwitchController::class, 'updateSwitch']);
 //tirage
 Route::get('ajouter-tirage', [tirageController::class,'create']);
 Route::get('/contact', function () {
     return view('contactapp');
 });
 
+//parametre
+Route::get('maryaj-set',[parametreController::class, 'indexmaryaj'])->name('maryajGratis');
+Route::post('updatemontantmg',[parametreController::class,'updatePrixMaryajGratis'])->name('updatemontantmg');
+Route::post('updatestatutmg',[parametreController::class,'updatestatut']);

@@ -13289,9 +13289,9 @@ code {
   border: none; }
   .input-group-append .input-group-text,
   .input-group-prepend .input-group-text {
-    border-color: #ebedf2;
+    border-color: #6e87c3;
     padding: 0.94rem 0.75rem;
-    color: #c9c8c8; }
+    color: #0e196d; }
 
 .form-control {
   border: 1px solid #ebedf2;
@@ -14239,7 +14239,7 @@ dl {
       .sidebar .nav.sub-menu .nav-item {
         padding: 0; }
         .sidebar .nav.sub-menu .nav-item .nav-link {
-          color: #888;
+          color: #12042b;
           padding: 0.75rem 2rem 0.75rem 2rem;
           position: relative;
           font-size: 1rem;
