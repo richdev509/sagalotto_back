@@ -23,12 +23,6 @@
     <!-- End layout styles -->
     <link rel="shortcut icon" href="assets/images/favicon.ico" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <style>
-        .menu-title{
-            font-size: 15px;
-        }
-    </style>
-
 </head>
 
 <body>
@@ -175,13 +169,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false"
+                        <a class="nav-link" data-bs-toggle="collapse" href="#vendeur" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Vandè</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-account menu-icon"></i>
                         </a>
-                        <div class="collapse" id="ui-basic">
+                        <div class="collapse" id="vendeur">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link"
                                         href="ajouter-vendeur">Ajoute vandè</a></li>
@@ -202,7 +196,7 @@
                                 <li class="nav-item"> <a class="nav-link"
                                         href="ajouter-tirage">Ajoute Tiraj</a></li>
                                 <li class="nav-item"> <a class="nav-link"
-                                        href="lister-vendeur">Lis Tiraj</a></li>
+                                        href="lister-tirage">Lis Tiraj</a></li>
                             </ul>
                         </div>
                     </li>
@@ -219,12 +213,12 @@
                                         href="/block">Bloke/Debloke
                                         </a></li>
                                 <li class="nav-item"> <a class="nav-link"
-                                        href="lister-vendeur">Sak jwe plis</a></li>
+                                        href="">Sak jwe plis</a></li>
                             </ul>
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#" aria-expanded="false"
+                        <a class="nav-link" data-bs-toggle="collapse" href="#lo" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Rapo</span>
                            
@@ -242,10 +236,10 @@
                         <div class="collapse" id="lo">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link"
-                                        href="ajout-lo">Ajoute
+                                        href="/block">Ajoute
                                         </a></li>
                                 <li class="nav-item"> <a class="nav-link"
-                                        href="lister-lo">Lis</a></li>
+                                        href="">Lis</a></li>
                             </ul>
                         </div>
                     </li>
