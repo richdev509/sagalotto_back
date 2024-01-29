@@ -218,7 +218,7 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#lo" aria-expanded="false"
+                        <a class="nav-link" data-bs-toggle="collapse" href="#rapo" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Rapo</span>
                            
@@ -236,10 +236,10 @@
                         <div class="collapse" id="lo">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link"
-                                        href="/block">Ajoute
+                                        href="/ajout-lo">Ajoute lo
                                         </a></li>
                                 <li class="nav-item"> <a class="nav-link"
-                                        href="">Lis</a></li>
+                                        href="lister-lo">Liste lo</a></li>
                             </ul>
                         </div>
                     </li>
