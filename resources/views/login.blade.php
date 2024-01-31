@@ -1,22 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Konekte Sagalotto</title>
-    <!-- plugins:css -->
     @notifyCss
     <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
-    <!-- endinject -->
-    <!-- Plugin css for this page -->
-    <!-- End plugin css for this page -->
-    <!-- inject:css -->
-    <!-- endinject -->
-    <!-- Layout styles -->
     <link rel="stylesheet" href="assets/css/style.css">
-    <!-- End layout styles -->
     <link rel="shortcut icon" href="assets/images/favicon.ico" />
   </head>
   <body>
@@ -27,17 +18,19 @@
             <div class="col-lg-4 mx-auto">
               <div class="auth-form-light text-left p-5">
                 <div class="brand-logo">
-                  <img src="assets/images/logo.svg">
+                  <img src="assets/images/logo.png">
+                  <h4>Sagalotto</h4>
                 </div>
-                <h4>!Ann komanse</h4>
+                
                 <h6 class="font-weight-light">Konekte pouw kontinye.</h6>
                 <form class="pt-3" method="POST" action="login">
                   @csrf
                   <div class="form-group">
-                    <input type="text" name="username" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Itilizatè">
+                    <input type="text" name="username" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Itilizatè" style="border-color: blueviolet;" required>
+
                   </div>
                   <div class="form-group">
-                    <input type="password" name="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="modepas">
+                    <input type="password" name="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="modepas" style="border-color: blueviolet;" required>
                   </div>
                   <div class="mt-3">
 

@@ -13701,7 +13701,11 @@ dl {
     border-color: #ebedf2; }
 
 .auth .brand-logo {
-  margin-bottom: 2rem; }
+  margin-bottom: 2rem;
+  display: flex;
+    align-items: center;
+    justify-content: center;
+}
   .auth .brand-logo img {
     width: 150px; }
 

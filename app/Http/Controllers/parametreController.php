@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\maryajgratis;
+use App\Models\RulesOne;
 
 class parametreController extends Controller
 {
@@ -88,5 +89,30 @@ class parametreController extends Controller
                         notify()->error('Gen yon pwoblem kontakte ekip teknik');
                             return redirect()->back();
                     }
+    }
+
+    public function ajistelo(){
+        $data=RulesOne::where('compagnie_id',session('loginId'))->first();
+        return view('parametre/ajisteprixlo',compact('data'));
+    }
+
+    public function storelopri(Request $request){
+         if($request->montant==1){
+            $montant=50;
+         }elseif($request->montant==2){
+            $montant=60;
+         }
+        try{
+        $reponse=RulesOne::where('compagnie_id',session('loginId'))->first();
+        $reponse->update([
+                 'prix'=>$montant,
+        ]);
+
+                            notify()->success('Pri pwemye lo ajiste a: '.$montant);
+                            return redirect()->back();
+    }catch(\Exception $e){
+        notify()->error('Gen yon pwoblem kontakte ekip teknik');
+        return redirect()->back();
+    }
     }
 }

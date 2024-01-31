@@ -9,5 +9,9 @@ class RulesOne extends Model
 {
     //use HasFactory;
     protected $table ="rulesone";
-
+    protected $fillable = [
+          'id',
+          'compagnie_id',
+          'prix',
+    ];
 }

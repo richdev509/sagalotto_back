@@ -76,3 +76,5 @@ Route::get('/contact', function () {
 Route::get('maryaj-set',[parametreController::class, 'indexmaryaj'])->name('maryajGratis');
 Route::post('updatemontantmg',[parametreController::class,'updatePrixMaryajGratis'])->name('updatemontantmg');
 Route::post('updatestatutmg',[parametreController::class,'updatestatut']);
+Route::get('ajistelo',[parametreController::class, 'ajistelo'])->name('ajisteprilo');
+Route::post('ajistelo',[parametreController::class, 'storelopri'])->name('updateprilo');

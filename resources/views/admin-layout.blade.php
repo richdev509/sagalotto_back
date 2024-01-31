@@ -2,38 +2,24 @@
 <html lang="en">
 
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>Purple Admin</title>
-    <!-- plugins:css -->
+    <title>Sagalotto dashboard</title>
     <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
     @notifyCss
-
-    <!-- endinject -->
-    <!-- Plugin css for this page -->
-    <!-- End plugin css for this page -->
-    <!-- inject:css -->
-    <!-- endinject -->
-    <!-- Layout styles -->
     <link rel="stylesheet" href="assets/css/style.css">
-    <!-- End layout styles -->
     <link rel="shortcut icon" href="assets/images/favicon.ico" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
-
 <body>
     <div class="container-scroller">
-       
-        <!-- partial:partials/_navbar.html -->
         <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-                <a class="navbar-brand brand-logo" href="admin"><img src="assets/images/logo.svg"
+                <a class="navbar-brand brand-logo" href="admin"><img src="assets/images/logo1.png"
                         alt="logo" /></a>
-                <a class="navbar-brand brand-logo-mini" href="admin"><img src="assets/images/logo-mini.svg"
+                <a class="navbar-brand brand-logo-mini" href="admin"><img src="assets/images/logo-mini.png"
                         alt="logo" /></a>
             </div>
             <div class="navbar-menu-wrapper d-flex align-items-stretch">
@@ -271,6 +257,9 @@
                                 <li class="nav-item"> <a class="nav-link"
                                         href="{{route('maryajGratis')}}">Maryaj Gratis
                                         </a></li>
+                                <li class="nav-item"> <a class="nav-link"
+                                            href="{{route('ajisteprilo')}}">Premye lo-Ajiste
+                                            </a></li>
                              
                             </ul>
                         </div>

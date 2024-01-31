@@ -17,7 +17,7 @@
               <div class="col-lg-12 stretch-card">
                 <div class="card">
                   <div class="card-body">
-                   
+                    <div class="table-responsive">
                     <table class="table table-bordered">
                       <thead>
                        
@@ -60,6 +60,7 @@
 
                       </tbody>
                     </table>
+                    </div>
                   </div>
                 </div>
               </div>

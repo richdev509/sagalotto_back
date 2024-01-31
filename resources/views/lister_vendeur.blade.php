@@ -17,6 +17,7 @@
                 <h4 class="card-title">Lis vandè yo: {{$vendeur->count()}}</h4>
 
                 </p>
+                <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -65,6 +66,7 @@
 
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>
