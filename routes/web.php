@@ -78,3 +78,7 @@ Route::post('updatemontantmg',[parametreController::class,'updatePrixMaryajGrati
 Route::post('updatestatutmg',[parametreController::class,'updatestatut']);
 Route::get('ajistelo',[parametreController::class, 'ajistelo'])->name('ajisteprilo');
 Route::post('ajistelo',[parametreController::class, 'storelopri'])->name('updateprilo');
+Route::get('lotconfig',[parametreController::class, 'create_config'])->name('lotconfig');
+Route::post('editerdelai',[parametreController::class, 'update_delai']);
+
+

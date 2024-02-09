@@ -13,6 +13,7 @@
     <link rel="shortcut icon" href="assets/images/favicon.ico" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
+
 <body>
     <div class="container-scroller">
         <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
@@ -29,23 +30,24 @@
 
                 <ul class="navbar-nav navbar-nav-right">
                     <li class="nav-item nav-profile dropdown">
-                        <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                          <div class="nav-profile-img">
-                            <img src="../../assets/images/faces/face1.jpg" alt="image">
-                            <span class="availability-status online"></span>
-                          </div>
-                          <div class="nav-profile-text">
-                            <p class="mb-1 text-black">{{ session('name')}}</p>
-                          </div>
+                        <a class="nav-link dropdown-toggle" id="profileDropdown" href="#"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="nav-profile-img">
+                                <img src="../../assets/images/faces/face1.jpg" alt="image">
+                                <span class="availability-status online"></span>
+                            </div>
+                            <div class="nav-profile-text">
+                                <p class="mb-1 text-black">{{ session('name') }}</p>
+                            </div>
                         </a>
                         <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
-                          <a class="dropdown-item" href="#">
-                            <i class="mdi mdi-cached me-2 text-success"></i> Activity Log </a>
-                          <div class="dropdown-divider"></div>
-                          <a class="dropdown-item" href="/logout">
-                            <i class="mdi mdi-logout me-2 text-primary"></i> Signout </a>
+                            <a class="dropdown-item" href="#">
+                                <i class="mdi mdi-cached me-2 text-success"></i> Activity Log </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/logout">
+                                <i class="mdi mdi-logout me-2 text-primary"></i> Signout </a>
                         </div>
-                      </li>
+                    </li>
                     <li class="nav-item nav-profile dropdown">
 
                         <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
@@ -63,9 +65,9 @@
                     </li>
                     <li class="nav-item dropdown">
 
-                        
-                            
-                            
+
+
+
                     </li>
                     <li class="nav-item dropdown">
 
@@ -136,18 +138,18 @@
                 <ul class="nav">
                     <li class="nav-item nav-profile">
                         <a href="#" class="nav-link">
-                          <div class="nav-profile-image">
-                            <img src="../../assets/images/faces/face1.jpg" alt="profile">
-                            <span class="login-status online"></span>
-                            <!--change to offline or busy as needed-->
-                          </div>
-                          <div class="nav-profile-text d-flex flex-column">
-                            <span class="font-weight-bold mb-2">{{session('name')}}</span>
-                            <span class="text-secondary text-small">Manager</span>
-                          </div>
-                          <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
+                            <div class="nav-profile-image">
+                                <img src="../../assets/images/faces/face1.jpg" alt="profile">
+                                <span class="login-status online"></span>
+                                <!--change to offline or busy as needed-->
+                            </div>
+                            <div class="nav-profile-text d-flex flex-column">
+                                <span class="font-weight-bold mb-2">{{ session('name') }}</span>
+                                <span class="text-secondary text-small">Manager</span>
+                            </div>
+                            <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
                         </a>
-                      </li>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="admin">
                             <span class="menu-title">Akèy</span>
@@ -163,10 +165,9 @@
                         </a>
                         <div class="collapse" id="vendeur">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link"
-                                        href="ajouter-vendeur">Ajoute vandè</a></li>
-                                <li class="nav-item"> <a class="nav-link"
-                                        href="lister-vendeur">Lis vandè</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="ajouter-vendeur">Ajoute vandè</a>
+                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="lister-vendeur">Lis vandè</a></li>
                             </ul>
                         </div>
                     </li>
@@ -179,10 +180,8 @@
                         </a>
                         <div class="collapse" id="tirage">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link"
-                                        href="ajouter-tirage">Ajoute Tiraj</a></li>
-                                <li class="nav-item"> <a class="nav-link"
-                                        href="lister-tirage">Lis Tiraj</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="ajouter-tirage">Ajoute Tiraj</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="lister-tirage">Lis Tiraj</a></li>
                             </ul>
                         </div>
                     </li>
@@ -195,11 +194,9 @@
                         </a>
                         <div class="collapse" id="autorisation">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link"
-                                        href="/block">Bloke/Debloke
-                                        </a></li>
-                                <li class="nav-item"> <a class="nav-link"
-                                        href="">Sak jwe plis</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="/block">Bloke/Debloke
+                                    </a></li>
+                                <li class="nav-item"> <a class="nav-link" href="">Sak jwe plis</a></li>
                             </ul>
                         </div>
                     </li>
@@ -207,10 +204,10 @@
                         <a class="nav-link" data-bs-toggle="collapse" href="#rapo" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Rapo</span>
-                           
+
                             <i class="mdi mdi-chart-line menu-icon"></i>
                         </a>
-                        
+
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="collapse" href="#lo" aria-expanded="false"
@@ -221,11 +218,9 @@
                         </a>
                         <div class="collapse" id="lo">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link"
-                                        href="/ajout-lo">Ajoute lo
-                                        </a></li>
-                                <li class="nav-item"> <a class="nav-link"
-                                        href="lister-lo">Liste lo</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="/ajout-lo">Ajoute lo
+                                    </a></li>
+                                <li class="nav-item"> <a class="nav-link" href="lister-lo">Liste lo</a></li>
                             </ul>
                         </div>
                     </li>
@@ -238,10 +233,9 @@
                         </a>
                         <div class="collapse" id="fich">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link"
-                                        href="/block">Chache
-                                        </a></li>
-                             
+                                <li class="nav-item"> <a class="nav-link" href="/block">Chache
+                                    </a></li>
+
                             </ul>
                         </div>
                     </li>
@@ -254,25 +248,28 @@
                         </a>
                         <div class="collapse" id="paramet">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link"
-                                        href="{{route('maryajGratis')}}">Maryaj Gratis
-                                        </a></li>
-                                <li class="nav-item"> <a class="nav-link"
-                                            href="{{route('ajisteprilo')}}">Premye lo-Ajiste
-                                            </a></li>
-                             
+                                <li class="nav-item"> <a class="nav-link" href="{{ route('maryajGratis') }}">Maryaj
+                                        Gratis
+                                    </a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ route('ajisteprilo') }}">Premye
+                                        lo-Ajiste
+                                    </a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ route('lotconfig') }}">Lot 
+                                        Konfigirasyon
+                                    </a></li>
+
                             </ul>
                         </div>
-                        
+
                     </li>
-                  
+
                 </ul>
-            
+
             </nav>
             <!-- partial -->
             <div class="main-panel">
                 <div class="content-wrapper">
-                    
+
                     @yield('content')
                 </div>
                 <!-- content-wrapper ends -->
@@ -281,8 +278,8 @@
                     <div class="container-fluid d-flex justify-content-between">
                         <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright ©
                             Sagalotto.com 2023</span>
-                        <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"> Ou bezwen pwop sistèm ou contakte nou <a
-                                href="https://www.bootstrapdash.com/bootstrap-admin-template/"
+                        <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"> Ou bezwen pwop sistèm ou contakte
+                            nou <a href="https://www.bootstrapdash.com/bootstrap-admin-template/"
                                 target="_blank"></a>+50914231234</span>
                     </div>
                 </footer>

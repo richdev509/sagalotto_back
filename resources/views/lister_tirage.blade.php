@@ -69,4 +69,4 @@
         
           <!-- main-panel ends -->
     
-@endsection
+@stop
