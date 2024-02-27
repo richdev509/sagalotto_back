@@ -36,5 +36,7 @@ Route::group([
     Route::get('/tirage', [AuthController::class,'tirage']);
     Route::post('/ticket/creer', [ticketController::class,'creer_ticket']);
     Route::get('/ticket/list', [ticketController::class,'list_ticket']);
+    Route::post('/ticket/cancel', [ticketController::class,'cancel_ticket']);
+
    
 });

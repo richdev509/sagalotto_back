@@ -196,54 +196,64 @@ class ticketController extends Controller
         ]);
         try {
 
-            $delai = DB::table('ticket_supression')->where(
+            $delai = DB::table('ticket_suppression')->where([
                 ['compagnie_id', '=', auth()->user()->compagnie_id]
-            )->first();
-           
-            $carbon = Carbon::create($delai->delai);
-            $minutes = $carbon->minutes;
+            ])->first();
+            if(!$delai){
+                return response()->json([
+                    'status' => 'false',
+                    "code" => '404',
+                    "message" => 'vous pouvez pas annuler'
+
+                ], 404,);
+
+            }
+            $carbon = $delai->delai->format('H:i');
+            $minute = $carbon->minutes;
             $ticket = DB::table('ticket_code')->where([
                 ['compagnie_id', '=', auth()->user()->compagnie_id],
                 ['user_id', '=', auth()->user()->id],
-                
+
                 ['code', '=', $request->input('id')]
             ])->first();
-            if(!$ticket){
+            if (!$ticket) {
                 return response()->json([
                     'status' => 'false',
                     "code" => '404',
                     "message" => 'ticket pas trouver'
 
                 ], 404,);
-
             }
-            if($ticket->created_at + $minutes < Carbon::now() ){
-                 $ticket_vendu = DB::table('ticket_vendu')->where([
+            //search if tirage close
+            $tirage_record = tirage_record::where([
+                ['compagnie_id', '=', auth()->user()->compagnie_id],
+                ['is_active', '=', '1'],
+                // ['name', '=', $name['name']]
+            ])->whereTime(
+                'hour',
+                '>',
+                Carbon::now()->format('H:i:s'),
+            )->first();
+            if ($ticket->created_at + $minute > Carbon::now()) {
+                $ticket_vendu = DB::table('ticket_vendu')->where([
                     ['code', '=', $request->input('id')]
-                 ])->update([
-                     'is_cancel'=>1
-                 ]);
-                 return response()->json([
+                ])->update([
+                    'is_cancel' => 1
+                ]);
+                return response()->json([
                     'status' => 'true',
                     "code" => '200',
                     "message" => 'ticket annule'
 
                 ], 200,);
-
-
-
-            }else{
+            } else {
                 return response()->json([
                     'status' => 'false',
                     "code" => '404',
                     "message" => 'delai suppression ecoule'
 
                 ], 200,);
-
-
             }
-           
-          
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
