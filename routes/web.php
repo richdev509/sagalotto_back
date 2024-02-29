@@ -32,17 +32,25 @@ Route::get('/contactsaga', function () {
 Route::get('/login', function () {
     
     return view('login');
-});
+})->name('login');
 
+Route::get('/contact', function () {
+    return view('contactapp');
+});
 
 Route::post('login', [CompanyController::class,'login']);
 
-Route::get('admin', [CompanyController::class,'admin']);
-
-Route::get('profil', [CompanyController::class,'profil']);
-
 Route::get('logout', [CompanyController::class,'logout']);
 //vendeur
+
+
+
+Route::middleware(['web', 'verify.session'])->group(function () {
+    // Vos routes nécessitant une vérification de session vont ici
+
+
+Route::get('admin', [CompanyController::class,'admin']);
+Route::get('profil', [CompanyController::class,'profil']);
 
 Route::get('ajouter-vendeur', [CompanyController::class,'create_vendeur']);
 
@@ -68,9 +76,10 @@ Route::get('ajouter-tirage', [tirageController::class,'create']);
 Route::post('editertirage', [tirageController::class,'update']);
 Route::get('lister-tirage', [tirageController::class,'index']);
 //end tirage
-Route::get('/contact', function () {
-    return view('contactapp');
-});
+
+
+
+
 
 //parametre
 Route::get('maryaj-set',[parametreController::class, 'indexmaryaj'])->name('maryajGratis');
@@ -81,4 +90,4 @@ Route::post('ajistelo',[parametreController::class, 'storelopri'])->name('update
 Route::get('lotconfig',[parametreController::class, 'create_config'])->name('lotconfig');
 Route::post('editerdelai',[parametreController::class, 'update_delai']);
 
-
+});
