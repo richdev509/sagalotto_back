@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\TicketVendu;
 use Illuminate\Http\Request;
 use App\Models\company;
 use App\Models\User;
@@ -190,14 +191,17 @@ class ticketController extends Controller
     public function cancel_ticket(Request $request)
     {
 
-        $validator = $request->validate([
-            "id" => "required",
-
-        ]);
+       
         try {
 
+            $validator = $request->validate([
+                "id" => "required",
+    
+            ]);
+
             $delai = DB::table('ticket_suppression')->where([
-                ['compagnie_id', '=', auth()->user()->compagnie_id]
+                ['compagnie_id', '=', auth()->user()->compagnie_id],
+                ['is_active','=', 1]
             ])->first();
             if(!$delai){
                 return response()->json([
@@ -208,35 +212,92 @@ class ticketController extends Controller
                 ], 404,);
 
             }
-            $carbon = $delai->delai->format('H:i');
-            $minute = $carbon->minutes;
+           
+           
             $ticket = DB::table('ticket_code')->where([
                 ['compagnie_id', '=', auth()->user()->compagnie_id],
                 ['user_id', '=', auth()->user()->id],
 
                 ['code', '=', $request->input('id')]
-            ])->first();
-            if (!$ticket) {
+                
+            ])->whereDate('created_at', Carbon::now())
+            ->first();
+            //ticket not exist
+             if (!$ticket) {
                 return response()->json([
                     'status' => 'false',
                     "code" => '404',
-                    "message" => 'ticket pas trouver'
+                    "message" => 'ticket id pas trouver'
+                ], 404,);
+            }
+           
+            //get tirage for compare date of end
+            $tirage_ids = DB::table('ticket_vendu')->where([
+                ['ticket_code_id', '=', $request->input('id')],
+                ['is_cancel','=', 0],
+                ['is_delete','=', 0],
+
+            ])->select('tirage_record_id as tirage_id')
+            ->get();
+            if($tirage_ids->count() <= 0){
+                return response()->json([
+                    'status' => 'false',
+                    "code" => '404',
+                    "message" => 'ticket deja annuler'
 
                 ], 404,);
             }
-            //search if tirage close
-            $tirage_record = tirage_record::where([
-                ['compagnie_id', '=', auth()->user()->compagnie_id],
-                ['is_active', '=', '1'],
-                // ['name', '=', $name['name']]
-            ])->whereTime(
-                'hour',
-                '>',
-                Carbon::now()->format('H:i:s'),
-            )->first();
-            if ($ticket->created_at + $minute > Carbon::now()) {
+            //chek if tirage end or active
+            foreach($tirage_ids as $id){
+                $tirage_record = tirage_record::where([
+                    ['compagnie_id', '=', auth()->user()->compagnie_id],
+                  //  ['is_active', '=', '1'],
+                    ['id', '=', $id->tirage_id]
+                ])->whereTime(
+                    'hour',
+                    '>',
+                    Carbon::now()->format('H:i:s'),
+                )->first();
+                if(!$tirage_record){
+                    return response()->json([
+                        'status' => 'false',
+                        "code" => '404',
+                        "message" => 'tirage inactive'
+    
+                    ], 404,);
+
+                }
+                //delai from directeur input
+                $minute = Carbon::parse("00:".$delai->delai.":00");
+                //the date of the ticket creation
+                $date =  Carbon::parse($ticket->created_at);
+                $now = Carbon::now();
+                $now = Carbon::parse($now);
+                $dif = $date->diffInMinutes($now);
+            
+                if($dif >= $delai->delai ){
+                    return response()->json([
+                        'status' => 'false',
+                        "code" => '404',
+                        "message" => 'dalai ecouler'
+    
+                    ], 404,);
+
+                } 
+                if($date->toTimeString()->add() + $minute < $tirage_record->hour){
+                    return response()->json([
+                        'status' => 'false',
+                        "code" => '404',
+                        "message" => 'tirage deja fermer'
+    
+                    ], 404,);
+                }*/
+                
+
+
+            }
                 $ticket_vendu = DB::table('ticket_vendu')->where([
-                    ['code', '=', $request->input('id')]
+                    ['ticket_code_id', '=', $request->input('id')]
                 ])->update([
                     'is_cancel' => 1
                 ]);
@@ -246,14 +307,7 @@ class ticketController extends Controller
                     "message" => 'ticket annule'
 
                 ], 200,);
-            } else {
-                return response()->json([
-                    'status' => 'false',
-                    "code" => '404',
-                    "message" => 'delai suppression ecoule'
-
-                ], 200,);
-            }
+            
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,

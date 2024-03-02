@@ -17,7 +17,7 @@ class verificationController extends Controller
         //la varaible contenant les boules
         $boulesNonAutorisees = [];
 
-
+       // dd($request->input('tirages'));
         // Parcourir les tirage
         foreach ($request->input('tirages') as $name) {
             //rechercher le nom de chak tirages
