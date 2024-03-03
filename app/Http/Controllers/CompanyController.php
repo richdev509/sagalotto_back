@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use App\Models\BoulGagnant;
 //use Carbon\Carbon;
 class CompanyController extends Controller
 {
@@ -152,8 +153,13 @@ class CompanyController extends Controller
             ->join('ticket_vendu','ticket_vendu.ticket_code_id','=','ticket_code.code')
             ->sum('winning');
             
+            $list = BoulGagnant::where('compagnie_id', session('loginId'))
+                    ->latest('created_at')
+                    ->take(3)
+                    ->get();
 
-            return view('admin',['vente'=>$vente, 'perte'=>$perte]);
+
+            return view('admin',['vente'=>$vente, 'perte'=>$perte, 'list'=>$list]);
         } else {
             return view('login');
         }
