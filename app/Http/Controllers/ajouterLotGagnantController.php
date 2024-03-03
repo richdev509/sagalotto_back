@@ -37,7 +37,7 @@ class ajouterLotGagnantController extends Controller
         $premierchiffre = $request->input('premierchiffre');
         $secondchiffre = $request->input('secondchiffre');
         $troisiemechiffre = $request->input('troisiemechiffre');
-
+        
         $erreurs = $this->validerEntrees($tirageId, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre);
 
         if ($erreurs) {
@@ -62,13 +62,17 @@ class ajouterLotGagnantController extends Controller
 
         $heureServeur = Carbon::now()->format('H:i:s');
 
-        if (Carbon::parse($heureServeur)->gte(Carbon::parse($heureTirage))) {
-            notify()->error('Le pou tiraj sa fenmen poko rive');
+       
+
+        if (Carbon::parse($heureServeur)->gte(Carbon::parse($heureTirage)) || $date < Carbon::now()->format('Y-m-d')) {
+         
+        } else {
+            // Le tirage n'a pas encore commencé
+            notify()->info('lo an poko ka mete. tiraj la ap femen a:'.$heureTirage);
             return redirect()->back();
         }
-        //fin de la verification
-
-        $formattedDate = $date; //Carbon::createFromFormat('m-d-Y', $date)->format('Y-m-d');
+        
+         $formattedDate = $date; //Carbon::createFromFormat('m-d-Y', $date)->format('Y-m-d');
         try {
             $reponseadd = BoulGagnant::create([
                 'tirage_id' => $request->input('tirage'),
@@ -81,7 +85,7 @@ class ajouterLotGagnantController extends Controller
                 'created_' => $formattedDate
             ]);
 
-            if ($reponseadd) {
+         if ($reponseadd) {
                 $class = new executeTirageController();
                 $reponse = $class->verification($tirageId, $date);
                 if ($reponse == '1') {
@@ -95,6 +99,8 @@ class ajouterLotGagnantController extends Controller
                     return redirect()->back();
                 }
             }
+
+          ;
         } catch (\Exception $e) {
             // Gérer l'exception si la création échoue
             notify()->error('erreur dajout', $e);

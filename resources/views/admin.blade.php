@@ -56,7 +56,7 @@
         <div class="col-12 grid-margin">
           <div class="card">
             <div class="card-body">
-              <h4 class="card-title">3 Denye tiraj ki tire</h4>
+              <h4 class="card-title">3 Denye tiraj ki tire  @php echo "L'heure du serveur est : " . date('Y-m-d H:i:s') . "\n";@endphp</h4>
               <a href="/">  <label class="badge badge-gradient-info">Gade plis</label></a>
               <div class="table-responsive">
                 <table class="table">
