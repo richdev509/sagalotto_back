@@ -13,6 +13,7 @@ use App\Models\ticket_code;
 use App\Models\tirage_record;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use App\Models\maryajgratis;
 use App\Jobs\ExecutionTirage;
 
 class executeTirageController extends Controller
@@ -53,6 +54,7 @@ class executeTirageController extends Controller
      $borletePrice =RulesOne::where('compagnie_id', $compagnieId)->value('prix');
      $lotoNames = ['maryaj', 'loto3', 'loto4', 'loto5'];  // Remplacez cela par les noms de vos lotos spécifiques
      $lotoPrices = RulesTwo::whereIn('loto_name', $lotoNames)->pluck('prix', 'loto_name');
+     $maryajgratis= maryajgratis::where('compagnie_id',$compagnieId)->where('etat',1)->value('prix');
      // Étape 3: Récupération des numéros gagnants de la table 'boulgagnant'
      $tirageName = $tirage;
  
@@ -101,6 +103,8 @@ if($fiches!=""){
     $this->loto4($gagnants,$ficheData,$lotoPrices['loto4']);
    
     $this->loto5($gagnants,$ficheData,$lotoPrices['loto5']);
+
+    $this->mariagegratis($gagnants,$ficheData,$maryajgratis);
     
      //generer codeSpecifique peut etre le code fiche fiche ici.
      
@@ -293,16 +297,20 @@ if($codes){
      $options = [];
      foreach ($loto4Data as $fiche) {
          $boul1 = $fiche['boul1'];
+
+         if(isset($fiche['option1'])){
+            $combinaisonGagnante = $gagnants->secondchiffre . $gagnants->troisiemechiffre;
+            if ($boul1 == $combinaisonGagnante) {
+                $montantGagne = $fiche['option1'] * $loto4Price;
+                $this->totalGains=$this->totalGains+$montantGagne;
+                $firsttest=1;
+                $this->havegainloto4=1;
+            }else{
+                $this->havegainloto4=0;
+            }
+         }
           // Vérification si le boul1 correspond à la combinaison de secondchiffre et troisiemechiffre
-     $combinaisonGagnante = $gagnants->secondchiffre . $gagnants->troisiemechiffre;
-     if ($boul1 == $combinaisonGagnante) {
-         $montantGagne = $fiche['montant'] * $loto4Price;
-         $this->totalGains=$this->totalGains+$montantGagne;
-         $firsttest=1;
-         $this->havegainloto4=1;
-     }else{
-         $this->havegainloto4=0;
-     }
+     
     
      if(isset($fiche['option2'])) {
          $combinaisonGagnante2 = $gagnants->secondchiffre . $gagnants->premierchiffre;
@@ -321,36 +329,10 @@ if($codes){
          $firsttest=1;
          $this->havegainloto4=1;
      }
-       /*  $options[] = [
-             'option3' => 'option3',
-            
-         ];*/
-         
-     }
- /*
-     if($firsttest==1 && !empty($options)){
-         $this->gagnantsData['loto4'][] = [
-             'boul1' => $boul1,
-             'montant' => $fiche['montant'],
-             'options' => $options,
-         ];
-     }elseif($firsttest==1 && empty($options)){
-         $this->gagnantsData['loto4'][] = [
-             'boul1' => $boul1,
-             'montant' => $fiche['montant'],
-             
-         ];
-     }elseif($firsttest==0 && !empty($options)){
-         $this->gagnantsData['loto4'][] = [
-             'boul1' => $boul1,
-             'options' => $options,
-         ];
-     }elseif($firsttest==0 && empty($options)){
-         $this->gagnantsData['loto4'][] = [
-            
-         ];
+       
         
-     }*/
+     }
+
      
     }
   }else{
@@ -364,24 +346,31 @@ if($codes){
 
     $do="ok";
     if (isset($ficheData[4]['loto5']) && !empty($ficheData[4]['loto5'])) 
-    {    $loto5Data = $ficheData[4]['loto5'];
+    {   
+        
+        
+        $loto5Data = $ficheData[4]['loto5'];
          $options = [];
          $firsttest=0;
-         $do="ok2";
+        
      foreach ($loto5Data as $fiche) {
-        $do="ok3";
+        
          $boul1 = $fiche['boul1'];
          $boul2=$fiche['boul2'];
+
+         if(isset($fiche['option1'])){
+
+         
        $combinaisonGagnante = $gagnants->unchiffre . $gagnants->premierchiffre . $gagnants->secondchiffre;
  
        if ($boul1 . $boul2 == $combinaisonGagnante) {
      // La concaténation de 3 chiffres dans boul1 et boul2 correspond à la combinaison gagnante, multiplier le montant par le prix de "loto5"
-     $montantGagne = $fiche['montant'] * $loto5Price;
+     $montantGagne = $fiche['option1'] * $loto5Price;
      $this->totalGains=$this->totalGains+$montantGagne;
      $firsttest=1;
      $this->havegainloto5=1;
        }
- 
+    }
  
      if (isset($fiche['option2']) && $boul1 . $boul2 == $gagnants->unchiffre . $gagnants->premierchiffre . $gagnants->troisiemechiffre) {
      // L'option2 est présente et correspond à la combinaison gagnante, multiplier le montant par le prix de l'option2
@@ -401,36 +390,7 @@ if($codes){
      ];*/
      $this->havegainloto5=1;
      } 
-     /*
-     if($firsttest==1 && !empty($options)){
-         $this->gagnantsData['loto5'][] = [
-             'boul1' => $boul1,
-              'boul2'=>$boul2,
-              'montant' => $fiche['montant'],
-              'options' => $options,
-         ];
-         $this->havegainloto5=1;
-     }elseif($firsttest==1 && empty($options)){
-         $this->gagnantsData['loto4'][] = [
-             'boul1' => $boul1,
-             'boul2'=>$boul2,
-             'montant' => $fiche['montant'],
-         ];
-         $this->havegainloto5=1;
-     }elseif($firsttest==0 && !empty($options)){
-         $this->gagnantsData['loto5'][] = [
-         'boul1' => $boul1,
-         'boul2'=>$boul2,
-         'options' => $options,
-           
-         ];
-         $this->havegainloto5=1;
-     }elseif($firsttest==0 && empty($options)){
-         $this->gagnantsData['loto5'][] = [
-            
-         ];
-        
-     }*/
+     
    
  
      
@@ -440,5 +400,30 @@ if($codes){
  }
  
  return $do;
+ }
+
+ public function mariagegratis($gagnants,$ficheData, $maryajgratis){
+    if(isset($ficheData[5]['maryaj_gratis']) && !empty($ficheData[5]['maryaj_gratis'])){
+        $maryajData = $ficheData[5]['maryaj'];
+        
+        foreach ($maryajData as $fiche) {
+           
+            $boul1 = $fiche['boul1'];
+            $boul2 = $fiche['boul2'];
+            if (
+                ($boul1 == $gagnants->premierchiffre && $boul2 == $gagnants->secondchiffre) ||
+                ($boul1 == $gagnants->premierchiffre && $boul2 == $gagnants->troisiemechiffre) ||
+                ($boul1 == $gagnants->secondchiffre && $boul2 == $gagnants->premierchiffre) ||
+                ($boul1 == $gagnants->secondchiffre && $boul2 == $gagnants->troisiemechiffre) ||
+                ($boul1 == $gagnants->troisiemechiffre && $boul2 == $gagnants->premierchiffre) ||
+                ($boul1 == $gagnants->troisiemechiffre && $boul2 == $gagnants->secondchiffre) 
+            ) {
+                $montantGagne =  $maryajgratis;
+                $this->totalGains=$this->totalGains+$montantGagne;
+            }
+            
+        }
+    }
+    
  }
 }
