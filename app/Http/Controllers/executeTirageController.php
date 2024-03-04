@@ -50,16 +50,15 @@ class executeTirageController extends Controller
 
      $totalGains =0;
      $compagnieId =session('loginId'); 
-      // Remplacez cela par l'id de votre compagnie spécifique
+
      $borletePrice =RulesOne::where('compagnie_id', $compagnieId)->value('prix');
-     $lotoNames = ['maryaj', 'loto3', 'loto4', 'loto5'];  // Remplacez cela par les noms de vos lotos spécifiques
+     $lotoNames = ['maryaj', 'loto3', 'loto4', 'loto5'];
      $lotoPrices = RulesTwo::whereIn('loto_name', $lotoNames)->pluck('prix', 'loto_name');
      $maryajgratis= maryajgratis::where('compagnie_id',$compagnieId)->where('etat',1)->value('prix');
-     // Étape 3: Récupération des numéros gagnants de la table 'boulgagnant'
      $tirageName = $tirage;
- 
+     
      // Récupération des numéros gagnants pour le tirage spécifique
-     $formattedDate = Carbon::createFromFormat('m/d/Y', $date)->format('Y-m-d');
+     $formattedDate = $date;
      $gagnants = BoulGagnant::where('compagnie_id', $compagnieId)
           ->where('tirage_id', $tirageName)
           ->whereDate('created_', $formattedDate)
@@ -70,6 +69,7 @@ class executeTirageController extends Controller
     ->whereDate('created_at', $formattedDate)
     ->pluck('code')
     ->toArray();
+    
     $fiches="";
    if($codes){
  // Récupérer les tickets vendus
@@ -89,14 +89,15 @@ if($fiches!=""){
 
 
  foreach ($fiches as $fiche) {
- $ficheData = json_decode($fiche->boule, true);
+    $ficheData = json_decode($fiche->boule, true);
     $ficheDatas=$ficheData;
      //recuperation de l'id du fiche
      $codeSpecifique=$fiche->ticket_code_id;
      //apel des function.
-    $reponse=$this->bolete($gagnants,$ficheData,$borletePrice);
      
-    $reponse= $this->maryaj($gagnants,$ficheData,$lotoPrices['maryaj']);
+     $reponse=$this->bolete($gagnants,$ficheData,$borletePrice);
+     
+     $reponse= $this->maryaj($gagnants,$ficheData,$lotoPrices['maryaj']);
     
     $this->loto3($gagnants,$ficheData,$lotoPrices['loto3']);
     
@@ -106,19 +107,19 @@ if($fiches!=""){
 
     $this->mariagegratis($gagnants,$ficheData,$maryajgratis);
     
-     //generer codeSpecifique peut etre le code fiche fiche ici.
-     
+    
+
      if($this->havegain==1 || $this->havegainmaryaj==1 || $this->havegainloto3==1 || $this->havegainloto4==1 || $this->havegainloto5==1){
-        // $this->gagnantsDataParCode[$codeSpecifique][] = $this->gagnantsData;
-        //$this->gagnantsDataParCode[$codeSpecifique][] = $this->totalGains;
+        
+        $this->totalgains[$i][]=$this->totalGains;
+        $this->totalgains[$i][]=$codeSpecifique;
+        $i=$i+1;
+
         $reponseRequette=TicketVendu::where('ticket_code_id',$codeSpecifique)->where('tirage_record_id',$tirage)
             ->update([
                 'winning' => $this->totalGains,
                 'is_win' => 1,
             ]);
-        $this->totalgains[$i][]=$this->totalGains;
-        $this->totalgains[$i][]=$codeSpecifique;
-        $i=$i+1;
          $this->totalGains=0;
          $this->havegain=0;
          $this->havegainmaryaj=0;
@@ -128,19 +129,21 @@ if($fiches!=""){
  
      }
      
+     
  
  }
 }
 
-//return response()->json(['data'=>$data,'statut'=> 1],200); // Réponse JSON
+
 if($codes){
-   // return response()->json(['data'=>$this->totalgains,'montantparid'=>$this->montantparid,'statut'=> 1],200);
-    return $statut=1;  
+     return $statut=1;  
 }else{
-    //return response()->json(['data'=>'Donne vide','statut'=>0],200);
+    
     return $statut=0;
  }
- //fin
+ 
+
+ 
     }
  
  

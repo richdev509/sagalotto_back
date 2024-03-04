@@ -37,7 +37,7 @@ class ajouterLotGagnantController extends Controller
         $premierchiffre = $request->input('premierchiffre');
         $secondchiffre = $request->input('secondchiffre');
         $troisiemechiffre = $request->input('troisiemechiffre');
-
+        
         $erreurs = $this->validerEntrees($tirageId, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre);
 
         if ($erreurs) {
@@ -66,9 +66,7 @@ class ajouterLotGagnantController extends Controller
             notify()->error('Le pou tiraj sa fenmen poko rive');
             return redirect()->back();
         }
-        //fin de la verification
-
-        $formattedDate = $date; //Carbon::createFromFormat('m-d-Y', $date)->format('Y-m-d');
+         $formattedDate = $date; //Carbon::createFromFormat('m-d-Y', $date)->format('Y-m-d');
         try {
             $reponseadd = BoulGagnant::create([
                 'tirage_id' => $request->input('tirage'),
@@ -81,7 +79,7 @@ class ajouterLotGagnantController extends Controller
                 'created_' => $formattedDate
             ]);
 
-            if ($reponseadd) {
+         if ($reponseadd) {
                 $class = new executeTirageController();
                 $reponse = $class->verification($tirageId, $date);
                 if ($reponse == '1') {
@@ -95,6 +93,8 @@ class ajouterLotGagnantController extends Controller
                     return redirect()->back();
                 }
             }
+
+          ;
         } catch (\Exception $e) {
             // Gérer l'exception si la création échoue
             notify()->error('erreur dajout', $e);
