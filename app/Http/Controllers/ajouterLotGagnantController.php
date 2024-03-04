@@ -62,8 +62,13 @@ class ajouterLotGagnantController extends Controller
 
         $heureServeur = Carbon::now()->format('H:i:s');
 
+       
+
         if (Carbon::parse($heureServeur)->gte(Carbon::parse($heureTirage))) {
-            notify()->error('Le pou tiraj sa fenmen poko rive');
+         
+        } else {
+            // Le tirage n'a pas encore commencé
+            notify()->info('lo an poko ka mete. tiraj la ap femen a:'.$heureTirage);
             return redirect()->back();
         }
          $formattedDate = $date; //Carbon::createFromFormat('m-d-Y', $date)->format('Y-m-d');
