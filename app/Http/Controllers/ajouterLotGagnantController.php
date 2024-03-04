@@ -64,13 +64,14 @@ class ajouterLotGagnantController extends Controller
 
        
 
-        if (Carbon::parse($heureServeur)->gte(Carbon::parse($heureTirage))) {
+        if (Carbon::parse($heureServeur)->gte(Carbon::parse($heureTirage)) || $date < Carbon::now()->format('Y-m-d')) {
          
         } else {
             // Le tirage n'a pas encore commencé
             notify()->info('lo an poko ka mete. tiraj la ap femen a:'.$heureTirage);
             return redirect()->back();
         }
+        
          $formattedDate = $date; //Carbon::createFromFormat('m-d-Y', $date)->format('Y-m-d');
         try {
             $reponseadd = BoulGagnant::create([
