@@ -31,8 +31,8 @@ Route::get('/contactsaga', function () {
 
 Route::get('/login', function () {
     
-    return view('login');
-})->name('login');
+   return view('login');
+});
 
 Route::get('/contact', function () {
     return view('contactapp');
@@ -91,3 +91,7 @@ Route::get('lotconfig',[parametreController::class, 'create_config'])->name('lot
 Route::post('editerdelai',[parametreController::class, 'update_delai']);
 
 });
+
+//Auth::routes();
+
+//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

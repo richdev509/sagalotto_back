@@ -34,9 +34,13 @@ Route::group([
     Route::get('/profil', [AuthController::class,'profil']);
     Route::post('/logout', [AuthController::class,'logout']);
     Route::get('/tirage', [AuthController::class,'tirage']);
+    Route::get('/tirage/tout', [AuthController::class,'tirage_list']);
+
     Route::post('/ticket/creer', [ticketController::class,'creer_ticket']);
     Route::get('/ticket/list', [ticketController::class,'list_ticket']);
     Route::post('/ticket/cancel', [ticketController::class,'cancel_ticket']);
+    Route::get('/ticket/report', [ticketController::class,'report_ticket']);
+
 
    
 });

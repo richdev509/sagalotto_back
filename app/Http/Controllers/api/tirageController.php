@@ -16,7 +16,7 @@ class tirageController extends Controller
         $this->middleware('auth:api', ['except' => ['login']]);
     }
 
-    public function tirage(){
+    public function tirage_list(){
 
     }
     

@@ -86,13 +86,37 @@ class verificationController extends Controller
         }
         if (!empty($request->input('loto4'))) {
 
-            foreach ($request->input('loto4') as $montant) {
-                $montant_tot = $montant_tot + $montant['montant'];
+            foreach ($request->input('loto4') as $option) {
+                if(!empty($option['option1'])){
+                    $montant_tot = $montant_tot + $option['option1'];
+
+                }
+                if(!empty($option['option2'])){
+                    $montant_tot = $montant_tot + $option['option2'];
+
+                }
+                if(!empty($option['option3'])){
+                    $montant_tot = $montant_tot + $option['option3'];
+
+                }
+
             }
         }
         if (!empty($request->input('loto5'))) {
-            foreach ($request->input('loto5') as $montant) {
-                $montant_tot = $montant_tot + $montant['montant'];
+            foreach ($request->input('loto5') as $option) {
+                if(!empty($option['option1'])){
+                    $montant_tot = $montant_tot + $option['option1'];
+
+                }
+                if(!empty($option['option2'])){
+                    $montant_tot = $montant_tot + $option['option2'];
+
+                }
+                if(!empty($option['option3'])){
+                    $montant_tot = $montant_tot + $option['option3'];
+
+                }
+           
             }
         }
 
