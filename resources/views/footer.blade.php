@@ -11,7 +11,7 @@
                 <div class="col-lg-8">
                     <ul class="links">
                         <li>
-                            <a href="sagacelotto.com" class="active">Akey</a>
+                            <a href="sagaceloto.com" class="active">Akey</a>
                         </li>
                         <li>
                             <a href="https://facebook.com/sagacetech">a pwopo</a>
@@ -20,9 +20,7 @@
                         <li>
                             <a href="/sagacetech">sevis</a>
                         </li>
-                        <li>
-                            <a href="shop">boutik</a>
-                        </li>
+                       
                         
                         <li>
                             <a href="contact">kontak</a>

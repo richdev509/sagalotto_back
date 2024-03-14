@@ -4,11 +4,11 @@
         <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="keywords" content="Sagacetech, SAGALOTTO pos, POS haiti,">
-    <meta name="description" content="SAGALOTTO application POS bolot , yon pwodwi de Sagacetech">
+    <meta name="keywords" content="Sagacetech, SAGALOTO pos, POS haiti,">
+    <meta name="description" content="SAGALOTO application POS bolot , yon pwodwi de Sagacetech">
     <meta name="author" content="Sagacetech">
         
-    <title>SAGALOTTO</title>
+    <title>Sagaloto</title>
 
         <link rel="shortcut icon" href="{{ asset('/assets/landing/img/saga.png')}}" title="Favicon" >
 
@@ -71,7 +71,7 @@
                 <div class="row gx-0">
                     <div class="col-lg-6">
                         <div class="info">
-                            <small class="mb-50 title_small">SAGALOTTO - POS App</small>
+                            <small class="mb-50 title_small">Sagaloto - POS App</small>
                             <h1 class="mb-30">Aplikasyon <span> POS Bolet</span>  </h1>
                             <p class="text">Vann pi rapid , e gen kontrol tout tranzaksyon yo. A pati de 30 POS ou mande pesonalize saw vle gratis</p>
                             <div class="d-flex align-items-center mt-50">
@@ -163,7 +163,7 @@
         <section class="features pt-70 pb-70 style-4">
             <div class="container">
                 <div class="section-head text-center style-4">
-                    <small class="title_small bg-white">Sagalotto - Aplikasyon POS Bolet</small>
+                    <small class="title_small bg-white">Sagaloto - Aplikasyon POS Bolet</small>
                     
                 </div>
                 <div class="content">
@@ -208,7 +208,7 @@
                         <div class="col-lg-5">
                             <div class="info">
                                 <div class="section-head style-4">
-                                    <small class="title_small">Sagalotto-Dashboard </small>
+                                    <small class="title_small">Sagaloto-Dashboard </small>
                                     <h2 class="mb-30">Espas <span>pou gere POS yo </span> </h2>
                                 </div>
                                 <p class="text mb-40">
@@ -250,7 +250,7 @@
                             <div class="info">
                                 <div class="section-head style-4">
                                     <small class="title_small">Yon sistèm konplè, saw bezwen mandel</small>
-                                    <h2 class="mb-30">SAGALOTTO <span> POS APP</span> </h2>
+                                    <h2 class="mb-30">Sagaloto <span> POS APP</span> </h2>
                                 </div>
                                 <p class="text mb-40">
                                     Nouvo entefas, sistèm otmatik ,anpil nouvote. Vann pi rapid avèk plis konfyans nan rapo ou.
@@ -365,7 +365,7 @@
         <section class="pricing section-padding style-4 pb-50">
             <div class="container">
                 <div class="section-head text-center style-4">
-                    <small class="title_small">SAGALOTTO Plan</small>
+                    <small class="title_small">Sagaloto Plan</small>
                     <h2 class="mb-30"> Demare yon pri<span>konfotab</span> </h2>
                 </div>
                 <div class="content">
@@ -424,8 +424,8 @@
                                             <p class="fw-bold">Export rapo PDF,</p>
                                         </li>
                                     </ul>
-                                    <a href="page-contact-5.html" class="btn rounded-pill hover-blue4 fw-bold mt-50 px-5 border-blue4">
-                                        <small>Anrejistre </small>
+                                    <a href="https://wa.me/46538901" class="btn rounded-pill hover-blue4 fw-bold mt-50 px-5 border-blue4">
+                                        <small>Kontakte la sou Whatsapp pou Anregistre </small>
                                     </a>
                                 </div>
                             </div>
@@ -482,8 +482,8 @@
                                             <p class="fw-bold">Exporte rapo ou an PDF</p>
                                         </li>
                                     </ul>
-                                    <a href="page-contact-5.html" class="btn rounded-pill bg-blue4 fw-bold text-white px-5 mt-50">
-                                        <small>Anregistre</small>
+                                    <a href="https://wa.me/46538901" class="btn rounded-pill bg-blue4 fw-bold text-white px-5 mt-50">
+                                        <small>Kontakte la sou Whatsapp pou Anregistre klike</small>
                                     </a>
                                 </div>
                                 <div class="off">
@@ -509,7 +509,7 @@
                                 <h2 class="mb-30">Kontantman<span>kliyan nou</span> </h2>
                             </div>
                             <p class="text mb-40">
-                               SAGALOTTO sevis de Sagacetech ,Best konpani nan teknoloji an Haiti.
+                               Sagaloto sevis de Sagacetech ,Best konpani nan teknoloji an Haiti.
                             </p>
                             <div class="numbs">
                                 <div class="num-card">
@@ -522,8 +522,8 @@
                                 
                             </div>
                             <div class="d-flex align-items-center mt-70">
-                                <a href="https://www.apple.com/app-store/" class="btn rounded-pill bg-blue4 fw-bold text-white me-4" target="_blank">
-                                    <small> Contactez nous. </small>
+                                <a href="/" class="btn rounded-pill bg-blue4 fw-bold text-white me-4" target="_blank">
+                                    <small> Kontakte nou. </small>
                                 </a>
                                 <a href="https://youtu.be/pGbIOC83-So?t=21" data-lity="" class="play-btn">
                                     <span class="icon me-2">
@@ -696,8 +696,8 @@
                             <i class="fab fa-whatsapp"></i>
                         </div>
                         <div class="inf">
-                            <h5>Whatsapp SAGALOTTO</h5>
-                            <p>Swiv nou sou chanel Loto SAGALOTTO lan</p>
+                            <h5>Whatsapp Sagaloto</h5>
+                            <p>Swiv nou sou chanel Loto Sagaloto lan</p>
                         </div>
                     </a>
                     <a href="#" class="commun-card">
