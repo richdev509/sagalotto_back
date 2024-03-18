@@ -73,7 +73,7 @@
                         <div class="info">
                             <small class="mb-50 title_small">Sagaloto - POS App</small>
                             <h1 class="mb-30">Aplikasyon <span> POS Bolet</span>  </h1>
-                            <p class="text">Vann pi rapid , e gen kontrol tout tranzaksyon yo. A pati de 30 POS ou mande pesonalize saw vle gratis</p>
+                            <p class="text">Vann pi rapid , e gen kontwol tout tranzaksyon yo. A pati de 30 POS ou mande pesonalize saw vle gratis</p>
                             <div class="d-flex align-items-center mt-50">
                                 <a href="https://www.apple.com/app-store/" class="btn rounded-pill bg-blue4 fw-bold text-white me-4" target="_blank">
                                     <small> <i class="fab fa-apple me-2 pe-2 border-end"></i>Telechaje Aplikasyon an </small>
@@ -115,49 +115,7 @@
     <!--Contents-->
     <main>
 
-        <!-- ====== start clients ====== -->
-        <section class="clients style-4">
-            <div class="container">
-                <div class="text-center">
-                    <h5 class="fw-bold mb-60"><span class="color-blue4">Biznis kap mache aven</span></h5>
-                </div>
-                <div class="client-logos pb-70">
-                    <div class="row align-items-center">
-                        <div class="col-6 col-lg-2">
-                            <a href="#" class="img d-block">
-                                <img src="{{ asset('/assets/landing/img/logos/1.png')}}" alt="">
-                            </a>
-                        </div>
-                        <div class="col-6 col-lg-2">
-                            <a href="#" class="img d-block">
-                                <img src="{{ asset('/assets/landing/img/logos/2.png')}}" alt="">
-                            </a>
-                        </div>
-                        <div class="col-6 col-lg-2">
-                            <a href="#" class="img d-block">
-                                <img src="{{ asset('/assets/landing/img/logos/3.png')}}" alt="">
-                            </a>
-                        </div>
-                        <div class="col-6 col-lg-2">
-                            <a href="#" class="img d-block">
-                                <img src="{{ asset('/assets/landing/img/logos/4.png')}}" alt="">
-                            </a>
-                        </div>
-                        <div class="col-6 col-lg-2">
-                            <a href="#" class="img d-block">
-                                <img src="{{ asset('assets/landing/img/logos/5.png')}}" alt="">
-                            </a>
-                        </div>
-                        <div class="col-6 col-lg-2">
-                            <a href="#" class="img d-block">
-                                <img src="{{ asset('assets/landing/img/logos/6.png')}}" alt="">
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- ====== end clients ====== -->
+    
 
         <!-- ====== start features ====== -->
         <section class="features pt-70 pb-70 style-4">
@@ -224,13 +182,13 @@
                                         <small class="icon-30 bg-gray rounded-circle color-blue4 d-inline-flex align-items-center justify-content-center me-3">
                                             <i class="fas fa-sync"></i>
                                         </small>
-                                        <h6 class="fw-bold">Rapo tout van.</h6>
+                                        <h6 class="fw-bold">Rapò tout van.</h6>
                                     </li>
                                     <li class="d-flex align-items-center">
                                         <small class="icon-30 bg-gray rounded-circle color-blue4 d-inline-flex align-items-center justify-content-center me-3">
                                             <i class="fas fa-text-width"></i>
                                         </small>
-                                        <h6 class="fw-bold">Jere boul kap jwe , met kontrol</h6>
+                                        <h6 class="fw-bold">Jere boul kap jwe , met kontwòl</h6>
                                     </li>
                                 </ul>
                                 <a href="page-contact-5.html" class="btn rounded-pill bg-blue4 fw-bold text-white mt-50">
@@ -253,7 +211,7 @@
                                     <h2 class="mb-30">Sagaloto <span> POS APP</span> </h2>
                                 </div>
                                 <p class="text mb-40">
-                                    Nouvo entefas, sistèm otmatik ,anpil nouvote. Vann pi rapid avèk plis konfyans nan rapo ou.
+                                    Nouvo entefas, sistèm otmatik ,anpil nouvote. Vann pi rapid avèk plis konfyans nan rapò ou.
                                 </p>
                                 <div class="faq style-3 style-4">
                                     <div class="accordion" id="accordionExample">
@@ -272,12 +230,12 @@
                                         <div class="accordion-item">
                                             <h2 class="accordion-header" id="heading2">
                                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
-                                                   Kontwol rapo.
+                                                   Kontwòl rapò.
                                                 </button>
                                             </h2>
                                             <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2" data-bs-parent="#accordionExample">
                                                 <div class="accordion-body">
-                                                   Kontwol rapo ou rapid,  Plizyè flitè pou jwenn rapo jounen ou. ak tout lot jou yo.  E nan kèk jou ou ka pwograme rapo ou poul soti chak le bolot fenmen .
+                                                   Kontwòl rapò ou rapid,  Plizyè flitè pou jwenn rapò jounen ou. ak tout lot jou yo.  E nan kèk jou ou ka pwograme rapo ou poul soti chak le bolot fenmen .
                                                 </div>
                                             </div>
                                         </div>
@@ -289,7 +247,7 @@
                                             </h2>
                                             <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3" data-bs-parent="#accordionExample">
                                                 <div class="accordion-body">
-                                                   Tout tiraj Bolot pou jounen epi soti 1 Janvye 2024 Disponib sou Aplikasyon pa mwa, Pwoblem kesyon bezwen konn sak soti rezoud. Epi avan tout tiraj fich ganyan sistem met kontrol pou we si gen ere nan met boul tiraj yo.  
+                                                   Tout tiraj Bòlet pou jounen epi soti 1 Janvye 2024 Disponib sou Aplikasyon pa mwa, Pwoblem kesyon bezwen konn sak soti rezoud. Epi avan tout tiraj fich ganyan sistem met kontrol pou we si gen ere nan met boul tiraj yo.  
                                                 </div>
                                             </div>
                                         </div>
@@ -366,7 +324,7 @@
             <div class="container">
                 <div class="section-head text-center style-4">
                     <small class="title_small">Sagaloto Plan</small>
-                    <h2 class="mb-30"> Demare yon pri<span>konfotab</span> </h2>
+                    <h2 class="mb-30"> Demare yon pri <span>konfòtab</span> </h2>
                 </div>
                 <div class="content">
                     <div class="toggle_switch d-flex align-items-center justify-content-center mb-40">
@@ -374,7 +332,7 @@
                             <label class="form-check-label" for="flexSwitchCheckDefault"><small>peye pa mwa</small></label>
                             <input class="form-check-input float-none bg-blue4" type="checkbox" id="flexSwitchCheckDefault" checked="">
                             <label class="form-check-label" for="flexSwitchCheckDefault"><small>peye
-                                    pa trimèst</small></label>
+                                    pa trimès</small></label>
                         </div>
                     </div>
                     <div class="row gx-0">
@@ -469,12 +427,7 @@
                                             </small>
                                             <p class="fw-bold">Rapo tranzaksyon nenpot moman</p>
                                         </li>
-                                        <li class="d-flex align-items-center mb-3">
-                                            <small class="icon-30 bg-blue4 rounded-circle text-white d-inline-flex align-items-center justify-content-center me-3 flex-shrink-0">
-                                                <i class="fas fa-undo"></i>
-                                            </small>
-                                            <p class="fw-bold">Aplikasyon Android, entegrasyon moncash</p>
-                                        </li>
+                                       
                                         <li class="d-flex align-items-center">
                                             <small class="icon-30 bg-blue4 rounded-circle text-white d-inline-flex align-items-center justify-content-center me-3 flex-shrink-0">
                                                 <i class="fas fa-download"></i>
@@ -522,7 +475,7 @@
                                 
                             </div>
                             <div class="d-flex align-items-center mt-70">
-                                <a href="/" class="btn rounded-pill bg-blue4 fw-bold text-white me-4" target="_blank">
+                                <a href="/contact" class="btn rounded-pill bg-blue4 fw-bold text-white me-4" target="_blank">
                                     <small> Kontakte nou. </small>
                                 </a>
                                 <a href="https://youtu.be/pGbIOC83-So?t=21" data-lity="" class="play-btn">
@@ -673,7 +626,7 @@
                     <h2 class="mb-30"> Rejwenn <span> kominote nou </span> </h2>
                 </div>
                 <div class="content">
-                    <a href="#" class="commun-card">
+                    <a href="https://facebook.com/sagacetech" class="commun-card">
                         <div class="icon">
                             <i class="fab fa-facebook"></i>
                         </div>
@@ -682,16 +635,8 @@
                             <p>Swiv nou sou kominote Facebook lan</p>
                         </div>
                     </a>
-                    <a href="#" class="commun-card">
-                        <div class="icon">
-                            <i class="fab fa-twitter"></i>
-                        </div>
-                        <div class="inf">
-                            <h5>Twitter</h5>
-                            <p>Swiv nou sou kominote Twitter lan</p>
-                        </div>
-                    </a>
-                    <a href="#" class="commun-card">
+                    
+                    <a href="https://wa.me/46538901" class="commun-card">
                         <div class="icon">
                             <i class="fab fa-whatsapp"></i>
                         </div>
@@ -700,15 +645,7 @@
                             <p>Swiv nou sou chanel Loto Sagaloto lan</p>
                         </div>
                     </a>
-                    <a href="#" class="commun-card">
-                        <div class="icon">
-                            <i class="fab fa-telegram"></i>
-                        </div>
-                        <div class="inf">
-                            <h5>Telegram</h5>
-                            <p>Swiv nou sou chanel Telegram lan</p>
-                        </div>
-                    </a>
+                    
                 </div>
             </div>
         </section>
