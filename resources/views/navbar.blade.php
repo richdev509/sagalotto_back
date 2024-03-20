@@ -18,13 +18,13 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        pages
+                        paj
                         
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown1">
                         
                         <li><a class="dropdown-item" href="https://facebook.com/sagacetech">A pwopo</a></li>
-                        <li><a class="dropdown-item" href="/sagacetech">sevis nou</a></li>
+                        <li><a class="dropdown-item" href="/">sevis nou</a></li>
                         </ul>
                 </li>
                 

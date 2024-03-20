@@ -4,11 +4,11 @@
         <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="keywords" content="Sagacetech, SAGALOTTO pos, POS haiti,">
-    <meta name="description" content="SAGALOTTO application POS bolot , yon pwodwi de Sagacetech">
+    <meta name="keywords" content="Sagacetech, SAGALOTO pos, POS haiti,">
+    <meta name="description" content="SAGALOTO application POS bolot , yon pwodwi de Sagacetech">
     <meta name="author" content="Sagacetech">
         
-    <title>SAGALOTTO</title>
+    <title>SAGALOTO</title>
 
         <link rel="shortcut icon" href="{{ asset('/assets/landing/img/saga.png')}}" title="Favicon" >
 
@@ -53,8 +53,8 @@
                 <img src="{{ asset('/assets/landing/img/icons/nav_icon/imoj_heart.png')}}" alt="" class="icon-15">
                 <span class="fs-10px op-6">Pran abonman paw la  </span>
                 <small class="op-10 fs-10px">8$ mois</small>
-                <span class="fs-10px op-6">jiska 14 janvier</span>
-                <a href="page-contact-5.html" class="fs-10px text-decoration-underline ms-2">Pase komand</a>
+                <span class="fs-10px op-6">jiska 1 Mai 2024</span>
+                <a href="/contact" class="fs-10px text-decoration-underline ms-2">Pase komand</a>
             </div>
         </div>
     </div>
@@ -69,7 +69,7 @@
                 <div class="section-head text-center style-4 mb-40">
                     <small class="title_small">Kontakte nou</small>
                     
-                    <p>Nap kontaktew apre 5h tan ou fin ekri nou</p>
+                    <p>Nap kontaktew nan yon ti tan pa two lwen.</p>
                 </div>
                 <div class="content rounded-pill">
                     <div class="commun-card">
@@ -77,7 +77,7 @@
                             <img src="assets/img/icons/mail3d.png" alt="">
                         </div>
                         <div class="inf">
-                            <h5>contact@sagalotto.com </h5>
+                            <h5>contact@sagaloto.com </h5>
                         </div>
                     </div>
                     <div class="commun-card">
@@ -85,7 +85,7 @@
                             <img src="assets/img/icons/map3d.png" alt="">
                         </div>
                         <div class="inf">
-                            <h5>Delmas 75</h5>
+                            <h5>Petion-ville</h5>
                         </div>
                     </div>
                     <div class="commun-card">
@@ -93,7 +93,7 @@
                             <img src="assets/img/icons/msg3d.png" alt="">
                         </div>
                         <div class="inf">
-                            <h5>(+23) 5535 68 68</h5>
+                            <h5>(+509)46538901- 47974323 -55175521</h5>
                         </div>
                     </div>
                 </div>
