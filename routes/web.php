@@ -79,8 +79,6 @@ Route::get('lister-tirage', [tirageController::class,'index']);
 
 
 
-
-
 //parametre
 Route::get('maryaj-set',[parametreController::class, 'indexmaryaj'])->name('maryajGratis');
 Route::post('updatemontantmg',[parametreController::class,'updatePrixMaryajGratis'])->name('updatemontantmg');
