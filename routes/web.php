@@ -6,6 +6,8 @@ use App\Http\Controllers\tirageController;
 use App\Http\Controllers\updateSwitchController;
 use App\Http\Controllers\ajouterLotGagnantController;
 use App\Http\Controllers\parametreController;
+use App\Http\Controllers\rapportController;
+use App\Http\Controllers\ticketController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -77,6 +79,21 @@ Route::post('editertirage', [tirageController::class,'update']);
 Route::get('lister-tirage', [tirageController::class,'index']);
 //end tirage
 
+//raport
+Route::get('rapport', [rapportController::class,'create_rapport']);
+
+
+//end rapport
+
+//ticket
+Route::get('lister-ticket', [ticketController::class,'index']);
+
+//end ticket
+//boule
+Route::get('boule-show', [ticketController::class,'show_boule']);
+
+
+//end boule
 
 
 //parametre
