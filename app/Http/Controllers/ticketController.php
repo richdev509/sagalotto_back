@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 class ticketController extends Controller
 {
     public function index(){
+        
         if (Session('loginId')) {
             $ticket = DB::table('ticket_code')->where([
                 ['ticket_code.compagnie_id', '=', Session('loginId')],
