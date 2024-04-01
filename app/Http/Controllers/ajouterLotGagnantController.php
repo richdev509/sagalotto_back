@@ -176,6 +176,7 @@ class ajouterLotGagnantController extends Controller
             notify()->error('Pwoblem miz ajou kontakte sevis teknik');
             return redirect()->back();
         }
+        
         $Boulgnant = BoulGagnant::where('compagnie_id', session('loginId'))->where('created_', $date);
         if ($Boulgnant) {
             try {
