@@ -30,7 +30,7 @@ Route::group([
 
 ], function ($router) {
 
-    Route::post('/login', [AuthController::class,'login'])->name('login');
+    Route::post('/login', [AuthController::class,'login']);
     Route::get('/profil', [AuthController::class,'profil']);
     Route::post('/logout', [AuthController::class,'logout']);
     Route::get('/tirage', [AuthController::class,'tirage']);
