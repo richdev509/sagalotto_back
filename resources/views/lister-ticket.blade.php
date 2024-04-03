@@ -5,22 +5,13 @@
     <style type="text/css">
         .content {
             position: fixed;
-<<<<<<< HEAD
-<<<<<<< HEAD
 
             margin-top: 200px;
             left: 50%;
-=======
             top: 50%;
-            left: 60%;
->>>>>>> d47295737645b9d815a0986389d33e9d15a258e1
-=======
-            top: 50%;
-            left: 60%;
->>>>>>> d47295737645b9d815a0986389d33e9d15a258e1
             transform: translate(-50%, -50%);
             width: 70%;
-            height: 200px;
+            height: 500px;
             text-align: center;
             background-color: white;
             border: 1px solid blueviolet;
