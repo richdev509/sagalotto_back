@@ -32,9 +32,8 @@ Route::get('/contactsaga', function () {
 });
 
 Route::get('/login', function () {
-    
    return view('login');
-});
+})->name('login2');
 
 Route::get('/contact', function () {
     return view('contactapp');
