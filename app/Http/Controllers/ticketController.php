@@ -17,6 +17,7 @@ class ticketController extends Controller
                 ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
                 ->join('users','ticket_code.user_id','users.id')
                 ->select('ticket_vendu.*','ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain','users.bank_name as bank')
+                ->orderByDesc('id')
                 ->paginate(100);
             return view('lister-ticket',['ticket'=>$ticket]);
         } else {
