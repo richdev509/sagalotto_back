@@ -52,7 +52,7 @@
 
                        </td>
                        <td>                                
-                        <button  style="height:15px;" type="submit" class="btn btn-gradient-primary me-2">Modifye</button>               
+                        <button  style="" type="submit" class="btn btn-gradient-primary me-2">Modifye</button>               
                        </td>
                         </tr>
                         </form>

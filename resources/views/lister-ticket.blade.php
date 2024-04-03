@@ -4,9 +4,9 @@
 @section('content')
     <style type="text/css">
         .content {
-            position: absolute;
-            top: auto;
-            left: 50%;
+            position: fixed;
+            top: 50%;
+            left: 60%;
             transform: translate(-50%, -50%);
             width: 70%;
             height: auto;
@@ -29,6 +29,8 @@
             color: white;
             border-radius: 50%;
             padding: 4px;
+            width: 26px;
+            cursor: pointer;
         }
     </style>
     <div class="page-header">
@@ -56,13 +58,13 @@
 
                                 <td>
                                     <label for="dateFilter">komanse</label>
-                                    <input style="height:10px;" type="date" class="form-control" value=""
+                                    <input style="height:10px;margin-top: 10px;" type="date" class="form-control" value=""
                                         name="time_tirer" />
-                                    <label for="dateFilter">Fini</label>
+                                    <label for="dateFilter" style="margin-top: 5px;">Fini</label>
 
-                                    <input style="height:10px;" type="date" class="form-control" value=""
+                                    <input style="height:10px;margin-top: 10px;" type="date" class="form-control" value=""
                                         name="time_tirer" />
-                                    <button style="height:15px;" type="submit"
+                                    <button style="margin-top: 18px;" type="submit"
                                         class="btn btn-gradient-primary me-2">Chache</button>
                                 </td>
 

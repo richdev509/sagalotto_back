@@ -251,8 +251,7 @@
                                 <li class="nav-item"> <a class="nav-link" href="{{ route('maryajGratis') }}">Maryaj
                                         Gratis
                                     </a></li>
-                                <li class="nav-item"> <a class="nav-link" href="{{ route('ajisteprilo') }}">Premye
-                                        lo-Ajiste
+                                <li class="nav-item"> <a class="nav-link" href="{{ route('ajisteprilo') }}">Ajiste pri premye lo
                                     </a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ route('lotconfig') }}">Lot 
                                         Konfigirasyon
