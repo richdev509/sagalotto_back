@@ -5,11 +5,13 @@
     <style type="text/css">
         .content {
             position: fixed;
+
+            margin-top: 200px;
+            left: 50%;
             top: 50%;
-            left: 60%;
             transform: translate(-50%, -50%);
             width: 70%;
-            height: auto;
+            height: 500px;
             text-align: center;
             background-color: white;
             border: 1px solid blueviolet;
@@ -17,9 +19,15 @@
             padding: 10px;
             z-index: 100;
             display: none;
-            overflow: scroll;
+            overflow-y: scroll;
+            overflow-x: scroll;
             /*to hide popup initially*/
         }
+
+        .content-clear td {
+            font-size: 11px;
+        }
+
 
         .close-btn {
             position: absolute;
@@ -169,100 +177,297 @@
 
 
         </div>
-        <div class="content">
-            <div onclick="closePopup()" class="close-btn">
-                ×
+
+
+        <div class="content" id="tent">
+            <div onclick="closePopup()" class="close-btn" id="close" style="position: fixed;">
+                <i class="mdi mdi-close-octagon" style="color: red;"></i>
             </div>
-            <h5>Boul ak miz</h5>
-
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th> Boul </th>
-
-                        <th>Prix</th>
+            <div class="table-responsive">
 
 
 
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
+                <table class="table table-striped" id="mytable">
+
+                    <thead>
+                        <tr style="background-color: #b66dff;">
+                            <th> Boul </th>
+
+                            <th>Prix</th>
 
 
-                        <td>03</td>
-                        <td>25 HTG</td>
 
+                        </tr>
 
-                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="bor" style="background-color: #30be64;">
+                            <td colspan="2" style="color: white; font-weight: bold">Bolèt</td>
+                        </tr>
+                        <table class="table table-striped" id="mytable1">
 
-                </tbody>
-            </table>
+                            <tbody>
+                                <tr id="mar" style="background-color: #06aafd;">
+                                    <td colspan="2">Maryaj</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-striped" id="mytable2">
+
+                            <tbody>
+                                <tr id="l3" style="background-color: #be307c">
+                                    <td colspan="2">Loto 3</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-striped" id="mytable3">
+
+                            <tbody>
+                                <tr id="l4" style="background-color: #f4d910;">
+                                    <td colspan="2" style="color: white; font-weight: bold;">Loto 4</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-striped" id="mytable4">
+
+                            <tbody>
+                                <tr id="l5" style="background-color: #f38b03;">
+                                    <td colspan="2" style="color:white; font-weight: bold;">Loto 5</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-striped" id="mytable5">
+
+                            <tbody>
+                                <tr id="mar_g" style="background-color: #be307c;">
+                                    <td colspan="2" style="color: white; font-weight: bold;">Maryaj gratis</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    <script type="text/javascript">
-        // Function to show and hide the popup 
-        function togglePopup() {
-            $(".content").show();
 
-        }
+        <script type="text/javascript">
+            // Function to show and hide the popup 
+            function togglePopup() {
+                $(".content").show();
 
-        function closePopup() {
-            $(".content").hide();
-        }
+            }
 
-        $('.form').on('submit', function(event) {
-            event.preventDefault();
+            function closePopup() {
+                $(".content").hide();
+                $('.content-clear').remove();
 
-            $.ajax({
-                url: "{{ url('boule-show') }}",
-                data: $(this).serialize(),
-                type: 'get',
-                success: function(response) {
+            }
 
-                    if (response.status == 'true') {
-                        const jsonData = response.boule['boule'];
+            $('.form').on('submit', function(event) {
+                event.preventDefault();
 
-                        // Parse JSON string into a JavaScript object
-                        const jsonObject = JSON.parse(jsonData);
+                $.ajax({
+                    url: "{{ url('boule-show') }}",
+                    data: $(this).serialize(),
+                    type: 'get',
+                    success: function(response) {
 
-                        // Iterate over the properties of the object
-                        Object.keys(jsonObject).forEach(function(key) {
-                             console.log(`${key}:`);
+                        if (response.status == 'true') {
+                            const jsonData = response.boule['boule'];
 
-                            // Check if the value of the property is an array
-                            if (Array.isArray(jsonObject[key])) {
-                                // Iterate over elements of the array
-                                jsonObject[key].forEach(function(element, index) {
-                                    console.log(`  ${index + 1}. ${element}`);
-                                });
-                            } else {
-                                // Iterate over properties of the nested object
-                                Object.keys(jsonObject[key]).forEach(function(subKey) {
-                                   // console.log(
-                                    //    `  ${subKey}: ${jsonObject[key][subKey]}`);
-                                });
-                            }
-                        });
+                            // Parse JSON string into a JavaScript object
+                            const jsonObject = JSON.parse(jsonData);
 
-                    } else {
+                            // Iterate over the properties of the object
+                            jsonObject.forEach(function(key) {
+                                //bolete
+                                if (Array.isArray(key.bolete) && key.bolete.length > 0) {
 
-                        alert('li pa mache');
+
+                                    key.bolete.forEach(function(item) {
+                                        const table = document.getElementById("mytable");
+
+
+                                        const row = document.createElement("tr");
+
+                                        row.classList.add('content-clear');
+                                        const bo = document.createElement("td");
+                                        const prix = document.createElement("td");
+
+
+                                        bo.textContent = item.boul1;
+                                        prix.textContent = item.montant + ' HTG';
+                                        row.appendChild(bo);
+                                        row.appendChild(prix);
+                                        table.appendChild(row);
+                                    });
+
+                                } else {
+                                    //  $('#bor').remove();
+
+                                }
+
+                                //mariaj
+                                if (Array.isArray(key.maryaj) && key.maryaj.length > 0) {
+                                    key.maryaj.forEach(function(item) {
+                                        const table = document.getElementById("mytable1");
+
+
+                                        const row = document.createElement("tr");
+
+                                        row.classList.add('content-clear');
+                                        const bo = document.createElement("td");
+                                        const prix = document.createElement("td");
+
+
+                                        bo.textContent = item.boul1 + 'X' + item.boul2;
+                                        prix.textContent = item.montant + ' HTG';
+                                        row.appendChild(bo);
+                                        row.appendChild(prix);
+                                        table.appendChild(row);
+                                    });
+
+                                } else {
+                                    // $('#mar').remove();
+
+                                }
+
+                                //loto3
+                                if (Array.isArray(key.loto3) && key.loto3.length > 0) {
+                                    key.loto3.forEach(function(item) {
+                                        const table = document.getElementById("mytable2");
+                                        const row = document.createElement("tr");
+                                        row.classList.add('content-clear');
+                                        const bo = document.createElement("td");
+                                        const prix = document.createElement("td");
+                                        bo.textContent = item.boul1;
+                                        prix.textContent = item.montant + ' HTG';
+                                        row.appendChild(bo);
+                                        row.appendChild(prix);
+                                        table.appendChild(row);
+                                    });
+                                } else {
+                                    // $('#l3').remove();
+
+                                }
+
+
+                                //loto4
+                                if (Array.isArray(key.loto4) && key.loto4.length > 0) {
+
+                                    key.loto4.forEach(function(item) {
+                                        var op = ' ';
+                                        const table = document.getElementById("mytable3");
+                                        const row = document.createElement("tr");
+                                        row.classList.add('content-clear');
+                                        const bo = document.createElement("td");
+                                        const prix = document.createElement("td");
+
+                                        bo.textContent = item.boul1;
+                                        if (item.option1) {
+                                            op += 'option1: ' + item.option1 +
+                                                'HTG';
+
+                                        }
+                                        if (item.option2) {
+                                            op += '  option2: ' + item.option2 +
+                                                'HTG';
+
+                                        }
+                                        if (item.option3) {
+                                            op += '  option:3 ' + item.option3 +
+                                                'HTG';
+
+                                        }
+                                        prix.textContent = op;
+                                        row.appendChild(bo);
+                                        row.appendChild(prix);
+                                        table.appendChild(row);
+                                    });
+
+                                } else {
+                                    //  $('#l4').remove();
+
+                                }
+                                //loto 5
+                                if (Array.isArray(key.loto5) && key.loto5.length > 0) {
+                                    key.loto5.forEach(function(item) {
+                                        var op ="";
+                                        const table = document.getElementById("mytable4");
+                                        const row = document.createElement("tr");
+                                        row.classList.add('content-clear');
+                                        const bo = document.createElement("td");
+                                        const prix = document.createElement("td");
+                                        bo.textContent = item.boul1;
+                                        if (item.option1) {
+                                            op += 'option1: ' + item.option1 +
+                                                'HTG';
+                                              
+                                        }
+                                        if (item.option2) {
+                                            op += '  option2: ' + item.option2 +
+                                                'HTG';
+
+                                        }
+                                        if (item.option3) {
+                                            op += '  option:3 ' + item.option3 +
+                                                'HTG';
+
+                                        }
+                                        prix.textContent = op;
+                                        row.appendChild(bo);
+                                        row.appendChild(prix);
+                                        table.appendChild(row);
+
+                                    });
+
+                                } else {
+                                    //  $('#l5').remove();
+
+                                }
+                                //mariage gratuit
+                              
+
+                                // Check if the value of the property is an array
+
+                            });
+
+                        } else {
+
+                            alert('li pa mache');
+                        }
+
+
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+
+
                     }
+                });
 
 
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
 
 
-                }
+
             });
 
+            document.addEventListener('click', function(event) {
+                var myDiv = document.getElementById('tent');
+                var targetElement = event.target;
+               /* if (window.getComputedStyle(myDiv).display !== 'none') {
+                    if (!myDiv.contains(targetElement)) {
+                        $(".content").hide();
+                        $('.content-clear').remove();
 
+                    }else{
+                        $(".content").show();
 
+                    }
 
+                } */
 
-        });
-    </script>
-@endsection
+                // Check if the clicked element is not within the myDiv
+
+            });
+        </script>
+    @endsection
