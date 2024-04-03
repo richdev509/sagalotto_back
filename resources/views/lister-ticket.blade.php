@@ -6,9 +6,14 @@
         .content {
             position: fixed;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
             margin-top: 200px;
             left: 50%;
+=======
+            top: 50%;
+            left: 60%;
+>>>>>>> d47295737645b9d815a0986389d33e9d15a258e1
 =======
             top: 50%;
             left: 60%;
