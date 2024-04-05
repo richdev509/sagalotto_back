@@ -18,6 +18,7 @@ class ajouterLotGagnantController extends Controller
         $list = BoulGagnant::where('compagnie_id', session('loginId'))->orderBy('created_at', 'desc')->get();
         return view('list-lo', compact('list'));
     }
+
     public function ajouterlo(Request $request)
     {
         $id = $request->id;
@@ -171,9 +172,10 @@ class ajouterLotGagnantController extends Controller
 
         //Espace pour effectuer l'appel du fonction pour reinitialiser les donees.
         $instance = new executeTirageController();
-        $resultat=$instance->reinitialisation($date);
-        if($resultat==false){
+        $reponses=$instance->rentier($date,$tirageId);
+        if($reponses=false){
             notify()->error('Pwoblem miz ajou kontakte sevis teknik');
+            //dd($reponses);
             return redirect()->back();
         }
         

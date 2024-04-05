@@ -212,7 +212,7 @@
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="collapse" href="#lo" aria-expanded="false"
                             aria-controls="ui-basic">
-                            <span class="menu-title">Lo yo</span>
+                            <span class="menu-title">Lo ki soti</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-alarm menu-icon"></i>
                         </a>

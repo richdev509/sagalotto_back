@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use App\Models\maryajgratis;
 use App\Jobs\ExecutionTirage;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class executeTirageController extends Controller
 {
@@ -43,6 +45,51 @@ class executeTirageController extends Controller
                 return $statut='-1';
              }
             
+    }
+
+    public function rentier($date,$tirageName){
+       
+        try {  
+            // Récupérer les codes fiches 
+            $numero = ticket_code::where('compagnie_id', session('loginId'))
+                                ->whereDate('created_at', $date)
+                                ->pluck('code')
+                                ->toArray();
+                    
+            if ($numero) {
+                // Récupérer les tickets vendus
+                $listefiche = TicketVendu::whereIn('ticket_code_id', $numero)
+                                         ->where('tirage_record_id', $tirageName)
+                                         ->where('is_win','1')
+                                         ->get();
+                       // dd($listefiche,$date,$tirageName,$numero);                
+                if ($listefiche->count() > 0) {
+                    // Parcourir chaque fiche et mettre à jour les champs
+                    foreach ($listefiche as $fiche) {
+                        $fiche->update([
+                            'is_win' => '0', // Mettre à jour is_win à 0
+                            'winning' => 0,
+                            'is_calculated' =>0,
+                        ]);
+                    }
+                    return true; // Opération réussie
+                } else {
+                    return true; // Pas de fiche à mettre à jour
+                }
+            } else {
+                return true; // Pas de codes de fiche trouvés
+            }
+        } catch (\Exception $e) {
+            // En cas d'erreur, notifier l'utilisateur
+            // notify()->error('Erreur lors de la réinitialisation', $e->getMessage());
+            return $e->getMessage(); // Opération échouée
+        }
+        
+       
+
+        
+        
+
     }
 
     public function execute($tirage,$date){
@@ -75,7 +122,6 @@ class executeTirageController extends Controller
  // Récupérer les tickets vendus
  $fiches= TicketVendu::whereIn('ticket_code_id', $codes)
  ->where('tirage_record_id', $tirageName)
- ->whereDate('created_at', $formattedDate)
  ->get();
    }
    
@@ -108,17 +154,18 @@ if($fiches!=""){
     $this->mariagegratis($gagnants,$ficheData,$maryajgratis);
     
     
-
+    $this->totalgains[$i][]=$this->totalGains;
+    $this->totalgains[$i][]=$codeSpecifique;
+   
      if($this->havegain==1 || $this->havegainmaryaj==1 || $this->havegainloto3==1 || $this->havegainloto4==1 || $this->havegainloto5==1){
         
-        $this->totalgains[$i][]=$this->totalGains;
-        $this->totalgains[$i][]=$codeSpecifique;
-        $i=$i+1;
+        
 
         $reponseRequette=TicketVendu::where('ticket_code_id',$codeSpecifique)->where('tirage_record_id',$tirage)
             ->update([
                 'winning' => $this->totalGains,
                 'is_win' => 1,
+                'is_calculated' =>1,
             ]);
          $this->totalGains=0;
          $this->havegain=0;
@@ -127,7 +174,14 @@ if($fiches!=""){
          $this->havegainloto4=0; 
          $this->havegainloto5=0;
  
-     }
+     }else{
+        $reponseRequette=TicketVendu::where('ticket_code_id',$codeSpecifique)->where('tirage_record_id',$tirage)
+        ->update([
+            'is_calculated' =>1,
+            
+        ]);
+     } 
+     $i=$i+1;
      
      
  
