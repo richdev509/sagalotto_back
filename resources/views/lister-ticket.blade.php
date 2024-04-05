@@ -6,12 +6,12 @@
         .content {
             position: fixed;
 
-           
+            margin-top: 200px;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
             width: 70%;
-            height: 500px;
+            height: 400px;
             text-align: center;
             background-color: white;
             border: 1px solid blueviolet;
