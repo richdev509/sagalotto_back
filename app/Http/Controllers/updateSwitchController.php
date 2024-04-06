@@ -37,7 +37,7 @@ class updateSwitchController extends Controller
         $tirage= $request->input('selectedOptionValue');
 
         if($status==0){
-         $status= $this->deletedboul($number);
+         $status= $this->deletedboul($number,$tirage);
          if($status==true){
             return response()->json(['number'=>$number,'statut'=> 0],200); // Réponse JSON
          }else{
@@ -75,10 +75,10 @@ class updateSwitchController extends Controller
         }
     }
 
-    public function deletedboul($id)
+    public function deletedboul($id,$tirage)
     {
         $statut = Switchboul::where('boul', $id)
-            ->where('id_compagnie', session('loginId'))
+            ->where('id_compagnie', session('loginId'))->where('tirage_id',$tirage)
             ->delete();
     
         return $statut ? true : false;

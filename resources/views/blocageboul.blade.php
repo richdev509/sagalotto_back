@@ -162,6 +162,7 @@
                                     var selectedOptionValue = document.querySelector(
                                         'input[name="optionsRadios"]:checked').value;
                                     console.log(number);
+                                    console.log(selectedOptionValue);
 
                                     $.ajax({
                                         url: '/block/update-switch',
@@ -248,6 +249,8 @@
                             if (selectedOptionValue !== null) {
                                 $('input[name="optionsRadios"]').filter('[value="' + selectedOptionValue + '"]').prop('checked',
                                     true);
+                            }else{
+                                $('input[name="optionsRadios"][value="1"]').prop('checked', true);
                             }
                         });
                     </script>
