@@ -70,7 +70,7 @@ Route::get('/block',[updateSwitchController::class, 'index']);
 Route::get('ajout-lo',[ajouterLotGagnantController::class,'ajouterlo'])->name('ajoutlo');
 Route::post('ajoutelos',[ajouterLotGagnantController::class, 'store'])->name('savelot');
 Route::get('lister-lo',[ajouterLotGagnantController::class,'index'])->name('listlo');
-Route::get('/block/update-switch', [updateSwitchController::class, 'updateSwitch']);
+Route::post('/block/update-switch', [updateSwitchController::class, 'updateSwitch']);
 Route::post('modifierlo',[ajouterLotGagnantController::class,'modifierlo'])->name('modifierlo');
 //tirage
 Route::post('ajouterTirage', [tirageController::class,'store']);
