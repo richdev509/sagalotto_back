@@ -55,8 +55,8 @@ class tirageController extends Controller
                 'hour' => $request->input('time'),       
                 'created_at' => Carbon::now()
             ]);
-
-            return view('ajouter_tirage', ['tirage'=>$tirage]);
+            notify()->success('tiraj ajoute avek sikse');
+            return back();
         } else {
             return view('login');
         }

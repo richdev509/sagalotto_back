@@ -39,8 +39,7 @@ class verificationController extends Controller
                         ['tirage_id', '=', $tirage_id->id],
                         ['boul', '=', $boule['boul1']]
 
-                    ])
-                        ->first();
+                    ])->first();
 
                     if ($bouleBloquee) {
                         $boulesNonAutorisees[] = $boule['boul1'];
