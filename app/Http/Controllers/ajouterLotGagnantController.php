@@ -20,13 +20,16 @@ class ajouterLotGagnantController extends Controller
     }
 
     public function ajouterlo(Request $request)
-    {
+    {   
         $id = $request->id;
-
         $list = tirage_record::where('compagnie_id', session('loginId'))->get();
-        $record = BoulGagnant::where('compagnie_id', session('loginId'))->where('created_', $id)->first();
-        return view('ajoutelo', compact('list', 'record'));
-    }
+        if($id!=""){
+            $record = BoulGagnant::where('compagnie_id', session('loginId'))->where('created_', $id)->first();
+            return view('ajoutelo', compact('list', 'record'));
+        }
+        return view('ajoutelo', compact('list'));
+        }
+        
 
     public function store(Request $request)
     {
@@ -46,7 +49,9 @@ class ajouterLotGagnantController extends Controller
             notify()->error($messagesErreur);
             return redirect()->back();
         }
-
+        if(strlen((string)$premierchiffre) == 1){
+            
+        }
         //verifaction exist lo
         $resultExist = $this->ifExisteLo($tirageId, $date);
         if ($resultExist) {
@@ -93,8 +98,8 @@ class ajouterLotGagnantController extends Controller
                     notify()->success('Lo ajout avek sikese');
                     return redirect()->back();
                 } elseif ($reponse == '-1') {
-                    notify()->error('Pa gen fich ki jwe pou tiraj sa');
-                    return redirect()->back();
+                    notify()->error('Lo ajoute ,Pa gen fich ki jwe pou tiraj sa');
+                    return redirect()->route('listlo');
                 } elseif ($reponse == '0') {
                     notify()->error('Le pou tiraj fenmen poko rive');
                     return redirect()->back();
@@ -121,7 +126,15 @@ class ajouterLotGagnantController extends Controller
     }
 
     function validerEntrees($tirageId, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre)
+
+
     {
+
+       
+        $premierchiffre = (string) $premierchiffre;
+        $secondchiffre = (string) $secondchiffre;
+        $troisiemechiffre = (string) $troisiemechiffre;
+
         $validator = Validator::make(
             [
                 'tirage' => $tirageId,
@@ -133,9 +146,9 @@ class ajouterLotGagnantController extends Controller
             [
                 'tirage' => 'required|integer',
                 'unchiffre' => 'required|integer|digits:1',
-                'premierchiffre' => 'required|integer|digits:2',
-                'secondchiffre' => 'required|integer|digits:2',
-                'troisiemechiffre' => 'required|integer|digits:2',
+                'premierchiffre' => 'required|string|size:2',
+                'secondchiffre' => 'required|string|size:2',
+                'troisiemechiffre' => 'required|string|size:2',
             ],
             [
                 'unchiffre.digits' => 'Yon chif dwe yon sel chif.',
