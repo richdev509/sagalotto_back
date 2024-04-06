@@ -5,8 +5,7 @@
     <style type="text/css">
         .content {
             position: fixed;
-
-            margin-top: 200px;
+            margin-top: 100px;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
@@ -22,6 +21,16 @@
             overflow-y: scroll;
             overflow-x: scroll;
             /*to hide popup initially*/
+        }
+
+        #search div {
+            display: inline-block;
+        }
+
+        .row_head {
+            border: 1px solid blueviolet;
+            padding: 10px;
+
         }
 
         .content-clear td {
@@ -40,6 +49,98 @@
             width: 26px;
             cursor: pointer;
         }
+
+        h1 {
+            text-align: center;
+            font-family: Tahoma, Arial, sans-serif;
+            color: #06D85F;
+            margin: 80px 0;
+        }
+
+        .box {
+            width: 40%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 35px;
+            border: 2px solid #fff;
+            border-radius: 20px/50px;
+            background-clip: padding-box;
+            text-align: center;
+        }
+
+        .button {
+            font-size: 1em;
+            padding: 10px;
+            color: gray;
+            border-radius: 20px/50px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease-out;
+        }
+
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            transition: opacity 500ms;
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .overlay:target {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .popup {
+            margin: 200px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 5px;
+            width: 50%;
+            position: relative;
+            transition: all 5s ease-in-out;
+        }
+
+        .popup h2 {
+            margin-top: 0;
+            color: #333;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+
+        .popup .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            transition: all 200ms;
+            font-size: 30px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .popup .close:hover {
+            color: black;
+        }
+
+        .popup .content {
+            max-height: auto;
+            overflow: auto;
+        }
+
+        @media screen and (max-width: 700px) {
+            .box {
+                width: 70%;
+            }
+
+            .popup {
+                width: 70%;
+            }
+        }
     </style>
     <div class="page-header">
         <h3 class="page-title">Lis Fich</h3>
@@ -57,31 +158,55 @@
 
         <div class="card">
             <div class="card-body">
+                <div class="row_head">
+                    <form method="get" action="lister-ticket" id="search">
+                        @csrf
 
+                        <div class="col-12 col-sm-4">
+                            <div class="form-group local-forms">
+                                <label for="dateFilter">komanse</label>
+                                <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
+                                    name="date_debut" value="{{ old('date_debut') }}" />
+
+                                <label for="dateFilter" style="margin-top: 5px;">Fini</label>
+
+                                <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
+                                    value="" name="date_fin" value="{{ old('date_fin') }}" />
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-4">
+                            <div class="form-group local-forms">
+                                <label for="dateFilter">Bank</label>
+                                <select class="form-control selectpicker" name="bank" data-live-search="true"
+                                    value="{{ old('bank') }}">
+                                    <option>Tout</option>
+                                    @foreach ($vendeur as $row)
+                                        <option value="{{ $row->id }}">{{ $row->bank_name }}</option>
+                                    @endforeach
+                                </select>
+                                <label for="dateFilter" style="margin-top: 5px;">#fich</label>
+
+                                <input style="height:10px;margin-top: 10px;" type="text" class="form-control"
+                                    value="" name="ticket" placeholder="antre yon #fich" />
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="student-submit">
+                                <button style="margin-top: 18px;" type="submit"
+                                    class="btn btn-gradient-primary me-2">Chache</button>
+                            </div>
+                        </div>
+
+
+
+                    </form>
+
+
+
+                </div>
                 <div class="table-responsive">
-                    <tbody>
-                        <form method="post" action="editertirage">
-                            @csrf
-                            <tr class="table-info filter-head" style="border: 2px solid blue;">
 
-                                <td>
-                                    <label for="dateFilter">komanse</label>
-                                    <input style="height:10px;margin-top: 10px;" type="date" class="form-control" value=""
-                                        name="time_tirer" />
-                                    <label for="dateFilter" style="margin-top: 5px;">Fini</label>
-
-                                    <input style="height:10px;margin-top: 10px;" type="date" class="form-control" value=""
-                                        name="time_tirer" />
-                                    <button style="margin-top: 18px;" type="submit"
-                                        class="btn btn-gradient-primary me-2">Chache</button>
-                                </td>
-
-
-                            </tr>
-                        </form>
-
-
-                    </tbody>
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -163,13 +288,21 @@
 
                                     <td> {{ $row->created_at }} </td>
 
-                                    <td class="text-center"><a href="#"><i class="mdi mdi-delete"></i>
-                                        </a></td>
+                                    <td class="text-center">
+                                        <form action="delete-ticket" method="get" class="deleting_form">
+                                            <input type="hidden" name="id" value="{{ $row->id }}">
+                                            <button type="submit" style="color: red;"><i
+                                                    class="mdi mdi-delete"></i></button>
+                                        </form>
+
+                                    </td>
 
                                 </tr>
                             @endforeach
                         </tbody>
+
                     </table>
+                    {{ $ticket->links() }}
 
                 </div>
             </div>
@@ -251,222 +384,259 @@
 
 
         <script type="text/javascript">
-            // Function to show and hide the popup 
-            function togglePopup() {
-                $(".content").show();
+            $(document).ready(function() {
+                // Function to show and hide the popup 
+                function togglePopup() {
+                    $(".content").show();
 
-            }
+                }
 
-            function closePopup() {
-                $(".content").hide();
-                $('.content-clear').remove();
+                function closePopup() {
+                    $(".content").hide();
+                    $('.content-clear').remove();
 
-            }
+                }
 
-            $('.form').on('submit', function(event) {
-                event.preventDefault();
+                $('.form').on('submit', function(event) {
+                    event.preventDefault();
 
-                $.ajax({
-                    url: "{{ url('boule-show') }}",
-                    data: $(this).serialize(),
-                    type: 'get',
-                    success: function(response) {
+                    $.ajax({
+                        url: "{{ url('boule-show') }}",
+                        data: $(this).serialize(),
+                        type: 'get',
+                        success: function(response) {
 
-                        if (response.status == 'true') {
-                            const jsonData = response.boule['boule'];
+                            if (response.status == 'true') {
+                                const jsonData = response.boule['boule'];
 
-                            // Parse JSON string into a JavaScript object
-                            const jsonObject = JSON.parse(jsonData);
+                                // Parse JSON string into a JavaScript object
+                                const jsonObject = JSON.parse(jsonData);
 
-                            // Iterate over the properties of the object
-                            jsonObject.forEach(function(key) {
-                                //bolete
-                                if (Array.isArray(key.bolete) && key.bolete.length > 0) {
-
-
-                                    key.bolete.forEach(function(item) {
-                                        const table = document.getElementById("mytable");
+                                // Iterate over the properties of the object
+                                jsonObject.forEach(function(key) {
+                                    //bolete
+                                    if (Array.isArray(key.bolete) && key.bolete.length >
+                                        0) {
 
 
-                                        const row = document.createElement("tr");
-
-                                        row.classList.add('content-clear');
-                                        const bo = document.createElement("td");
-                                        const prix = document.createElement("td");
+                                        key.bolete.forEach(function(item) {
+                                            const table = document.getElementById(
+                                                "mytable");
 
 
-                                        bo.textContent = item.boul1;
-                                        prix.textContent = item.montant + ' HTG';
-                                        row.appendChild(bo);
-                                        row.appendChild(prix);
-                                        table.appendChild(row);
-                                    });
+                                            const row = document.createElement(
+                                            "tr");
 
-                                } else {
-                                    //  $('#bor').remove();
-
-                                }
-
-                                //mariaj
-                                if (Array.isArray(key.maryaj) && key.maryaj.length > 0) {
-                                    key.maryaj.forEach(function(item) {
-                                        const table = document.getElementById("mytable1");
+                                            row.classList.add('content-clear');
+                                            const bo = document.createElement("td");
+                                            const prix = document.createElement(
+                                                "td");
 
 
-                                        const row = document.createElement("tr");
+                                            bo.textContent = item.boul1;
+                                            prix.textContent = item.montant +
+                                            ' HTG';
+                                            row.appendChild(bo);
+                                            row.appendChild(prix);
+                                            table.appendChild(row);
+                                        });
 
-                                        row.classList.add('content-clear');
-                                        const bo = document.createElement("td");
-                                        const prix = document.createElement("td");
+                                    } else {
+                                        //  $('#bor').remove();
 
+                                    }
 
-                                        bo.textContent = item.boul1 + 'X' + item.boul2;
-                                        prix.textContent = item.montant + ' HTG';
-                                        row.appendChild(bo);
-                                        row.appendChild(prix);
-                                        table.appendChild(row);
-                                    });
-
-                                } else {
-                                    // $('#mar').remove();
-
-                                }
-
-                                //loto3
-                                if (Array.isArray(key.loto3) && key.loto3.length > 0) {
-                                    key.loto3.forEach(function(item) {
-                                        const table = document.getElementById("mytable2");
-                                        const row = document.createElement("tr");
-                                        row.classList.add('content-clear');
-                                        const bo = document.createElement("td");
-                                        const prix = document.createElement("td");
-                                        bo.textContent = item.boul1;
-                                        prix.textContent = item.montant + ' HTG';
-                                        row.appendChild(bo);
-                                        row.appendChild(prix);
-                                        table.appendChild(row);
-                                    });
-                                } else {
-                                    // $('#l3').remove();
-
-                                }
+                                    //mariaj
+                                    if (Array.isArray(key.maryaj) && key.maryaj.length >
+                                        0) {
+                                        key.maryaj.forEach(function(item) {
+                                            const table = document.getElementById(
+                                                "mytable1");
 
 
-                                //loto4
-                                if (Array.isArray(key.loto4) && key.loto4.length > 0) {
+                                            const row = document.createElement(
+                                            "tr");
 
-                                    key.loto4.forEach(function(item) {
-                                        var op = ' ';
-                                        const table = document.getElementById("mytable3");
-                                        const row = document.createElement("tr");
-                                        row.classList.add('content-clear');
-                                        const bo = document.createElement("td");
-                                        const prix = document.createElement("td");
+                                            row.classList.add('content-clear');
+                                            const bo = document.createElement("td");
+                                            const prix = document.createElement(
+                                                "td");
 
-                                        bo.textContent = item.boul1;
-                                        if (item.option1) {
-                                            op += 'option1: ' + item.option1 +
-                                                'HTG';
 
-                                        }
-                                        if (item.option2) {
-                                            op += '  option2: ' + item.option2 +
-                                                'HTG';
+                                            bo.textContent = item.boul1 + 'X' + item
+                                                .boul2;
+                                            prix.textContent = item.montant +
+                                            ' HTG';
+                                            row.appendChild(bo);
+                                            row.appendChild(prix);
+                                            table.appendChild(row);
+                                        });
 
-                                        }
-                                        if (item.option3) {
-                                            op += '  option:3 ' + item.option3 +
-                                                'HTG';
+                                    } else {
+                                        // $('#mar').remove();
 
-                                        }
-                                        prix.textContent = op;
-                                        row.appendChild(bo);
-                                        row.appendChild(prix);
-                                        table.appendChild(row);
-                                    });
+                                    }
 
-                                } else {
-                                    //  $('#l4').remove();
+                                    //loto3
+                                    if (Array.isArray(key.loto3) && key.loto3.length > 0) {
+                                        key.loto3.forEach(function(item) {
+                                            const table = document.getElementById(
+                                                "mytable2");
+                                            const row = document.createElement(
+                                            "tr");
+                                            row.classList.add('content-clear');
+                                            const bo = document.createElement("td");
+                                            const prix = document.createElement(
+                                                "td");
+                                            bo.textContent = item.boul1;
+                                            prix.textContent = item.montant +
+                                            ' HTG';
+                                            row.appendChild(bo);
+                                            row.appendChild(prix);
+                                            table.appendChild(row);
+                                        });
+                                    } else {
+                                        // $('#l3').remove();
 
-                                }
-                                //loto 5
-                                if (Array.isArray(key.loto5) && key.loto5.length > 0) {
-                                    key.loto5.forEach(function(item) {
-                                        var op ="";
-                                        const table = document.getElementById("mytable4");
-                                        const row = document.createElement("tr");
-                                        row.classList.add('content-clear');
-                                        const bo = document.createElement("td");
-                                        const prix = document.createElement("td");
-                                        bo.textContent = item.boul1;
-                                        if (item.option1) {
-                                            op += 'option1: ' + item.option1 +
-                                                'HTG';
-                                              
-                                        }
-                                        if (item.option2) {
-                                            op += '  option2: ' + item.option2 +
-                                                'HTG';
+                                    }
 
-                                        }
-                                        if (item.option3) {
-                                            op += '  option:3 ' + item.option3 +
-                                                'HTG';
 
-                                        }
-                                        prix.textContent = op;
-                                        row.appendChild(bo);
-                                        row.appendChild(prix);
-                                        table.appendChild(row);
+                                    //loto4
+                                    if (Array.isArray(key.loto4) && key.loto4.length > 0) {
 
-                                    });
+                                        key.loto4.forEach(function(item) {
+                                            var op = ' ';
+                                            const table = document.getElementById(
+                                                "mytable3");
+                                            const row = document.createElement(
+                                            "tr");
+                                            row.classList.add('content-clear');
+                                            const bo = document.createElement("td");
+                                            const prix = document.createElement(
+                                                "td");
 
-                                } else {
-                                    //  $('#l5').remove();
+                                            bo.textContent = item.boul1;
+                                            if (item.option1) {
+                                                op += 'option1: ' + item.option1 +
+                                                    'HTG';
 
-                                }
-                                //mariage gratuit
-                              
+                                            }
+                                            if (item.option2) {
+                                                op += '  option2: ' + item.option2 +
+                                                    'HTG';
 
-                                // Check if the value of the property is an array
+                                            }
+                                            if (item.option3) {
+                                                op += '  option:3 ' + item.option3 +
+                                                    'HTG';
 
-                            });
+                                            }
+                                            prix.textContent = op;
+                                            row.appendChild(bo);
+                                            row.appendChild(prix);
+                                            table.appendChild(row);
+                                        });
 
-                        } else {
+                                    } else {
+                                        //  $('#l4').remove();
 
-                            alert('li pa mache');
+                                    }
+                                    //loto 5
+                                    if (Array.isArray(key.loto5) && key.loto5.length > 0) {
+                                        key.loto5.forEach(function(item) {
+                                            var op = "";
+                                            const table = document.getElementById(
+                                                "mytable4");
+                                            const row = document.createElement(
+                                            "tr");
+                                            row.classList.add('content-clear');
+                                            const bo = document.createElement("td");
+                                            const prix = document.createElement(
+                                                "td");
+                                            bo.textContent = item.boul1;
+                                            if (item.option1) {
+                                                op += 'option1: ' + item.option1 +
+                                                    'HTG';
+
+                                            }
+                                            if (item.option2) {
+                                                op += '  option2: ' + item.option2 +
+                                                    'HTG';
+
+                                            }
+                                            if (item.option3) {
+                                                op += '  option:3 ' + item.option3 +
+                                                    'HTG';
+
+                                            }
+                                            prix.textContent = op;
+                                            row.appendChild(bo);
+                                            row.appendChild(prix);
+                                            table.appendChild(row);
+
+                                        });
+
+                                    } else {
+                                        //  $('#l5').remove();
+
+                                    }
+                                    //mariage gratuit
+
+
+                                    // Check if the value of the property is an array
+
+                                });
+
+                            } else {
+
+                                alert('li pa mache');
+                            }
+
+
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+
+
                         }
+                    });
 
 
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
 
 
-                    }
+
                 });
 
 
 
+                jQuery(".deleting_form").on('submit', function(e) {
+                    e.preventDefault();
+                    const formAction = this.getAttribute('action');
+                    jQuery.getScript('https://cdn.jsdelivr.net/npm/sweetalert2@11', function() {
+                        Swal.fire({
+                            title: 'Vous voulez vraiment continuer ?',
+                            text: "Vous voulez supprimer",
+                            icon: 'success',
+                            showCancelButton: true,
+                            confirmButtonColor: 'green',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Oui',
+                            cancelButtonText: 'Annulez'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Log the form action
+                                window.location.href = formAction;
 
 
-            });
+                            } else {
+                                console.log('clicked cancel');
+                            }
+                        })
 
-            document.addEventListener('click', function(event) {
-                var myDiv = document.getElementById('tent');
-                var targetElement = event.target;
-               /* if (window.getComputedStyle(myDiv).display !== 'none') {
-                    if (!myDiv.contains(targetElement)) {
-                        $(".content").hide();
-                        $('.content-clear').remove();
+                    })
 
-                    }else{
-                        $(".content").show();
+                    // rest of the code
+                });
 
-                    }
-
-                } */
-
-                // Check if the clicked element is not within the myDiv
 
             });
         </script>
