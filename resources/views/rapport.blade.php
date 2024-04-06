@@ -143,11 +143,11 @@
         }
     </style>
     <div class="page-header">
-        <h3 class="page-title">Lis Fich</h3>
+        <h3 class="page-title">Rapo</h3>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="admin">Akèy</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Fich</li>
+                <li class="breadcrumb-item active" aria-current="page">Rapo</li>
             </ol>
         </nav>
     </div>
@@ -159,19 +159,19 @@
         <div class="card">
             <div class="card-body">
                 <div class="row_head">
-                    <form method="get" action="lister-ticket" id="search">
+                    <form method="get" action="rapport" id="search">
                         @csrf
 
                         <div class="col-12 col-sm-4">
                             <div class="form-group local-forms">
                                 <label for="dateFilter">komanse</label>
                                 <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
-                                    name="date_debut" value="{{ old('date_debut') }}" />
+                                    name="date_debut" value="{{ old('date_debut') }}" required />
 
                                 <label for="dateFilter" style="margin-top: 5px;">Fini</label>
 
                                 <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
-                                    value="" name="date_fin" value="{{ old('date_fin') }}" />
+                                    value="" name="date_fin" value="{{ old('date_fin') }}" required />
                             </div>
                         </div>
 
@@ -185,16 +185,21 @@
                                         <option value="{{ $row->id }}">{{ $row->bank_name }}</option>
                                     @endforeach
                                 </select>
-                                <label for="dateFilter" style="margin-top: 5px;">#fich</label>
+                                <label for="dateFilter" style="margin-top: 5px;">Tiraj</label>
+                                <select class="form-control selectpicker" name="tirage" data-live-search="true"
+                                    value="{{ old('bank') }}">
+                                    <option>Tout</option>
+                                    @foreach ($tirage as $row)
+                                        <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                    @endforeach
+                                </select>
 
-                                <input style="height:10px;margin-top: 10px;" type="text" class="form-control"
-                                    value="" name="ticket" placeholder="antre yon #fich" />
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="student-submit">
                                 <button style="margin-top: 18px;" type="submit"
-                                    class="btn btn-gradient-primary me-2">Chache</button>
+                                    class="btn btn-gradient-primary me-2">Rapo</button>
                             </div>
                         </div>
 
@@ -210,99 +215,72 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th> #fich </th>
-                                <th> Bank </th>
-                                <th> Tirage </th>
-                                <th> Boul </th>
-                                <th> Jwe</th>
-                                <th> Genyen</th>
-                                <th> Kakile</th>
-                                <th> Dat</th>
-                                <th> Aksyon</th>
+                              
 
 
 
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach ($ticket as $row)
-                                <tr>
-                                    <td> {{ $row->ticket_id }} </td>
-                                    <td class="py-1">
-                                        {{ $row->bank }}
-                                    </td>
-                                    @if ($row->tirage == 'New York Soir')
-                                        <td style="color:blue;">
-                                            {{ $row->tirage }}
-                                        </td>
-                                    @elseif($row->tirage == 'New York Matin')
-                                        <td style="color: #06aafd">
-                                            {{ $row->tirage }}
-                                        </td>
-                                    @elseif($row->tirage == 'Florida Matin')
-                                        <td style="color: #58dc0b">
-                                            {{ $row->tirage }}
-                                        </td>
-                                    @elseif($row->tirage == 'Florida Soir')
-                                        <td style="color: #30be64">
-                                            {{ $row->tirage }}
-                                        </td>
-                                    @else
-                                        <td>
-                                            {{ $row->tirage }}
-                                        </td>
-                                    @endif
-                                    <td class="text-center">
-                                        <form action="boule-show" method="GET" class="form">
-                                            @csrf
-                                            <input type="hidden" name="id" value="{{ $row->id }}">
-                                            <button type="submit" onclick="togglePopup()" style="color: blue;"><i
-                                                    class="mdi mdi-eye"></i></button>
+                        <tbody style="border: 1px solid #ac32cb;">
+                            @if($is_calculated==1)
+                            <tr>
+                                <td colspan="2" class="text-center">Rapo soti {{$date_debut}} Rive {{$date_fin}}</td>
+                                
 
-                                        </form>
+                            </tr>
+                           
 
+                            <tr>
+                                <td>Bank:</td>
+                                <td>{{$bank}}</td>
 
+                            </tr>
+                            <tr>
+                                <td>Tiraj:</td>
+                                <td>{{$tirage_}}</td>
 
-                                    </td>
+                            </tr>
+                            <tr>
+                                <td>Fich Total:</td>
+                                <td>{{$ticket_win + $ticket_lose}}</td>
 
-                                    <td> {{ $row->amount }} HTG</td>
+                            </tr>
+                            <tr>
+                                <td>Fich Genyen:</td>
+                                <td>{{$ticket_win}}</td>
 
+                            </tr>
+                            <tr>
+                                <td>Fich Pedi:</td>
+                                <td>{{$ticket_lose}}</td>
 
-                                    @if ($row->winning == null)
-                                        <td style="color: red">
-                                            {{ 0 }} HTG
+                            </tr>
+                            <tr>
+                                <td>Vant:</td>
+                                <td>{{$vente}} HTG</td>
 
-                                        </td>
-                                    @else
-                                        <td style="color: green;">
-                                            {{ $row->winning }} HTG
-                                        </td>
-                                    @endif
-                                    </td>
-                                    @if ($row->is_calculated == 0)
-                                        <td style="color: red;"> Non </td>
-                                    @else
-                                        <td style="color:#58dc0b;"> Wi </td>
-                                    @endif
+                            </tr>
+                            <tr>
+                                <td>Pet:</td>
+                                <td>{{$perte}} HTG</td>
 
+                            </tr>
+                            <tr>
+                                <td>Komisyon:</td>
+                                <td>{{$commission}} HTG</td>
 
-                                    <td> {{ $row->created_at }} </td>
+                            </tr>
+                            <tr>
+                                <td>Balans:</td>
+                                <td>{{$vente- ($perte + $commission)}} HTG</td>
 
-                                    <td class="text-center">
-                                        <form action="delete-ticket" method="get" class="deleting_form">
-                                            <input type="hidden" name="id" value="{{ $row->id }}">
-                                            <button type="submit" style="color: red;"><i
-                                                    class="mdi mdi-delete"></i></button>
-                                        </form>
-
-                                    </td>
-
-                                </tr>
-                            @endforeach
+                            </tr>
+                            @endif
+                            
+                            
                         </tbody>
 
                     </table>
-                    {{ $ticket->links() }}
 
                 </div>
             </div>
@@ -425,7 +403,7 @@
 
 
                                             const row = document.createElement(
-                                            "tr");
+                                                "tr");
 
                                             row.classList.add('content-clear');
                                             const bo = document.createElement("td");
@@ -435,7 +413,7 @@
 
                                             bo.textContent = item.boul1;
                                             prix.textContent = item.montant +
-                                            ' HTG';
+                                                ' HTG';
                                             row.appendChild(bo);
                                             row.appendChild(prix);
                                             table.appendChild(row);
@@ -455,7 +433,7 @@
 
 
                                             const row = document.createElement(
-                                            "tr");
+                                                "tr");
 
                                             row.classList.add('content-clear');
                                             const bo = document.createElement("td");
@@ -466,7 +444,7 @@
                                             bo.textContent = item.boul1 + 'X' + item
                                                 .boul2;
                                             prix.textContent = item.montant +
-                                            ' HTG';
+                                                ' HTG';
                                             row.appendChild(bo);
                                             row.appendChild(prix);
                                             table.appendChild(row);
@@ -483,14 +461,14 @@
                                             const table = document.getElementById(
                                                 "mytable2");
                                             const row = document.createElement(
-                                            "tr");
+                                                "tr");
                                             row.classList.add('content-clear');
                                             const bo = document.createElement("td");
                                             const prix = document.createElement(
                                                 "td");
                                             bo.textContent = item.boul1;
                                             prix.textContent = item.montant +
-                                            ' HTG';
+                                                ' HTG';
                                             row.appendChild(bo);
                                             row.appendChild(prix);
                                             table.appendChild(row);
@@ -509,7 +487,7 @@
                                             const table = document.getElementById(
                                                 "mytable3");
                                             const row = document.createElement(
-                                            "tr");
+                                                "tr");
                                             row.classList.add('content-clear');
                                             const bo = document.createElement("td");
                                             const prix = document.createElement(
@@ -548,7 +526,7 @@
                                             const table = document.getElementById(
                                                 "mytable4");
                                             const row = document.createElement(
-                                            "tr");
+                                                "tr");
                                             row.classList.add('content-clear');
                                             const bo = document.createElement("td");
                                             const prix = document.createElement(

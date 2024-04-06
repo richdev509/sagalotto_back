@@ -152,6 +152,12 @@ class CompanyController extends Controller
             ])->whereDate('ticket_code.created_at','=', Carbon::now())
             ->join('ticket_vendu','ticket_vendu.ticket_code_id','=','ticket_code.code')
             ->sum('winning');
+
+            $commission = DB::table('ticket_code')->where([
+                ['compagnie_id','=', Session('loginId')]
+            ])->whereDate('ticket_code.created_at','=', Carbon::now())
+            ->join('ticket_vendu','ticket_vendu.ticket_code_id','=','ticket_code.code')
+            ->sum('commission');
             
             $list = BoulGagnant::where('compagnie_id', session('loginId'))
                     ->latest('created_at')
@@ -159,7 +165,7 @@ class CompanyController extends Controller
                     ->get();
 
 
-            return view('admin',['vente'=>$vente, 'perte'=>$perte, 'list'=>$list]);
+            return view('admin',['vente'=>$vente, 'perte'=>$perte, 'list'=>$list, 'commission'=>$commission]);
         } else {
             return view('login');
         }

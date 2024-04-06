@@ -69,12 +69,52 @@ class ticketController extends Controller
                 'code' => '404',
             ], 404,);
         }
+         //tchek if all tirage are open before proceed
+         foreach ($request->input('tirages') as $name) {
+            $tirage_record = tirage_record::where([
+                ['compagnie_id', '=', auth()->user()->compagnie_id],
+                ['is_active', '=', '1'],
+                ['name', '=', $name['name']]
+            ])->whereTime(
+                'hour',
+                '>',
+                Carbon::now()->format('H:i:s'),
+            )->first();
+            if (!$tirage_record) {
+                return response()->json([
+                    'status' => 'false',
+                    'message' =>$name['name'].' ferme',
+                    'code' => '404',
+                ], 404,);
+            }
+            
+        }
         $resp = verify::verifierBoulesNonAutorisees($request);
         if ($resp != '1') {
             return $resp;
         }
         $i = 0;
         //$ticketId[];
+        //tchek if all tirage are open before proceed
+        foreach ($request->input('tirages') as $name) {
+            $tirage_record = tirage_record::where([
+                ['compagnie_id', '=', auth()->user()->compagnie_id],
+                ['is_active', '=', '1'],
+                ['name', '=', $name['name']]
+            ])->whereTime(
+                'hour',
+                '>',
+                Carbon::now()->format('H:i:s'),
+            )->first();
+            if (!$tirage_record) {
+                return response()->json([
+                    'status' => 'false',
+                    'message' =>$name['name'].' ferme',
+                    'code' => '404',
+                ], 404,);
+            }
+            
+        }
         foreach ($request->input('tirages') as $name) {
 
 
@@ -87,7 +127,6 @@ class ticketController extends Controller
                 '>',
                 Carbon::now()->format('H:i:s'),
             )->first();
-            $tirage[] = $tirage_record->name . ', ' . $tirage_record->hour_tirer;
             if (!$tirage_record) {
                 return response()->json([
                     'status' => 'false',
@@ -95,6 +134,8 @@ class ticketController extends Controller
                     'code' => '404',
                 ], 404,);
             }
+            $tirage[] = $tirage_record->name . ', ' . $tirage_record->hour_tirer;
+
             $montant = verify::calculer_montant($request);
             $amount_tot = $amount_tot + $montant;
 
@@ -119,6 +160,8 @@ class ticketController extends Controller
                 'tirage_record_id' => $tirage_record->id,
                 'boule' => json_encode($boule),
                 'amount' =>  $montant,
+                'commission' =>  ($montant * auth()->user()->percent) /100 ,
+
                 'created_at' =>  $created_at,
             ]);
 
@@ -162,7 +205,7 @@ class ticketController extends Controller
                 ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
                 ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                 ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
-                ->select('ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain')
+                ->select('ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain','ticket_vendu.is_payed as payer')
                 ->get();
             if ($vente->count() > 0) {
                 return response()->json([
@@ -196,144 +239,193 @@ class ticketController extends Controller
 
             $validator = $request->validate([
                 "id" => "required",
-
+                 "check"=>"required"
             ]);
-
-            $delai = DB::table('ticket_suppression')->where([
-                ['compagnie_id', '=', auth()->user()->compagnie_id],
-                ['is_active', '=', 1]
-            ])->first();
-            if (!$delai) {
-                return response()->json([
-                    'status' => 'false',
-                    "code" => '404',
-                    "message" => 'vous pouvez pas annuler'
-
-                ], 404,);
-            }
+            if($request->input('check')=='1'){
+                $ticket = DB::table('ticket_code')->where([
+                    ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
+                    ['ticket_code.user_id', '=', auth()->user()->id],
+                    ['ticket_vendu.is_cancel', '=', 0],
+                    ['ticket_vendu.is_delete', '=', 0],
+                    ['ticket_vendu.ticket_code_id', '=', $request->input('id')],
 
 
-            $ticket = DB::table('ticket_code')->where([
-                ['compagnie_id', '=', auth()->user()->compagnie_id],
-                ['user_id', '=', auth()->user()->id],
+    
+                ])
+                    ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                    ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
+                    ->select('ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain')
+                    ->get(); 
+                    if($ticket->count()> 0){
+                         $i =0;
+                        foreach($ticket as $row){
+                            if($i==0){
+                                $date = $row->date;
+                                $ticket_id = $row->ticket_id;
+                                $montant = $row->montant;
+                            }
+                         }
+                         return response()->json([
+                            'status' => 'true',
+                            "code" => '202',
+                            "ticket" => [
+                                'ticket_id'=>$ticket_id,
+                                'date'=>$date,
+                                'montant'=> $montant * $ticket->count()
+                            ]
 
-                ['code', '=', $request->input('id')]
-
-            ])->whereDate('created_at', Carbon::now())
-                ->first();
-            //ticket not exist
-            if (!$ticket) {
-                return response()->json([
-                    'status' => 'false',
-                    "code" => '404',
-                    "message" => 'ticket id pas trouver'
-                ], 404,);
-            }
-
-            //get tirage for compare date of end
-            $tirage_ids = DB::table('ticket_vendu')->where([
-                ['ticket_code_id', '=', $request->input('id')],
-                ['is_cancel', '=', 0],
-                ['is_delete', '=', 0],
-
-            ])->select('tirage_record_id as tirage_id')
-                ->get();
-            if ($tirage_ids->count() <= 0) {
-                return response()->json([
-                    'status' => 'false',
-                    "code" => '404',
-                    "message" => 'ticket deja annuler'
-
-                ], 404,);
-            }
-            //chek if tirage end or active
-            foreach ($tirage_ids as $id) {
-                $tirage_record = tirage_record::where([
+        
+                        ], 200,);
+                    }else{
+                        return response()->json([
+                            'status' => 'false',
+                            "code" => '404',
+                            "message" => 'ticket pas trouver'
+        
+                        ], 404,);
+                    }
+            }else{
+                $delai = DB::table('ticket_suppression')->where([
                     ['compagnie_id', '=', auth()->user()->compagnie_id],
-                    //  ['is_active', '=', '1'],
-                    ['id', '=', $id->tirage_id]
-                ])->whereTime(
-                    'hour',
-                    '>',
-                    Carbon::now()->format('H:i:s'),
-                )->first();
-                if (!$tirage_record) {
+                    ['is_active', '=', 1]
+                ])->first();
+                if (!$delai) {
                     return response()->json([
                         'status' => 'false',
                         "code" => '404',
-                        "message" => 'tirage inactive'
-
+                        "message" => 'vous pouvez pas annuler'
+    
                     ], 404,);
                 }
-                //delai from directeur input
-                if ($delai->delai < 10) {
-                    $delai_conversion = "00: 0" . $delai->delai . ":00";
-                } else {
-                    $delai_conversion = "00:" . $delai->delai . ":00";
-                }
-                //the date of the ticket creation
-                $datet =  Carbon::parse($ticket->created_at);
-                $now = Carbon::now();
-                $now = Carbon::parse($now);
-                $dif = $datet->diffInMinutes($now);
-
-                if ($dif >= $delai->delai) {
+    
+    
+                $ticket = DB::table('ticket_code')->where([
+                    ['compagnie_id', '=', auth()->user()->compagnie_id],
+                    ['user_id', '=', auth()->user()->id],
+    
+                    ['code', '=', $request->input('id')]
+    
+                ])->whereDate('created_at', Carbon::now())
+                    ->first();
+                //ticket not exist
+                if (!$ticket) {
                     return response()->json([
                         'status' => 'false',
                         "code" => '404',
-                        "message" => 'dalai ecouler'
-
+                        "message" => 'ticket id pas trouver'
                     ], 404,);
                 }
-
-                if ($datet->minute < 10) {
-                    $mminute = "0" . $datet->minute;
-                } else {
-                    $mminute = $datet->minute;
-                }
-                if ($datet->hour < 10) {
-                    $hhour = "0" . $datet->hour;
-                } else {
-                    $hhour = $datet->hour;
-                }
-                if ($datet->second < 10) {
-                    $ssecond = "0" . $datet->second;
-                } else {
-                    $ssecond = $datet->second;
-                }
-
-                $hour_creation = $hhour . ":" . $mminute . ":" . $ssecond;
-                // dd($hour_creation);
-
-                // Parse the times into Carbon instances with a default date
-                $carbonTime1 = Carbon::createFromFormat('H:i:s', $hour_creation);
-                $carbonTime2 = Carbon::createFromFormat('H:i:s', $delai_conversion);
-                // Add the second time to the first time
-                $summedTime = $carbonTime1->addHours($carbonTime2->hour)->addMinutes($carbonTime2->minute)->addSeconds($carbonTime2->second);
-                // Format the summed time as desired (optional)
-                $timesum = $summedTime->format('H:i:s');
-
-                if ($timesum > $tirage_record->hour) {
+    
+                //get tirage for compare date of end
+                $tirage_ids = DB::table('ticket_vendu')->where([
+                    ['ticket_code_id', '=', $request->input('id')],
+                    ['is_cancel', '=', 0],
+                    ['is_delete', '=', 0],
+    
+                ])->select('tirage_record_id as tirage_id')
+                    ->get();
+                if ($tirage_ids->count() <= 0) {
                     return response()->json([
                         'status' => 'false',
                         "code" => '404',
-                        "message" => 'tirage deja ferme'
-
+                        "message" => 'ticket deja annuler'
+    
                     ], 404,);
                 }
+                //chek if tirage end or active
+                foreach ($tirage_ids as $id) {
+                    $tirage_record = tirage_record::where([
+                        ['compagnie_id', '=', auth()->user()->compagnie_id],
+                        //  ['is_active', '=', '1'],
+                        ['id', '=', $id->tirage_id]
+                    ])->whereTime(
+                        'hour',
+                        '>',
+                        Carbon::now()->format('H:i:s'),
+                    )->first();
+                    if (!$tirage_record) {
+                        return response()->json([
+                            'status' => 'false',
+                            "code" => '404',
+                            "message" => 'tirage inactive'
+    
+                        ], 404,);
+                    }
+                    //delai from directeur input
+                    if ($delai->delai < 10) {
+                        $delai_conversion = "00: 0" . $delai->delai . ":00";
+                    } else {
+                        $delai_conversion = "00:" . $delai->delai . ":00";
+                    }
+                    //the date of the ticket creation
+                    $datet =  Carbon::parse($ticket->created_at);
+                    $now = Carbon::now();
+                    $now = Carbon::parse($now);
+                    $dif = $datet->diffInMinutes($now);
+    
+                    if ($dif >= $delai->delai) {
+                        return response()->json([
+                            'status' => 'false',
+                            "code" => '404',
+                            "message" => 'dalai ecouler'
+    
+                        ], 404,);
+                    }
+    
+                    if ($datet->minute < 10) {
+                        $mminute = "0" . $datet->minute;
+                    } else {
+                        $mminute = $datet->minute;
+                    }
+                    if ($datet->hour < 10) {
+                        $hhour = "0" . $datet->hour;
+                    } else {
+                        $hhour = $datet->hour;
+                    }
+                    if ($datet->second < 10) {
+                        $ssecond = "0" . $datet->second;
+                    } else {
+                        $ssecond = $datet->second;
+                    }
+    
+                    $hour_creation = $hhour . ":" . $mminute . ":" . $ssecond;
+                    // dd($hour_creation);
+    
+                    // Parse the times into Carbon instances with a default date
+                    $carbonTime1 = Carbon::createFromFormat('H:i:s', $hour_creation);
+                    $carbonTime2 = Carbon::createFromFormat('H:i:s', $delai_conversion);
+                    // Add the second time to the first time
+                    $summedTime = $carbonTime1->addHours($carbonTime2->hour)->addMinutes($carbonTime2->minute)->addSeconds($carbonTime2->second);
+                    // Format the summed time as desired (optional)
+                    $timesum = $summedTime->format('H:i:s');
+                    //dd($timesum, $tirage_record->hour);
+                    if ($timesum > $tirage_record->hour) {
+                        return response()->json([
+                            'status' => 'false',
+                            "code" => '404',
+                            "message" => 'tirage deja ferme'
+    
+                        ], 404,);
+                    }
+                }
+    
+                $ticket_vendu = DB::table('ticket_vendu')->where([
+                    ['ticket_code_id', '=', $request->input('id')]
+                ])->update([
+                    'is_cancel' => 1
+                ]);
+                return response()->json([
+                    'status' => 'true',
+                    "code" => '200',
+                    "message" => 'ticket annule'
+    
+                ], 200,);
+
+
+
+
             }
 
-            $ticket_vendu = DB::table('ticket_vendu')->where([
-                ['ticket_code_id', '=', $request->input('id')]
-            ])->update([
-                'is_cancel' => 1
-            ]);
-            return response()->json([
-                'status' => 'true',
-                "code" => '200',
-                "message" => 'ticket annule'
-
-            ], 200,);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
@@ -353,7 +445,7 @@ class ticketController extends Controller
 
             ]);
             //find for all tirage
-            if ($request->input('tirage') == "tout") {
+            if ($request->input('tirage') == "Tout") {
 
                 $vente = DB::table('ticket_code')->where([
                     ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
@@ -376,6 +468,17 @@ class ticketController extends Controller
                     ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
                     ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                     ->sum('winning');
+
+                    $commission = DB::table('ticket_code')->where([
+                        ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
+                        ['ticket_code.user_id', '=', auth()->user()->id],
+                        ['ticket_vendu.is_cancel', '=', 0],
+                        ['ticket_vendu.is_delete', '=', 0],
+    
+                    ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
+                        ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
+                        ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                        ->sum('commission');
 
 
                 $ticket_win = DB::table('ticket_code')->where([
@@ -408,7 +511,7 @@ class ticketController extends Controller
                     return response()->json([
                     'status' => 'true',
                     "code" => '200',
-                    "date"=>Carbon::now(),
+                    "date"=>Carbon::now()->format('y-m-d h:i:s'),
                     'tirage'=>$request->input('tirage'),
                     "rapport" => $request->input('date_debut') . " au " . $request->input('date_fin'),
                     "ticket_gain"=>$ticket_win,
@@ -416,7 +519,8 @@ class ticketController extends Controller
                     "ticket_total"=>$ticket_win + $ticket_lose,
                     "vente"=>$vente,
                     "perte"=>$perte,
-                    "balance"=>$vente - $perte
+                    'commission'=>$commission,
+                    "balance"=>$vente - ($perte+$commission)
 
 
                 ], 200,);
@@ -458,7 +562,19 @@ class ticketController extends Controller
                     ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
                     ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                     ->sum('winning');
-
+                 
+                    $commission = DB::table('ticket_code')->where([
+                        ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
+                        ['ticket_code.user_id', '=', auth()->user()->id],
+                        ['ticket_vendu.is_cancel', '=', 0],
+                        ['ticket_vendu.is_delete', '=', 0],
+                        ['ticket_vendu.tirage_record_id', '=', $tirage_record->id],
+    
+    
+                    ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
+                        ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
+                        ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                        ->sum('commission');
 
                 $ticket_win = DB::table('ticket_code')->where([
                     ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
@@ -492,7 +608,7 @@ class ticketController extends Controller
                     return response()->json([
                     'status' => 'true',
                     "code" => '200',
-                    "date"=>Carbon::now(),
+                    "date"=>Carbon::now()->format('y-m-d h:i:s'),
                     'tirage'=>$request->input('tirage'),
                     "rapport" => $request->input('date_debut') . " au " . $request->input('date_fin'),
                     "ticket_gain"=>$ticket_win,
@@ -500,7 +616,8 @@ class ticketController extends Controller
                     "ticket_total"=>$ticket_win + $ticket_lose,
                     "vente"=>$vente,
                     "perte"=>$perte,
-                    "balance"=>$vente - $perte
+                    "commission"=>$commission,
+                    "balance"=>$vente - ($perte+$commission)
 
 
                 ], 200,);
@@ -513,6 +630,111 @@ class ticketController extends Controller
 
 
             }
+
+
+
+           
+
+           
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                "message" => $th->getMessage(),
+
+            ], 500,);
+        }
+    }
+    public function payer_ticket(Request $request)
+    {
+        try {
+
+            $validator = $request->validate([
+                "id" => "required",
+                "tirage" => "required",
+
+            ]);
+            $tirage_record = tirage_record::where([
+                ['compagnie_id', '=', auth()->user()->compagnie_id],
+                ['is_active', '=', '1'],
+                ['name', '=', $request->input('tirage')]
+            ])->first();
+            if($tirage_record){
+                $vente = DB::table('ticket_code')->where([
+                    ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
+                    ['ticket_code.user_id', '=', auth()->user()->id],
+                    ['ticket_vendu.is_cancel', '=', 0],
+                    ['ticket_vendu.is_delete', '=', 0],
+                    ['ticket_vendu.ticket_code_id','=', $request->input('id')],
+                    ['ticket_vendu.tirage_record_id','=', $tirage_record->id]
+
+                ])->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                 ->first();
+                if($vente){
+                    $ticket_vendu = DB::table('ticket_vendu')->where([
+                        ['ticket_code_id', '=', $request->input('id')],
+                        ['tirage_record_id', '=', $tirage_record->id]
+                    ])->update([
+                        'is_payed' => 1
+                    ]);
+                    return response()->json([
+                        'status' => 'true',
+                        "code" => '200',
+                        "message" => 'ticket paye avec success'
+        
+                    ], 200,);
+                
+                }else{
+                    return response()->json([
+                        'status' => 'false',
+                        "code" => '404',
+                        "message" => 'ticket non trouve'
+        
+                    ], 404,);
+
+                }
+               
+               
+
+            }else{
+                return response()->json([
+                    'status'=>'false',
+                    'code'=>'404',
+                    'message'=>'Tirage non trouver'
+
+                ], 404,);
+
+            }
+            
+          
+               
+               
+               
+                $vente = DB::table('ticket_code')->where([
+                    ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
+                    ['ticket_code.user_id', '=', auth()->user()->id],
+                    ['ticket_vendu.is_cancel', '=', 0],
+                    ['ticket_vendu.is_delete', '=', 0],
+
+                ])->first();
+               
+                 return response()->json([
+                    
+
+                ], 200,);
+        
+                
+              
+               
+                 
+
+
+
+
+
+
+
+
+            
 
 
 

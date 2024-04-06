@@ -73,7 +73,9 @@ Route::get('lister-lo',[ajouterLotGagnantController::class,'index'])->name('list
 Route::get('/block/update-switch', [updateSwitchController::class, 'updateSwitch']);
 Route::post('modifierlo',[ajouterLotGagnantController::class,'modifierlo'])->name('modifierlo');
 //tirage
+Route::post('ajouterTirage', [tirageController::class,'store']);
 Route::get('ajouter-tirage', [tirageController::class,'create']);
+
 Route::post('editertirage', [tirageController::class,'update']);
 Route::get('lister-tirage', [tirageController::class,'index']);
 //end tirage

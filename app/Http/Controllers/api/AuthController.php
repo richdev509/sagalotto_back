@@ -168,6 +168,31 @@ class AuthController extends Controller
             return response()->json(['erreur' => 'Token expiré'], 401);
         }
     }
+    public function resutat_list(Request $request)
+    {
+
+
+
+        try {
+            $tirage_record = DB::table('tirage_record')->where([
+
+                ['compagnie_id', '=', auth()->user()->compagnie_id],
+            ])
+               ->select('name')
+                ->get();
+        
+            return response()->json([
+                "status"=>'true',
+                "code"=>"200",
+                'tirage' => $tirage_record,
+
+            ], 200);
+        } catch (TokenInvalidException $e) {
+            return response()->json(['erreur' => 'token pas valable'], 401);
+        } catch (TokenExpiredException $e) {
+            return response()->json(['erreur' => 'Token expiré'], 401);
+        }
+    }
     public function profil()
     {
 
