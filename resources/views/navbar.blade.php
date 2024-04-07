@@ -41,7 +41,7 @@
                     <a href="#" class="search-icon me-4">
                         <i class="bi bi-person"></i>
                     </a>
-                    <a href="page-contact-app.html" class="btn rounded-pill brd-gray hover-blue4 sm-butn fw-bold">
+                    <a href="/login" class="btn rounded-pill brd-gray hover-blue4 sm-butn fw-bold">
                         <span>Akse kont Directeur<i class="bi bi-arrow-right ms-1"></i> </span>
                     </a>
                 </div>

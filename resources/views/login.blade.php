@@ -41,10 +41,10 @@
                       <label class="form-check-label text-muted">
                         <input type="checkbox" class="form-check-input"> Kenbem konekte pou lontan</label>
                     </div>
-                    <a href="#" class="auth-link text-black">Ou bliye modepas ou? Kontakte nou</a>
+                    <a href="/contact" class="auth-link text-black">Ou bliye modepas ou? Kontakte nou</a>
                   </div>
                   
-                  <div class="text-center mt-4 font-weight-light"> Ou bezwen sistèm pou bolet ou? <a href="register.html" class="text-primary">Ranpli fom nan</a>
+                  <div class="text-center mt-4 font-weight-light"> Ou bezwen sistèm pou bolet ou? <a href="/contact" class="text-primary">Ranpli fom nan</a>
                   </div>
                 </form>
               </div>

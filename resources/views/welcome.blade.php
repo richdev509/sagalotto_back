@@ -52,9 +52,9 @@
                 </span>
                 <img src="{{ asset('/assets/landing/img/icons/nav_icon/imoj_heart.png')}}" alt="" class="icon-15">
                 <span class="fs-10px op-6">Pran abonman paw la  </span>
-                <small class="op-10 fs-10px">8$ mois</small>
-                <span class="fs-10px op-6">jiska 14 janvier</span>
-                <a href="page-contact-5.html" class="fs-10px text-decoration-underline ms-2">Pase komand</a>
+                <small class="op-10 fs-10px">10$ mois</small>
+                <span class="fs-10px op-6">jiska 30 Mai</span>
+                <a href="/contact" class="fs-10px text-decoration-underline ms-2">Pase komand</a>
             </div>
         </div>
     </div>
@@ -76,7 +76,7 @@
                             <p class="text">Vann pi rapid , e gen kontwol tout tranzaksyon yo. A pati de 30 POS ou mande pesonalize saw vle gratis</p>
                             <div class="d-flex align-items-center mt-50">
                                 <a href="https://www.apple.com/app-store/" class="btn rounded-pill bg-blue4 fw-bold text-white me-4" target="_blank">
-                                    <small> <i class="fab fa-apple me-2 pe-2 border-end"></i>Telechaje Aplikasyon an </small>
+                                    <small> <i class="fab fa-android me-2 pe-2 border-end"></i>Telechaje Aplikasyon an </small>
                                 </a>
                                 <a href="https://youtu.be/pGbIOC83-So?t=21" data-lity="" class="play-btn">
                                     <span class="icon me-2">
@@ -273,53 +273,8 @@
                 </div>
                 <img src="{{ asset('/assets/landing/img/about/about_s4_bubble2.png')}}" alt="" class="bubble2">
             </div>
-          
-            
         </section>
-        <!-- ====== end about ====== -->
-
-        <!-- ====== start screenshots  ====== -->
-        <div class="screenshots style-4">
-            <div class="screenshots-slider style-4">
-                <div class="swiper-container">
-                    <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <div class="img">
-                                <img src="{{ asset('/assets/landing/img/screenshots/1.png')}}" alt="">
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="img">
-                                <img src="{{ asset('/assets/landing/img/screenshots/2.png')}}" alt="">
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="img">
-                                <img src="{{ asset('/assets/landing/img/screenshots/3.jpg')}}" alt="">
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="img">
-                                <img src="{{ asset('/assets/landing/img/screenshots/4.png')}}" alt="">
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="img">
-                                <img src="{{ asset('/assets/landing/img/screenshots/5.png')}}" alt="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <img src="{{ asset('/assets/landing/img/screenshots/hand.png')}}" alt="" class="mob-hand">
-        </div>
-        <!-- ====== end screenshots  ====== -->
-
-        <!-- ====== start testimonials ====== -->
-     
-        <!-- ====== end testimonials ====== -->
-
-        <!-- ====== start pricing ====== -->
+    
         <section class="pricing section-padding style-4 pb-50">
             <div class="container">
                 <div class="section-head text-center style-4">
