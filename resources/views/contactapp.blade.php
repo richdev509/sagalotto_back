@@ -52,7 +52,7 @@
                 </span>
                 <img src="{{ asset('/assets/landing/img/icons/nav_icon/imoj_heart.png')}}" alt="" class="icon-15">
                 <span class="fs-10px op-6">Pran abonman paw la  </span>
-                <small class="op-10 fs-10px">8$ mois</small>
+                <small class="op-10 fs-10px">10$ mois</small>
                 <span class="fs-10px op-6">jiska 1 Mai 2024</span>
                 <a href="/contact" class="fs-10px text-decoration-underline ms-2">Pase komand</a>
             </div>

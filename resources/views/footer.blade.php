@@ -3,11 +3,7 @@
         
         <div class="foot mt-80">
             <div class="row align-items-center">
-                <div class="col-lg-2">
-                    <div class="logo">
-                        <img src="{{ asset('assets/landing/img/saga.png')}}" alt="">
-                    </div>
-                </div>
+               
                 <div class="col-lg-8">
                     <ul class="links">
                         <li>

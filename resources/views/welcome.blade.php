@@ -95,11 +95,11 @@
                                 <small class="icon-30 bg-gray rounded-circle color-blue4 d-inline-flex align-items-center justify-content-center me-1">
                                     <i class="fas fa-credit-card"></i>
                                 </small>
-                                <small class="text-uppercase">ou ka Peye abonmanw an liy tou</small>
+                                <small style="display: none;" class="text-uppercase">ou ka Peye abonmanw an liy tou</small>
                             </span>
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-6" style="margin-top: -66px;">
                         <div class="img">
                             <img src="{{ asset('/assets/landing/img/header/header_4.png')}}" alt="">
                         </div>
@@ -328,7 +328,7 @@
                                             <small class="icon-30 bg-blue4 rounded-circle text-white d-inline-flex align-items-center justify-content-center me-3 flex-shrink-0">
                                                 <i class="fas fa-undo"></i>
                                             </small>
-                                            <p class="fw-bold">rapo tranzaksyon chak aprè midi</p>
+                                            <p class="fw-bold">Rapo tranzaksyon nenpot moman</p>
                                         </li>
                                         <li class="d-flex align-items-center op-3">
                                             <small class="icon-30 bg-blue4 rounded-circle text-white d-inline-flex align-items-center justify-content-center me-3 flex-shrink-0">
@@ -347,7 +347,7 @@
                             <div class="price-card">
                                 <div class="price-header pb-4">
                                     <h6> <img src="{{ asset('/assets/landing/img/icons/price_s4_2.png')}}" alt="" class="icon"> premium Plan </h6>
-                                    <h2>$26<small> / trimèst</small></h2>
+                                    <h2>$27<small> / trimèst</small></h2>
                                     <p>Tout aksè sou sistem nan. sipo e asistans rapid</p>
                                 </div>
                                 <div class="price-body py-4">
@@ -383,11 +383,11 @@
                                             <p class="fw-bold">Rapo tranzaksyon nenpot moman</p>
                                         </li>
                                        
-                                        <li class="d-flex align-items-center">
+                                        <li class="d-flex align-items-center op-3">
                                             <small class="icon-30 bg-blue4 rounded-circle text-white d-inline-flex align-items-center justify-content-center me-3 flex-shrink-0">
                                                 <i class="fas fa-download"></i>
                                             </small>
-                                            <p class="fw-bold">Exporte rapo ou an PDF</p>
+                                            <p class="fw-bold">Export rapo PDF,</p>
                                         </li>
                                     </ul>
                                     <a href="https://wa.me/46538901" class="btn rounded-pill bg-blue4 fw-bold text-white px-5 mt-50">
@@ -396,7 +396,7 @@
                                 </div>
                                 <div class="off">
                                     <span>
-                                        7.5% <br> off
+                                        10% <br> off
                                     </span>
                                 </div>
                             </div>
