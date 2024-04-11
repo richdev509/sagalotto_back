@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\maryajgratis;
 use App\Models\RulesOne;
+use App\Models\limitprixachat;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
@@ -17,6 +18,48 @@ class parametreController extends Controller
         $data = maryajgratis::where('compagnie_id', session('loginId'))->first();
         return view('parametre.maryajGratis', compact('data'));
     }
+
+    public function limitprixview(){
+        $limitprix= limitprixachat::where('compagnie_id', session('loginId'))->first();
+        return view('parametre.limitPrixAchat', compact('limitprix'));
+    }
+
+
+    public function limitprixstore(Request $request){
+        if(!Empty($request->active) && $request->prix>0 && !Empty($request->prix)){
+         $active=true;
+        }else{
+            $active=false;
+        }
+        
+        try {
+            $key = $request->id . 'etat';
+            // Recherche de la ligne correspondante avec 'compagnie_id'
+            $limitprix = limitprixachat::where('compagnie_id', session('loginId'))->first();
+        
+            if ($limitprix) {
+                // Mise à jour de la ligne existante
+                $limitprix->update([
+                 $request->id => $request->prix,
+                 $key=>$active,
+                ]);
+                
+            } else {
+                // Création d'une nouvelle ligne
+                $limitprix = Limitprixachat::create([
+                    'compagnie_id' => session('loginId'),
+                     $request->id => $request->prix
+                ]);
+            }
+            notify()->success('Modifikasyon sikse');
+            return redirect()->route('limitprix');
+            // Réponse ou traitement supplémentaire
+        } catch (\Exception $e) {
+                notify()->error('Gen yon pwoblem kontakte ekip teknik');
+                return redirect()->back();
+        }
+    }
+    
 
 
     public function store()

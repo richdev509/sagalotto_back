@@ -38,6 +38,9 @@ Route::get('/login', function () {
 Route::get('/contact', function () {
     return view('contactapp');
 });
+Route::get('/register', function () {
+    return view('register.register');
+});
 
 Route::post('login', [CompanyController::class,'login']);
 
@@ -105,6 +108,8 @@ Route::get('ajistelo',[parametreController::class, 'ajistelo'])->name('ajistepri
 Route::post('ajistelo',[parametreController::class, 'storelopri'])->name('updateprilo');
 Route::get('lotconfig',[parametreController::class, 'create_config'])->name('lotconfig');
 Route::post('editerdelai',[parametreController::class, 'update_delai']);
+Route::get('limitprix',[parametreController::class, 'limitprixview'])->name('limitprix');
+Route::post('limitprixstore',[parametreController::class, 'limitprixstore'])->name('limitprixstore');
 
 });
 

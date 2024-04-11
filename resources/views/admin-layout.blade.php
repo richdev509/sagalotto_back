@@ -253,6 +253,8 @@
                                     </a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ route('ajisteprilo') }}">Ajiste pri premye lo
                                     </a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="{{ route('limitprix') }}">Ajiste Limit Prix Achat
+                                    </a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ route('lotconfig') }}">Lot 
                                         Konfigirasyon
                                     </a></li>
