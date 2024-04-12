@@ -596,7 +596,7 @@ small.text {
 }
 
 .section-padding {
-  padding: 100px 0;
+  padding: 20px 0;
 }
 
 .swiper-pagination {
@@ -1410,7 +1410,7 @@ small.text {
 }
 
 .pt-70 {
-  padding-top: 70px !important;
+  padding-top: 10px !important;
 }
 
 .pt-80 {
@@ -3602,7 +3602,7 @@ header.style-3 .content .info .form-group.input-with-icon .input-icon {
 /* ------------ animation -------- */
 header.style-4 {
   position: relative;
-  padding: 60px 0;
+  padding: 11px 0;
 }
 header.style-4 .content {
   position: relative;
@@ -16311,7 +16311,7 @@ footer.style-15 .foot p {
 }
 @media screen and (max-width: 991px) {
   .section-padding {
-    padding: 70px 0;
+    padding: 10px 0;
   }
   .section-head h2 {
     font-size: 25px;
@@ -16693,7 +16693,7 @@ footer.style-2 .text-center {
     margin-bottom: 20px !important;
   }
   header.style-4 .content .info .mt-100 {
-    margin-top: 50px !important;
+    margin-top: 14px !important;
   }
   header.style-4 .content .info .mt-50 {
     margin-top: 30px !important;
@@ -16778,7 +16778,7 @@ header.style-4 .content .info .btn {
     font-size: 25px;
   }
   footer.style-4 {
-    margin-top: 120px;
+    margin-top: 50px;
   }
   footer.style-4 .d-flex {
     -webkit-box-orient: vertical;
