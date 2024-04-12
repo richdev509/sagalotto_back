@@ -11,7 +11,7 @@
     <title>Sagaloto</title>
 
         <link rel="shortcut icon" href="{{ asset('/assets/landing/img/saga.png')}}" title="Favicon" >
-
+        <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico')}}" />
         <!-- ====== bootstrap icons cdn ====== -->
         <link rel="stylesheet" href="ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" integrity="sha512-ZnR2wlLbSbr8/c9AgLg3jQPAattCUImNsae6NHYnS9KrIwRdcY9DxFotXhNAKIKbAXlRnujIqUWoXXwqyFOeIQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
     
