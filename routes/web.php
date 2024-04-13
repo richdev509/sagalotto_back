@@ -91,6 +91,7 @@ Route::get('rapport', [rapportController::class,'create_rapport']);
 
 //ticket
 Route::get('lister-ticket', [ticketController::class,'index']);
+Route::get('delete-ticket', [ticketController::class,'destroy']);
 
 //end ticket
 //boule
@@ -110,6 +111,8 @@ Route::get('lotconfig',[parametreController::class, 'create_config'])->name('lot
 Route::post('editerdelai',[parametreController::class, 'update_delai']);
 Route::get('limitprix',[parametreController::class, 'limitprixview'])->name('limitprix');
 Route::post('limitprixstore',[parametreController::class, 'limitprixstore'])->name('limitprixstore');
+Route::Post('editpassword', [CompanyController::class,'new_password']);
+
 
 });
 

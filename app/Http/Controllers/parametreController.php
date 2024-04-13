@@ -20,7 +20,16 @@ class parametreController extends Controller
     }
 
     public function limitprixview(){
+      
+      
         $limitprix= limitprixachat::where('compagnie_id', session('loginId'))->first();
+        if(!$limitprix){
+            $query = limitprixachat::insert([
+                 'compagnie_id'=> Session('loginId'),
+            ]);
+            $limitprix= limitprixachat::where('compagnie_id', session('loginId'))->first();
+
+        }
         return view('parametre.limitPrixAchat', compact('limitprix'));
     }
 

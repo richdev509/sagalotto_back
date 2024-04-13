@@ -519,8 +519,8 @@ class ticketController extends Controller
                     "ticket_total"=>$ticket_win + $ticket_lose,
                     "vente"=>$vente,
                     "perte"=>$perte,
-                    'commission'=>$commission,
-                    "balance"=>$vente - ($perte+$commission)
+                    'commission'=>round($commission, 2),
+                    "balance"=>round($vente - ($perte+$commission), 2)
 
 
                 ], 200,);
@@ -616,10 +616,8 @@ class ticketController extends Controller
                     "ticket_total"=>$ticket_win + $ticket_lose,
                     "vente"=>$vente,
                     "perte"=>$perte,
-                    "commission"=>$commission,
-                    "balance"=>$vente - ($perte+$commission)
-
-
+                    "commission"=>round($commission, 2),
+                    "balance"=>round($vente - ($perte+$commission), 2)
                 ], 200,);
 
 
@@ -704,43 +702,7 @@ class ticketController extends Controller
                 ], 404,);
 
             }
-            
-          
-               
-               
-               
-                $vente = DB::table('ticket_code')->where([
-                    ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
-                    ['ticket_code.user_id', '=', auth()->user()->id],
-                    ['ticket_vendu.is_cancel', '=', 0],
-                    ['ticket_vendu.is_delete', '=', 0],
-
-                ])->first();
-               
-                 return response()->json([
-                    
-
-                ], 200,);
-        
-                
-              
-               
-                 
-
-
-
-
-
-
-
-
-            
-
-
-
-           
-
-           
+                  
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
@@ -748,5 +710,53 @@ class ticketController extends Controller
 
             ], 500,);
         }
+    }
+
+    public function copier_ticket(Request $request)
+    {
+        try {
+            $validator = $request->validate([
+                "id" => "required",
+
+            ]);
+            $ticket = DB::table('ticket_code')->where([
+                ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
+                ['ticket_code.user_id', '=', auth()->user()->id],
+                ['ticket_vendu.is_cancel', '=', 0],
+                ['ticket_vendu.is_delete', '=', 0],
+                ['ticket_code.code', '=', $request->input('id')]
+
+
+            ])
+                ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
+                ->select('ticket_code.code as ticket_id', 'ticket_vendu.boule')
+                ->first();
+            if ($ticket) {
+
+                return response()->json([
+                    'status' => 'true',
+                    "code" => '200',
+                    "body" => [
+                        json_decode($ticket->boule)
+                    ]
+
+                ], 200,);
+            } else {
+                return response()->json([
+                    'status' => 'false',
+                    "code" => '404',
+                    "message" => 'pas de ticket'
+
+                ], 404,);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                "message" => $th->getMessage(),
+
+            ], 500,);
+        }
+      
     }
 }

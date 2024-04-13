@@ -137,6 +137,29 @@
                               </div>
                             </div>
                         </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group row">
+                              <label class="col-sm-3 col-form-label">Non bank lan</label>
+                              <div class="col-sm-9">
+                                <input type="text" name="bank_name" value="{{$vendeur->bank_name}}" class="form-control" placeholder="Egzanp: bank1" />
+                                <span class="error">@error('bank_name')
+                                    {{$message}}
+                                @enderror</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group row">
+                              <label class="col-sm-3 col-form-label">ID machin nan</label>
+                              <div class="col-sm-9">
+                                <input type="text" name="bank_id" value="{{$vendeur->android_id}}" class="form-control" placeholder="Egzanp: bank1" />
+                                <span class="error">@error('bank_id')
+                                    {{$message}}
+                                @enderror</span>
+                              </div>
+                            </div>
+                        </div>
                         
                         <div class="row">
                           <div class="col-md-6">
@@ -146,7 +169,15 @@
                                 <input type="text" name="username" value="{{$vendeur->username}}"class="form-control" placeholder="470000" />
                               </div>
                             </div>
-                          </div>
+                         
+                            <div class="col-md-6">
+                              <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Modepas</label>
+                                <div class="col-sm-9">
+                                  <input type="password" name="password" class="form-control"/>
+                                </div>
+                              </div>
+                            </div>
                          
                           
                         </div>

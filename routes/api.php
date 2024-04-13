@@ -35,12 +35,19 @@ Route::group([
     Route::post('/logout', [AuthController::class,'logout']);
     Route::get('/tirage', [AuthController::class,'tirage']);
     Route::get('/tirage/tout', [AuthController::class,'tirage_list']);
+    Route::get('/tirage/result', [AuthController::class,'tirage_result']);
+
+
 
     Route::post('/ticket/creer', [ticketController::class,'creer_ticket']);
     Route::get('/ticket/list', [ticketController::class,'list_ticket']);
     Route::post('/ticket/cancel', [ticketController::class,'cancel_ticket']);
     Route::get('/ticket/report', [ticketController::class,'report_ticket']);
-    Route::get('/ticket/payer', [ticketController::class,'payer_ticket']);
+    Route::post('/ticket/payer', [ticketController::class,'payer_ticket']);
+    Route::post('/ticket/copier', [ticketController::class,'copier_ticket']);
+
+
+
 
 
 

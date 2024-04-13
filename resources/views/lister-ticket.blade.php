@@ -256,7 +256,7 @@
                                         <form action="boule-show" method="GET" class="form">
                                             @csrf
                                             <input type="hidden" name="id" value="{{ $row->id }}">
-                                            <button type="submit" onclick="togglePopup()" style="color: blue;"><i
+                                            <button type="submit" style="color: blue;" id="btn_boule"><i
                                                     class="mdi mdi-eye"></i></button>
 
                                         </form>
@@ -289,7 +289,9 @@
                                     <td> {{ $row->created_at }} </td>
 
                                     <td class="text-center">
-                                        <form action="delete-ticket" method="get" class="deleting_form">
+                                        <form action="delete-ticket?id={{ $row->id }}" method="get"
+                                            class="deleting_form">
+                                            @csrf
                                             <input type="hidden" name="id" value="{{ $row->id }}">
                                             <button type="submit" style="color: red;"><i
                                                     class="mdi mdi-delete"></i></button>
@@ -313,7 +315,7 @@
 
 
         <div class="content" id="tent">
-            <div onclick="closePopup()" class="close-btn" id="close" style="position: fixed;">
+            <div class="close-btn" id="close" style="position: fixed;">
                 <i class="mdi mdi-close-octagon" style="color: red;"></i>
             </div>
             <div class="table-responsive">
@@ -390,12 +392,15 @@
                     $(".content").show();
 
                 }
+                $('#btn_boule').on('click', function() {
+                    $(".content").show();
 
-                function closePopup() {
+                });
+                $('.close-btn').on('click', function() {
                     $(".content").hide();
                     $('.content-clear').remove();
 
-                }
+                })
 
                 $('.form').on('submit', function(event) {
                     event.preventDefault();
@@ -405,7 +410,6 @@
                         data: $(this).serialize(),
                         type: 'get',
                         success: function(response) {
-
                             if (response.status == 'true') {
                                 const jsonData = response.boule['boule'];
 
@@ -425,7 +429,7 @@
 
 
                                             const row = document.createElement(
-                                            "tr");
+                                                "tr");
 
                                             row.classList.add('content-clear');
                                             const bo = document.createElement("td");
@@ -435,7 +439,7 @@
 
                                             bo.textContent = item.boul1;
                                             prix.textContent = item.montant +
-                                            ' HTG';
+                                                ' HTG';
                                             row.appendChild(bo);
                                             row.appendChild(prix);
                                             table.appendChild(row);
@@ -455,7 +459,7 @@
 
 
                                             const row = document.createElement(
-                                            "tr");
+                                                "tr");
 
                                             row.classList.add('content-clear');
                                             const bo = document.createElement("td");
@@ -466,7 +470,7 @@
                                             bo.textContent = item.boul1 + 'X' + item
                                                 .boul2;
                                             prix.textContent = item.montant +
-                                            ' HTG';
+                                                ' HTG';
                                             row.appendChild(bo);
                                             row.appendChild(prix);
                                             table.appendChild(row);
@@ -483,14 +487,14 @@
                                             const table = document.getElementById(
                                                 "mytable2");
                                             const row = document.createElement(
-                                            "tr");
+                                                "tr");
                                             row.classList.add('content-clear');
                                             const bo = document.createElement("td");
                                             const prix = document.createElement(
                                                 "td");
                                             bo.textContent = item.boul1;
                                             prix.textContent = item.montant +
-                                            ' HTG';
+                                                ' HTG';
                                             row.appendChild(bo);
                                             row.appendChild(prix);
                                             table.appendChild(row);
@@ -509,7 +513,7 @@
                                             const table = document.getElementById(
                                                 "mytable3");
                                             const row = document.createElement(
-                                            "tr");
+                                                "tr");
                                             row.classList.add('content-clear');
                                             const bo = document.createElement("td");
                                             const prix = document.createElement(
@@ -548,7 +552,7 @@
                                             const table = document.getElementById(
                                                 "mytable4");
                                             const row = document.createElement(
-                                            "tr");
+                                                "tr");
                                             row.classList.add('content-clear');
                                             const bo = document.createElement("td");
                                             const prix = document.createElement(
@@ -588,8 +592,7 @@
                                 });
 
                             } else {
-
-                                alert('li pa mache');
+                                
                             }
 
 

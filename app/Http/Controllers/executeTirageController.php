@@ -94,7 +94,6 @@ class executeTirageController extends Controller
 
     public function execute($tirage,$date){
 
-
      $totalGains =0;
      $compagnieId =session('loginId'); 
 

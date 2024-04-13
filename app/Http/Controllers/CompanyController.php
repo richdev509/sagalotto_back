@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\company;
-use App\Models\user;
+use App\Models\User;
 use App\Http\Requests\StorecompanyRequest;
 use App\Http\Requests\UpdatecompanyRequest;
 use Illuminate\Http\Request;
@@ -98,17 +98,16 @@ class CompanyController extends Controller
     }
     public function login(Request $request)
     {
-        $username =  $_POST['username'];
-        $password =  $_POST['password'];
+        $username =  $request->input('username');
+        $password =  $request->input('password');
 
-        if (empty($username) || empty($password)) {
+        if (Empty($username) || Empty($password)) {
             notify()->error('ranpli tout chan yo');
-            return redirect('/login');
+            return back();
         } else {
 
             $user = company::where([
                 ['username', '=', $username],
-
             ])->first();
             //try to know if user
             if ($user) {
@@ -131,7 +130,7 @@ class CompanyController extends Controller
                     return redirect('/login');
                 }
             } else {
-                notify()->error('ranpli tout chan yo');
+                notify()->error('non itilizate a inkorek');
 
                 return redirect('/login')->with('error', 'Utilisateur non trouve');
             }
@@ -142,7 +141,9 @@ class CompanyController extends Controller
         if (Session('loginId')) {
 
             $vente = DB::table('ticket_code')->where([
-                ['compagnie_id','=', Session('loginId')]
+                ['compagnie_id','=', Session('loginId')],
+                ['ticket_vendu.is_delete', '=', 0],
+                ['ticket_vendu.is_cancel', '=', 0],
             ])->whereDate('ticket_code.created_at','=', Carbon::now())
             ->join('ticket_vendu','ticket_vendu.ticket_code_id','=','ticket_code.code')
             ->sum('amount');
@@ -154,14 +155,16 @@ class CompanyController extends Controller
             ->sum('winning');
 
             $commission = DB::table('ticket_code')->where([
-                ['compagnie_id','=', Session('loginId')]
+                ['compagnie_id','=', Session('loginId')],
+                ['ticket_vendu.is_delete', '=', 0],
+                ['ticket_vendu.is_cancel', '=', 0],
             ])->whereDate('ticket_code.created_at','=', Carbon::now())
             ->join('ticket_vendu','ticket_vendu.ticket_code_id','=','ticket_code.code')
             ->sum('commission');
             
             $list = BoulGagnant::where('compagnie_id', session('loginId'))
                     ->latest('created_at')
-                    ->take(3)
+                    ->take(5)
                     ->get();
 
 
@@ -229,7 +232,7 @@ class CompanyController extends Controller
                 'percent' => $request->input('percent'),
                 'android_id' => $request->input('bank_id'),
                 'bank_name' => $request->input('bank_name'),
-                'password' => Hash::make($request->input('bank_name')),
+                'password' => Hash::make($request->input('password')),
                 'is_block' => $status,
                 'created_at' => Carbon::now()
             ]);
@@ -274,24 +277,80 @@ class CompanyController extends Controller
             }else{
                 $status = 0;
             }
-            $user = user::where('id',$request->input('id'))->update([
-                'name' => $request->input('name'),
-                'address' => $request->input('address'),
-                'gender' => $request->input('gender'),   
-                'phone' => $request->input('phone'),
-                //'username' => $request->input('username'),  
-                'percent' => $request->input('percent'),
-                'android_id' => $request->input('bank_id'),
-                'bank_name' => $request->input('bank_name'),
-                //'password' => Hash::make($request->input('bank_name')),
-                'is_block' => $status,
-                'created_at' => Carbon::now()
-            ]);
-            
-             notify()->success('modifikasyon an fet avek siksè');
-             return back();
+            if(!Empty($request->input('password'))){
+                $user = user::where('id',$request->input('id'))->update([
+                    'name' => $request->input('name'),
+                    'address' => $request->input('address'),
+                    'gender' => $request->input('gender'),   
+                    'phone' => $request->input('phone'),
+                    //'username' => $request->input('username'),  
+                    'percent' => $request->input('percent'),
+                    'android_id' => $request->input('bank_id'),
+                    'bank_name' => $request->input('bank_name'),
+                    'password' => Hash::make($request->input('password')),
+                    'is_block' => $status,
+                    'created_at' => Carbon::now()
+                ]);
+                
+                 notify()->success('modifikasyon an fet avek siksè');
+                 return back();
+    
+
+            }else{
+                $user = user::where('id',$request->input('id'))->update([
+                    'name' => $request->input('name'),
+                    'address' => $request->input('address'),
+                    'gender' => $request->input('gender'),   
+                    'phone' => $request->input('phone'),
+                    //'username' => $request->input('username'),  
+                    'percent' => $request->input('percent'),
+                    'android_id' => $request->input('bank_id'),
+                    'bank_name' => $request->input('bank_name'),
+                    //'password' => Hash::make($request->input('bank_name')),
+                    'is_block' => $status,
+                    'created_at' => Carbon::now()
+                ]);
+                
+                 notify()->success('modifikasyon an fet avek siksè');
+                 return back();
+    
+
+            }
+           
+        } else {
+            return view('login');
+        }
+    }
+
+    //compagnie
+    public function new_password(Request $request)
+    {
+        if (!empty(Session('loginId'))) {
+                $validateData = $request->validate([
+                    'old_password' => 'required',
+                    'password' => 'required|confirmed|max:20|min:8',
+
+                ]);
+                if ($validateData) {
+                    $user = Company::where([
+                        ['id', '=', Session('loginId')],
+                    ])->first();
+                    if (Hash::check($request->input('old_password'), $user->password)) {
+                        $user->password = Hash::make($request->input('password'));
+                        $user->save();
+                        notify()->success('mo de pass ou a chanje');
+                        return back();
+                    } else {
+                        notify()->error('ansyen modepass la pa bon');
+                        return back();
+                    }
+                } else {
+                    notify()->error('yon ere pase');
+                    return back();
+                }
 
         } else {
+
             return view('login');
         }
     }

@@ -113,14 +113,72 @@
                                     <td>
                                         <label> <input type="checkbox" class="flipswitch-cb" name="active" value="1"
                                                 id="optionsRadios1"
-                                                @if($suppression->is_active == 1) @checked(true) @endif> Aktif
+                                                @if ($suppression->is_active == 1) @checked(true) @endif> Aktif
                                         </label>
 
                                     </td>
                                     <td>
-                                        <input style="height:10px;color:black;" type="number" 
-                                             class="form-control" value="{{ $suppression->delai }}"
-                                            name="time" id="minutes" />
+                                        <input style="height:10px;color:black;" type="number" class="form-control"
+                                            value="{{ $suppression->delai }}" name="time" id="minutes" />
+
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="submit" class="btn btn-gradient-primary me-2">Enrejistre</button>
+                                    </td>
+                                </tr>
+                            </form>
+
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-responsive" style="margin-top: 20px;">
+                    <h5>Chanje modepas ou</h5>
+                    <table class="table table-bordered">
+                        <thead>
+
+
+                        </thead>
+                        <tbody>
+
+
+                            <form method="post" action="editpassword">
+                                @csrf
+                                <tr class="table-info">
+
+
+                                    <td>
+                                        <label>
+                                            Modepas ou gen kounya
+                                        </label>
+                                        <input style="height:10px;color:black;" type="password" class="form-control"
+                                            name="old_password" /><br />
+                                        <span class="login-danger" style="color: red;">
+                                            @error('old_password')
+                                                {{ $message }}
+                                            @enderror
+                                        </span><br />
+                                        <label>
+                                            Modepas wap mete a
+                                        </label>
+                                        <input style="height:10px;color:black;" type="password" class="form-control"
+                                            name="password" /> <label>
+                                            <span class="login-danger" style="color: red;">
+                                                @error('password')
+                                                    {{ $message }}
+                                                @enderror
+                                            </span><br />
+                                            Remete Modepas wap mete a
+                                        </label>
+
+
+                                        <input style="height:10px;color:black;" type="password" class="form-control"
+                                            name="password_confirmation" />
+                                        <span class="login-danger" style="color: red;">
+                                            @error('password')
+                                                {{ $message }}
+                                            @enderror
+                                        </span><br />
 
                                     </td>
                                     <td class="text-center">
@@ -139,15 +197,15 @@
     <script>
         const minutesInput = document.getElementById("minutes");
         minutesInput.addEventListener("change", (event) => {
-          const value = parseInt(event.target.value);
-          if (value < 0 || value > 59) {
-            event.target.value = ""; // Reset value if invalid
-            alert("Please enter a valid minute value between 0 and 59.");
-          } else {
-            // Format value as desired, e.g., "05" for single-digit minutes
-          }
+            const value = parseInt(event.target.value);
+            if (value < 0 || value > 59) {
+                event.target.value = ""; // Reset value if invalid
+                alert("Please enter a valid minute value between 0 and 59.");
+            } else {
+                // Format value as desired, e.g., "05" for single-digit minutes
+            }
         });
-      </script>
+    </script>
 
 
     <!-- main-panel ends -->

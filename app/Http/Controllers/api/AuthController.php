@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+
 use App\Models\company;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
@@ -16,6 +17,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades;
 use Carbon\Carbon;
+use App\Models\BoulGagnant;
+use App\Models\tirage_record;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
@@ -168,25 +171,53 @@ class AuthController extends Controller
             return response()->json(['erreur' => 'Token expiré'], 401);
         }
     }
-    public function resutat_list(Request $request)
+    public function tirage_result(Request $request)
     {
 
 
 
         try {
-            $tirage_record = DB::table('tirage_record')->where([
+            $validator = $request->validate([
+                "tirage" => "required",
 
+            ]);
+            $tirage_record = tirage_record::where([
                 ['compagnie_id', '=', auth()->user()->compagnie_id],
-            ])
-               ->select('name')
-                ->get();
-        
-            return response()->json([
-                "status"=>'true',
-                "code"=>"200",
-                'tirage' => $tirage_record,
+                ['is_active', '=', '1'],
+                ['name', '=', $request->input('tirage')]
+            ])->first();
+            if($tirage_record){
+                 $result = BoulGagnant::where([
+                    ['compagnie_id', '=', auth()->user()->compagnie_id], 
+                    ['tirage_id', '=', $tirage_record->id]
+                ])->orderByDesc('id')
+                 ->limit('100')
+                 ->select('created_ as date','unchiffre as loto','premierchiffre as boul1','secondchiffre as boul2','troisiemechiffre as boul3')
+                 ->get();
 
-            ], 200);
+                 return response()->json([
+                    "status"=>'true',
+                    "code"=>"200",
+                    'resultat' => [
+                        $result
+                    ],
+    
+                ], 200);
+ 
+            }else{
+                return response()->json([
+                    "status"=>'true',
+                    "code"=>"200",
+                    'resultat' => [
+                    
+                    ],
+    
+                ], 200);
+
+            }
+              
+        
+           
         } catch (TokenInvalidException $e) {
             return response()->json(['erreur' => 'token pas valable'], 401);
         } catch (TokenExpiredException $e) {

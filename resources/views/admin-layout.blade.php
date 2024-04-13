@@ -196,12 +196,11 @@
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link" href="/block">Bloke/Debloke
                                     </a></li>
-                                <li class="nav-item"> <a class="nav-link" href="">Sak jwe plis</a></li>
                             </ul>
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#rapo" aria-expanded="false"
+                        <a class="nav-link"  href="rapport"
                             aria-controls="ui-basic">
                             <span class="menu-title">Rapo</span>
 
