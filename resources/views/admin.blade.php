@@ -71,7 +71,7 @@
                     @foreach($list as $lists)
                     <tr>
                     
-                      <td>{{$lists->tirage->name}}</td>
+                      <td>{{$lists->tirage_record->name}}</td>
                      
                       <td>{{ \Carbon\Carbon::parse($lists->created_)->format('d-m-Y') }}
                       </td>

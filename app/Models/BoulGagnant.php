@@ -20,8 +20,8 @@ class BoulGagnant extends Model
         'created_',
     ];
 
-    public function tirage()
+    public function tirage_record()
     {
-        return $this->belongsTo(tirage::class,'tirage_id','id');
+        return $this->belongsTo(tirage_record::class,'tirage_id','id');
     }
 }

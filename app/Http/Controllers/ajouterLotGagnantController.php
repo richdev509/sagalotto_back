@@ -34,7 +34,7 @@ class ajouterLotGagnantController extends Controller
     public function store(Request $request)
     {
 
-
+        
         $tirageId = $request->input('tirage');
         $date = $request->input('date');
         $unchiffre = $request->input('unchiffre');
@@ -63,8 +63,9 @@ class ajouterLotGagnantController extends Controller
         //fin
         // Vérifier si l'heure du serveur est supérieure ou égale à $heureTirage
         $compagnieId = session('loginId');
-        $heureTirage = tirage_record::where('tirage_id', $tirageId)->where('compagnie_id', $compagnieId)->value('hour');
-
+        
+        $heureTirage = tirage_record::where('id', $tirageId)->where('compagnie_id', $compagnieId)->value('hour');
+        
 
         $heureServeur = Carbon::now()->format('H:i:s');
 
