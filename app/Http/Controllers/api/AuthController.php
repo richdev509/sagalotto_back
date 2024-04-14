@@ -29,12 +29,12 @@ class AuthController extends Controller
     /**
      * login method
      */
-   
+
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login'], ['tirage']]);
     }
-    
+
     public function login(Request $request)
     {
 
@@ -98,7 +98,7 @@ class AuthController extends Controller
         return response()->json([
             "access_token" => $token,
             "token_type" => "bearer",
-           
+
             'user' => auth()->user(),
             'compagnie' => $compagnie
 
@@ -130,10 +130,19 @@ class AuthController extends Controller
                 'hour',
                 '>',
                 Carbon::now()->format('H:i:s'),
-            )->select('name', 'hour')
+            )->whereIn('hour', function ($query) {
+                $query->select(DB::raw('MIN(hour)'))
+                    ->from('tirage_record')
+                    ->groupBy('code');
+            }) ->orwhereIn('hour', function ($query) {
+                $query->select(DB::raw('MIN(hour)'))
+                    ->from('tirage_record')
+                    ->get();
+            }) 
+            ->select('name', 'hour')
                 ->orderBy('hour', 'asc')
                 ->get();
-            
+
             return response()->json([
                 'tirage' => $tirage_record,
                 'current_time' => Carbon::now()->format('H:i:s'),
@@ -156,12 +165,12 @@ class AuthController extends Controller
 
                 ['compagnie_id', '=', auth()->user()->compagnie_id],
             ])
-               ->select('name')
+                ->select('name')
                 ->get();
-        
+
             return response()->json([
-                "status"=>'true',
-                "code"=>"200",
+                "status" => 'true',
+                "code" => "200",
                 'tirage' => $tirage_record,
 
             ], 200);
@@ -186,38 +195,31 @@ class AuthController extends Controller
                 ['is_active', '=', '1'],
                 ['name', '=', $request->input('tirage')]
             ])->first();
-            if($tirage_record){
-                 $result = BoulGagnant::where([
-                    ['compagnie_id', '=', auth()->user()->compagnie_id], 
+            if ($tirage_record) {
+                $result = BoulGagnant::where([
+                    ['compagnie_id', '=', auth()->user()->compagnie_id],
                     ['tirage_id', '=', $tirage_record->id]
                 ])->orderByDesc('id')
-                 ->limit('100')
-                 ->select('created_ as date','unchiffre as loto','premierchiffre as boul1','secondchiffre as boul2','troisiemechiffre as boul3')
-                 ->get();
+                    ->limit('100')
+                    ->select('created_ as date', 'unchiffre as loto', 'premierchiffre as boul1', 'secondchiffre as boul2', 'troisiemechiffre as boul3')
+                    ->get();
 
-                 return response()->json([
-                    "status"=>'true',
-                    "code"=>"200",
+                return response()->json([
+                    "status" => 'true',
+                    "code" => "200",
                     'resultat' => [
                         $result
                     ],
-    
-                ], 200);
- 
-            }else{
-                return response()->json([
-                    "status"=>'true',
-                    "code"=>"200",
-                    'resultat' => [
-                    
-                    ],
-    
-                ], 200);
 
+                ], 200);
+            } else {
+                return response()->json([
+                    "status" => 'true',
+                    "code" => "200",
+                    'resultat' => [],
+
+                ], 200);
             }
-              
-        
-           
         } catch (TokenInvalidException $e) {
             return response()->json(['erreur' => 'token pas valable'], 401);
         } catch (TokenExpiredException $e) {

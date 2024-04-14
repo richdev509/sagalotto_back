@@ -39,7 +39,7 @@
                             required>
 
                             @if (isset($record))
-                                <option value="{{ $record->tirage->id }}">{{ $record->tirage->name }}</option>
+                                <option value="{{ $record->tirage_record->id }}">{{ $record->tirage_record->name }}</option>
                             @else
                                 <option disabled>Lis tiraj</option>
 

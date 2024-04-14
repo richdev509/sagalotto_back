@@ -22,22 +22,15 @@
                       <form class="form-sample" method="post" action="editervendeur">
                         @csrf
                         <p class="card-description">Info sou vandè a </p>
-                        <div class="row">
-                            <div class="col-md-6">
-                              <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Kod vandè a</label>
-                                <div class="col-sm-9">
-                                  <input type="text"  value="{{$vendeur->code}}" class="form-control" disabled/>
-                                  <input type="hidden" name="id" value="{{$vendeur->id}}" class="form-control" />
-
-                                </div>
-                              </div>
-                            </div>
+                       
+                           
                         <div class="row">
                           <div class="col-md-6">
                             <div class="form-group row">
                               <label class="col-sm-3 col-form-label">Tout non vandè a</label>
                               <div class="col-sm-9">
+                                <input type="hidden" name="id" value="{{$vendeur->id}}" class="form-control"/>
+
                                 <input type="text" name="name" value="{{$vendeur->name}}" class="form-control" placeholder="non konplè" />
                                 <span class="error">@error('name') 
                                    {{$message}}
@@ -130,7 +123,7 @@
                             <div class="form-group row">
                               <label class="col-sm-3 col-form-label">ID machin nan</label>
                               <div class="col-sm-9">
-                                <input type="text" name="bank_id" value="{{$vendeur->android_id}}" class="form-control" placeholder="Egzanp: bank1" />
+                                <input type="text" name="bank_id" value="{{$vendeur->android_id}}" class="form-control" />
                                 <span class="error">@error('bank_id')
                                     {{$message}}
                                 @enderror</span>
@@ -140,10 +133,10 @@
                         <div class="row">
                           <div class="col-md-6">
                             <div class="form-group row">
-                              <label class="col-sm-3 col-form-label">Non bank lan</label>
+                              <label class="col-sm-3 col-form-label">Itilizate</label>
                               <div class="col-sm-9">
-                                <input type="text" name="bank_name" value="{{$vendeur->bank_name}}" class="form-control" placeholder="Egzanp: bank1" />
-                                <span class="error">@error('bank_name')
+                                <input type="text" name="username" value="{{$vendeur->username}}" class="form-control" disabled/>
+                                <span class="error">@error('username')
                                     {{$message}}
                                 @enderror</span>
                               </div>
@@ -151,36 +144,17 @@
                           </div>
                           <div class="col-md-6">
                             <div class="form-group row">
-                              <label class="col-sm-3 col-form-label">ID machin nan</label>
+                              <label class="col-sm-3 col-form-label">Modepas</label>
                               <div class="col-sm-9">
-                                <input type="text" name="bank_id" value="{{$vendeur->android_id}}" class="form-control" placeholder="Egzanp: bank1" />
-                                <span class="error">@error('bank_id')
+                                <input type="password" name="password"  class="form-control"/>
+                                <span class="error">@error('password')
                                     {{$message}}
                                 @enderror</span>
                               </div>
                             </div>
                         </div>
                         
-                        <div class="row">
-                          <div class="col-md-6">
-                            <div class="form-group row">
-                              <label class="col-sm-3 col-form-label">Itilizatè</label>
-                              <div class="col-sm-9">
-                                <input type="text" name="username" value="{{$vendeur->username}}"class="form-control" placeholder="470000" />
-                              </div>
-                            </div>
-                         
-                            <div class="col-md-6">
-                              <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Modepas</label>
-                                <div class="col-sm-9">
-                                  <input type="password" name="password" class="form-control"/>
-                                </div>
-                              </div>
-                            </div>
-                         
-                          
-                        </div>
+                   
                         <div class="row">
                          
                          
