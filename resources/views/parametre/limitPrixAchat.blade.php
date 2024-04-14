@@ -164,7 +164,9 @@
               <td>Loto5</td>
               <td>  
                 @if($limitprix)
-                <input style="height:10px;" type="number" class="form-control" value="{{ $limitprix->loto5 != null ? $limitprix->loto5 : '' }}" name="prix"/>
+                <input style="height: 10px;
+                text-align: center;
+                width: 100px;" type="number" class="form-control" value="{{ $limitprix->loto5 != null ? $limitprix->loto5 : '' }}" name="prix"/>
                 @else
                 <input style="height:10px;" type="number" class="form-control" value=""   name="prix" />
         
