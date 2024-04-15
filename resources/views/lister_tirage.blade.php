@@ -24,6 +24,7 @@
                         <tr>
                           <th> code </th>
                           <th> Non </th>
+                          <th> Ouvri </th>
                           <th> Femen </th>
                           <th> Tire </th>
                           <th> Aktive </th>
@@ -39,6 +40,10 @@
                          <input type="hidden" name="id" value="{{ $row->id}}"/>
                           <td> {{$row->id}} </td>
                           <td> {{$row->name}} </td>
+                          <td>                                
+                            <input style="height:10px;" type="time" class="form-control" value="{{$row->hour_open}}"   name="time_open" />
+                   
+                       </td>
                           <td>                                
                              <input style="height:10px;" type="time" class="form-control" value="{{$row->hour}}"   name="time" />
                     

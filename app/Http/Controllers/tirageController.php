@@ -29,6 +29,10 @@ class tirageController extends Controller
             $validator = $request->validate([
                 "tirage" => "required",
                 'time' =>'required',
+                'time_open' =>'required',
+                'time_tirer' =>'required',
+
+
 
             ]);
             $tirage = DB::table('tirage')->where([
@@ -50,7 +54,11 @@ class tirageController extends Controller
                 'compagnie_id' => Session('loginId'),
                 'tirage_id' => $tirage->id,
                 'name' => $request->input('tirage'),
-                'hour' => $request->input('time'),       
+                'hour' => $request->input('time'), 
+                'hour_open' => $request->input('time_open'), 
+                'hour_tirer' => $request->input('time_tirer'),       
+      
+      
                 'created_at' => Carbon::now()
             ]);
             notify()->success('tiraj ajoute avek sikse');
@@ -65,6 +73,7 @@ class tirageController extends Controller
         if (Session('loginId')) {
             $validator = $request->validate([
                 "time" => "required",
+                "time_open" => "required",
                 'time_tirer' =>'required',
 
             ]);
@@ -88,6 +97,8 @@ class tirageController extends Controller
             $tirage_record = tirage_record::where('id',$request->input('id'))->update([
                 'hour_tirer'=> $request->input('time_tirer'),
                 'hour' => $request->input('time'), 
+                'hour_open' => $request->input('time_open'), 
+
                 'is_active' => $active,       
                 'updated_at' => Carbon::now()
             ]);

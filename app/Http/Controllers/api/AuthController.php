@@ -130,15 +130,11 @@ class AuthController extends Controller
                 'hour',
                 '>',
                 Carbon::now()->format('H:i:s'),
-            )->whereIn('hour', function ($query) {
-                $query->select(DB::raw('MIN(hour)'))
-                    ->from('tirage_record')
-                    ->groupBy('code');
-            }) ->orwhereIn('hour', function ($query) {
-                $query->select(DB::raw('MIN(hour)'))
-                    ->from('tirage_record')
-                    ->get();
-            }) 
+            )->whereTime(
+                'hour_open',
+                '<',
+                Carbon::now()->format('H:i:s'),
+            )
             ->select('name', 'hour')
                 ->orderBy('hour', 'asc')
                 ->get();

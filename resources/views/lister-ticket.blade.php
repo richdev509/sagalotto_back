@@ -257,7 +257,7 @@
                                             @csrf
                                             <input type="hidden" name="id" value="{{ $row->id }}">
                                             <button type="submit" style="color: blue;" id="btn_boule"><i
-                                                    class="mdi mdi-eye"></i></button>
+                                                    class="mdi mdi-eye btn_boule"></i></button>
 
                                         </form>
 
@@ -392,7 +392,7 @@
                     $(".content").show();
 
                 }
-                $('#btn_boule').on('click', function() {
+                $('.btn_boule').on('click', function() {
                     $(".content").show();
 
                 });

@@ -89,11 +89,17 @@ class ticketController extends Controller
             }
             
         }
+        //verify number that are blocked
         $resp = verify::verifierBoulesNonAutorisees($request);
         if ($resp != '1') {
             return $resp;
         }
         $i = 0;
+        //verify number that are limited in price
+        $resp_prix = verify::verifierLimitePrixJouer($request);
+        if($resp_prix !='1'){
+             return $resp_prix;
+        }
         //$ticketId[];
         //tchek if all tirage are open before proceed
         foreach ($request->input('tirages') as $name) {

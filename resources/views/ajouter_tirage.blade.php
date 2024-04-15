@@ -45,9 +45,33 @@
                             <div class="form-group row">
                               
                               <div class="col-sm-9">
-                                <label class="col-sm-3 col-form-label">Lè lap fème</label>
-                                <input style="height:10px;" type="time" class="form-control" value="{{old('phone')}}"   name="time" />
+                                <label class="col-sm-3 col-form-label">Lè wap ouvril lan</label>
+                                <input style="height:10px;" type="time" class="form-control" value="00:00:00"   name="time_open" />
+                                <span class="error">@error('time_open') 
+                                  {{$message}}
+                                 @enderror</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group row">
+                              
+                              <div class="col-sm-9">
+                                <label class="col-sm-3 col-form-label">Lè wap fèmenl lan</label>
+                                <input style="height:10px;" type="time" class="form-control" value="{{old('time')}}"   name="time" />
                                 <span class="error">@error('time') 
+                                  {{$message}}
+                                 @enderror</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group row">
+                              
+                              <div class="col-sm-9">
+                                <label class="col-sm-3 col-form-label">Lè li tire a</label>
+                                <input style="height:10px;" type="time" class="form-control" value="{{old('time_tirer')}}"   name="time_tirer"/>
+                                <span class="error">@error('time_tirer') 
                                   {{$message}}
                                  @enderror</span>
                               </div>
