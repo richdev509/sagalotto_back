@@ -24,7 +24,7 @@ class ajouterLotGagnantController extends Controller
         $id = $request->id;
         $list = tirage_record::where('compagnie_id', session('loginId'))->get();
         if($id!=""){
-            $record = BoulGagnant::where('compagnie_id', session('loginId'))->where('created_', $id)->first();
+            $record = BoulGagnant::where('compagnie_id', session('loginId'))->where('tirage_id', $id)->first();
             return view('ajoutelo', compact('list', 'record'));
         }
         return view('ajoutelo', compact('list'));

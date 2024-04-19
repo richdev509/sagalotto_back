@@ -39,7 +39,7 @@
                     <td>Tiraj 100%</td>
                     <td class="text-end">
                       <form action="{{route('ajoutlo')}}">
-                          <input type="hidden" name="id" value="{{$lists->created_}}" />
+                          <input type="hidden" name="id" value="{{$lists->tirage_id}}" />
                           <button type="submit"><i class="mdi mdi-table-edit"></i></button>
 
                       </form>
