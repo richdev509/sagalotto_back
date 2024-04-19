@@ -36,7 +36,7 @@ class executeTirageController extends Controller
     //debut fonction
 
     public function verification($tirage,$date){
-
+            
             $tirageid=$tirage;
              $data=$this->execute($tirageid,$date);
              if($data==1){
@@ -49,19 +49,20 @@ class executeTirageController extends Controller
 
     public function rentier($date,$tirageName){
        
-        try {  
+         
             // Récupérer les codes fiches 
             $numero = ticket_code::where('compagnie_id', session('loginId'))
                                 ->whereDate('created_at', $date)
                                 ->pluck('code')
                                 ->toArray();
-                    
+                   
             if ($numero) {
                 // Récupérer les tickets vendus
                 $listefiche = TicketVendu::whereIn('ticket_code_id', $numero)
                                          ->where('tirage_record_id', $tirageName)
                                          ->where('is_win','1')
                                          ->get();
+                                         
                        // dd($listefiche,$date,$tirageName,$numero);                
                 if ($listefiche->count() > 0) {
                     // Parcourir chaque fiche et mettre à jour les champs
@@ -79,11 +80,7 @@ class executeTirageController extends Controller
             } else {
                 return true; // Pas de codes de fiche trouvés
             }
-        } catch (\Exception $e) {
-            // En cas d'erreur, notifier l'utilisateur
-            // notify()->error('Erreur lors de la réinitialisation', $e->getMessage());
-            return $e->getMessage(); // Opération échouée
-        }
+       
         
        
 
@@ -109,7 +106,7 @@ class executeTirageController extends Controller
           ->where('tirage_id', $tirageName)
           ->whereDate('created_', $formattedDate)
           ->first();
-
+      
      //Recupere liste des codes vendu pour le jour en question.
      $codes = ticket_code::where('compagnie_id', $compagnieId)
     ->whereDate('created_at', $formattedDate)
@@ -122,6 +119,7 @@ class executeTirageController extends Controller
  $fiches= TicketVendu::whereIn('ticket_code_id', $codes)
  ->where('tirage_record_id', $tirageName)
  ->get();
+ 
    }
    
     

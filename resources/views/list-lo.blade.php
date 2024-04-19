@@ -40,6 +40,7 @@
                     <td class="text-end">
                       <form action="{{route('ajoutlo')}}">
                           <input type="hidden" name="id" value="{{$lists->tirage_id}}" />
+                          <input type="hidden" name="dat_" value="{{$lists->created_}}" />
                           <button type="submit"><i class="mdi mdi-table-edit"></i></button>
 
                       </form>

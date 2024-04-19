@@ -22,9 +22,10 @@ class ajouterLotGagnantController extends Controller
     public function ajouterlo(Request $request)
     {   
         $id = $request->id;
+        $dat_=$request->dat_;
         $list = tirage_record::where('compagnie_id', session('loginId'))->get();
         if($id!=""){
-            $record = BoulGagnant::where('compagnie_id', session('loginId'))->where('tirage_id', $id)->first();
+            $record = BoulGagnant::where('compagnie_id', session('loginId'))->where('tirage_id', $id)->where('created_',$dat_)->first();
             return view('ajoutelo', compact('list', 'record'));
         }
         return view('ajoutelo', compact('list'));
@@ -81,6 +82,7 @@ class ajouterLotGagnantController extends Controller
         
          $formattedDate = $date; //Carbon::createFromFormat('m-d-Y', $date)->format('Y-m-d');
         try {
+
             $reponseadd = BoulGagnant::create([
                 'tirage_id' => $request->input('tirage'),
                 'compagnie_id' => session('loginId'),
@@ -107,10 +109,10 @@ class ajouterLotGagnantController extends Controller
                 }
             }
 
-          ;
+          
         } catch (\Exception $e) {
             // Gérer l'exception si la création échoue
-            notify()->error('erreur dajout', $e);
+            notify()->error('erreur dajout');
             return redirect()->back();
         }
     }
@@ -187,14 +189,16 @@ class ajouterLotGagnantController extends Controller
         //Espace pour effectuer l'appel du fonction pour reinitialiser les donees.
         $instance = new executeTirageController();
         $reponses=$instance->rentier($date,$tirageId);
-        if($reponses=false){
+        if($reponses==false){
             notify()->error('Pwoblem miz ajou kontakte sevis teknik');
             //dd($reponses);
             return redirect()->back();
         }
         
-        $Boulgnant = BoulGagnant::where('compagnie_id', session('loginId'))->where('created_', $date);
+        $Boulgnant = BoulGagnant::where('compagnie_id', session('loginId'))->where('tirage_id', $tirageId)->where('created_',$date)->first();
+       
         if ($Boulgnant) {
+            $reponseadd="";
             try {
                 $reponseadd = $Boulgnant->update([
                     'unchiffre' => $unchiffre,
@@ -204,8 +208,8 @@ class ajouterLotGagnantController extends Controller
                     'etat' => 'true',
                 ]);
 
-
-                if ($reponseadd) {
+                
+                if ($reponseadd==true) {
                     $class = new executeTirageController();
                     $reponse = $class->verification($tirageId, $date);
                     if ($reponse == '1') {
@@ -223,7 +227,7 @@ class ajouterLotGagnantController extends Controller
                 return redirect()->route('listlo');
             } catch (\Exception $e) {
                 // Gérer l'exception si la création échoue
-                notify()->error('erreur dajout', $e);
+                notify()->error('erreur dajout la', $e->getMessage());
                 return redirect()->back();
             }
         } else {
