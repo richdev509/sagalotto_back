@@ -180,9 +180,10 @@ class ticketController extends Controller
                     }
                     if (array_key_exists(5, $boule)) {
                         array_splice($boule, 5, 1);
-                        $boule[] = ['mariage-gratis' => $mg_res];
                       
                     }
+                    $boule[] = ['mariage-gratis' => $mg_res];
+
                 }
                 unset($mg_res);
             }
