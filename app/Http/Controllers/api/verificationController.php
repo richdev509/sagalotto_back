@@ -294,4 +294,49 @@ class verificationController extends Controller
 
         return $montant_tot;
     }
+    public static function generer_gratuit($data, $montant, $tirage_name){
+        
+        if($data->min_inter_1 <= $montant && $data->max_inter_1 >= $montant){
+             
+             for($i =1; $i<= $data->q_inter_1; $i++){
+                $mariage[] = [
+                    'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
+                    'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
+                    'montant' => 'Gagnant '.$tirage_name,
+                ];
+
+
+             }
+             return $mariage;
+        }elseif($data->min_inter_2 <= $montant && $data->max_inter_2 >= $montant){
+        
+            for($i =1; $i<= $data->q_inter_2; $i++){
+               $mariage[] = [
+                   'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
+                   'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
+                   'montant' => 'Gagnant '.$tirage_name,
+               ];
+
+
+            }
+           
+            return $mariage;
+        }elseif($data->min_inter_3 <= $montant && $data->max_inter_3 >= $montant){
+            
+            for($i =1; $i<= $data->q_inter_3; $i++){
+               $mariage[] = [
+                   'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
+                   'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
+                   'montant' => 'Gagnant '.$tirage_name,
+                ];
+
+
+            }
+           
+            return $mariage;
+
+
+        }
+        return false;
+    }
 }

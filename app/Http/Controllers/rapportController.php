@@ -170,10 +170,13 @@ class rapportController extends Controller
 
                     ])->select('tirage_record.id', 'tirage_record.name')
                         ->get();
-                    return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => 'Tout', 'tirage_' => 'Tout', 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission]);
-               
-               
-               
+                    $name_tirage = tirage_record::where(
+                        [
+                            ['id', '=', $request->input('tirage')]
+                        ]
+                    )->select('name')
+                        ->first();
+                    return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => 'Tout', 'tirage_' => $name_tirage->name, 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission]);
                 } elseif ($request->input('bank') != 'Tout' && $request->input('tirage') == 'Tout') {
                     $vente = DB::table('ticket_code')->where([
                         ['ticket_code.compagnie_id', '=', Session('loginId')],
@@ -253,9 +256,11 @@ class rapportController extends Controller
 
                     ])->select('tirage_record.id', 'tirage_record.name')
                         ->get();
-                    return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => 'Tout', 'tirage_' => 'Tout', 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission]);
-               
-               
+                    $name_bank = User::where([
+                        ['id', '=', $request->input('bank')]
+                    ])->select('bank_name')
+                        ->first();
+                    return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => $name_bank->bank_name, 'tirage_' => 'Tout', 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission]);
                 } elseif ($request->input('bank') != 'Tout' && $request->input('tirage') != 'Tout') {
                     $vente = DB::table('ticket_code')->where([
                         ['ticket_code.compagnie_id', '=', Session('loginId')],
@@ -341,12 +346,17 @@ class rapportController extends Controller
 
                     ])->select('tirage_record.id', 'tirage_record.name')
                         ->get();
-                    return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => 'Tout', 'tirage_' => 'Tout', 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission]);
-               
-               
-               
-               
-               
+                    $name_tirage = tirage_record::where(
+                        [
+                            ['id', '=', $request->input('tirage')]
+                        ]
+                    )->select('name')
+                        ->first();
+                    $name_bank = User::where([
+                        ['id', '=', $request->input('bank')]
+                    ])->select('bank_name')
+                        ->first();
+                    return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => $name_bank->bank_name, 'tirage_' => $name_tirage->name, 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission]);
                 }
             } else {
                 //get vendeur

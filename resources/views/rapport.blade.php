@@ -211,411 +211,124 @@
 
                 </div>
                 <div class="table-responsive">
-
+                   <form class="form">
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                              
+
 
 
 
                             </tr>
                         </thead>
                         <tbody style="border: 1px solid #ac32cb;">
-                            @if($is_calculated==1)
-                            <tr>
-                                <td colspan="2" class="text-center">Rapo soti {{$date_debut}} Rive {{$date_fin}}</td>
-                                
+                            @if ($is_calculated == 1)
+                                <tr>
+                                    <td colspan="2" class="text-center">Rapo soti {{ $date_debut }} Rive
+                                        {{ $date_fin }}</td>
 
-                            </tr>
-                           
 
-                            <tr>
-                                <td>Bank:</td>
-                                <td>{{$bank}}</td>
+                                </tr>
 
-                            </tr>
-                            <tr>
-                                <td>Tiraj:</td>
-                                <td>{{$tirage_}}</td>
 
-                            </tr>
-                            <tr>
-                                <td>Fich Total:</td>
-                                <td>{{$ticket_win + $ticket_lose}}</td>
+                                <tr>
+                                    <td>Bank:</td>
+                                    <td>{{ $bank }}</td>
 
-                            </tr>
-                            <tr>
-                                <td>Fich Genyen:</td>
-                                <td>{{$ticket_win}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Tiraj:</td>
+                                    <td>{{ $tirage_ }}</td>
 
-                            </tr>
-                            <tr>
-                                <td>Fich Pedi:</td>
-                                <td>{{$ticket_lose}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Fich Total:</td>
+                                    <td>{{ $ticket_win + $ticket_lose }}</td>
 
-                            </tr>
-                            <tr>
-                                <td>Vant:</td>
-                                <td>{{$vente}} HTG</td>
+                                </tr>
+                                <tr>
+                                    <td>Fich Genyen:</td>
+                                    <td>{{ $ticket_win }}</td>
 
-                            </tr>
-                            <tr>
-                                <td>Pet:</td>
-                                <td>{{$perte}} HTG</td>
+                                </tr>
+                                <tr>
+                                    <td>Fich Pedi:</td>
+                                    <td>{{ $ticket_lose }}</td>
 
-                            </tr>
-                            <tr>
-                                <td>Komisyon:</td>
-                                <td>{{$commission}} HTG</td>
+                                </tr>
+                                <tr>
+                                    <td>Vant:</td>
+                                    <td>{{ $vente }} HTG</td>
 
-                            </tr>
-                            <tr>
-                                <td>Balans:</td>
-                                <td>{{$vente- ($perte + $commission)}} HTG</td>
+                                </tr>
+                                <tr>
+                                    <td>Pet:</td>
+                                    <td>{{ $perte }} HTG</td>
 
-                            </tr>
+                                </tr>
+                                <tr>
+                                    <td>Komisyon:</td>
+                                    <td>{{ $commission }} HTG</td>
+
+                                </tr>
+                                <tr>
+                                    <td>Balans:</td>
+                                    <td>{{ $vente - ($perte + $commission) }} HTG</td>
+
+                                </tr>
+                                <!--
+                                <button type="button" id="create_pdf"><i
+                                class="mdi mdi-briefcase-download"></i>Telechaje</i></button> -->
+
                             @endif
-                            
-                            
+
+
                         </tbody>
-
                     </table>
-
+                </form>
                 </div>
             </div>
 
 
 
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-
-        <div class="content" id="tent">
-            <div onclick="closePopup()" class="close-btn" id="close" style="position: fixed;">
-                <i class="mdi mdi-close-octagon" style="color: red;"></i>
-            </div>
-            <div class="table-responsive">
-
-
-
-                <table class="table table-striped" id="mytable">
-
-                    <thead>
-                        <tr style="background-color: #b66dff;">
-                            <th> Boul </th>
-
-                            <th>Prix</th>
-
-
-
-                        </tr>
-
-                    </thead>
-                    <tbody>
-                        <tr id="bor" style="background-color: #30be64;">
-                            <td colspan="2" style="color: white; font-weight: bold">Bolèt</td>
-                        </tr>
-                        <table class="table table-striped" id="mytable1">
-
-                            <tbody>
-                                <tr id="mar" style="background-color: #06aafd;">
-                                    <td colspan="2">Maryaj</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <table class="table table-striped" id="mytable2">
-
-                            <tbody>
-                                <tr id="l3" style="background-color: #be307c">
-                                    <td colspan="2">Loto 3</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <table class="table table-striped" id="mytable3">
-
-                            <tbody>
-                                <tr id="l4" style="background-color: #f4d910;">
-                                    <td colspan="2" style="color: white; font-weight: bold;">Loto 4</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <table class="table table-striped" id="mytable4">
-
-                            <tbody>
-                                <tr id="l5" style="background-color: #f38b03;">
-                                    <td colspan="2" style="color:white; font-weight: bold;">Loto 5</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <table class="table table-striped" id="mytable5">
-
-                            <tbody>
-                                <tr id="mar_g" style="background-color: #be307c;">
-                                    <td colspan="2" style="color: white; font-weight: bold;">Maryaj gratis</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-
-        <script type="text/javascript">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+            integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script>
             $(document).ready(function() {
-                // Function to show and hide the popup 
-                function togglePopup() {
-                    $(".content").show();
+                var form = $('.form'),
+                    cache_width = form.width(),
+                    a4 = [595.28, 841.89]; // for a4 size paper width and height  
 
-                }
+                $('#create_pdf').on('click', function() {
+                    $('body').scrollTop(0);
+                    createPDF();
+                });
 
-                function closePopup() {
-                    $(".content").hide();
-                    $('.content-clear').remove();
-
-                }
-
-                $('.form').on('submit', function(event) {
-                    event.preventDefault();
-
-                    $.ajax({
-                        url: "{{ url('boule-show') }}",
-                        data: $(this).serialize(),
-                        type: 'get',
-                        success: function(response) {
-
-                            if (response.status == 'true') {
-                                const jsonData = response.boule['boule'];
-
-                                // Parse JSON string into a JavaScript object
-                                const jsonObject = JSON.parse(jsonData);
-
-                                // Iterate over the properties of the object
-                                jsonObject.forEach(function(key) {
-                                    //bolete
-                                    if (Array.isArray(key.bolete) && key.bolete.length >
-                                        0) {
-
-
-                                        key.bolete.forEach(function(item) {
-                                            const table = document.getElementById(
-                                                "mytable");
-
-
-                                            const row = document.createElement(
-                                                "tr");
-
-                                            row.classList.add('content-clear');
-                                            const bo = document.createElement("td");
-                                            const prix = document.createElement(
-                                                "td");
-
-
-                                            bo.textContent = item.boul1;
-                                            prix.textContent = item.montant +
-                                                ' HTG';
-                                            row.appendChild(bo);
-                                            row.appendChild(prix);
-                                            table.appendChild(row);
-                                        });
-
-                                    } else {
-                                        //  $('#bor').remove();
-
-                                    }
-
-                                    //mariaj
-                                    if (Array.isArray(key.maryaj) && key.maryaj.length >
-                                        0) {
-                                        key.maryaj.forEach(function(item) {
-                                            const table = document.getElementById(
-                                                "mytable1");
-
-
-                                            const row = document.createElement(
-                                                "tr");
-
-                                            row.classList.add('content-clear');
-                                            const bo = document.createElement("td");
-                                            const prix = document.createElement(
-                                                "td");
-
-
-                                            bo.textContent = item.boul1 + 'X' + item
-                                                .boul2;
-                                            prix.textContent = item.montant +
-                                                ' HTG';
-                                            row.appendChild(bo);
-                                            row.appendChild(prix);
-                                            table.appendChild(row);
-                                        });
-
-                                    } else {
-                                        // $('#mar').remove();
-
-                                    }
-
-                                    //loto3
-                                    if (Array.isArray(key.loto3) && key.loto3.length > 0) {
-                                        key.loto3.forEach(function(item) {
-                                            const table = document.getElementById(
-                                                "mytable2");
-                                            const row = document.createElement(
-                                                "tr");
-                                            row.classList.add('content-clear');
-                                            const bo = document.createElement("td");
-                                            const prix = document.createElement(
-                                                "td");
-                                            bo.textContent = item.boul1;
-                                            prix.textContent = item.montant +
-                                                ' HTG';
-                                            row.appendChild(bo);
-                                            row.appendChild(prix);
-                                            table.appendChild(row);
-                                        });
-                                    } else {
-                                        // $('#l3').remove();
-
-                                    }
-
-
-                                    //loto4
-                                    if (Array.isArray(key.loto4) && key.loto4.length > 0) {
-
-                                        key.loto4.forEach(function(item) {
-                                            var op = ' ';
-                                            const table = document.getElementById(
-                                                "mytable3");
-                                            const row = document.createElement(
-                                                "tr");
-                                            row.classList.add('content-clear');
-                                            const bo = document.createElement("td");
-                                            const prix = document.createElement(
-                                                "td");
-
-                                            bo.textContent = item.boul1;
-                                            if (item.option1) {
-                                                op += 'option1: ' + item.option1 +
-                                                    'HTG';
-
-                                            }
-                                            if (item.option2) {
-                                                op += '  option2: ' + item.option2 +
-                                                    'HTG';
-
-                                            }
-                                            if (item.option3) {
-                                                op += '  option:3 ' + item.option3 +
-                                                    'HTG';
-
-                                            }
-                                            prix.textContent = op;
-                                            row.appendChild(bo);
-                                            row.appendChild(prix);
-                                            table.appendChild(row);
-                                        });
-
-                                    } else {
-                                        //  $('#l4').remove();
-
-                                    }
-                                    //loto 5
-                                    if (Array.isArray(key.loto5) && key.loto5.length > 0) {
-                                        key.loto5.forEach(function(item) {
-                                            var op = "";
-                                            const table = document.getElementById(
-                                                "mytable4");
-                                            const row = document.createElement(
-                                                "tr");
-                                            row.classList.add('content-clear');
-                                            const bo = document.createElement("td");
-                                            const prix = document.createElement(
-                                                "td");
-                                            bo.textContent = item.boul1;
-                                            if (item.option1) {
-                                                op += 'option1: ' + item.option1 +
-                                                    'HTG';
-
-                                            }
-                                            if (item.option2) {
-                                                op += '  option2: ' + item.option2 +
-                                                    'HTG';
-
-                                            }
-                                            if (item.option3) {
-                                                op += '  option:3 ' + item.option3 +
-                                                    'HTG';
-
-                                            }
-                                            prix.textContent = op;
-                                            row.appendChild(bo);
-                                            row.appendChild(prix);
-                                            table.appendChild(row);
-
-                                        });
-
-                                    } else {
-                                        //  $('#l5').remove();
-
-                                    }
-                                    //mariage gratuit
-
-
-                                    // Check if the value of the property is an array
-
-                                });
-
-                            } else {
-
-                                alert('li pa mache');
-                            }
-
-
-                        },
-                        error: function(jqXHR, textStatus, errorThrown) {
-
-
-                        }
+                function createPDF() {
+                    getCanvas().then(function(canvas) {
+                        var
+                            img = canvas.toDataURL("image/png"),
+                            doc = new jsPDF({
+                                unit: 'px',
+                                format: 'a4'
+                            });
+                        doc.addImage(img, 'JPEG', 20, 20);
+                        doc.save('techsolutionstuff.pdf');
+                        form.width(cache_width);
                     });
+                }
 
-
-
-
-
-                });
-
-
-
-                jQuery(".deleting_form").on('submit', function(e) {
-                    e.preventDefault();
-                    const formAction = this.getAttribute('action');
-                    jQuery.getScript('https://cdn.jsdelivr.net/npm/sweetalert2@11', function() {
-                        Swal.fire({
-                            title: 'Vous voulez vraiment continuer ?',
-                            text: "Vous voulez supprimer",
-                            icon: 'success',
-                            showCancelButton: true,
-                            confirmButtonColor: 'green',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Oui',
-                            cancelButtonText: 'Annulez'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                // Log the form action
-                                window.location.href = formAction;
-
-
-                            } else {
-                                console.log('clicked cancel');
-                            }
-                        })
-
-                    })
-
-                    // rest of the code
-                });
-
-
+                function getCanvas() {
+                    form.width((a4[0] * 1.33333) - 80).css('max-width', 'none');
+                    return html2canvas(form, {
+                        imageTimeout: 2000,
+                        removeContainer: true
+                    });
+                }
             });
         </script>
     @endsection

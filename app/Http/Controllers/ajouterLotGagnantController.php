@@ -20,29 +20,29 @@ class ajouterLotGagnantController extends Controller
     }
 
     public function ajouterlo(Request $request)
-    {   
+    {
         $id = $request->id;
-        $dat_=$request->dat_;
+        $dat_ = $request->dat_;
         $list = tirage_record::where('compagnie_id', session('loginId'))->get();
-        if($id!=""){
-            $record = BoulGagnant::where('compagnie_id', session('loginId'))->where('tirage_id', $id)->where('created_',$dat_)->first();
+        if ($id != "") {
+            $record = BoulGagnant::where('compagnie_id', session('loginId'))->where('tirage_id', $id)->where('created_', $dat_)->first();
             return view('ajoutelo', compact('list', 'record'));
         }
         return view('ajoutelo', compact('list'));
-        }
-        
+    }
+
 
     public function store(Request $request)
     {
 
-        
+
         $tirageId = $request->input('tirage');
         $date = $request->input('date');
         $unchiffre = $request->input('unchiffre');
         $premierchiffre = $request->input('premierchiffre');
         $secondchiffre = $request->input('secondchiffre');
         $troisiemechiffre = $request->input('troisiemechiffre');
-        
+
         $erreurs = $this->validerEntrees($tirageId, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre);
 
         if ($erreurs) {
@@ -50,8 +50,7 @@ class ajouterLotGagnantController extends Controller
             notify()->error($messagesErreur);
             return redirect()->back();
         }
-        if(strlen((string)$premierchiffre) == 1){
-            
+        if (strlen((string)$premierchiffre) == 1) {
         }
         //verifaction exist lo
         $resultExist = $this->ifExisteLo($tirageId, $date);
@@ -64,23 +63,22 @@ class ajouterLotGagnantController extends Controller
         //fin
         // Vérifier si l'heure du serveur est supérieure ou égale à $heureTirage
         $compagnieId = session('loginId');
-        
+
         $heureTirage = tirage_record::where('id', $tirageId)->where('compagnie_id', $compagnieId)->value('hour');
-        
+
 
         $heureServeur = Carbon::now()->format('H:i:s');
 
-       
+
 
         if (Carbon::parse($heureServeur)->gte(Carbon::parse($heureTirage)) || $date < Carbon::now()->format('Y-m-d')) {
-         
         } else {
             // Le tirage n'a pas encore commencé
-            notify()->info('lo an poko ka mete. tiraj la ap femen a:'.$heureTirage);
+            notify()->info('lo an poko ka mete. tiraj la ap femen a:' . $heureTirage);
             return redirect()->back();
         }
-        
-         $formattedDate = $date; //Carbon::createFromFormat('m-d-Y', $date)->format('Y-m-d');
+
+        $formattedDate = $date; //Carbon::createFromFormat('m-d-Y', $date)->format('Y-m-d');
         try {
 
             $reponseadd = BoulGagnant::create([
@@ -94,7 +92,7 @@ class ajouterLotGagnantController extends Controller
                 'created_' => $formattedDate
             ]);
 
-         if ($reponseadd) {
+            if ($reponseadd) {
                 $class = new executeTirageController();
                 $reponse = $class->verification($tirageId, $date);
                 if ($reponse == '1') {
@@ -108,8 +106,6 @@ class ajouterLotGagnantController extends Controller
                     return redirect()->back();
                 }
             }
-
-          
         } catch (\Exception $e) {
             // Gérer l'exception si la création échoue
             notify()->error('erreur dajout');
@@ -133,7 +129,7 @@ class ajouterLotGagnantController extends Controller
 
     {
 
-       
+
         $premierchiffre = (string) $premierchiffre;
         $secondchiffre = (string) $secondchiffre;
         $troisiemechiffre = (string) $troisiemechiffre;
@@ -188,17 +184,17 @@ class ajouterLotGagnantController extends Controller
 
         //Espace pour effectuer l'appel du fonction pour reinitialiser les donees.
         $instance = new executeTirageController();
-        $reponses=$instance->rentier($date,$tirageId);
-        if($reponses==false){
+        $reponses = $instance->rentier($date, $tirageId);
+        if ($reponses == false) {
             notify()->error('Pwoblem miz ajou kontakte sevis teknik');
             //dd($reponses);
             return redirect()->back();
         }
-        
-        $Boulgnant = BoulGagnant::where('compagnie_id', session('loginId'))->where('tirage_id', $tirageId)->where('created_',$date)->first();
-       
+
+        $Boulgnant = BoulGagnant::where('compagnie_id', session('loginId'))->where('tirage_id', $tirageId)->where('created_', $date)->first();
+
         if ($Boulgnant) {
-            $reponseadd="";
+            $reponseadd = "";
             try {
                 $reponseadd = $Boulgnant->update([
                     'unchiffre' => $unchiffre,
@@ -208,8 +204,8 @@ class ajouterLotGagnantController extends Controller
                     'etat' => 'true',
                 ]);
 
-                
-                if ($reponseadd==true) {
+
+                if ($reponseadd == true) {
                     $class = new executeTirageController();
                     $reponse = $class->verification($tirageId, $date);
                     if ($reponse == '1') {
