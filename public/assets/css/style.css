@@ -3225,7 +3225,6 @@ progress {
   margin-top: calc(-1 * var(--bs-gutter-y));
   margin-right: calc(-.5 * var(--bs-gutter-x));
   margin-left: calc(-.5 * var(--bs-gutter-x));
-  
 }
 
 .row>* {
@@ -19109,7 +19108,7 @@ code {
 }
 
 .card .card-body {
-  padding: 1.1rem 0.9rem;
+  padding: 2.5rem 2.5rem;
 }
 
 .card .card-body+.card-body {
@@ -21330,7 +21329,7 @@ dl li {
 
 .content-wrapper {
   background: #f2edf3;
-  padding:0.75rem 0.25rem;
+  padding: 0.75rem 0.25rem;
   width: 100%;
   -webkit-box-flex: 1;
   -ms-flex-positive: 1;
