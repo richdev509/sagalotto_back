@@ -21,8 +21,8 @@ class ticketController extends Controller
 
     public function creer_ticket(Request $request)
     {
-        
-        
+
+
         // prix total
         $amount_tot = 0;
         //tirage
@@ -31,7 +31,6 @@ class ticketController extends Controller
         // $array = $request->all();
         // $allBolete = $array['bolete'];
         //all mariage gratuit
-        $maryaj_all[] =[];
         //trouver compagnie
         $comp = company::where([
             ['id', '=', auth()->user()->compagnie_id],
@@ -77,8 +76,8 @@ class ticketController extends Controller
             ['compagnie_id', '=', auth()->user()->compagnie_id],
             ['etat', '=', '1'],
         ])->first();
-         //tchek if all tirage are open before proceed
-         foreach ($request->input('tirages') as $name) {
+        //tchek if all tirage are open before proceed
+        foreach ($request->input('tirages') as $name) {
             $tirage_record = tirage_record::where([
                 ['compagnie_id', '=', auth()->user()->compagnie_id],
                 ['is_active', '=', '1'],
@@ -91,11 +90,10 @@ class ticketController extends Controller
             if (!$tirage_record) {
                 return response()->json([
                     'status' => 'false',
-                    'message' =>$name['name'].' ferme',
+                    'message' => $name['name'] . ' ferme',
                     'code' => '404',
                 ], 404,);
             }
-            
         }
         //verify number that are blocked
         $resp = verify::verifierBoulesNonAutorisees($request);
@@ -105,8 +103,8 @@ class ticketController extends Controller
         $i = 0;
         //verify number that are limited in price
         $resp_prix = verify::verifierLimitePrixJouer($request);
-        if($resp_prix !='1'){
-             return $resp_prix;
+        if ($resp_prix != '1') {
+            return $resp_prix;
         }
         //$ticketId[];
         //tchek if all tirage are open before proceed
@@ -123,11 +121,10 @@ class ticketController extends Controller
             if (!$tirage_record) {
                 return response()->json([
                     'status' => 'false',
-                    'message' =>$name['name'].' ferme',
+                    'message' => $name['name'] . ' ferme',
                     'code' => '404',
                 ], 404,);
             }
-            
         }
         foreach ($request->input('tirages') as $name) {
 
@@ -152,7 +149,7 @@ class ticketController extends Controller
 
             $montant = verify::calculer_montant($request);
             $amount_tot = $amount_tot + $montant;
- 
+
             if ($i == '0') {
                 $created_at = Carbon::now();
                 $ticketId = time() . '-' . rand(1000, 9999);
@@ -167,46 +164,51 @@ class ticketController extends Controller
                 $boule[] = ['loto3' => $request->input('loto3')];
                 $boule[] = ['loto4' => $request->input('loto4')];
                 $boule[] = ['loto5' => $request->input('loto5')];
-                $boule[] = ['mariage-gratis' => []];
+                // $boule[] = ['mariage-gratis' =>[]];
             }
             //call mariage gratuit if is active
-            if($mg){
-               $mg_res = verify::generer_gratuit($mg, $montant, $name['name']);
-               
-               if($mg_res !=false){
-                $maryaj_all[] = $mg_res;
+            if ($mg) {
+                $mg_res = verify::generer_gratuit($mg, $montant, $name['name']);
 
-                    $indexToRemove = array_search(['mariage-gratis' => []], $boule);
-                    // Check if the element exists and then unset it
-                    if ($indexToRemove !== false) {
-                        unset($boule[$indexToRemove]);
-                        $boule[] = ['mariage-gratis' => [$mg_res]];
+                if ($mg_res != false) {
+                    $maryaj_all[] =  array_merge($mg_res);
+                    $mergedResults = [];
 
-                    }           
-                } 
+                    foreach ($maryaj_all as $drawResults) {
+                        // Add each draw's results to the merged list
+                        $mergedResults = array_merge($mergedResults, $drawResults);
+                    }
+                    if (array_key_exists(5, $boule)) {
+                        array_splice($boule, 5, 1);
+                        $boule[] = ['mariage-gratis' => $mg_res];
+                      
+                    }
+                }
                 unset($mg_res);
-   
             }
             $query = DB::table('ticket_vendu')->insertGetId([
                 'ticket_code_id' => $ticketId,
                 'tirage_record_id' => $tirage_record->id,
                 'boule' => json_encode($boule),
                 'amount' =>  $montant,
-                'commission' =>  ($montant * auth()->user()->percent) /100 ,
+                'commission' => ($montant * auth()->user()->percent) / 100,
 
                 'created_at' =>  $created_at,
             ]);
 
             $i++;
         }
-        if(!empty($maryaj_all)){
-            $indexToRemove = array_search(['mariage-gratis' => []], $boule);
-            // Check if the element exists and then unset it
-            if ($indexToRemove !== false) {
-                unset($boule[$indexToRemove]);
+        if (!empty($maryaj_all)) {
+            if (array_key_exists(5, $boule)) {
+                array_splice($boule, 5, 1);
             }
-            $boule[] = ['mariage-gratis' => [$maryaj_all]];
-             
+
+
+            $boule[] = ['mariage-gratis' => $mergedResults];
+           
+        }else{
+            $boule[] = ['mariage-gratis' => []];
+
         }
         return response()->json([
             'status' => 'true',
@@ -246,7 +248,7 @@ class ticketController extends Controller
                 ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
                 ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                 ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
-                ->select('ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain','ticket_vendu.is_payed as payer')
+                ->select('ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain', 'ticket_vendu.is_payed as payer')
                 ->get();
             if ($vente->count() > 0) {
                 return response()->json([
@@ -280,9 +282,9 @@ class ticketController extends Controller
 
             $validator = $request->validate([
                 "id" => "required",
-                 "check"=>"required"
+                "check" => "required"
             ]);
-            if($request->input('check')=='1'){
+            if ($request->input('check') == '1') {
                 $ticket = DB::table('ticket_code')->where([
                     ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
                     ['ticket_code.user_id', '=', auth()->user()->id],
@@ -291,42 +293,42 @@ class ticketController extends Controller
                     ['ticket_vendu.ticket_code_id', '=', $request->input('id')],
 
 
-    
+
                 ])
                     ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                     ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
                     ->select('ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain')
-                    ->get(); 
-                    if($ticket->count()> 0){
-                         $i =0;
-                        foreach($ticket as $row){
-                            if($i==0){
-                                $date = $row->date;
-                                $ticket_id = $row->ticket_id;
-                                $montant = $row->montant;
-                            }
-                         }
-                         return response()->json([
-                            'status' => 'true',
-                            "code" => '202',
-                            "ticket" => [
-                                'ticket_id'=>$ticket_id,
-                                'date'=>$date,
-                                'montant'=> $montant * $ticket->count()
-                            ]
-
-        
-                        ], 200,);
-                    }else{
-                        return response()->json([
-                            'status' => 'false',
-                            "code" => '404',
-                            "message" => 'ticket pas trouver'
-        
-                        ], 404,);
+                    ->get();
+                if ($ticket->count() > 0) {
+                    $i = 0;
+                    foreach ($ticket as $row) {
+                        if ($i == 0) {
+                            $date = $row->date;
+                            $ticket_id = $row->ticket_id;
+                            $montant = $row->montant;
+                        }
                     }
-            }else{
-               
+                    return response()->json([
+                        'status' => 'true',
+                        "code" => '202',
+                        "ticket" => [
+                            'ticket_id' => $ticket_id,
+                            'date' => $date,
+                            'montant' => $montant * $ticket->count()
+                        ]
+
+
+                    ], 200,);
+                } else {
+                    return response()->json([
+                        'status' => 'false',
+                        "code" => '404',
+                        "message" => 'ticket pas trouver'
+
+                    ], 404,);
+                }
+            } else {
+
                 $delai = DB::table('ticket_suppression')->where([
                     ['compagnie_id', '=', auth()->user()->compagnie_id],
                     ['is_active', '=', 1]
@@ -336,21 +338,21 @@ class ticketController extends Controller
                         'status' => 'false',
                         "code" => '404',
                         "message" => 'vous pouvez pas annuler'
-    
+
                     ], 404,);
                 }
-    
-    
+
+
                 $ticket = DB::table('ticket_code')->where([
                     ['compagnie_id', '=', auth()->user()->compagnie_id],
                     ['user_id', '=', auth()->user()->id],
-    
+
                     ['code', '=', $request->input('id')]
-    
+
                 ])->whereDate('created_at', Carbon::now())
-                ->first();
+                    ->first();
                 //ticket not exist
-                
+
                 if (!$ticket) {
                     return response()->json([
                         'status' => 'false',
@@ -358,25 +360,25 @@ class ticketController extends Controller
                         "message" => 'ticket id pas trouver'
                     ], 404,);
                 }
-    
+
                 //get tirage for compare date of end
                 $tirage_ids = DB::table('ticket_vendu')->where([
                     ['ticket_code_id', '=', $request->input('id')],
                     ['is_cancel', '=', 0],
                     ['is_delete', '=', 0],
-    
+
                 ])->select('tirage_record_id as tirage_id')
-                ->get();
-                
+                    ->get();
+
                 if ($tirage_ids->count() == 0) {
                     return response()->json([
                         'status' => 'false',
                         "code" => '404',
                         "message" => 'ticket deja annuler'
-    
+
                     ], 404,);
                 }
-                
+
                 //chek if tirage end or active
                 foreach ($tirage_ids as $id) {
                     $tirage_record = tirage_record::where([
@@ -393,12 +395,12 @@ class ticketController extends Controller
                             'status' => 'false',
                             "code" => '404',
                             "message" => 'tirage inactive'
-    
+
                         ], 404,);
                     }
                     //delai from directeur input
                     if ($delai->delai < 10) {
-                        $delai_conversion = "00:0". $delai->delai .":00";
+                        $delai_conversion = "00:0" . $delai->delai . ":00";
                     } else {
                         $delai_conversion = "00:" . $delai->delai . ":00";
                     }
@@ -407,13 +409,13 @@ class ticketController extends Controller
                     $now = Carbon::now();
                     $now = Carbon::parse($now);
                     $dif = $datet->diffInMinutes($now);
-    
+
                     if ($dif >= $delai->delai) {
                         return response()->json([
                             'status' => 'false',
                             "code" => '404',
                             "message" => 'dalai ecouler'
-    
+
                         ], 404,);
                     }
 
@@ -451,11 +453,11 @@ class ticketController extends Controller
                             'status' => 'false',
                             "code" => '404',
                             "message" => 'tirage deja ferme'
-    
+
                         ], 404,);
                     }
                 }
-    
+
                 $ticket_vendu = DB::table('ticket_vendu')->where([
                     ['ticket_code_id', '=', $request->input('id')]
                 ])->update([
@@ -465,14 +467,9 @@ class ticketController extends Controller
                     'status' => 'true',
                     "code" => '200',
                     "message" => 'ticket annule'
-    
+
                 ], 200,);
-
-
-
-
             }
-
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
@@ -516,16 +513,16 @@ class ticketController extends Controller
                     ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                     ->sum('winning');
 
-                    $commission = DB::table('ticket_code')->where([
-                        ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
-                        ['ticket_code.user_id', '=', auth()->user()->id],
-                        ['ticket_vendu.is_cancel', '=', 0],
-                        ['ticket_vendu.is_delete', '=', 0],
-    
-                    ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
-                        ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
-                        ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-                        ->sum('commission');
+                $commission = DB::table('ticket_code')->where([
+                    ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
+                    ['ticket_code.user_id', '=', auth()->user()->id],
+                    ['ticket_vendu.is_cancel', '=', 0],
+                    ['ticket_vendu.is_delete', '=', 0],
+
+                ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
+                    ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
+                    ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                    ->sum('commission');
 
 
                 $ticket_win = DB::table('ticket_code')->where([
@@ -553,37 +550,36 @@ class ticketController extends Controller
                     ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
                     ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                     ->get()->count();
-               
-               
-                    return response()->json([
+
+
+                return response()->json([
                     'status' => 'true',
                     "code" => '200',
-                    "date"=>Carbon::now()->format('y-m-d h:i:s'),
-                    'tirage'=>$request->input('tirage'),
+                    "date" => Carbon::now()->format('y-m-d h:i:s'),
+                    'tirage' => $request->input('tirage'),
                     "rapport" => $request->input('date_debut') . " au " . $request->input('date_fin'),
-                    "ticket_gain"=>$ticket_win,
-                    "ticket_perte"=>$ticket_lose,
-                    "ticket_total"=>$ticket_win + $ticket_lose,
-                    "vente"=>$vente,
-                    "perte"=>$perte,
-                    'commission'=>round($commission, 2),
-                    "balance"=>round($vente - ($perte+$commission), 2)
+                    "ticket_gain" => $ticket_win,
+                    "ticket_perte" => $ticket_lose,
+                    "ticket_total" => $ticket_win + $ticket_lose,
+                    "vente" => $vente,
+                    "perte" => $perte,
+                    'commission' => round($commission, 2),
+                    "balance" => round($vente - ($perte + $commission), 2)
 
 
                 ], 200,);
-            }else{
-                
+            } else {
+
                 $tirage_record = tirage_record::where([
                     ['compagnie_id', '=', auth()->user()->compagnie_id],
                     ['name', '=', $request->input('tirage')]
                 ])->first();
-                if(!$tirage_record){
+                if (!$tirage_record) {
                     return response()->json([
                         "status" => 'false',
                         "code" => '404',
-                        "message"=>"tirage non trouve"
+                        "message" => "tirage non trouve"
                     ], 404,);
-
                 }
                 $vente = DB::table('ticket_code')->where([
                     ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
@@ -609,19 +605,19 @@ class ticketController extends Controller
                     ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
                     ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                     ->sum('winning');
-                 
-                    $commission = DB::table('ticket_code')->where([
-                        ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
-                        ['ticket_code.user_id', '=', auth()->user()->id],
-                        ['ticket_vendu.is_cancel', '=', 0],
-                        ['ticket_vendu.is_delete', '=', 0],
-                        ['ticket_vendu.tirage_record_id', '=', $tirage_record->id],
-    
-    
-                    ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
-                        ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
-                        ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-                        ->sum('commission');
+
+                $commission = DB::table('ticket_code')->where([
+                    ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
+                    ['ticket_code.user_id', '=', auth()->user()->id],
+                    ['ticket_vendu.is_cancel', '=', 0],
+                    ['ticket_vendu.is_delete', '=', 0],
+                    ['ticket_vendu.tirage_record_id', '=', $tirage_record->id],
+
+
+                ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
+                    ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
+                    ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                    ->sum('commission');
 
                 $ticket_win = DB::table('ticket_code')->where([
                     ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
@@ -650,37 +646,23 @@ class ticketController extends Controller
                     ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
                     ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                     ->get()->count();
-               
-               
-                    return response()->json([
+
+
+                return response()->json([
                     'status' => 'true',
                     "code" => '200',
-                    "date"=>Carbon::now()->format('y-m-d h:i:s'),
-                    'tirage'=>$request->input('tirage'),
+                    "date" => Carbon::now()->format('y-m-d h:i:s'),
+                    'tirage' => $request->input('tirage'),
                     "rapport" => $request->input('date_debut') . " au " . $request->input('date_fin'),
-                    "ticket_gain"=>$ticket_win,
-                    "ticket_perte"=>$ticket_lose,
-                    "ticket_total"=>$ticket_win + $ticket_lose,
-                    "vente"=>$vente,
-                    "perte"=>$perte,
-                    "commission"=>round($commission, 2),
-                    "balance"=>round($vente - ($perte+$commission), 2)
+                    "ticket_gain" => $ticket_win,
+                    "ticket_perte" => $ticket_lose,
+                    "ticket_total" => $ticket_win + $ticket_lose,
+                    "vente" => $vente,
+                    "perte" => $perte,
+                    "commission" => round($commission, 2),
+                    "balance" => round($vente - ($perte + $commission), 2)
                 ], 200,);
-
-
-
-
-
-
-
-
             }
-
-
-
-           
-
-           
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
@@ -703,18 +685,18 @@ class ticketController extends Controller
                 ['is_active', '=', '1'],
                 ['name', '=', $request->input('tirage')]
             ])->first();
-            if($tirage_record){
+            if ($tirage_record) {
                 $vente = DB::table('ticket_code')->where([
                     ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
                     ['ticket_code.user_id', '=', auth()->user()->id],
                     ['ticket_vendu.is_cancel', '=', 0],
                     ['ticket_vendu.is_delete', '=', 0],
-                    ['ticket_vendu.ticket_code_id','=', $request->input('id')],
-                    ['ticket_vendu.tirage_record_id','=', $tirage_record->id]
+                    ['ticket_vendu.ticket_code_id', '=', $request->input('id')],
+                    ['ticket_vendu.tirage_record_id', '=', $tirage_record->id]
 
                 ])->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-                 ->first();
-                if($vente){
+                    ->first();
+                if ($vente) {
                     $ticket_vendu = DB::table('ticket_vendu')->where([
                         ['ticket_code_id', '=', $request->input('id')],
                         ['tirage_record_id', '=', $tirage_record->id]
@@ -725,31 +707,24 @@ class ticketController extends Controller
                         'status' => 'true',
                         "code" => '200',
                         "message" => 'ticket paye avec success'
-        
+
                     ], 200,);
-                
-                }else{
+                } else {
                     return response()->json([
                         'status' => 'false',
                         "code" => '404',
                         "message" => 'ticket non trouve'
-        
+
                     ], 404,);
-
                 }
-               
-               
-
-            }else{
+            } else {
                 return response()->json([
-                    'status'=>'false',
-                    'code'=>'404',
-                    'message'=>'Tirage non trouver'
+                    'status' => 'false',
+                    'code' => '404',
+                    'message' => 'Tirage non trouver'
 
                 ], 404,);
-
             }
-                  
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
@@ -804,6 +779,5 @@ class ticketController extends Controller
 
             ], 500,);
         }
-      
     }
 }
