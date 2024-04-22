@@ -152,7 +152,7 @@
         </nav>
     </div>
 
-    <div class="row">
+    <div class="row" style="margin-left: -40px; margin-right: -40px;">
 
 
 
@@ -286,7 +286,7 @@
                                     @endif
 
 
-                                    <td> {{ $row->created_at }} </td>
+                                    <td> {{ $row->date}} </td>
 
                                     <td class="text-center">
                                         <form action="delete-ticket?id={{ $row->id }}" method="get"

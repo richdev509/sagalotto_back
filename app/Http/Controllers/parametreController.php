@@ -124,19 +124,28 @@ class parametreController extends Controller
     }
     public function updatePrixMaryajGratis(Request $request)
     {
-        $request->montant;
+        
         try {
             // Récupérer le modèle existant que vous souhaitez mettre à jour
             $maryajIsset = maryajgratis::where('compagnie_id', session('loginId'))
                 ->first();
 
             if ($maryajIsset) {
+                
                 // Mettre à jour les champs nécessaires
-                $maryajIsset->update([
-                    'prix' => $request->montant,
-                ]);
+                $maryajIsset->prix = $request->input('montant');
+                $maryajIsset->q_inter_1 = $request->input('q_inter_1');
+                $maryajIsset->min_inter_1 = $request->input('min_inter_1');
+                $maryajIsset->max_inter_1 = $request->input('max_inter_1');
+                $maryajIsset->q_inter_2 = $request->input('q_inter_2');
+                $maryajIsset->min_inter_2 = $request->input('min_inter_2');
+                $maryajIsset->max_inter_2 = $request->input('max_inter_2');
+                $maryajIsset->q_inter_3 = $request->input('q_inter_3');
+                $maryajIsset->min_inter_3 = $request->input('min_inter_3');
+                $maryajIsset->max_inter_3 = $request->input('max_inter_3');
+                $maryajIsset->save(); 
 
-                notify()->success('Montant ajoute: ' . $request->montant);
+                notify()->success('tout paramet yo byen mofifye');
                 return redirect()->back();
             } else {
                 notify()->error('Gen yon pwoblem kontakte ekip teknik');

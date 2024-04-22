@@ -96,7 +96,7 @@
 
         </div>
         <div class="card-body">
-            <h4 class="card-title">Pri marya Gratis</h4>
+            <h4 class="card-title">Kantite ak enteval kob</h4>
             @if ($data)
             @else
                 <p class="card-description" id="alert1" style="color:red">Ou poko ka fixe prix maryajGratis, Svp ON
@@ -108,6 +108,63 @@
             <form class="forms-sample" action="{{ route('updatemontantmg') }}" method="POST">
                 @csrf
                 <div class="form-group">
+                    <div class="input-group">
+                        <select class="form-control"name="q_inter_1">
+
+                            <option>{{ $data->q_inter_1 }}</option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+
+
+                        </select>
+
+                        <input type="number" name="min_inter_1" class="form-control" placeholder="Min kob"
+                            value="{{ $data->min_inter_1 }}" required min="0">
+
+                        <input type="number" name="max_inter_1" value="{{ $data->max_inter_1 }}" class="form-control"
+                            placeholder="Max kob" required min="0">
+
+
+                    </div>
+                    <div class="input-group">
+                        <select class="form-control" name="q_inter_2">
+                            <option>{{ $data->q_inter_2 }}</option>
+                            <option>0</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                        </select>
+                        <input type="number" name="min_inter_2" value="{{ $data->min_inter_2 }}" class="form-control"
+                            placeholder="Min kob" required min="0">
+                        <input type="number" name="max_inter_2" value="{{ $data->max_inter_2 }}" class="form-control"
+                            placeholder="Min kob" required min="0">
+
+                    </div>
+                    <div class="input-group">
+                        <select class="form-control" name="q_inter_3">
+                            <option>{{ $data->q_inter_3 }}</option>
+
+                            <option>0</option>
+                            <option>9</option>
+                            <option>10</option>
+                            <option>11</option>
+                            <option>12</option>
+
+
+                        </select>
+
+                        <input type="number" name="min_inter_3" value="{{ $data->min_inter_3 }}" class="form-control"
+                            placeholder="Min kob" required min="0">
+
+                        <input type="number" name="max_inter_3" value="{{ $data->max_inter_3 }}" class="form-control"
+                            placeholder="Max kob" required min="0">
+
+
+                    </div>
+                    <h4 class="card-title">Pri marya Gratis</h4>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">HTG</span>
@@ -123,7 +180,9 @@
                             </span>
                         </div>
                         <input type="text" name="montant" class="form-control"
-                            aria-label="Montant (ajoute montant a mise a jour)" placeholder="Antre vale kob vle mete an">
+                            aria-label="Montant (ajoute montant a mise a jour)" value="{{ $data->prix }}"
+                            placeholder="Antre vale kob vle mete an">
+
                         @if ($data && $data->id)
                             <button type="submit" class="btn btn-gradient-primary me-2">Mete a jou</button>
                         @endif

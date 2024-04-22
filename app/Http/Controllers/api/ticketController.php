@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\company;
 use App\Models\User;
 use App\Http\Controllers\api\verificationController as verify;
+use App\Models\maryajgratis;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Models\tirage_record;
@@ -20,6 +21,8 @@ class ticketController extends Controller
 
     public function creer_ticket(Request $request)
     {
+        
+        
         // prix total
         $amount_tot = 0;
         //tirage
@@ -27,8 +30,8 @@ class ticketController extends Controller
         $ticketId = "";
         // $array = $request->all();
         // $allBolete = $array['bolete'];
-
-
+        //all mariage gratuit
+        $maryaj_all[] =[];
         //trouver compagnie
         $comp = company::where([
             ['id', '=', auth()->user()->compagnie_id],
@@ -69,6 +72,11 @@ class ticketController extends Controller
                 'code' => '404',
             ], 404,);
         }
+        //check if mariage gratuit is active
+        $mg = maryajgratis::where([
+            ['compagnie_id', '=', auth()->user()->compagnie_id],
+            ['etat', '=', '1'],
+        ])->first();
          //tchek if all tirage are open before proceed
          foreach ($request->input('tirages') as $name) {
             $tirage_record = tirage_record::where([
@@ -144,7 +152,7 @@ class ticketController extends Controller
 
             $montant = verify::calculer_montant($request);
             $amount_tot = $amount_tot + $montant;
-
+ 
             if ($i == '0') {
                 $created_at = Carbon::now();
                 $ticketId = time() . '-' . rand(1000, 9999);
@@ -161,6 +169,24 @@ class ticketController extends Controller
                 $boule[] = ['loto5' => $request->input('loto5')];
                 $boule[] = ['mariage-gratis' => []];
             }
+            //call mariage gratuit if is active
+            if($mg){
+               $mg_res = verify::generer_gratuit($mg, $montant, $name['name']);
+               
+               if($mg_res !=false){
+                $maryaj_all[] = $mg_res;
+
+                    $indexToRemove = array_search(['mariage-gratis' => []], $boule);
+                    // Check if the element exists and then unset it
+                    if ($indexToRemove !== false) {
+                        unset($boule[$indexToRemove]);
+                        $boule[] = ['mariage-gratis' => [$mg_res]];
+
+                    }           
+                } 
+                unset($mg_res);
+   
+            }
             $query = DB::table('ticket_vendu')->insertGetId([
                 'ticket_code_id' => $ticketId,
                 'tirage_record_id' => $tirage_record->id,
@@ -172,6 +198,15 @@ class ticketController extends Controller
             ]);
 
             $i++;
+        }
+        if(!empty($maryaj_all)){
+            $indexToRemove = array_search(['mariage-gratis' => []], $boule);
+            // Check if the element exists and then unset it
+            if ($indexToRemove !== false) {
+                unset($boule[$indexToRemove]);
+            }
+            $boule[] = ['mariage-gratis' => [$maryaj_all]];
+             
         }
         return response()->json([
             'status' => 'true',
@@ -291,6 +326,7 @@ class ticketController extends Controller
                         ], 404,);
                     }
             }else{
+               
                 $delai = DB::table('ticket_suppression')->where([
                     ['compagnie_id', '=', auth()->user()->compagnie_id],
                     ['is_active', '=', 1]
@@ -312,8 +348,9 @@ class ticketController extends Controller
                     ['code', '=', $request->input('id')]
     
                 ])->whereDate('created_at', Carbon::now())
-                    ->first();
+                ->first();
                 //ticket not exist
+                
                 if (!$ticket) {
                     return response()->json([
                         'status' => 'false',
@@ -329,8 +366,9 @@ class ticketController extends Controller
                     ['is_delete', '=', 0],
     
                 ])->select('tirage_record_id as tirage_id')
-                    ->get();
-                if ($tirage_ids->count() <= 0) {
+                ->get();
+                
+                if ($tirage_ids->count() == 0) {
                     return response()->json([
                         'status' => 'false',
                         "code" => '404',
@@ -338,6 +376,7 @@ class ticketController extends Controller
     
                     ], 404,);
                 }
+                
                 //chek if tirage end or active
                 foreach ($tirage_ids as $id) {
                     $tirage_record = tirage_record::where([
@@ -359,7 +398,7 @@ class ticketController extends Controller
                     }
                     //delai from directeur input
                     if ($delai->delai < 10) {
-                        $delai_conversion = "00: 0" . $delai->delai . ":00";
+                        $delai_conversion = "00:0". $delai->delai .":00";
                     } else {
                         $delai_conversion = "00:" . $delai->delai . ":00";
                     }
@@ -377,7 +416,7 @@ class ticketController extends Controller
     
                         ], 404,);
                     }
-    
+
                     if ($datet->minute < 10) {
                         $mminute = "0" . $datet->minute;
                     } else {
@@ -393,14 +432,16 @@ class ticketController extends Controller
                     } else {
                         $ssecond = $datet->second;
                     }
-    
+
                     $hour_creation = $hhour . ":" . $mminute . ":" . $ssecond;
                     // dd($hour_creation);
-    
+
                     // Parse the times into Carbon instances with a default date
                     $carbonTime1 = Carbon::createFromFormat('H:i:s', $hour_creation);
+
                     $carbonTime2 = Carbon::createFromFormat('H:i:s', $delai_conversion);
                     // Add the second time to the first time
+
                     $summedTime = $carbonTime1->addHours($carbonTime2->hour)->addMinutes($carbonTime2->minute)->addSeconds($carbonTime2->second);
                     // Format the summed time as desired (optional)
                     $timesum = $summedTime->format('H:i:s');

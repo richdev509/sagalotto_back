@@ -149,7 +149,9 @@ class CompanyController extends Controller
             ->sum('amount');
 
             $perte = DB::table('ticket_code')->where([
-                ['compagnie_id','=', Session('loginId')]
+                ['compagnie_id','=', Session('loginId')],
+                ['ticket_vendu.is_delete', '=', 0],
+                ['ticket_vendu.is_cancel', '=', 0],
             ])->whereDate('ticket_code.created_at','=', Carbon::now())
             ->join('ticket_vendu','ticket_vendu.ticket_code_id','=','ticket_code.code')
             ->sum('winning');
