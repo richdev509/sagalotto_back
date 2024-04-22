@@ -196,7 +196,7 @@ class ajouterLotGagnantController extends Controller
         }
         
         $Boulgnant = BoulGagnant::where('compagnie_id', session('loginId'))->where('tirage_id', $tirageId)->where('created_',$date)->first();
-       
+        
         if ($Boulgnant) {
             $reponseadd="";
             try {

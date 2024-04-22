@@ -80,13 +80,7 @@ class executeTirageController extends Controller
             } else {
                 return true; // Pas de codes de fiche trouvés
             }
-       
-        
-       
-
-        
-        
-
+    
     }
 
     public function execute($tirage,$date){
@@ -257,7 +251,7 @@ if($codes){
          ];*/
          $this->havegain=0;
      }
- return $bo;
+ 
     }
  
     public function maryaj($gagnants,$ficheData,$maryajPrice){
@@ -302,7 +296,7 @@ if($codes){
        ];*/
         $this->havegainmaryaj=0;
        }
-       return $do;
+       
  }
  
     public function loto3($gagnants,$ficheData,$loto3Price){
@@ -410,14 +404,14 @@ if($codes){
      foreach ($loto5Data as $fiche) {
         
          $boul1 = $fiche['boul1'];
-         $boul2=$fiche['boul2'];
+        // $boul2=$fiche['boul2'];
 
          if(isset($fiche['option1'])){
 
          
        $combinaisonGagnante = $gagnants->unchiffre . $gagnants->premierchiffre . $gagnants->secondchiffre;
  
-       if ($boul1 . $boul2 == $combinaisonGagnante) {
+       if ($boul1 == $combinaisonGagnante) {
      // La concaténation de 3 chiffres dans boul1 et boul2 correspond à la combinaison gagnante, multiplier le montant par le prix de "loto5"
      $montantGagne = $fiche['option1'] * $loto5Price;
      $this->totalGains=$this->totalGains+$montantGagne;
@@ -426,7 +420,7 @@ if($codes){
        }
     }
  
-     if (isset($fiche['option2']) && $boul1 . $boul2 == $gagnants->unchiffre . $gagnants->premierchiffre . $gagnants->troisiemechiffre) {
+     if (isset($fiche['option2']) && $boul1 == $gagnants->unchiffre . $gagnants->premierchiffre . $gagnants->troisiemechiffre) {
      // L'option2 est présente et correspond à la combinaison gagnante, multiplier le montant par le prix de l'option2
      $montantGagne = $fiche['option2'] * $loto5Price;
      $this->totalGains=$this->totalGains+$montantGagne;
@@ -435,7 +429,7 @@ if($codes){
      ];*/
      $this->havegainloto5=1;
      } 
-     if (isset($fiche['option3']) && $boul1 . $boul2 == substr($gagnants->premierchiffre, -1) . $gagnants->secondchiffre . $gagnants->troisiemechiffre) {
+     if (isset($fiche['option3']) && $boul1  == substr($gagnants->premierchiffre, -1) . $gagnants->secondchiffre . $gagnants->troisiemechiffre) {
      // L'option3 est présente et correspond à la combinaison gagnante, multiplier le montant par le prix de l'option3
      $montantGagne = $fiche['option3'] * $loto5Price;
      $this->totalGains=$this->totalGains+$montantGagne;
@@ -453,7 +447,7 @@ if($codes){
     $this->havegainloto5=0;
  }
  
- return $do;
+
  }
 
  public function mariagegratis($gagnants,$ficheData, $maryajgratis){
