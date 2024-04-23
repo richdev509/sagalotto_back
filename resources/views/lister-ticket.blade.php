@@ -585,7 +585,34 @@
 
                                     }
                                     //mariage gratuit
+                                    if (Array.isArray(key.mariage_gratis) && key.mariage_gratis.length > 0) {
+                                        key.mariage_gratis.forEach(function(item) {
+                                            const table = document.getElementById(
+                                                "mytable5");
 
+
+                                            const row = document.createElement(
+                                                "tr");
+
+                                            row.classList.add('content-clear');
+                                            const bo = document.createElement("td");
+                                            const prix = document.createElement(
+                                                "td");
+
+
+                                            bo.textContent = item.boul1 + 'X' + item
+                                                .boul2;
+                                            prix.textContent =  'Gagnant';
+                                            row.appendChild(bo);
+                                            row.appendChild(prix);
+                                            table.appendChild(row);
+                                           
+                                        });
+
+                                    } else {
+                                        //  $('#l5').remove();
+
+                                    }
 
                                     // Check if the value of the property is an array
 

@@ -182,7 +182,7 @@ class ticketController extends Controller
                         array_splice($boule, 5, 1);
                       
                     }
-                    $boule[] = ['mariage-gratis' => $mg_res];
+                    $boule[] = ['mariage_gratis' => $mg_res];
 
                 }
                 unset($mg_res);
