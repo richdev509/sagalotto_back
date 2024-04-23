@@ -32,7 +32,7 @@ class executeTirageController extends Controller
     public $havegainloto4=0;
     public $havegainloto5=0;
     public $montantparid=[];
-
+    public $havegainmaryajGratis=0;
     //debut fonction
 
     public function verification($tirage,$date){
@@ -148,7 +148,7 @@ if($fiches!=""){
     $this->totalgains[$i][]=$this->totalGains;
     $this->totalgains[$i][]=$codeSpecifique;
    
-     if($this->havegain==1 || $this->havegainmaryaj==1 || $this->havegainloto3==1 || $this->havegainloto4==1 || $this->havegainloto5==1){
+     if($this->havegain==1 || $this->havegainmaryaj==1 || $this->havegainloto3==1 || $this->havegainloto4==1 || $this->havegainloto5==1 || $this->havegainmaryajGratis==1){
         
         
 
@@ -164,6 +164,7 @@ if($fiches!=""){
          $this->havegainloto3=0;
          $this->havegainloto4=0; 
          $this->havegainloto5=0;
+         $this->havegainmaryajGratis=0;
  
      }else{
         $reponseRequette=TicketVendu::where('ticket_code_id',$codeSpecifique)->where('tirage_record_id',$tirage)
@@ -451,8 +452,8 @@ if($codes){
  }
 
  public function mariagegratis($gagnants,$ficheData, $maryajgratis){
-    if(isset($ficheData[5]['maryaj_gratis']) && !empty($ficheData[5]['maryaj_gratis'])){
-        $maryajData = $ficheData[5]['maryaj'];
+    if(isset($ficheData[5]['mariage_gratis']) && !empty($ficheData[5]['mariage_gratis'])){
+        $maryajData = $ficheData[5]['mariage_gratis'];
         
         foreach ($maryajData as $fiche) {
            
@@ -468,10 +469,15 @@ if($codes){
             ) {
                 $montantGagne =  $maryajgratis;
                 $this->totalGains=$this->totalGains+$montantGagne;
+                $this->havegainmaryajGratis=1;
+            }else{
+               
             }
             
         }
+    }else{
+        $this->havegainmaryajGratis=0;
     }
-    
+   
  }
 }
