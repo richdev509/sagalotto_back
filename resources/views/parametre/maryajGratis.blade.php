@@ -48,8 +48,8 @@
         .flipswitch-inner:after {
             content: "OFF";
             padding-right: 4px;
-            background-color: #EBEBEB;
-            color: #888888;
+            background-color: #db2424;
+            color: #f5f4f4;
             text-align: right;
         }
 
@@ -84,7 +84,7 @@
             @endif
             <div class="flipswitch" style="margin-top: 13px;">
                 <input type="checkbox" name="flipswitch" class="flipswitch-cb" id="fs"
-                    @if ($data && $data->etat == 1) checked @endif>
+                    @if ($data && $data->etat == 1) checked @endif >
                 <label class="flipswitch-label" for="fs">
                     <div class="flipswitch-inner"></div>
                     <div class="flipswitch-switch"></div>
@@ -109,57 +109,73 @@
                 @csrf
                 <div class="form-group">
                     <div class="input-group">
-                        <select class="form-control"name="q_inter_1">
-
-                            <option>{{ $data->q_inter_1 }}</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-
-
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Kantite maryaj</span>
+                        </div>
+                        <select class="form-control" name="q_inter_1">
+                            @if ($data)
+                                <option>{{ $data->q_inter_1 }}</option>
+                                <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
+                            @endif
+                            @for ($i = 0; $i <= 6; $i++)
+                                @if ($data && $data->q_inter_1 == $i) <!-- Assurez-vous que la valeur de données est ignorée -->
+                                    @continue
+                                @endif
+                                <option>{{ $i }}</option>
+                            @endfor
                         </select>
+                        
 
                         <input type="number" name="min_inter_1" class="form-control" placeholder="Min kob"
-                            value="{{ $data->min_inter_1 }}" required min="0">
+                            value="{{ isset($data) ? $data->min_inter_1 : '' }}" required min="0">
 
-                        <input type="number" name="max_inter_1" value="{{ $data->max_inter_1 }}" class="form-control"
+                        <input type="number" name="max_inter_1" value="{{ isset($data) ? $data->max_inter_1 : '' }}" class="form-control"
                             placeholder="Max kob" required min="0">
 
-
                     </div>
                     <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">KT maryaj</span>
+                        </div>
                         <select class="form-control" name="q_inter_2">
-                            <option>{{ $data->q_inter_2 }}</option>
-                            <option>0</option>
-                            <option>5</option>
-                            <option>6</option>
-                            <option>7</option>
-                            <option>8</option>
+                            @if ($data)
+                            <option>{{ $data->q_inter_2}}</option>
+                            <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
+                        @endif
+                        @for ($i = 7; $i <= 10; $i++)
+                            @if ($data && $data->q_inter_1 == $i) <!-- Assurez-vous que la valeur de données est ignorée -->
+                                @continue
+                            @endif
+                            <option>{{ $i }}</option>
+                        @endfor
                         </select>
-                        <input type="number" name="min_inter_2" value="{{ $data->min_inter_2 }}" class="form-control"
-                            placeholder="Min kob" required min="0">
-                        <input type="number" name="max_inter_2" value="{{ $data->max_inter_2 }}" class="form-control"
+                        <input type="number" name="min_inter_2" value="{{ isset($data) ? $data->min_inter_2 : '' }}" class="form-control" placeholder="Min kob" required min="0">
+                        <input type="number" name="max_inter_2" value="{{ isset($data) ? $data->max_inter_2 : '' }}" class="form-control"
                             placeholder="Min kob" required min="0">
 
                     </div>
                     <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Kantite maryaj</span>
+                        </div>
                         <select class="form-control" name="q_inter_3">
-                            <option>{{ $data->q_inter_3 }}</option>
-
-                            <option>0</option>
-                            <option>9</option>
-                            <option>10</option>
-                            <option>11</option>
-                            <option>12</option>
-
+                            @if ($data)
+                                <option>{{ $data->q_inter_3 }}</option>
+                                <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
+                            @endif
+                            @for ($i = 11; $i <= 15; $i++)
+                                @if ($data && $data->q_inter_1 == $i) <!-- Assurez-vous que la valeur de données est ignorée -->
+                                    @continue
+                                @endif
+                                <option>{{ $i }}</option>
+                            @endfor
 
                         </select>
 
-                        <input type="number" name="min_inter_3" value="{{ $data->min_inter_3 }}" class="form-control"
+                        <input type="number" name="min_inter_3" value="{{ isset($data) ? $data->min_inter_3 : '' }}" class="form-control"
                             placeholder="Min kob" required min="0">
 
-                        <input type="number" name="max_inter_3" value="{{ $data->max_inter_3 }}" class="form-control"
+                        <input type="number" name="max_inter_3" value="{{ isset($data) ? $data->min_inter_3 : '' }}" class="form-control"
                             placeholder="Max kob" required min="0">
 
 
@@ -180,7 +196,7 @@
                             </span>
                         </div>
                         <input type="text" name="montant" class="form-control"
-                            aria-label="Montant (ajoute montant a mise a jour)" value="{{ $data->prix }}"
+                            aria-label="Montant (ajoute montant a mise a jour)" value=" @if ($data) {{ $data->prix }} @endif"
                             placeholder="Antre vale kob vle mete an">
 
                         @if ($data && $data->id)
