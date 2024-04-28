@@ -114,6 +114,10 @@ Route::post('limitprixstore',[parametreController::class, 'limitprixstore'])->na
 Route::Post('editpassword', [CompanyController::class,'new_password']);
 
 
+
+
+Route::get('ajisteprix',[parametreController::class, 'ajoutlimitprixboulView']);
+Route::post('ajisteprix',[parametreController::class, 'saveprixlimit'])->name('saveprixlimit');
 });
 
 //Auth::routes();

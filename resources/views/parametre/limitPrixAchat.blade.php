@@ -222,6 +222,76 @@
         </div>
     </div>
 
+    <div class="col-lg-12 grid-margin stretch-card">
+    
+        <div class="card">
+            
+          <div class="card-body">
+            
+            <h4 class="card-title">Limit pri pa boul</h4>
+            
+            </p>
+            <div class="form-group">
+              <label for="dateFilter">Filtre par Type:</label>
+             
+              <select class="form-control" name="select" id="selectype" style="width: 192px;
+              border-color: blue;
+              outline-color: aqua;
+              color: #41374b;">
+              @foreach($listetirage as $lists)
+                <option value="{{$lists->tirage_id}}">
+                         {{$lists->name}}
+                </option>
+                @endforeach
+              </select>
+              <div style="margin-top: 20px;"></div>
+              <a href="/ajisteprix">
+                <button class="btn btn-primary me-1">Ajoute</button>
+                </a>
+          </div>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable">
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>boul</th>
+                      <th>Montan HTG</th>
+                      <th>Aksyon</th>
+                      
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($limitprixboul as $limit)
+                    <tr>
+
+                        <td>{{ $limit->type != null ? $limit->type : '' }}</td>
+                        <td> {{$limit->opsyon != null ? $limit->opsyon : ''}}:{{ $limit->boul != null ? $limit->boul : '' }}
+                        </td>
+                        <td> {{ $limit->montant != null ? $limit->montant : '' }}</td>
+                        
+                        <td class="text-end">
+                          <form action="">
+                              <input type="hidden" name="id" value="{{ $limit->id != null ? $limit->id : '' }}" />
+                              <button type="submit" style="color: rgb(0, 132, 255);"><i class="mdi mdi-table-edit"></i></button>
+                          </form>
+                          <form action="" style="display: flex;gap:3px;">
+                            <input type="hidden" name="id" value="{{ $limit->id != null ? $limit->id : '' }}" />
+                            <button type="submit" style="color: red;"><i class="mdi mdi-delete"></i></button>
+                          </form>
+                        </td>
+                    </tr>
+                   @endforeach
+                    
+                  </tbody>
+                </table>
+            </div>
+    
+    
+    
+          </div>
+        </div>
+    </div>
+
 
 
 @stop

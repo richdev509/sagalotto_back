@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\maryajgratis;
 use App\Models\RulesOne;
 use App\Models\limitprixachat;
+use App\Models\limitprixboul;
+use App\Models\tirage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
+use App\Models\tirage_record;
 
 class parametreController extends Controller
 {
@@ -30,10 +33,112 @@ class parametreController extends Controller
             $limitprix= limitprixachat::where('compagnie_id', session('loginId'))->first();
 
         }
-        return view('parametre.limitPrixAchat', compact('limitprix'));
+        $listetirage=tirage_record::where('compagnie_id',session('loginId'))->get();
+        $limitprixboul=limitprixboul::where('compagnie_id',session('loginId'))->get();
+        return view('parametre.limitPrixAchat', compact('limitprix','listetirage','limitprixboul'));
     }
 
+    public function ajoutlimitprixboulView(){
+        $list=tirage_record::where('compagnie_id',session('loginId'))->get();
+        $listjwet=DB::table('listejwet')->get();
+        return view('parametre.ajouterLimitPrixBoul', compact('list','listjwet'));
+    }
 
+    public function saveprixlimit(Request $request){
+                $reponse=$this->regles($request);
+                $nametirage=tirage_record::where('compagnie_id',session('loginId'))->where('id',$request->tirage)->value('name');
+                $nameAssociatedWithType = DB::table('listejwet')->where('id', $request->type)->value('name');
+                //verification si opsyon koresponn ak boul
+                if($reponse==false){
+                    notify()->error('verifye ke boul korespon ak opsyon an');
+                return redirect()->back();
+                }else{
+                       //verifier si limit 10 boul lan rive 
+                    $count = DB::table('limit_prix_boul')->where('opsyon',$nameAssociatedWithType )->where('compagnie_id',session('loginId'))->count();
+                    if($count==10){
+                        notify()->error('Ou rive nan limit 10 boul la deja pou option sa');
+                        return redirect()->back();
+                    }
+                       //verifier si boul sa existe deja pou 
+                    $boule=DB::table('limit_prix_boul')->where('opsyon',$nameAssociatedWithType)->where('compagnie_id',session('loginId'))->where('tirage_record',$request->tirage)->first();
+                    if($boule){
+                        notify()->error('boul sa ekziste deja pou Tiraj sa e opsyon sa sa');
+                        return redirect()->back();
+                    }
+                    
+                        $reponse = limitprixboul::create([
+                            'tirage_record' => $request->tirage,
+                            'compagnie_id' => session('loginId'),
+                            'type' => $nametirage,
+                            'opsyon' => $nameAssociatedWithType,
+                            'boul' => $request->chiffre,
+                            'montant' => $request->montant,
+                        ]);
+                    
+                    
+
+                    if($reponse){
+                      
+                notify()->success('Ajoute avek sikse');
+                return redirect()->route('limitprix');
+                    }
+                }
+    }
+
+    public function verificationExiste(){
+
+    }
+    public function regles($request){
+        $type = request()->input('type');
+        $value = $request->chiffre;
+        $nameAssociatedWithType = DB::table('listejwet')->where('id', $type)->value('name');
+        
+        switch ($nameAssociatedWithType) {
+            case 'Bolet':
+                $mg=strlen($value);
+               
+                if($mg==2){
+                return true;
+            }else{
+                return false;
+            }
+            case 'Maryaj':
+                $mg=strlen($value);
+               
+                if($mg==4){
+                    return true;
+                }else{
+                    return false;
+                }
+            case 'Loto3':
+                $mg=strlen($value);
+               
+                if($mg==3){
+                    return true;
+                }else{
+                    return false;
+                }
+            case 'Loto4':
+                $mg=strlen($value);
+               
+                if($mg==4){
+                    return true;
+                }else{
+                    return false;
+                }
+            case 'Loto5':
+                $mg=strlen($value);
+               
+                if($mg==5){
+                    return true;
+                }else{
+                    return false;
+                }
+            default:
+                return false; // Si le nom n'est pas reconnu, la validation échoue
+        }
+
+    }
     public function limitprixstore(Request $request){
         if(!Empty($request->active) && $request->prix>0 && !Empty($request->prix)){
          $active=true;
