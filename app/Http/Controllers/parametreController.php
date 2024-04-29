@@ -34,8 +34,12 @@ class parametreController extends Controller
 
         }
         $listetirage=tirage_record::where('compagnie_id',session('loginId'))->get();
-        $limitprixboul=limitprixboul::where('compagnie_id',session('loginId'))->get();
-        return view('parametre.limitPrixAchat', compact('limitprix','listetirage','limitprixboul'));
+        $limitprixboul=limitprixboul::where('compagnie_id',session('loginId'))->orderBy('tirage_record') // Triez par tirage_record
+        ->get();
+      
+
+        $listjwet=DB::table('listejwet')->get();
+        return view('parametre.limitPrixAchat', compact('limitprix','listetirage','limitprixboul','listjwet'));
     }
 
     public function ajoutlimitprixboulView(){
@@ -60,7 +64,8 @@ class parametreController extends Controller
                         return redirect()->back();
                     }
                        //verifier si boul sa existe deja pou 
-                    $boule=DB::table('limit_prix_boul')->where('opsyon',$nameAssociatedWithType)->where('compagnie_id',session('loginId'))->where('tirage_record',$request->tirage)->first();
+                    $boule=DB::table('limit_prix_boul')->where('opsyon',$nameAssociatedWithType)->where('compagnie_id',session('loginId'))->where('tirage_record',$request->tirage)->where('boul',$request->chiffre)->first();
+                     
                     if($boule){
                         notify()->error('boul sa ekziste deja pou Tiraj sa e opsyon sa sa');
                         return redirect()->back();
@@ -84,10 +89,18 @@ class parametreController extends Controller
                     }
                 }
     }
-
-    public function verificationExiste(){
-
+   //fonction de suppresion dans la table limitprixboul
+    public function modifierLimitePrix(Request $request){
+        $reponse=limitprixboul::where('id',$request->id)->where('compagnie_id',session('loginId'))->delete();
+        if($reponse){
+            notify()->success('Siprime avek sikse');
+            return redirect()->route('limitprix');
+        }else{
+            notify()->error('Sipresyon pa posib, sil pesiste kontakte ekip teknik');
+            return redirect()->back();
+        }
     }
+
     public function regles($request){
         $type = request()->input('type');
         $value = $request->chiffre;

@@ -232,18 +232,35 @@
             
             </p>
             <div class="form-group">
-              <label for="dateFilter">Filtre par Type:</label>
+
+                <div style="display: flex;gap:8px;flex-wrap:wrap;">
+              <label for="dateFilter">Filtre par Tiraj:</label>
              
-              <select class="form-control" name="select" id="selectype" style="width: 192px;
+              <select class="form-control" name="selecttirage" id="selecttiraj" style="width: 192px;
               border-color: blue;
-              outline-color: aqua;
+              outline-color: rgb(23, 9, 82);
               color: #41374b;">
+              <option></option>
               @foreach($listetirage as $lists)
-                <option value="{{$lists->tirage_id}}">
+                <option value="{{$lists->name}}">
                          {{$lists->name}}
                 </option>
                 @endforeach
               </select>
+              <label for="dateFilter">Filtre par opsyon:</label>
+             
+              <select class="form-control" name="selectoption" id="selectopsyon" style="width: 192px;
+              border-color: blue;
+              outline-color: rgb(42, 13, 124);
+              color: #41374b;">
+              <option></option>
+              @foreach($listjwet as $jwet)
+                <option value="{{$jwet->name}}">
+                         {{$jwet->name}}
+                </option>
+                @endforeach
+              </select>
+            </div>
               <div style="margin-top: 20px;"></div>
               <a href="/ajisteprix">
                 <button class="btn btn-primary me-1">Ajoute</button>
@@ -253,7 +270,7 @@
                 <table class="table table-bordered" id="dataTable">
                   <thead>
                     <tr>
-                      <th>Type</th>
+                      <th>Tiraj</th>
                       <th>boul</th>
                       <th>Montan HTG</th>
                       <th>Aksyon</th>
@@ -270,11 +287,13 @@
                         <td> {{ $limit->montant != null ? $limit->montant : '' }}</td>
                         
                         <td class="text-end">
-                          <form action="">
+                          <form action="" style="display:none;">
+                            @csrf
                               <input type="hidden" name="id" value="{{ $limit->id != null ? $limit->id : '' }}" />
                               <button type="submit" style="color: rgb(0, 132, 255);"><i class="mdi mdi-table-edit"></i></button>
                           </form>
-                          <form action="" style="display: flex;gap:3px;">
+                          <form action="{{route('modifierLimitePrix')}}" method="POST" style="display: flex;gap:3px;">
+                            @csrf
                             <input type="hidden" name="id" value="{{ $limit->id != null ? $limit->id : '' }}" />
                             <button type="submit" style="color: red;"><i class="mdi mdi-delete"></i></button>
                           </form>
@@ -291,7 +310,44 @@
           </div>
         </div>
     </div>
+    <script>
+        // Fonction pour filtrer les données du tableau
+        function filterTable() {
+            var selecttiraj = document.getElementById('selecttiraj').value;
+            console.log(selecttiraj);
+            var selectopsyon = document.getElementById('selectopsyon').value;
+            var rows = document.getElementById('dataTable').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 
+            for (var i = 0; i < rows.length; i++) {
+                var tirajCell = rows[i].getElementsByTagName('td')[0];
+                var boulCell = rows[i].getElementsByTagName('td')[1];
+
+                var tirajText = tirajCell.textContent || tirajCell.innerText;
+                var boulText = boulCell.textContent || boulCell.innerText;
+
+                // Si le filtre pour tiraj est sélectionné et ne correspond pas à la valeur de la cellule de tiraj, masquer la ligne
+                if (selecttiraj && tirajText.trim() !== selecttiraj) {
+                    rows[i].style.display = 'none';
+                    continue; // Passer à la prochaine ligne
+                }
+
+                // Si le filtre pour opsyon est sélectionné et ne correspond pas à la valeur de la cellule de boul, masquer la ligne
+                if (selectopsyon && boulText.indexOf(selectopsyon) === -1) {
+                    rows[i].style.display = 'none';
+                    continue; // Passer à la prochaine ligne
+                }
+
+                // Si la ligne correspond aux filtres, afficher la ligne
+                rows[i].style.display = '';
+            }
+        }
+
+        // Écouteurs d'événements pour les changements dans les selects
+        document.getElementById('selecttiraj').addEventListener('change', filterTable);
+        document.getElementById('selectopsyon').addEventListener('change', filterTable);
+
+       
+    </script>
 
 
 @stop
