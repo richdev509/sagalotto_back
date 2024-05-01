@@ -51,7 +51,39 @@
           </div>
         </div>
       </div>
-     
+      <div class="row">
+        <div class="col-md-7 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Statistik</h4>
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      
+                      <th> Tirage</th>
+                      <th> Nombre Fich </th>
+                      <th> Gain</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                     
+                      <td>New York</td>
+                      <td> 400</td>
+                      <td>
+                        400HTG
+                      </td>
+                    </tr>
+                    
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
       <div class="row">
         <div class="col-12 grid-margin">
           <div class="card">
