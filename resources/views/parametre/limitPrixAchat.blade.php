@@ -273,6 +273,7 @@
                       <th>Tiraj</th>
                       <th>boul</th>
                       <th>Montan HTG</th>
+                      <th>General
                       <th>Aksyon</th>
                       
                     </tr>
@@ -285,7 +286,17 @@
                         <td> {{$limit->opsyon != null ? $limit->opsyon : ''}}:{{ $limit->boul != null ? $limit->boul : '' }}
                         </td>
                         <td> {{ $limit->montant != null ? $limit->montant : '' }}</td>
-                        
+                        <td style="color: green;display: flex;
+                        justify-content: space-between;">{{ $limit->is_general != 0 ? 'YES' : 'No' }}
+                          <form action="{{route('up-g')}}" method="POST">
+                            @csrf
+                        <input type="hidden" name="id" value="{{ $limit->id != null ? $limit->id : '' }}" />
+                        <button><i class="mdi mdi-file-check btn-icon-append" style="
+                            color: blue;
+                        "></i></button>
+                          </form>    
+                    </td>
+
                         <td class="text-end">
                           <form action="" style="display:none;">
                             @csrf

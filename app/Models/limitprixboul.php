@@ -18,6 +18,7 @@ class limitprixboul extends Model
         'opsyon',
         'boul',
         'montant',
+        'is_general',
         'updated_at',
         'created_at',
         

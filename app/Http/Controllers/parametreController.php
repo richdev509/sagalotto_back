@@ -54,7 +54,7 @@ class parametreController extends Controller
                 $nameAssociatedWithType = DB::table('listejwet')->where('id', $request->type)->value('name');
                 //verification si opsyon koresponn ak boul
                 if($reponse==false){
-                    notify()->error('verifye ke boul korespon ak opsyon an');
+                    notify()->error('verifye ke boul la korespon ak opsyon an, oubyen li ajoute deja');
                 return redirect()->back();
                 }else{
                        //verifier si limit 10 boul lan rive 
@@ -70,6 +70,8 @@ class parametreController extends Controller
                         notify()->error('boul sa ekziste deja pou Tiraj sa e opsyon sa sa');
                         return redirect()->back();
                     }
+                    
+                    //$this->vericationMaryajDouble($request,$request->type,$nameAssociatedWithType);
                     
                         $reponse = limitprixboul::create([
                             'tirage_record' => $request->tirage,
@@ -101,6 +103,20 @@ class parametreController extends Controller
         }
     }
 
+    public function vericationMaryajDouble($request,$type,$nameAssociatedWithType){
+        $chiffre=$request->chiffre;
+        $deuxPremiersChiffres = substr($chiffre, 0, 2);
+        $deuxDerniersChiffres = substr($chiffre, -2);
+        $chiffresFinal = $deuxDerniersChiffres.$deuxPremiersChiffres;
+        
+        $boule=DB::table('limit_prix_boul')->where('opsyon',$nameAssociatedWithType)->where('compagnie_id',session('loginId'))->where('tirage_record',$request->tirage)->where('boul',$chiffresFinal)->first();
+       
+        if($boule){
+           return true;
+        }else{
+            return false;
+        }        
+    }
     public function regles($request){
         $type = request()->input('type');
         $value = $request->chiffre;
@@ -116,10 +132,17 @@ class parametreController extends Controller
                 return false;
             }
             case 'Maryaj':
+                
                 $mg=strlen($value);
                
                 if($mg==4){
+                    $reponse=$this->vericationMaryajDouble($request,$type,$nameAssociatedWithType);
+                    if($reponse==true){
+                        
+                        return false;
+                    }else{
                     return true;
+                }
                 }else{
                     return false;
                 }
@@ -359,4 +382,37 @@ class parametreController extends Controller
             return redirect()->back();
         }
     }
+
+
+    //gestion plan
+    public function viewinfo(Request $request){
+        $data=DB::table('companies')->where('id',session('loginId'))->first();
+        return view('superadmin.plan', compact('data'));
+    }
+
+     //update is_generale
+     public function update_general(Request $request){
+        $data=limitprixboul::where('id',$request->id)->where('compagnie_id',session('loginId'))->first();
+         // dd($request->id);
+        if($data){
+            $var=0;
+            $is_generale=$data->is_general;
+
+            if($is_generale==0){
+               $var=1;
+            }
+           $reponse=$data->update([
+                  'is_general'=>$var,  
+           ]);
+           if($reponse){
+            notify()->success('Modifikasyon sikse');
+            return redirect()->back();
+           }else{
+            notify()->error('Erreur');
+            return redirect()->back();
+           }
+        }
+
+     }
+
 }
