@@ -23,6 +23,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 Route::get('/sagacetech', function () {
     return view('saga');
 });
@@ -119,8 +120,10 @@ Route::Post('editpassword', [CompanyController::class,'new_password']);
 Route::get('ajisteprix',[parametreController::class, 'ajoutlimitprixboulView']);
 Route::post('ajisteprix',[parametreController::class, 'saveprixlimit'])->name('saveprixlimit');
 Route::post('m-l-p',[parametreController::class, 'modifierLimitePrix'])->name('modifierLimitePrix');
+
+
+Route::get('/plan', [parametreController::class, 'viewinfo']) ;
+Route::post('/up-g', [parametreController::class, 'update_general'])->name('up-g');
+
 });
 
-//Auth::routes();
-
-//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
