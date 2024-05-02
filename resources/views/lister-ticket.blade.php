@@ -175,16 +175,29 @@
                             </div>
                         </div>
 
-                        <div class="col-12 col-sm-4">
+                        <div class="col-12 col-sm-4" style="margin-right: -10px;">
                             <div class="form-group local-forms">
                                 <label for="dateFilter">Bank</label>
-                                <select class="form-control selectpicker" name="bank" data-live-search="true"
+                                <select class="form-control selectpicker"  name="bank" data-live-search="true"
                                     value="{{ old('bank') }}">
                                     <option>Tout</option>
                                     @foreach ($vendeur as $row)
                                         <option value="{{ $row->id }}">{{ $row->bank_name }}</option>
                                     @endforeach
                                 </select>
+                                <label for="dateFilter" style="margin-top: 5px;">Tirage</label>
+                                <select class="form-control selectpicker" name="tirage" data-live-search="true"
+                                    value="{{ old('tirage') }}">
+                                    <option>Tout</option>
+                                    @foreach ($tirage as $row)
+                                        <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                    @endforeach
+                                </select>
+                               
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="form-group local-forms">
                                 <label for="dateFilter" style="margin-top: 5px;">#fich</label>
 
                                 <input style="height:10px;margin-top: 10px;" type="text" class="form-control"
@@ -231,26 +244,34 @@
                                     <td class="py-1">
                                         {{ $row->bank }}
                                     </td>
-                                    @if ($row->tirage == 'New York Soir')
+                                    @if ($row->tirage == 'NewYork Soir')
                                         <td style="color:blue;">
                                             {{ $row->tirage }}
                                         </td>
-                                    @elseif($row->tirage == 'New York Matin')
+                                    @elseif($row->tirage == 'NewYork Matin')
                                         <td style="color: #06aafd">
                                             {{ $row->tirage }}
                                         </td>
                                     @elseif($row->tirage == 'Florida Matin')
-                                        <td style="color: #58dc0b">
+                                        <td style="color: #53ca8c">
                                             {{ $row->tirage }}
                                         </td>
                                     @elseif($row->tirage == 'Florida Soir')
                                         <td style="color: #30be64">
                                             {{ $row->tirage }}
                                         </td>
-                                    @else
-                                        <td>
+                                    @elseif($row->tirage == 'Georgia Matin')
+                                        <td style="color: #be3030">
                                             {{ $row->tirage }}
                                         </td>
+                                    @elseif($row->tirage == 'Georgia ApresMidi')
+                                        <td style="color: #fa8e8e">
+                                            {{ $row->tirage }}
+                                        </td>
+                                    @else
+                                    <td>
+                                        {{ $row->tirage }}
+                                    </td>
                                     @endif
                                     <td class="text-center">
                                         <form action="boule-show" method="GET" class="form">
@@ -286,7 +307,7 @@
                                     @endif
 
 
-                                    <td> {{ $row->date}} </td>
+                                    <td> {{ $row->date }} </td>
 
                                     <td class="text-center">
                                         <form action="delete-ticket?id={{ $row->id }}" method="get"
@@ -585,7 +606,8 @@
 
                                     }
                                     //mariage gratuit
-                                    if (Array.isArray(key.mariage_gratis) && key.mariage_gratis.length > 0) {
+                                    if (Array.isArray(key.mariage_gratis) && key
+                                        .mariage_gratis.length > 0) {
                                         key.mariage_gratis.forEach(function(item) {
                                             const table = document.getElementById(
                                                 "mytable5");
@@ -602,11 +624,11 @@
 
                                             bo.textContent = item.boul1 + 'X' + item
                                                 .boul2;
-                                            prix.textContent =  'Gagnant';
+                                            prix.textContent = 'Gagnant';
                                             row.appendChild(bo);
                                             row.appendChild(prix);
                                             table.appendChild(row);
-                                           
+
                                         });
 
                                     } else {
@@ -619,7 +641,7 @@
                                 });
 
                             } else {
-                                
+
                             }
 
 

@@ -33,7 +33,7 @@
                         <a class="nav-link dropdown-toggle" id="profileDropdown" href="#"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="nav-profile-img">
-                                <img src="{{ session('logo')}}" alt="image">
+                                <img src="{{ session('logo') }}" alt="image">
                                 <span class="availability-status online"></span>
                             </div>
                             <div class="nav-profile-text">
@@ -41,21 +41,19 @@
                             </div>
                         </a>
                         <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
-                            <a class="dropdown-item" href="#">
-                                <i class="mdi mdi-cached me-2 text-success"></i> Activity Log </a>
+
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="/logout">
-                                <i class="mdi mdi-logout me-2 text-primary"></i> Signout </a>
+                                <i class="mdi mdi-logout me-2 text-primary"></i>Dekonekte</a>
                         </div>
                     </li>
                     <li class="nav-item nav-profile dropdown">
 
                         <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
-                            <a class="dropdown-item" href="#">
-                                <i class="mdi mdi-cached me-2 text-success"></i> Activity Log </a>
+
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="/logout">
-                                <i class="mdi mdi-logout me-2 text-primary"></i> Signout </a>
+                                <i class="mdi mdi-logout me-2 text-primary"></i> Dekonekte </a>
                         </div>
                     </li>
                     <li class="nav-item d-none d-lg-block full-screen-link">
@@ -119,7 +117,7 @@
                         </div>
                     </li>
                     <li class="nav-item nav-logout d-none d-lg-block">
-                        <a class="nav-link"  href="/logout">
+                        <a class="nav-link" href="/logout">
                             <i class="mdi mdi-power"></i>
                         </a>
                     </li>
@@ -139,7 +137,7 @@
                     <li class="nav-item nav-profile">
                         <a href="#" class="nav-link">
                             <div class="nav-profile-image">
-                                <img src="{{session('logo')}}" alt="profile">
+                                <img src="{{ session('logo') }}" alt="profile">
                                 <span class="login-status online"></span>
                                 <!--change to offline or busy as needed-->
                             </div>
@@ -196,14 +194,14 @@
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link" href="/block">Bloke/Debloke
                                     </a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="{{ route('limitprix') }}">Ajiste Limit Prix Achat
+                                <li class="nav-item"> <a class="nav-link" href="{{ route('limitprix') }}">Ajiste
+                                        Limit Prix Achat
                                     </a></li>
                             </ul>
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link"  href="rapport"
-                            aria-controls="ui-basic">
+                        <a class="nav-link" href="rapport" aria-controls="ui-basic">
                             <span class="menu-title">Rapo</span>
 
                             <i class="mdi mdi-chart-line menu-icon"></i>
@@ -252,10 +250,11 @@
                                 <li class="nav-item"> <a class="nav-link" href="{{ route('maryajGratis') }}">Maryaj
                                         Gratis
                                     </a></li>
-                                <li class="nav-item"> <a class="nav-link" href="{{ route('ajisteprilo') }}">Ajiste pri premye lo
+                                <li class="nav-item"> <a class="nav-link" href="{{ route('ajisteprilo') }}">Ajiste
+                                        pri premye lo
                                     </a></li>
-                                    
-                                <li class="nav-item"> <a class="nav-link" href="{{ route('lotconfig') }}">Lot 
+
+                                <li class="nav-item"> <a class="nav-link" href="{{ route('lotconfig') }}">Lot
                                         Konfigirasyon
                                     </a></li>
 
@@ -278,7 +277,7 @@
                 <footer class="footer">
                     <div class="container-fluid d-flex justify-content-between">
                         <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright ©
-                            Sagalotto.com 2023</span>
+                            Sagalotto.com 2024</span>
                         <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"> Ou bezwen pwop sistèm ou contakte
                             nou <a href="https://www.bootstrapdash.com/bootstrap-admin-template/"
                                 target="_blank"></a>+50914231234</span>
@@ -292,7 +291,11 @@
     </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
+
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+
+    
+   
     <!-- endinject -->
     <!-- Plugin js for this page -->
     <script src="assets/vendors/chart.js/Chart.min.js"></script>

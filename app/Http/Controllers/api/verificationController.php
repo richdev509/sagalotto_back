@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\limitprixachat;
+use App\Models\limitprixboul;
 use Illuminate\Http\Request;
 use App\Models\switchboul;
 use App\Models\tirage;
@@ -72,6 +73,8 @@ class verificationController extends Controller
         $limit = limitprixachat::where([
             ['compagnie_id', '=', auth()->user()->compagnie_id]
         ])->first();
+
+
         if (!empty($request->input('bolete'))) {
 
 
@@ -212,6 +215,267 @@ class verificationController extends Controller
                             'code' => '404'
 
                         ], 404,);
+                    }
+                }
+            }
+        }
+        return '1';
+    }
+    public static function verifierLimitePrixBoule(Request $request, $tirage)
+    {
+
+        if (!empty($request->input('bolete'))) {
+
+
+            foreach ($request->input('bolete') as $value) {
+                $limit_boul = limitprixboul::where([
+                    ['compagnie_id', '=', auth()->user()->compagnie_id],
+                    ['opsyon', '=', 'Bolet'],
+                    ['type', '=', $tirage],
+                    ['boul', '=', $value['boul1']]
+
+
+                ])->first();
+                if ($limit_boul) {
+
+                    if ($limit_boul->montant < $value['montant']) {
+                        return response()->json([
+                            'status' => 'false',
+                            'message' => [
+                                'info' => 'pri a depase limit pou boul sa',
+                                'boule' => 'ou paka jwe ' . $value['boul1'] . ' pou plis ke ' . $limit_boul->montant,
+
+                            ],
+                            'code' => '404'
+
+                        ], 404,);
+                    }
+                    if ($limit_boul->is_general == 1) {
+                        $limit_boul->montant = $limit_boul->montant - $value['montant'];
+                        $limit_boul->save();
+                    }
+                }
+            }
+        }
+        if (!empty($request->input('maryaj'))) {
+
+            foreach ($request->input('maryaj') as $value) {
+                $limit_boul = limitprixboul::where([
+                    ['compagnie_id', '=', auth()->user()->compagnie_id],
+                    ['opsyon', '=', 'Maryaj'],
+                    ['type', '=', $tirage],
+                    ['boul', '=', $value['boul1'] . $value['boul2']]
+
+                ])->orwhere([
+                    ['compagnie_id', '=', auth()->user()->compagnie_id],
+                    ['opsyon', '=', 'Maryaj'],
+                    ['type', '=', $tirage],
+                    ['boul', '=', $value['boul2'] . $value['boul1']]
+
+                ])->first();
+                if ($limit_boul) {
+
+                    if ($limit_boul->montant < $value['montant']) {
+                        return response()->json([
+                            'status' => 'false',
+                            'message' => [
+                                'info' => 'pri a depase limit pou boul sa',
+                                'boule' => 'ou paka jwe ' . $value['boul1'] . 'x' . $value['boul2'] . ' pou plis ke ' . $limit_boul->montant,
+
+                            ],
+                            'code' => '404'
+
+                        ], 404,);
+                    }
+                    if ($limit_boul->is_general == 1) {
+                        $limit_boul->montant = $limit_boul->montant - $value['montant'];
+                        $limit_boul->save();
+                    }
+                }
+            }
+        }
+        if (!empty($request->input('loto3'))) {
+            foreach ($request->input('loto3') as $value) {
+                $limit_boul = limitprixboul::where([
+                    ['compagnie_id', '=', auth()->user()->compagnie_id],
+                    ['opsyon', '=', 'Loto3'],
+                    ['type', '=', $tirage],
+                    ['boul', '=', $value['boul1']]
+
+
+                ])->first();
+                if ($limit_boul) {
+
+                    if ($limit_boul->montant < $value['montant']) {
+                        return response()->json([
+                            'status' => 'false',
+                            'message' => [
+                                'info' => 'pri a depase limit pou boul sa',
+                                'boule' => 'ou paka jwe ' . $value['boul1'] . ' pou plis ke ' . $limit_boul->montant,
+
+                            ],
+                            'code' => '404'
+
+                        ], 404,);
+                    }
+                    if ($limit_boul->is_general == 1) {
+                        $limit_boul->montant = $limit_boul->montant - $value['montant'];
+                        $limit_boul->save();
+                    }
+                }
+            }
+        }
+        if (!empty($request->input('loto4'))) {
+
+            foreach ($request->input('loto4') as $value) {
+                $limit_boul = limitprixboul::where([
+                    ['compagnie_id', '=', auth()->user()->compagnie_id],
+                    ['opsyon', '=', 'Loto4'],
+                    ['type', '=', $tirage],
+                    ['boul', '=', $value['boul1']]
+
+
+                ])->first();
+                if (!empty($value['option1'])) {
+
+                    if ($limit_boul) {
+
+                        if ($limit_boul->montant < $value['option1']) {
+                            return response()->json([
+                                'status' => 'false',
+                                'message' => [
+                                    'info' => 'pri a depase limit pou boul sa',
+                                    'boule' => 'ou paka jwe ' . $value['boul1'] . ' pou plis ke ' . $limit_boul->montant,
+
+                                ],
+                                'code' => '404'
+
+                            ], 404,);
+                        }
+                        if ($limit_boul->is_general == 1) {
+                            $limit_boul->montant = $limit_boul->montant - $value['option1'];
+                            $limit_boul->save();
+                        }
+                    }
+                }
+
+                if (!empty($value['option2'])) {
+
+                    if ($limit_boul) {
+
+                        if ($limit_boul->montant < $value['option2']) {
+                            return response()->json([
+                                'status' => 'false',
+                                'message' => [
+                                    'info' => 'pri a depase limit pou boul sa',
+                                    'boule' => 'ou paka jwe ' . $value['boul1'] . ' pou plis ke ' . $limit_boul->montant,
+
+                                ],
+                                'code' => '404'
+
+                            ], 404,);
+                        }
+                        if ($limit_boul->is_general == 1) {
+                            $limit_boul->montant = $limit_boul->montant - $value['option2'];
+                            $limit_boul->save();
+                        }
+                    }
+                }
+                if (!empty($value['option3'])) {
+                    if ($limit_boul) {
+
+                        if ($limit_boul->montant < $value['option3']) {
+                            return response()->json([
+                                'status' => 'false',
+                                'message' => [
+                                    'info' => 'pri a depase limit pou boul sa',
+                                    'boule' => 'ou paka jwe ' . $value['boul1'] . ' pou plis ke ' . $limit_boul->montant,
+                                ],
+                                'code' => '404'
+
+                            ], 404,);
+                        }
+                        if ($limit_boul->is_general == 1) {
+                            $limit_boul->montant = $limit_boul->montant - $value['option3'];
+                            $limit_boul->save();
+                        }
+                    }
+                }
+            }
+        }
+        if (!empty($request->input('loto5'))) {
+            foreach ($request->input('loto5') as $value) {
+                $limit_boul = limitprixboul::where([
+                    ['compagnie_id', '=', auth()->user()->compagnie_id],
+                    ['opsyon', '=', 'Loto5'],
+                    ['type', '=', $tirage],
+                    ['boul', '=', $value['boul1']]
+
+
+                ])->first();
+                if (!empty($value['option1'])) {
+
+                    if ($limit_boul) {
+
+                        if ($limit_boul->montant < $value['option1']) {
+                            return response()->json([
+                                'status' => 'false',
+                                'message' => [
+                                    'info' => 'pri a depase limit pou boul sa',
+                                    'boule' => 'ou paka jwe ' . $value['boul1'] . ' pou plis ke ' . $limit_boul->montant,
+
+                                ],
+                                'code' => '404'
+
+                            ], 404,);
+                        }
+                        if ($limit_boul->is_general == 1) {
+                            $limit_boul->montant = $limit_boul->montant - $value['option1'];
+                            $limit_boul->save();
+                        }
+                    }
+                }
+
+                if (!empty($value['option2'])) {
+
+                    if ($limit_boul) {
+
+                        if ($limit_boul->montant < $value['option2']) {
+                            return response()->json([
+                                'status' => 'false',
+                                'message' => [
+                                    'info' => 'pri a depase limit pou boul sa',
+                                    'boule' => 'ou paka jwe ' . $value['boul1'] . ' pou plis ke ' . $limit_boul->montant,
+
+                                ],
+                                'code' => '404'
+
+                            ], 404,);
+                        }
+                        if ($limit_boul->is_general == 1) {
+                            $limit_boul->montant = $limit_boul->montant - $value['option2'];
+                            $limit_boul->save();
+                        }
+                    }
+                }
+                if (!empty($value['option3'])) {
+                    if ($limit_boul) {
+
+                        if ($limit_boul->montant < $value['option3']) {
+                            return response()->json([
+                                'status' => 'false',
+                                'message' => [
+                                    'info' => 'pri a depase limit pou boul sa',
+                                    'boule' => 'ou paka jwe ' . $value['boul1'] . ' pou plis ke ' . $limit_boul->montant,
+                                ],
+                                'code' => '404'
+
+                            ], 404,);
+                        }
+                        if ($limit_boul->is_general == 1) {
+                            $limit_boul->montant = $limit_boul->montant - $value['option3'];
+                            $limit_boul->save();
+                        }
                     }
                 }
             }

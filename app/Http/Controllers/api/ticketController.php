@@ -125,6 +125,13 @@ class ticketController extends Controller
                     'code' => '404',
                 ], 404,);
             }
+
+            //verify limit boule for each tirage before
+            $resp_boul = verify::verifierLimitePrixBoule($request, $name);
+            if ($resp_boul != '1') {
+                return $resp_boul;
+            }
+
         }
         foreach ($request->input('tirages') as $name) {
 
@@ -760,9 +767,8 @@ class ticketController extends Controller
                 return response()->json([
                     'status' => 'true',
                     "code" => '200',
-                    "body" => [
-                        json_decode($ticket->boule)
-                    ]
+                    "body" => json_decode($ticket->boule)
+                    
 
                 ], 200,);
             } else {

@@ -363,7 +363,7 @@ if($codes){
     
      if(isset($fiche['option2'])) {
          $combinaisonGagnante2 = $gagnants->secondchiffre . $gagnants->premierchiffre;
-     if ($boul1 == $combinaisonGagnante2) {
+                if ($boul1 == $combinaisonGagnante2) {
          $montantGagne = $fiche['option2'] * $loto4Price;
          $this->totalGains=$this->totalGains+$montantGagne;
          $firsttest=1;

@@ -184,9 +184,7 @@
                                     <td>Loto5</td>
                                     <td>
                                         @if ($limitprix)
-                                            <input style="height: 10px;
-              
-                width: 100px;"
+                                            <input style="height: 10px;"
                                                 type="number" class="form-control"
                                                 value="{{ $limitprix->loto5 != null ? $limitprix->loto5 : '' }}"
                                                 name="prix" />
@@ -281,8 +279,15 @@
                   <tbody>
                     @foreach ($limitprixboul as $limit)
                     <tr>
+                        @if($limit->created_at->format('Y-m-d') == \Carbon\Carbon::now()->format('Y-m-d'))
+                        <td style="color: green;">{{ $limit->type != null ? $limit->type : '' }}</td>
 
-                        <td>{{ $limit->type != null ? $limit->type : '' }}</td>
+
+                        @else
+                        <td style="color: red;">{{ $limit->type != null ? $limit->type : '' }}</td>
+
+
+                        @endif
                         <td> {{$limit->opsyon != null ? $limit->opsyon : ''}}:{{ $limit->boul != null ? $limit->boul : '' }}
                         </td>
                         <td> {{ $limit->montant != null ? $limit->montant : '' }}</td>
