@@ -52,7 +52,7 @@
         </div>
       </div>
       <div class="row">
-<<<<<<< HEAD
+
         <div class="col-12 grid-margin">
           <div class="card">
             <div class="card-body">
@@ -60,8 +60,8 @@
             </div>
           </div>
         </div>
-=======
-        <div class="col-md-7 grid-margin stretch-card">
+
+        <div class="col-md-7 grid-margin stretch-card" style="display: none;">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Statistik</h4>
@@ -91,8 +91,7 @@
             </div>
           </div>
         </div>
-        
->>>>>>> b2456d709b6b8ac8f45fb998ab00c650c5ae65db
+
       </div>
       <div class="row">
         <div class="col-12 grid-margin">
