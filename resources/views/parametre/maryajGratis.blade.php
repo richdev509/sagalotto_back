@@ -135,14 +135,14 @@
                     </div>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">KT maryaj</span>
+                            <span class="input-group-text">Kantite maryaj</span>
                         </div>
                         <select class="form-control" name="q_inter_2">
                             @if ($data)
                             <option>{{ $data->q_inter_2}}</option>
                             <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
                         @endif
-                        @for ($i = 7; $i <= 10; $i++)
+                        @for ($i = 0; $i <= 10; $i++)
                             @if ($data && $data->q_inter_1 == $i) <!-- Assurez-vous que la valeur de données est ignorée -->
                                 @continue
                             @endif
@@ -163,7 +163,7 @@
                                 <option>{{ $data->q_inter_3 }}</option>
                                 <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
                             @endif
-                            @for ($i = 11; $i <= 15; $i++)
+                            @for ($i = 0; $i <= 15; $i++)
                                 @if ($data && $data->q_inter_1 == $i) <!-- Assurez-vous que la valeur de données est ignorée -->
                                     @continue
                                 @endif
