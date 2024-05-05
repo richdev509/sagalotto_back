@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="shortcut icon" href="assets/images/favicon.ico" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -201,11 +204,20 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="rapport" aria-controls="ui-basic">
-                            <span class="menu-title">Rapo</span>
-
-                            <i class="mdi mdi-chart-line menu-icon"></i>
-                        </a>
+                        <a class="nav-link" data-bs-toggle="collapse" href="#rapo" aria-expanded="false"
+                        aria-controls="ui-basic">
+                        <span class="menu-title">Rapo</span>
+                        <i class="menu-arrow"></i>
+                        <i class="mdi mdi-chart-line menu-icon"></i>
+                    </a>
+                    <div class="collapse" id="rapo">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="/rapport">Rapo general
+                                </a></li>
+                            <li class="nav-item"> <a class="nav-link" href="/raport2">Rapo/vande
+                                </a></li>
+                        </ul>
+                    </div>
 
                     </li>
                     <li class="nav-item">
@@ -274,13 +286,11 @@
                 </div>
                 <!-- content-wrapper ends -->
                 <!-- partial:partials/_footer.html -->
-                <footer class="footer">
+                <footer class="footer" >
                     <div class="container-fluid d-flex justify-content-between">
                         <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright ©
                             Sagalotto.com 2024</span>
-                        <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"> Ou bezwen pwop sistèm ou contakte
-                            nou <a href="https://www.bootstrapdash.com/bootstrap-admin-template/"
-                                target="_blank"></a>+50914231234</span>
+                       
                     </div>
                 </footer>
                 <!-- partial -->

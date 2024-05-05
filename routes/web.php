@@ -19,6 +19,9 @@ use App\Http\Controllers\ticketController;
 |
 */
 
+Route::get('/raport2', function () {
+    return view('raportsecond');
+});
 Route::get('/', function () {
     return view('welcome');
 });
