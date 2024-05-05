@@ -377,4 +377,12 @@ class rapportController extends Controller
             return view('login');
         }
     }
+    public function create_rapport2(Request $request){
+        $bank = User::where([
+           ['compagnie_id','=', Session('loginId')],
+           ['is_delete','=', 1],
+        ])->get();
+       
+        return view('raportsecond',['bank'=>$bank]);
+    }
 }

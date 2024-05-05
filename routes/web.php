@@ -19,9 +19,7 @@ use App\Http\Controllers\ticketController;
 |
 */
 
-Route::get('/raport2', function () {
-    return view('raportsecond');
-});
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -89,7 +87,7 @@ Route::get('lister-tirage', [tirageController::class,'index']);
 
 //raport
 Route::get('rapport', [rapportController::class,'create_rapport']);
-
+Route::get('/raport2', [rapportController::class, 'create_rapport2']);
 
 //end rapport
 

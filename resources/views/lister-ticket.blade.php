@@ -178,7 +178,7 @@
                         <div class="col-12 col-sm-4" style="margin-right: -10px;">
                             <div class="form-group local-forms">
                                 <label for="dateFilter">Bank</label>
-                                <select class="form-control selectpicker"  name="bank" data-live-search="true"
+                                <select class="form-control selectpicker" name="bank" data-live-search="true"
                                     value="{{ old('bank') }}">
                                     <option>Tout</option>
                                     @foreach ($vendeur as $row)
@@ -193,7 +193,7 @@
                                         <option value="{{ $row->id }}">{{ $row->name }}</option>
                                     @endforeach
                                 </select>
-                               
+
                             </div>
                         </div>
                         <div class="col-12 col-sm-4">
@@ -269,9 +269,9 @@
                                             {{ $row->tirage }}
                                         </td>
                                     @else
-                                    <td>
-                                        {{ $row->tirage }}
-                                    </td>
+                                        <td>
+                                            {{ $row->tirage }}
+                                        </td>
                                     @endif
                                     <td class="text-center">
                                         <form action="boule-show" method="GET" class="form">
@@ -325,9 +325,16 @@
                         </tbody>
 
                     </table>
-                    {{ $ticket->links() }}
 
                 </div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        {{ $ticket->links()}}
+                        
+                    </ul>
+                  </nav>
+                
+
             </div>
 
 
