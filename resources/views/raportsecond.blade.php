@@ -77,6 +77,7 @@
                         <div class="search-input">
                         <input type="text" placeholder="Type to search..." id="searchInput">
                         <div id="suggestions">
+                            <!----foreach---->
                         <a href="#">Khushal</a>
                         <a href="#">Vishal</a>
                         <a href="#">Hiren</a>
@@ -85,6 +86,7 @@
                         <a href="#">Bhavik</a>
                         <a href="#">Darsh</a>
                         <a href="#">Mayur</a>
+                         <!----foreach---->
                         </div>
                         <div class="search-icon"><i class="fas fa-search"></i></div>
                         <div class="error-message" id="errorMessage">No matching suggestion found</div>
