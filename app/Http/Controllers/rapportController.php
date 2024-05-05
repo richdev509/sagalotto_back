@@ -380,9 +380,54 @@ class rapportController extends Controller
     public function create_rapport2(Request $request){
         $bank = User::where([
            ['compagnie_id','=', Session('loginId')],
-           ['is_delete','=', 1],
+           ['is_delete','=', 0],
         ])->get();
        
         return view('raportsecond',['bank'=>$bank]);
+    }
+    public function get_control($user_id, $date){
+        $vente = DB::table('ticket_code')->where([
+            ['ticket_code.compagnie_id', '=', Session('loginId')],
+            ['ticket_code.user_id', '=', $user_id],
+            ['ticket_vendu.is_cancel', '=', 0],
+            ['ticket_vendu.is_delete', '=', 0],
+
+        ])->whereDate('ticket_code.created_at', '=', $date)
+            ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+            ->sum('amount');
+
+
+
+        $perte = DB::table('ticket_code')->where([
+            ['ticket_code.compagnie_id', '=', Session('loginId')],
+            ['ticket_code.user_id', '=', $user_id],
+
+            ['ticket_vendu.is_cancel', '=', 0],
+            ['ticket_vendu.is_delete', '=', 0],
+
+        ])->whereDate('ticket_code.created_at', '=', $date)
+            ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+            ->sum('winning');
+
+        $commission = DB::table('ticket_code')->where([
+            ['ticket_code.compagnie_id', '=', Session('loginId')],
+            ['ticket_code.user_id', '=', $user_id],
+
+            ['ticket_vendu.is_cancel', '=', 0],
+            ['ticket_vendu.is_delete', '=', 0],
+
+        ])->whereDate('ticket_code.created_at', '=', $date)
+            ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+            ->sum('commission');
+         $montant = $vente -($perte + $commission);
+
+          return response()->json([
+              'montant'=>$montant,
+              'date'=> $date
+
+          ]);
+
+
+
     }
 }
