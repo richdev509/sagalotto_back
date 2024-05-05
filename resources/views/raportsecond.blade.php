@@ -106,13 +106,15 @@
             <div class="tab-content">
                 <div role="tabpanel" id="react-aria-292-tabpane-design" aria-labelledby="react-aria-292-tab-design"
                     class="fade pb-4 p-4 tab-pane active show">
-                    <table class="text-nowrap table">
+                    <div class="table-responsive">
+                    <table class="text table">
                         <thead>
                             <tr>
                                 <th scope="col">CODE</th>
                                 <th scope="col">Vande</th>
                                 <th scope="col">Montant</th>
                                 <th scope="col">Balance</th>
+                                <th scope="col">Date</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -121,6 +123,7 @@
                                 <td>Mark</td>
                                 <td>Otto</td>
                                 <td>@mdo</td>
+                                <td>02/21/2023</td>
                             </tr>
                             <tr>
                                 <th scope="row">2</th>
@@ -136,6 +139,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    </div>
                 </div>
                
             </div>
