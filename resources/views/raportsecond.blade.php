@@ -115,15 +115,17 @@
                             <tr>
                                 <th scope="row">1</th>
                                 <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
+                                <td>2000 HTG<div style="display: flex;gap:10px;">  <span class="badge bg-success">Paye</span></div></td>
+                                <td>0 HTG </td>
                                 <td>02/21/2023</td>
                             </tr>
                             <tr>
                                 <th scope="row">2</th>
                                 <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
+                                <td>4000</td>
+                                <td>2000 HTG <div style="display: flex;gap:10px;"> <span class="badge bg-info">Akite</span></div></td>
+                           
+                                <td>02/21/2023</td>
                             </tr>
                             <tr>
                                 <th scope="row">3</th>
@@ -131,6 +133,48 @@
                                 <td>the Bird</td>
                                 <td>@twitter</td>
                             </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 15px;">
+        <div class="border-bottom-0 p-0 card-header">
+            <div class="nav-lb-tab nav card-header-undefined" role="tablist">
+                <div class="nav-item"><a role="tab" data-rr-ui-event-key="design" id="react-aria-292-tab-design"
+                        aria-controls="react-aria-292-tabpane-design" aria-selected="true"
+                        class="mb-sm-3 mb-md-0 nav-link active" tabindex="0" href="#">Historique Transaction</a></div>
+                <div class="nav-item" ></div>
+            </div>
+        </div>
+
+        <div class="p-0 card-body">
+            <div class="tab-content">
+                <div role="tabpanel" id="react-aria-292-tabpane-design" aria-labelledby="react-aria-292-tab-design"
+                    class="fade pb-4 p-4 tab-pane active show">
+                    <div class="table-responsive">
+                    <table class="text table">
+                        <thead>
+                            <tr>
+                                <th scope="col">CODE</th>
+                                <th scope="col">ID_RAPO</th>
+                                <th scope="col">Montant</th>
+                               
+                                <th scope="col">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>1</td>
+                                <td>2000 HTG</td>
+                                <td>02/21/2023</td>
+                            </tr>
+                           
                         </tbody>
                     </table>
                     </div>
