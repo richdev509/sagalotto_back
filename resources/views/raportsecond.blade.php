@@ -2,6 +2,7 @@
 
 
 @section('content')
+
     <style>
         /* Add your styles here */
         .search-wrapper {
@@ -78,39 +79,34 @@
     <div class="card">
         <div class="border-bottom-0 p-0 card-header">
             <div class="nav-lb-tab nav card-header-undefined" role="tablist">
-                <div class="nav-item"><a role="tab" data-rr-ui-event-key="design" id="react-aria-292-tab-design"
-                        aria-controls="react-aria-292-tabpane-design" aria-selected="true"
-                        class="mb-sm-3 mb-md-0 nav-link active" tabindex="0" href="#">Rapo vande</a></div>
-                
-                <div class="nav-item">
-                    <form style="display: flex; gap:10px;">
 
-                        <div class="search-wrapper">
-                            <div class="search-input">
-                                <input type="text" placeholder="Type to search..." id="searchInput">
-                                <div id="suggestions">
+                <div class="row">
+
+                    <form>
+
+                        <div class="form-group" style="display:inline-flex;border: 1px solid #dc61e7;padding: 0px;">
+                            <div>
+                                <select class="form-control selectpicker" data-live-search="true">
                                     @foreach ($bank as $row)
-                                        <a href="rapport2?id={{ $row->id }}">{{ $row->bank_name }}</a>
+                                        <option value="{{ $row->id }}">{{ $row->bank_name }}</option>
                                     @endforeach
-                                </div>
-                                <div class="search-icon"><i class="fas fa-search"></i></div>
-                                <div class="error-message" id="errorMessage">No matching suggestion found</div>
-                                <div class="cancel-button" id="cancelButton"><i class="fas fa-times-circle"></i></div>
+                                </select>
+                            </div>
+                            <div>
+                                <input class="form-control" type="date">
+                            </div>
+                            <div <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary">
+                                Chache
+                                </button>
                             </div>
                         </div>
 
-                        <input type="date"
-                            style="    calc(100% - 149px);
-                    border-radius: 20px;
-                    outline: none;
-                    border: 2px solid #ccc;
-                    border-radius: 50px;" />
+
+
+
                     </form>
                 </div>
-                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary" data-mdb-modal-init
-                    data-mdb-target="#exampleModal" style="margin-left:20px;margin-top:20px;">
-                    Ajouter paiement
-                </button>
+
             </div>
         </div>
         <div class="p-0 card-body">
@@ -143,7 +139,7 @@
                                     <td>Jacob</td>
                                     <td>4000</td>
                                     <td>2000 HTG <button type="button" id="balancebtn"> <span
-                                                class="badge bg-info"    >Akite</span></button>
+                                                class="badge bg-info">Akite</span></button>
                                     </td>
 
                                     <td>02/21/2023</td>
@@ -223,44 +219,48 @@
                             <h4 class="mb-1" id="texte"></h4>
                         </div>
                         <form class="" id="paiement" style="">
-                            <input type="hidden" name="id" value=""/>
+                            <input type="hidden" name="id" value="" />
                             <div class="mb-3 row"><label class="col-md-4 form-label" for="langauge">Date</label>
-                                <div class="col-md-8 col-12"><input type="date" class="form-control"
-                                        placeholder="date" id="edate" required="" name="date"></div>
+                                <div class="col-md-8 col-12"><input type="date" class="form-control" placeholder="date"
+                                        id="edate" required="" name="date"></div>
                             </div>
                             <div class="mb-3 row"><label class="col-md-4 form-label" for="timeZone">Montant</label>
                                 <div class="col-md-8 col-12"><input type="number" class="form-control"
-                                        placeholder="montant Ex:5000" id="montant" required="" name="montant"></div>
+                                        placeholder="montant Ex:5000" id="montant" required="" name="montant">
+                                </div>
                             </div>
                             <div class="mb-3 row"><label class="col-md-4 form-label" for="dateFormat">Balance</label>
                                 <div class="col-md-8 col-12"> <input type="number" class="form-control"
-                                        placeholder="balance" id="balance" name="balance" style="pointer-events: none;"></div>
+                                        placeholder="balance" id="balance" name="balance"
+                                        style="pointer-events: none;"></div>
                             </div>
-                            
+
                             <div class="mb-3 row">
-                                
+
                                 <div class="mt-2 col-md-8 col-12 offset-md-4"><button type="submit"
                                         class="btn btn-primary">Save Changes</button></div>
                             </div>
                         </form>
 
                         <form class="" id="paiement_balance" style="display: none;">
-                            <input type="hidden" name="id" value=""/>
+                            <input type="hidden" name="id" value="" />
                             <div class="mb-3 row"><label class="col-md-4 form-label" for="langauge">Date</label>
                                 <div class="col-md-8 col-12"><input type="date" class="form-control"
-                                        placeholder="date" id="edate" required="" name="date" style="pointer-events: none;"></div>
+                                        placeholder="date" id="edate" required="" name="date"
+                                        style="pointer-events: none;"></div>
                             </div>
                             <div class="mb-3 row"><label class="col-md-4 form-label" for="timeZone">balance</label>
                                 <div class="col-md-8 col-12"><input type="number" class="form-control"
-                                        placeholder="5000" id="balance" required="" name="balance" style="pointer-events: none;"></div>
+                                        placeholder="5000" id="balance" required="" name="balance"
+                                        style="pointer-events: none;"></div>
                             </div>
                             <div class="mb-3 row"><label class="col-md-4 form-label" for="dateFormat">Montant</label>
                                 <div class="col-md-8 col-12"> <input type="number" class="form-control"
-                                        placeholder="montant" id="montant" name="montant" ></div>
+                                        placeholder="montant" id="montant" name="montant"></div>
                             </div>
-                            
+
                             <div class="mb-3 row">
-                                
+
                                 <div class="mt-2 col-md-8 col-12 offset-md-4"><button type="submit"
                                         class="btn btn-primary">Save Changes</button></div>
                             </div>
@@ -270,7 +270,7 @@
                 <div class="modal-footer">
                     <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-secondary"
                         data-mdb-dismiss="modal">Close</button>
-                    
+
                 </div>
             </div>
         </div>
@@ -280,52 +280,7 @@
         integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDGtiDZklfDzbrjRizqgyj/21zZ+OwSY9OCn" crossorigin="anonymous"></script>
 
     <!-- Initialisation de la modale Bootstrap -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Récupération du bouton de déclenchement de la modale
-            var button = document.querySelector('[data-mdb-target="#exampleModal"]');
-            var formulaire=document.getElementById('paiement_balance');
-            var formulairepaiement=document.getElementById('paiement');
-            var texte=document.getElementById('texte');
-            // Ajout d'un écouteur d'événements au clic sur le bouton
-            button.addEventListener('click', function() {
-                // Récupération de la modale cible
-                var modal = new bootstrap.Modal(document.getElementById('exampleModal'));
-                formulaire.style.display='none';
-                formulairepaiement.style.display="block";
-                texte.innerHTML="Paiement";
-                // Affichage de la modale
-                modal.show();
-                
-            });
-
-            var buttonbalance =document.getElementById('balancebtn');
-           
-            buttonbalance.addEventListener('click', function() {
-                // Récupération de la modale cible
-                var modal = new bootstrap.Modal(document.getElementById('exampleModal'));
-                formulaire.style.display='block';
-                formulairepaiement.style.display="none";
-                texte.innerHTML="Balance Paiment";
-                // Affichage de la modale
-                modal.show();
-            });
-
-
-
-            var closeButton = document.querySelector('[data-mdb-dismiss="modal"]');
-
-    // Ajout d'un écouteur d'événements au clic sur le bouton de fermeture
-    closeButton.addEventListener('click', function () {
-      // Récupération de la modale parente du bouton
-      var modal = closeButton.closest('.modal');
-      
-      // Fermeture de la modale
-      var modalInstance = bootstrap.Modal.getInstance(modal);
-      modalInstance.hide();
-    });
-        });
-    </script>
+    <script></script>
 
 
     <script id="rendered-js">

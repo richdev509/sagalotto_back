@@ -43,7 +43,7 @@ Route::group([
     Route::get('/ticket/list', [ticketController::class,'list_ticket']);
     Route::post('/ticket/cancel', [ticketController::class,'cancel_ticket']);
     Route::get('/ticket/report', [ticketController::class,'report_ticket']);
-    Route::post('/ticket/payer', [ticketController::class,'payer_ticket']);
+    Route::post('/ticket/peyer', [ticketController::class,'payer_ticket']);
     Route::post('/ticket/copier', [ticketController::class,'copier_ticket']);
 
 

@@ -11,10 +11,19 @@
     @notifyCss
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="shortcut icon" href="assets/images/favicon.ico" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/css/bootstrap-multiselect.min.css"
+        integrity="sha512-fZNmykQ6RlCyzGl9he+ScLrlU0LWeaR6MO/Kq9lelfXOw54O63gizFMSD5fVgZvU1YfDIc6mxom5n60qJ1nCrQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap-grid.min.css"
+        integrity="sha512-Aa+z1qgIG+Hv4H2W3EMl3btnnwTQRA47ZiSecYSkWavHUkBF2aPOIIvlvjLCsjapW1IfsGrEO3FU693ReouVTA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -205,19 +214,19 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="collapse" href="#rapo" aria-expanded="false"
-                        aria-controls="ui-basic">
-                        <span class="menu-title">Rapo</span>
-                        <i class="menu-arrow"></i>
-                        <i class="mdi mdi-chart-line menu-icon"></i>
-                    </a>
-                    <div class="collapse" id="rapo">
-                        <ul class="nav flex-column sub-menu">
-                            <li class="nav-item"> <a class="nav-link" href="/rapport">Rapo general
-                                </a></li>
-                            <li class="nav-item"> <a class="nav-link" href="/raport2">Rapo/vande
-                                </a></li>
-                        </ul>
-                    </div>
+                            aria-controls="ui-basic">
+                            <span class="menu-title">Rapo</span>
+                            <i class="menu-arrow"></i>
+                            <i class="mdi mdi-chart-line menu-icon"></i>
+                        </a>
+                        <div class="collapse" id="rapo">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="/rapport">Rapo general
+                                    </a></li>
+                                <li class="nav-item"> <a class="nav-link" href="/raport2">Rapo/vande
+                                    </a></li>
+                            </ul>
+                        </div>
 
                     </li>
                     <li class="nav-item">
@@ -286,11 +295,11 @@
                 </div>
                 <!-- content-wrapper ends -->
                 <!-- partial:partials/_footer.html -->
-                <footer class="footer" >
+                <footer class="footer">
                     <div class="container-fluid d-flex justify-content-between">
                         <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright ©
                             Sagalotto.com 2024</span>
-                       
+
                     </div>
                 </footer>
                 <!-- partial -->
@@ -304,12 +313,13 @@
 
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>
 
-    
-   
+
+
     <!-- endinject -->
     <!-- Plugin js for this page -->
     <script src="assets/vendors/chart.js/Chart.min.js"></script>
     <script src="assets/js/jquery.cookie.js" type="text/javascript"></script>
+
     <!-- End plugin js for this page -->
     <!-- inject:js -->
     <script src="assets/js/off-canvas.js"></script>
@@ -319,6 +329,11 @@
     <!-- Custom js for this page -->
     <script src="assets/js/dashboard.js"></script>
     <script src="assets/js/todolist.js"></script>
+    <script src="{{ asset('https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js') }}"></script>
+    <script src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js') }}"></script>
+    <script
+        src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js') }}">
+    </script>
     <!-- End custom js for this page -->
     <x-notify::notify />
     @notifyJs

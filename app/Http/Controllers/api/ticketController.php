@@ -257,6 +257,7 @@ class ticketController extends Controller
                 ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                 ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
                 ->select('ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain', 'ticket_vendu.is_payed as payer')
+                ->orderByDesc('ticket_code.code')
                 ->get();
             if ($vente->count() > 0) {
                 return response()->json([
@@ -691,7 +692,7 @@ class ticketController extends Controller
             $tirage_record = tirage_record::where([
                 ['compagnie_id', '=', auth()->user()->compagnie_id],
                 ['is_active', '=', '1'],
-                ['name', '=', $request->input('tirage')]
+               ['name', '=', $request->input('tirage')]
             ])->first();
             if ($tirage_record) {
                 $vente = DB::table('ticket_code')->where([
@@ -709,7 +710,7 @@ class ticketController extends Controller
                         ['ticket_code_id', '=', $request->input('id')],
                         ['tirage_record_id', '=', $tirage_record->id]
                     ])->update([
-                        'is_payed' => 1
+                        'is_payed' => '1'
                     ]);
                     return response()->json([
                         'status' => 'true',
@@ -725,13 +726,13 @@ class ticketController extends Controller
 
                     ], 404,);
                 }
-            } else {
-                return response()->json([
-                    'status' => 'false',
-                    'code' => '404',
-                    'message' => 'Tirage non trouver'
+             } else {
+               return response()->json([
+                   'status' => 'false',
+                   'code' => '404',
+                   'message' => 'Tirage non trouver'
 
-                ], 404,);
+               ], 404,);
             }
         } catch (\Throwable $th) {
             return response()->json([
