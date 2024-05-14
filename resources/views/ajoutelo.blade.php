@@ -26,7 +26,7 @@
                             style="border-color: #1469e9;
                         
                     border-style: double;
-                    border-width: 1px;">
+                    border-width: 1px;" required>
                     </div>
                     <div class="form-group" style="margin-bottom: 10px;">
                         <label for="exampleInputUsername1">chwazi tiraj</label>
