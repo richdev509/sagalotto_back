@@ -385,7 +385,9 @@ class rapportController extends Controller
        
         return view('raportsecond',['bank'=>$bank]);
     }
-    public function get_control($user_id, $date){
+    public function get_control(Request $request){
+        $user_id = $request->input('user');
+        $date = $request->input('date');
         $vente = DB::table('ticket_code')->where([
             ['ticket_code.compagnie_id', '=', Session('loginId')],
             ['ticket_code.user_id', '=', $user_id],
@@ -422,6 +424,7 @@ class rapportController extends Controller
          $montant = $vente -($perte + $commission);
 
           return response()->json([
+              'status'=>'true',
               'montant'=>$montant,
               'date'=> $date
 

@@ -82,21 +82,22 @@
 
                 <div class="row">
 
-                    <form>
-
+                    <form id="rapport_form">
+                       @csrf
                         <div class="form-group" style="display:inline-flex;border: 1px solid #dc61e7;padding: 0px;">
                             <div>
-                                <select class="form-control selectpicker" data-live-search="true">
+                                <select class="form-control selectpicker" data-live-search="true" name="user">
                                     @foreach ($bank as $row)
                                         <option value="{{ $row->id }}">{{ $row->bank_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div>
-                                <input class="form-control" type="date">
+                                <input class="form-control" type="date" name="date" required>
                             </div>
-                            <div <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary">
-                                Chache
+                            <div>
+                                <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary">
+                                    Chache
                                 </button>
                             </div>
                         </div>
@@ -134,22 +135,8 @@
                                     <td>0 HTG </td>
                                     <td>02/21/2023</td>
                                 </tr>
-                                <tr>
-                                    <th scope="row">2</th>
-                                    <td>Jacob</td>
-                                    <td>4000</td>
-                                    <td>2000 HTG <button type="button" id="balancebtn"> <span
-                                                class="badge bg-info">Akite</span></button>
-                                    </td>
+                               
 
-                                    <td>02/21/2023</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">3</th>
-                                    <td>Larry</td>
-                                    <td>the Bird</td>
-                                    <td>@twitter</td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -276,38 +263,33 @@
         </div>
     </div>
     <!-- Bootstrap JavaScript -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"
-        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDGtiDZklfDzbrjRizqgyj/21zZ+OwSY9OCn" crossorigin="anonymous"></script>
-
+   
+    
     <!-- Initialisation de la modale Bootstrap -->
-    <script></script>
+    <script>
+        $(document).ready(function() {
+            $("#rapport_form").submit(function(event) {
+                // Prevent the default form submission
+                event.preventDefault();
 
+                // Get the form data
+                var formData = $(this).serialize();
 
-    <script id="rendered-js">
-        const searchInput = document.getElementById('searchInput');
-        const suggestionsList = document.getElementById('suggestions');
-        const errorMessage = document.getElementById('errorMessage');
-        const cancelButton = document.getElementById('cancelButton');
-        searchInput.addEventListener('input', function() {
-            const inputValue = this.value.trim().toLowerCase();
-            const suggestionItems = suggestionsList.querySelectorAll('a');
-            let hasMatches = false;
-            suggestionItems.forEach(function(listItem) {
-                const textValue = listItem.textContent.toLowerCase();
-                const displayStyle = textValue.includes(inputValue) ? 'block' : 'none';
-                listItem.style.display = displayStyle;
-                hasMatches = hasMatches || displayStyle === 'block';
+                // AJAX request
+                $.ajax({
+                    type: "POST",
+                    url: "raport2_get_amount",
+                    data: formData,
+                    success: function(response) {
+                        // Update the result div with the response
+                        alert(response.montant);
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors
+                        console.error(xhr.responseText);
+                    }
+                });
             });
-            suggestionsList.style.display = hasMatches ? 'block' : 'none';
-            errorMessage.style.display = hasMatches || inputValue.length === 0 ? 'none' : 'block';
-            cancelButton.style.display = inputValue.length > 0 ? 'block' : 'none';
         });
-        cancelButton.addEventListener('click', function() {
-            searchInput.value = '';
-            suggestionsList.style.display = 'none';
-            errorMessage.style.display = 'none';
-            cancelButton.style.display = 'none';
-        });
-        //# sourceURL=pen.js
     </script>
 @stop

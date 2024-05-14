@@ -178,7 +178,7 @@
                         <div class="col-12 col-sm-4">
                             <div class="form-group local-forms">
                                 <label for="dateFilter">Bank</label>
-                                <select class="form-control selectpicker" name="bank" data-live-search="true"
+                                <select class="form-control" name="bank"
                                     value="{{ old('bank') }}">
                                     <option>Tout</option>
                                     @foreach ($vendeur as $row)
@@ -186,7 +186,7 @@
                                     @endforeach
                                 </select>
                                 <label for="dateFilter" style="margin-top: 5px;">Tiraj</label>
-                                <select class="form-control selectpicker" name="tirage" data-live-search="true"
+                                <select class="form-control" name="tirage"
                                     value="{{ old('bank') }}">
                                     <option>Tout</option>
                                     @foreach ($tirage as $row)
