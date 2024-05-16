@@ -75,6 +75,11 @@
             top: 8px;
             left: 10px;
         }
+        .reglement{
+            border: 1px solid #dc61e7;
+            border-radius: 5px;
+
+        }
     </style>
     <div class="card">
         <div class="border-bottom-0 p-0 card-header">
@@ -83,7 +88,7 @@
                 <div class="row">
 
                     <form id="rapport_form">
-                       @csrf
+                        @csrf
                         <div class="form-group" style="display:inline-flex;border: 1px solid #dc61e7;padding: 0px;">
                             <div>
                                 <select class="form-control selectpicker" data-live-search="true" name="user">
@@ -115,27 +120,23 @@
                 <div role="tabpanel" id="react-aria-292-tabpane-design" aria-labelledby="react-aria-292-tab-design"
                     class="fade pb-4 p-4 tab-pane active show">
                     <div class="table-responsive">
-                        <table class="text table">
+                        <table class="text table" id="rapport_table">
                             <thead>
                                 <tr>
-                                    <th scope="col">CODE</th>
-                                    <th scope="col">Vande</th>
-                                    <th scope="col">Montant</th>
-                                    <th scope="col">Balance</th>
-                                    <th scope="col">Date</th>
+                                    <th scope="col">kod_bank</th>
+                                    <th scope="col">Bank</th>
+                                    <th scope="col">Montan</th>
+                                    <th scope="col">Dat</th>
+                                    <th scope="col">aksyon</th>
+
+
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <th scope="row">1</th>
-                                    <td>Mark</td>
-                                    <td>2000 HTG<div style="display: flex;gap:10px;"> <span
-                                                class="badge bg-success">Paye</span></div>
-                                    </td>
-                                    <td>0 HTG </td>
-                                    <td>02/21/2023</td>
+
                                 </tr>
-                               
+
 
                             </tbody>
                         </table>
@@ -263,8 +264,8 @@
         </div>
     </div>
     <!-- Bootstrap JavaScript -->
-   
-    
+
+
     <!-- Initialisation de la modale Bootstrap -->
     <script>
         $(document).ready(function() {
@@ -282,7 +283,48 @@
                     data: formData,
                     success: function(response) {
                         // Update the result div with the response
-                        alert(response.montant);
+                        $('.content-clear').remove();
+
+                        const table = document.getElementById(
+                            "rapport_table");
+
+
+                        const row = document.createElement(
+                            "tr");
+
+                        row.classList.add('content-clear');
+                        const code = document.createElement("td");
+                        const bank = document.createElement(
+                            "td");
+                        const amount = document.createElement(
+                            "td");
+                        const dated = document.createElement(
+                            "td");
+                        const action = document.createElement(
+                            "td");
+
+                        
+                        const link = document.createElement('button');
+
+                        link.textContent ='regleman/rapo';
+                        link.href ='#';
+                        link.classList.add('reglement');
+                        code.textContent = response.bank_code;
+                        bank.textContent = response.bank;
+                        amount.textContent = response.montant;
+                        dated.textContent = response.date;
+
+
+                        row.appendChild(code);
+                        row.appendChild(bank);
+                        row.appendChild(amount);
+                        row.appendChild(dated);
+                        action.appendChild(link);
+                        row.appendChild(action);
+
+
+
+                        table.appendChild(row);
                     },
                     error: function(xhr, status, error) {
                         // Handle errors

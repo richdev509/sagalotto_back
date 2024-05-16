@@ -388,6 +388,11 @@ class rapportController extends Controller
     public function get_control(Request $request){
         $user_id = $request->input('user');
         $date = $request->input('date');
+
+        $user = User::where([
+           ['id','=', $user_id]
+        ])->first();
+
         $vente = DB::table('ticket_code')->where([
             ['ticket_code.compagnie_id', '=', Session('loginId')],
             ['ticket_code.user_id', '=', $user_id],
@@ -425,6 +430,8 @@ class rapportController extends Controller
 
           return response()->json([
               'status'=>'true',
+              'bank_code'=>$user->code,
+              'bank'=>$user->bank_name,
               'montant'=>$montant,
               'date'=> $date
 
