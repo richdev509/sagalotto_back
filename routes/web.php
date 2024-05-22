@@ -8,6 +8,7 @@ use App\Http\Controllers\ajouterLotGagnantController;
 use App\Http\Controllers\parametreController;
 use App\Http\Controllers\rapportController;
 use App\Http\Controllers\ticketController;
+use App\http\Controllers\statistiqueController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,7 +19,6 @@ use App\Http\Controllers\ticketController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
 
 Route::get('/', function () {
     return view('welcome');
@@ -127,6 +127,11 @@ Route::post('m-l-p',[parametreController::class, 'modifierLimitePrix'])->name('m
 
 Route::get('/plan', [parametreController::class, 'viewinfo']) ;
 Route::post('/up-g', [parametreController::class, 'update_general'])->name('up-g');
+
+//statistique
+Route::post('getstatistiqueSimple', [statistiqueController::class,'getstatistiqueSimple'])->name('getstatistiqueSimple');
+Route::get('stat', [statistiqueController::class,'view']);
+
 
 });
 
