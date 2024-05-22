@@ -230,6 +230,22 @@
 
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#statistique" aria-expanded="false"
+                            aria-controls="ui-basic">
+                            <span class="menu-title">Statistik</span>
+                            <i class="menu-arrow"></i>
+                            <i class="mdi mdi-chart-line menu-icon"></i>
+                        </a>
+                        <div class="collapse" id="statistique">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="/stat">statistiqueUnique
+                                    </a></li>
+                               
+                            </ul>
+                        </div>
+
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="collapse" href="#lo" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Lo ki soti</span>
