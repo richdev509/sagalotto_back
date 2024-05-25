@@ -387,7 +387,25 @@ class parametreController extends Controller
     //gestion plan
     public function viewinfo(Request $request){
         $data=DB::table('companies')->where('id',session('loginId'))->first();
-        return view('superadmin.plan', compact('data'));
+        $nombre=$this->getDaysRemaining($data->dateplan,$data->dateexpiration);
+        return view('plan', compact('data','nombre'));
+    }
+
+    function getDaysRemaining($dateplan,$datefin)
+    {
+        
+        $startDate = Carbon::parse($dateplan);
+        $endDate = Carbon::parse($datefin);
+        $currentDate = Carbon::now();
+
+        // Vérifier si l'abonnement est encore valide
+        if ($currentDate->between($startDate, $endDate)) {
+            $daysRemaining = $currentDate->diffInDays($endDate);
+            return  $daysRemaining;
+        } else {
+            return $d= 0;
+            
+        }
     }
 
      //update is_generale

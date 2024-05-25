@@ -161,6 +161,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <span><i class="mdi mdi-bell-plus" style="color:orange;margin-left:10px;"></i>Byento nap gen nouvo koule nan menu pou pi bon manipilation</span>
                         <a class="nav-link" href="admin">
                             <span class="menu-title">Akèy</span>
                             <i class="mdi mdi-home menu-icon"></i>
@@ -233,7 +234,9 @@
                         <a class="nav-link" data-bs-toggle="collapse" href="#statistique" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Statistik</span>
+                            <i class="mdi mdi-bell-plus" style="color:orange;margin-left:10px;"></i>
                             <i class="menu-arrow"></i>
+                            
                             <i class="mdi mdi-chart-line menu-icon"></i>
                         </a>
                         <div class="collapse" id="statistique">
@@ -293,6 +296,8 @@
 
                                 <li class="nav-item"> <a class="nav-link" href="{{ route('lotconfig') }}">Lot
                                         Konfigirasyon
+                                    </a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="/plan">Compte & Plan
                                     </a></li>
 
                             </ul>
