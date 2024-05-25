@@ -9,8 +9,10 @@
                 <div class="row">
                     <form id="rapport_form">
                         @csrf
-                        <div class="form-group" style="display:inline-flex;border: 1px solid #dc61e7;padding: 0px;">
-                            <div>
+                        <div class="form-group" style="display:flex;flex-wrap:wrap; gap:5px; border: 1px solid #dc61e7;padding: 0px;">
+                            <div style="border-style: solid;
+                            border-width: thin;
+                            border-color: darkolivegreen;">
                                 <select class="form-control selectpicker" data-live-search="true" name="user">
                                     <option disabled></option>
                                     @foreach ($list as $liste)
@@ -19,7 +21,9 @@
                                 </select>
                             </div>
                             <div>
-                                <input class="form-control" type="number" name="boul" max="99999" required>
+                                <input class="form-control" type="number" name="boul" max="99999" placeholder="Antre boul lan" style="border-style: solid;
+                                border-width: thin;
+                                border-color: black;" required>
                             </div>
                             <div>
                                 <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary">

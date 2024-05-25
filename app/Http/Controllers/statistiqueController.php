@@ -16,7 +16,7 @@ class statistiqueController extends Controller
 {
 
 
-    public function view(){
+    public function viewpage(){
         $list = tirage_record::where('compagnie_id', session('loginId'))->get();
         return view('statistique.statistiqueunique',compact('list'));
     }
