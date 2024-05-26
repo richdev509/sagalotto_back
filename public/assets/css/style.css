@@ -19587,9 +19587,10 @@ code {
 }
 
 .form-control {
-  border: 1px solid #ebedf2;
+  border: 1px solid #323a4d;
   font-family: "ubuntu-regular", sans-serif;
   font-size: 0.8125rem;
+    border-radius: 4px;
 }
 
 .form-control:focus {

@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Konekte Sagalotto</title>
     @notifyCss
-    <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
-    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="shortcut icon" href="assets/images/favicon.ico" />
+    <link rel="stylesheet" href="/assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/assets/vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" />
   </head>
   <body>
     <div class="container-scroller">
@@ -18,12 +18,11 @@
             <div class="col-lg-4 mx-auto">
               <div class="auth-form-light text-left p-5">
                 <div class="brand-logo">
-                  <img src="assets/images/logo.png">
-                  <h4>Sagalotto</h4>
+                  <img src="/assets/images/logo.png">
+                  <h4>SUPER ADMIN</h4>
                 </div>
                 
-                <h6 class="font-weight-light">Konekte pouw kontinye.</h6>
-                <form class="pt-3" method="POST" action="auth">
+                <form class="pt-3" method="POST" action="/wp-admin/auth2">
                   @csrf
                   <div class="form-group">
                     <input type="text" name="username" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Itilizatè" style="border-color: blueviolet;" required>
@@ -36,16 +35,7 @@
 
                     <button class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn" type="submit">KONEKTE</button>
                   </div>
-                  <div class="my-2 d-flex justify-content-between align-items-center">
-                    <div class="form-check">
-                      <label class="form-check-label text-muted">
-                        <input type="checkbox" class="form-check-input"> Kenbem konekte pou lontan</label>
-                    </div>
-                    <a href="/contact" class="auth-link text-black">Ou bliye modepas ou? Kontakte nou</a>
-                  </div>
                   
-                  <div class="text-center mt-4 font-weight-light"> Ou bezwen sistèm pou bolet ou? <a href="/contact" class="text-primary">Ranpli fom nan</a>
-                  </div>
                 </form>
               </div>
             </div>

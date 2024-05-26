@@ -8,7 +8,9 @@ use App\Http\Controllers\ajouterLotGagnantController;
 use App\Http\Controllers\parametreController;
 use App\Http\Controllers\rapportController;
 use App\Http\Controllers\ticketController;
-use App\http\Controllers\statistiqueController;
+use App\Http\Controllers\statistiqueController;
+use App\Http\Controllers\superadmin\SystemController;
+use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,6 +22,14 @@ use App\http\Controllers\statistiqueController;
 |
 */
 
+Route::post('/wp-admin/auth2', [SystemController::class,'auth2']);
+Route::get('wp-admin/login', function(){
+           return view('superadmin.login');
+})->name('wplogin');
+
+
+
+//fin
 Route::get('/', function () {
     return view('welcome');
 });
@@ -47,6 +57,7 @@ Route::get('/register', function () {
 Route::post('login', [CompanyController::class,'login']);
 
 Route::get('logout', [CompanyController::class,'logout']);
+Route::get('/wp-admin/logout', [SystemController::class,'logout']);
 //vendeur
 
 
@@ -128,10 +139,38 @@ Route::post('m-l-p',[parametreController::class, 'modifierLimitePrix'])->name('m
 Route::get('/plan', [parametreController::class, 'viewinfo']) ;
 Route::post('/up-g', [parametreController::class, 'update_general'])->name('up-g');
 
-//statistique
+
 Route::post('getstatistiqueSimple', [statistiqueController::class,'getstatistiqueSimple'])->name('getstatistiqueSimple');
-Route::get('stat', [statistiqueController::class,'view']);
+Route::get('stat', [statistiqueController::class,'viewpage']);
 
 
+});
+
+Route::middleware(['web', 'chekadmin'])->group(function () {
+
+
+    Route::get('/wp-admin/admin',function(){
+        return view('superadmin.admin');
+});
+Route::get('/wp-admin/add-compagnie',function(){
+        return view('superadmin.ajouter_compagnie');
+});
+Route::get('/wp-admin/add-vendeur', function (Request $request) {
+  $idc = $request->query('idC');
+  return view('superadmin.ajouter_vendeur', compact('idc'));
+});
+Route::post('/wp-admin/C-add',[SystemController::class,'addCompagnie'])->name('add_compagnie');
+Route::post('/wp-admin/C-edite',[SystemController::class,'editCompagnie'])->name('edit_compagnie');
+Route::post('/wp-admin/C-compagnie',[SystemController::class,'viewCompagnieUnique'])->name('listecompagnieU');
+Route::get('/wp-admin/C-compagnie-2',[SystemController::class,'viewCompagnie'])->name('listecompagnie');
+Route::post('/wp-admin/update',[SystemController::class,'updateCompagnie'])->name('update_compagnie');
+Route::post('/wp-admin/V-edit',[SystemController::class,'editVendeur'])->name('edit_vendeur');
+Route::post('/wp-admin/V-bu',[SystemController::class,'blockUnblock'])->name('blockunlock');
+Route::post('/wp-admin/V-update',[SystemController::class,'updateVendeur'])->name('update_vendeur');
+Route::post('/wp-admin/add_vendeur',[SystemController::class,'addVendeur'])->name('addvendeur');
+Route::post('/wp-admin/C-abonnement',[SystemController::class,'addabonement'])->name('add_abonnement');
+Route::get('/wp-admin/C-abonnement',function(){
+    return view('superadmin.abonnement');
+})->name('add_abonnement');
 });
 
