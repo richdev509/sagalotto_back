@@ -274,27 +274,15 @@ if($codes){
              ($boul1 == $gagnants->troisiemechiffre && $boul2 == $gagnants->premierchiffre) ||
              ($boul1 == $gagnants->troisiemechiffre && $boul2 == $gagnants->secondchiffre) 
          ) {
-             // La combinaison boul1 et boul2 est gagnante, multiplier le montant par le prix de "maryaj"
              $montantGagne = $fiche['montant'] * $maryajPrice;
              $this->totalGains=$this->totalGains+$montantGagne;
-            /* $this->gagnantsData['maryaj'][] = [
-                 'boul1' => $boul1,
-                 'boul2'=>$boul2,
-                 'montant' =>$fiche['montant'],
-                 
-             ];*/
              $this->havegainmaryaj=1;
-             // Vous pouvez maintenant utiliser $montantGagne comme nécessaire
          }else{
-           /*  $this->gagnantsData['maryaj'][] = [
-             ];*/
            $this->havegainmaryaj=0;
          }
         
       }
       }else{
-     /*  $this->gagnantsData['maryaj'][] = [
-       ];*/
         $this->havegainmaryaj=0;
        }
        
@@ -330,9 +318,6 @@ if($codes){
      }
  
     }else{
-    /* $this->gagnantsData['loto3'][] = [
-                 
-     ];*/
       $this->havegainloto3=0;
     }
  }

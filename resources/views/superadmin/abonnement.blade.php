@@ -17,13 +17,15 @@
       
         <div class="form-group">
             <label for="exampleInputUsername1">Nom Compagnie</label>
-      <input type="text"  class="form-control" name="name" placeholder="Nom Compagnie" required/> 
+            @if(isset($data))
+      <input type="text"  class="form-control" name="name" value="{{$data->name}}" placeholder="Nom Compagnie" required/> 
+            @endif
         </div>
       
      
         <div class="form-group">
             <label for="exampleInputUsername1">Date abonnement</label>
-      <input type="date" class="form-control" name="date" /> 
+      <input type="date" class="form-control" name="date" @if(isset($data)) value="{{ $data->dateexpiration}}" @endif /> 
         </div>
       
 

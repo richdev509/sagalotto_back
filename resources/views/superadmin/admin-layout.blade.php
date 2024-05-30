@@ -157,6 +157,7 @@
                             <i class="mdi mdi-home menu-icon"></i>
                         </a>
                     </li>
+                    @if (session('role')=="admin" || session('role')=="admin2")
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="collapse" href="#compagnie" aria-expanded="false"
                             aria-controls="ui-basic">
@@ -174,7 +175,25 @@
                             </ul>
                         </div>
                     </li>
-                    
+                    @endif
+                    @if (session('role')=="admin")
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#utilisateur" aria-expanded="false"
+                            aria-controls="ui-basic">
+                            <span class="menu-title">utilisateur</span>
+                            <i class="menu-arrow"></i>
+                            <i class="mdi mdi-account menu-icon"></i>
+                        </a>
+                        <div class="collapse" id="utilisateur">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="/wp-admin/add-utilisateur">Ajouter utilisateur</a>
+                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="/wp-admin/U-liste">Liste utilisateur</a></li>
+                                 
+                            </ul>
+                        </div>
+                    </li>
+                    @endif
 
                 </ul>
 
@@ -190,7 +209,7 @@
                 <footer class="footer">
                     <div class="container-fluid d-flex justify-content-between">
                         <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright ©
-                            Sagalotto.com 2023</span>
+                            Sagalotto.com 2024</span>
                        
                     </div>
                 </footer>

@@ -91,7 +91,7 @@
                         <tbody style="">
                             @foreach ($datas as $dataD)
                             <tr>
-                                <td><form action="{{route('edit_vendeur')}}" method="POST"> @csrf <input type="hidden" name="id" value="{{$data->id}}" /> <input type="hidden" name="iduser" value="{{$dataD->id}}" /> <input type="hidden" value="{{$data->name}}" name="compagnie"/><button type="submit"><i class="mdi mdi-pencil mdi-24px"></i></button></form></td>
+                                <td><form action="{{route('edit_vendeur2')}}" method="POST"> @csrf <input type="hidden" name="id" value="{{$data->id}}" /> <input type="hidden" name="iduser" value="{{$dataD->id}}" /> <input type="hidden" value="{{$data->name}}" name="compagnie"/><button type="submit"><i class="mdi mdi-pencil mdi-24px"></i></button></form></td>
                               
                             <td>{{$dataD->name}}</td>
                             <td>{{$dataD->username}}</td>

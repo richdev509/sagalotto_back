@@ -16,6 +16,21 @@ use Illuminate\Support\Facades\DB;
 
 class SystemController extends Controller
 {
+
+    public function viewadmin()
+    {
+        if (session('role') == "admin" || session('role') == "comptable") {
+            $nombreCompagnie = DB::table('compagnies')->where('type', 'production')->count();
+        }else{
+            $nombreCompagnie = DB::table('compagnies')->where('type', 'production')->where('actionUser')->count();
+       
+        }
+    }
+
+    public function viewajoutelo(){
+        $list=DB::table('tirage')->get();
+        return view('superadmin.ajouter_lo',compact('list'));
+    }
     public function auth2(Request $request)
     {
         $username =  $request->input('username');
@@ -89,7 +104,11 @@ class SystemController extends Controller
         $verifier = company::where('name', $request->compagnie)
             ->orWhere('phone', $request->phone)
             ->exists();
-
+         $verifierusername=company::where('username',$request->user)->exists();
+         if( $verifierusername){
+            notify()->error('username non accepter');
+            return back();
+         }
         if ($verifier) {
             notify()->error('Compagnie existe');
             return back();
@@ -350,24 +369,22 @@ class SystemController extends Controller
                 $dateExpirationS = Carbon::parse($reponse->dateexpiration);
                 $nouvelleDate = $request->date ? Carbon::parse($request->date) : null;
                 $nouvelleDate2 = $request->date ? Carbon::parse($request->date) : null;
-      
-                
-                    if (!$nouvelleDate) {
-                       
-                        $dateexpiration = $dateExpirations->addMonths($dureemois)->addDays(10);
-                        $datedebut=$dateExpirationS->addDays(1);
 
-                       
-                    }else{
-                        if ($nouvelleDate->lessThan($dateExpirationS)) {
-                            notify()->error('La nouvelle date est inférieure à la date d\'expiration.');
-                            return back();
-                        }
-                        $dateexpiration = $nouvelleDate->addMonths($dureemois)->addDays(10);
-                        $datedebut=$nouvelleDate2;
+
+                if (!$nouvelleDate) {
+
+                    $dateexpiration = $dateExpirations->addMonths($dureemois)->addDays(10);
+                    $datedebut = $dateExpirationS->addDays(1);
+                } else {
+                    if ($nouvelleDate->lessThan($dateExpirationS)) {
+                        notify()->error('La nouvelle date est inférieure à la date d\'expiration.');
+                        return redirect()->route('listecompagnie');
                     }
-                     
-                
+                    $dateexpiration = $nouvelleDate->addMonths($dureemois)->addDays(10);
+                    $datedebut = $nouvelleDate2;
+                }
+
+
 
                 // Mettre à jour l'abonnement dans la base de données
                 $reponse->update([
@@ -386,14 +403,14 @@ class SystemController extends Controller
                 ]);
 
                 notify()->success('Abonnement mis à jour avec succès');
-                return back();
+                return redirect()->route('listecompagnie');
             } else {
                 notify()->error('Compagnie non trouvée');
-                return back();
+                return redirect()->route('listecompagnie');
             }
         } else {
             notify()->error('Vous n\'avez pas access a niveau');
-            return back();
+            return redirect()->route('listecompagnie');
         }
     }
 
@@ -413,6 +430,19 @@ class SystemController extends Controller
             return  $daysRemaining;
         } else {
             return $d = 0;
+        }
+    }
+
+    public function getcompagnie(Request $request)
+    {
+        if (session('id')) {
+            $data = company::where('id', $request->id)->first();
+            if ($data) {
+                return view('superadmin.abonnement', compact('data'));
+            } else {
+                notify()->error('partie recuperation compagnie');
+                return back();
+            }
         }
     }
 }

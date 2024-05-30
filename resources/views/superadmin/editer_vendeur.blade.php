@@ -18,7 +18,7 @@
                   <div class="card">
                     <div class="card-body">
                       
-                      <form class="form-sample" method="post" action="{{route('update_vendeur')}}">
+                      <form class="form-sample" method="post" action="{{route('update_vendeur2')}}">
                         @csrf
                         <input type="hidden" value="{{$data->compagnie_id}}" name="idcompagnie" />
                         <input type="hidden" value="{{$data->id}}" name="id"/>

@@ -39,7 +39,9 @@
                                 <th scope="col">plan</th>
                                 <th scope="col">Date Expiration</th>
                                 <th scope="col">Nombre de pos</th>
-                                
+                                @if(session('role')=='admin'|| session('role')=="addeur")
+                                <th scope="col">abonnement</th>
+                                @endif
 
                             </tr>
                         </thead>
@@ -54,6 +56,9 @@
                             <td>{{$donnee->plan}}</td>
                             <td>{{$donnee->dateexpiration}}</td>
                             <td>{{$donnee->number_pos}}</td>
+                            @if(session('role')=='admin'|| session('role')=="addeur")
+                            <td><form action="{{route('add_abonnement2')}}" method="POST"> @csrf <input type="hidden" name="id" value="{{$donnee->id}}"/><button><i class="mdi mdi-calendar-check mdi-24px"></i></button></form>
+                            @endif
                             </tr>
              
                             @endforeach
