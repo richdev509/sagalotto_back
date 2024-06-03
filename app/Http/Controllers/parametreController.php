@@ -59,7 +59,7 @@ class parametreController extends Controller
                 }else{
                        //verifier si limit 10 boul lan rive 
                     $count = DB::table('limit_prix_boul')->where('opsyon',$nameAssociatedWithType )->where('compagnie_id',session('loginId'))->count();
-                    if($count==10){
+                    if($count==500){
                         notify()->error('Ou rive nan limit 10 boul la deja pou option sa');
                         return redirect()->back();
                     }
@@ -72,7 +72,17 @@ class parametreController extends Controller
                     }
                     
                     //$this->vericationMaryajDouble($request,$request->type,$nameAssociatedWithType);
-                    
+                    if(isset($request->isgeneral) && $request->isgeneral==45){
+                        $reponse = limitprixboul::create([
+                            'tirage_record' => $request->tirage,
+                            'compagnie_id' => session('loginId'),
+                            'type' => $nametirage,
+                            'opsyon' => $nameAssociatedWithType,
+                            'boul' => $request->chiffre,
+                            'montant' => $request->montant,
+                            'is_general'=>1,
+                        ]);
+                    }else{
                         $reponse = limitprixboul::create([
                             'tirage_record' => $request->tirage,
                             'compagnie_id' => session('loginId'),
@@ -81,13 +91,17 @@ class parametreController extends Controller
                             'boul' => $request->chiffre,
                             'montant' => $request->montant,
                         ]);
-                    
+                    }
                     
 
                     if($reponse){
-                      
-                notify()->success('Ajoute avek sikse');
-                return redirect()->route('limitprix');
+                        if(isset($request->isgeneral) && $request->isgeneral==45){
+                            notify()->success('Bloke success');
+                            return redirect()->back();
+                        }else{
+                        notify()->success('Ajouter success');
+                        return redirect()->route('limitprix');
+                    }
                     }
                 }
     }
