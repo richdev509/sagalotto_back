@@ -24,7 +24,7 @@
               <img src="/assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
               <h4 class="font-weight-normal mb-3">Nombre POS<i class="mdi mdi-cash-register mdi-24px float-right"></i>
               </h4>
-              <h2 class="mb-5">10 <i class="mdi mdi-cash-register mdi-24px float-right"></i> </h2>
+              <h2 class="mb-5">{{$nombrePos}}<i class="mdi mdi-cash-register mdi-24px float-right"></i> </h2>
               <!--<h6 class="card-text">Vandè ki vann plis jodia:  <span style="font-weight: bold;">Bank #12</span></h6>-->
             </div>
           </div>
@@ -35,7 +35,7 @@
               <img src="/assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
               <h4 class="font-weight-normal mb-3">Nombre de compagnie<i class="mdi mdi-domain mdi-24px float-right"></i>
               </h4>
-              <h2 class="mb-5">0 <i class="mdi mdi-domain mdi-24px float-right"></i></h2> 
+              <h2 class="mb-5">{{$nombreCompagnie}}<i class="mdi mdi-domain mdi-24px float-right"></i></h2> 
             </div>
           </div>
         </div>
@@ -45,7 +45,7 @@
               <img src="/assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
               <h4 class="font-weight-normal mb-3">Compagnie inactif<i class="mdi mdi-domain mdi-24px float-right" ></i>
               </h4>
-              <h2 class="mb-5"> 0 <i class="mdi mdi-domain mdi-24px float-right" ></i></h2>
+              <h2 class="mb-5">{{$Compagnieinactive}}<i class="mdi mdi-domain mdi-24px float-right" ></i></h2>
               <h6 class="card-text"></h6>
             </div>
           </div>

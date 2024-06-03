@@ -170,7 +170,7 @@
                                 <li class="nav-item"> <a class="nav-link" href="/wp-admin/add-compagnie">Ajouter Compagnie</a>
                                 </li>
                                 <li class="nav-item"> <a class="nav-link" href="/wp-admin/C-compagnie-2">Liste Compagnie</a></li>
-                                @if (session('role')=="admin" || session('role')=="addeur") <li class="nav-item"> <a class="nav-link" href="/wp-admin/C-abonnement">Update Abonnement</a></li>@endif
+                                @if (session('role')=="admin" ) <li class="nav-item"> <a class="nav-link" href="/wp-admin/C-abonnementView">Update Abonnement</a></li>@endif
                           
                             </ul>
                         </div>
@@ -184,7 +184,7 @@
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-account menu-icon"></i>
                         </a>
-                        <div class="collapse" id="utilisateur">
+                        <div class="collapse" id="utilisateur" style="display: none;">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link" href="/wp-admin/add-utilisateur">Ajouter utilisateur</a>
                                 </li>

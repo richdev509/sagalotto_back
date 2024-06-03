@@ -19,7 +19,10 @@
             <label for="exampleInputUsername1">Nom Compagnie</label>
             @if(isset($data))
       <input type="text"  class="form-control" name="name" value="{{$data->name}}" placeholder="Nom Compagnie" required/> 
-            @endif
+      @else
+      <input type="text"  class="form-control" name="name" value="" placeholder="Nom Compagnie" required/> 
+          
+      @endif
         </div>
       
      
