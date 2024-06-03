@@ -11,8 +11,8 @@ class participation extends Model
     protected $fillable = [
     'id',
     'compagnie_id',
-    'tirage_id','
-    date_',
+    'tirage_id',
+    'date_',
     'updated_at',
     'created_at',
     ];	

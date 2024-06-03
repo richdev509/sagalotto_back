@@ -16,9 +16,17 @@ class CheckAdmin
     public function handle(Request $request, Closure $next): Response
     {
 
-        if (session('id') && session('role')=='admin' ||Session('role')=='admin2' || Session('role')=='comptable'|| Session('role')=='addeur')
+        if (session('id'))
+
         {
+
+            if(session('role')=='admin' || Session('role')=='admin2' || Session('role')=='comptable'|| Session('role')=='addeur'){
             return $next($request);
+            
+            }else{
+
+                return redirect()->route('wplogin');
+            }
            
         }else{
             return redirect()->route('wplogin');

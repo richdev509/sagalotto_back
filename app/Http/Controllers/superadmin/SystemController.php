@@ -9,7 +9,7 @@ use App\Models\company;
 use App\Models\tbladmin;
 use App\Models\User;
 use App\Models\abonnementhistoriqueuser;
-
+use App\Models\ticket_code;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -20,16 +20,27 @@ class SystemController extends Controller
     public function viewadmin()
     {
         if (session('role') == "admin" || session('role') == "comptable") {
-            $nombreCompagnie = DB::table('compagnies')->where('type', 'production')->count();
-        }else{
-            $nombreCompagnie = DB::table('compagnies')->where('type', 'production')->where('actionUser')->count();
-       
+            $Compagnie = DB::table('companies')->where('type', 'production')->get();
+            $nombreCompagnie = $Compagnie->count();
+            $id = DB::table('companies')->where('type', 'production')->pluck('id')
+                ->toArray();
+            $nombrePos = User::whereIn('compagnie_id', $id)->count();
+            $Compagnieinactive = DB::table('companies')->where('type', 'production')->where('is_active', 0)->count();
+        } else {
+            $Compagnie = DB::table('companies')->where('type', 'production')->where('actionUser', session('id'))->get();
+            $nombreCompagnie = $Compagnie->count();
+            $id = DB::table('companies')->where('type', 'production')->where('actionuser', session('id'))->pluck('id')
+                ->toArray();
+            $nombrePos = User::whereIn('compagnie_id', $id)->count();
+            $Compagnieinactive = DB::table('companies')->where('type', 'production')->where('actionuser', session('id'))->where('is_active', 0)->count();
         }
+        return view('superadmin.admin', compact('nombreCompagnie', 'nombrePos', 'Compagnieinactive'));
     }
 
-    public function viewajoutelo(){
-        $list=DB::table('tirage')->get();
-        return view('superadmin.ajouter_lo',compact('list'));
+    public function viewajoutelo()
+    {
+        $list = DB::table('tirage')->get();
+        return view('superadmin.ajouter_lo', compact('list'));
     }
     public function auth2(Request $request)
     {
@@ -73,14 +84,48 @@ class SystemController extends Controller
         }
     }
 
+    public function nombrevendeurmois($data){
+        $results = [];
+            foreach ($data as $da) {
+                $date = Carbon::parse($da->dateplan);
+                $month = $date->month;
+                $year = $date->year;
+    
+                $distinctUserCount = DB::table('ticket_code')
+                    ->where('compagnie_id', $da->id)
+                    ->whereMonth('created_at', $month)
+                    ->whereYear('created_at', $year)
+                    ->distinct('user_id')
+                    ->count('user_id');
+    
+                $results[$da->id] = $distinctUserCount;
+            }
+            return $results;
+    }
     public function viewCompagnie()
     {
-        $data = DB::table('companies')->get();
-        if ($data) {
-            return view('superadmin.liste_compagnie', compact('data'));
-        } else {
-            notify()->error('Compagnie non trouver');
-            return back();
+        if (session('role') == "admin" || session('role') == "comptable") {
+            $data = DB::table('companies')->get();
+            $results=$this->nombrevendeurmois($data);
+            if ($data) {
+                return view('superadmin.liste_compagnie', compact('data','results'));
+            } else {
+                notify()->error('Compagnie non trouver');
+                return back();
+            }
+        }
+
+
+
+        if (session('role') == "admin2") {
+            $data = DB::table('companies')->where('actionUser', session('id'))->get();
+            $results=$this->nombrevendeurmois($data);
+            if ($data) {
+                return view('superadmin.liste_compagnie', compact('data','results'));
+            } else {
+                notify()->error('Compagnie non trouver');
+                return back();
+            }
         }
     }
 
@@ -104,11 +149,11 @@ class SystemController extends Controller
         $verifier = company::where('name', $request->compagnie)
             ->orWhere('phone', $request->phone)
             ->exists();
-         $verifierusername=company::where('username',$request->user)->exists();
-         if( $verifierusername){
+        $verifierusername = company::where('username', $request->user)->exists();
+        if ($verifierusername) {
             notify()->error('username non accepter');
             return back();
-         }
+        }
         if ($verifier) {
             notify()->error('Compagnie existe');
             return back();
@@ -122,8 +167,12 @@ class SystemController extends Controller
             'plan' => $request->plan,
             'username' => $request->user,
             'actionUser' => session('id'),
+            'is_active' => '0',
             'password' => Hash::make($request->input('password')),
         ]);
+        $company = company::find($reponse);
+        $company->code = "CO-00" . $reponse;
+        $company->save();
         if ($reponse) {
             notify()->success('Compagnie add success');
             return redirect()->route('listecompagnie');

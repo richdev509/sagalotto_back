@@ -83,6 +83,43 @@ class executeTirageController extends Controller
     
     }
 
+
+    public function rentierauto($compagnieId,$tirageName,$date){
+       
+         
+        // Récupérer les codes fiches 
+        $numero = ticket_code::where('compagnie_id', $compagnieId)
+                            ->whereDate('created_at', $date)
+                            ->pluck('code')
+                            ->toArray();
+               
+        if ($numero) {
+            // Récupérer les tickets vendus
+            $listefiche = TicketVendu::whereIn('ticket_code_id', $numero)
+                                     ->where('tirage_record_id', $tirageName)
+                                     ->where('is_win','1')
+                                     ->get();
+                                     
+                   // dd($listefiche,$date,$tirageName,$numero);                
+            if ($listefiche->count() > 0) {
+                // Parcourir chaque fiche et mettre à jour les champs
+                foreach ($listefiche as $fiche) {
+                    $fiche->update([
+                        'is_win' => '0', // Mettre à jour is_win à 0
+                        'winning' => 0,
+                        'is_calculated' =>0,
+                    ]);
+                }
+                return true; // Opération réussie
+            } else {
+                return true; // Pas de fiche à mettre à jour
+            }
+        } else {
+            return true; // Pas de codes de fiche trouvés
+        }
+
+}
+
     public function execute($tirage,$date){
 
      $totalGains =0;

@@ -17,8 +17,17 @@ use App\Models\participation;
 class executeTirageAuto extends Controller
 {
 
-    public function  executeTirageAuto(Request $request)
+
+    public function switchActon(Request $request){
+             if($request->action=='update'){
+
+             }elseif($request->action=='add'){
+                $this->executeTirageAuto($request);
+             }
+    }
+    public function  executeTirageAuto($request)
     {
+
 
         $tirageId = $request->input('tirageid');
         $date = $request->input('date');
@@ -54,7 +63,7 @@ class executeTirageAuto extends Controller
                     if ($compagnie->service == 1) {
                         $reponseStore = $this->store($compagnie->id, $tirageid, $date, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre);
                         //signer participation
-
+                        $this->participation($compagnie->id, $tirageid, $date);
                         //lancement du job pour le compagnie en question.
                         if ($reponseStore) {
                             dispatch(new ExecutionTirage($tirageid, $compagnie->id, $date, session('id')));

@@ -37,6 +37,7 @@
                                 <th scope="col">Compagnie</th>
                                 <th scope="col">Phone</th>
                                 <th scope="col">plan</th>
+                                <th scope="col">Montant due</th>
                                 <th scope="col">Date Expiration</th>
                                 <th scope="col">Nombre de pos</th>
                                 @if(session('role')=='admin'|| session('role')=="addeur")
@@ -48,15 +49,19 @@
                         <tbody style="">
                             @foreach($data as $donnee)
                             <tr>
+                                @if(session('role')=='admin'|| session('role')=='admin2'|| session('role')=="addeur")
                                 <td><form action="{{route('edit_compagnie')}}" method="POST"> @csrf <input type="hidden" name="id" value="{{$donnee->id}}"/><button type="submit"><i class="mdi mdi-pencil mdi-24px"></i></button></form></td>
-                                <td><form action="{{route('listecompagnieU')}}" method="POST"> @csrf <input type="hidden" name="idcompagnie" value="{{$donnee->id}}"/><button type="submit"><i class="mdi mdi-eye mdi-24px"></i></button></form></td>
+                                @endif<td><form action="{{route('listecompagnieU')}}" method="POST"> @csrf <input type="hidden" name="idcompagnie" value="{{$donnee->id}}"/><button type="submit"><i class="mdi mdi-eye mdi-24px"></i></button></form></td>
                             
                                 <td>{{$donnee->name}}</td>
                             <td>{{$donnee->phone}}</td>
                             <td>{{$donnee->plan}}</td>
+                            <td> 
+                                 {{ $results[$donnee->id] * $donnee->plan }} USD</li>
+                            </td>
                             <td>{{$donnee->dateexpiration}}</td>
                             <td>{{$donnee->number_pos}}</td>
-                            @if(session('role')=='admin'|| session('role')=="addeur")
+                            @if(session('role')=='admin'|| session('role')=="comptable")
                             <td><form action="{{route('add_abonnement2')}}" method="POST"> @csrf <input type="hidden" name="id" value="{{$donnee->id}}"/><button><i class="mdi mdi-calendar-check mdi-24px"></i></button></form>
                             @endif
                             </tr>

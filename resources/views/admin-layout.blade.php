@@ -243,6 +243,8 @@
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link" href="/stat">statistiqueUnique
                                     </a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="{{route('statistique')}}">statistique General
+                                    </a></li>
                                
                             </ul>
                         </div>
