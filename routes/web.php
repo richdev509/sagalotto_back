@@ -103,6 +103,8 @@ Route::get('lister-tirage', [tirageController::class,'index']);
 Route::get('rapport', [rapportController::class,'create_rapport']);
 Route::get('/raport2', [rapportController::class, 'create_rapport2']);
 Route::post('/raport2_get_amount', [rapportController::class, 'get_control']);
+Route::post('/save_reglement', [rapportController::class, 'save_control']);
+
 
 
 //end rapport
