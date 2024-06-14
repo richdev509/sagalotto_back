@@ -12,7 +12,11 @@ use App\Http\Controllers\statistiqueController;
 use App\Http\Controllers\superadmin\SystemController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\executeTirageAuto;
-use App\http\Controllers\statistiquegeneralController;
+use App\Http\Controllers\historiquetransaction;
+use App\Http\Controllers\statistiquegeneralController;
+use App\Http\Controllers\superadmin\abonnementController;
+use App\Http\Controllers\historiquetransanction;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -103,6 +107,8 @@ Route::get('lister-tirage', [tirageController::class,'index']);
 Route::get('rapport', [rapportController::class,'create_rapport']);
 Route::get('/raport2', [rapportController::class, 'create_rapport2']);
 Route::post('/raport2_get_amount', [rapportController::class, 'get_control']);
+Route::post('/save_reglement', [rapportController::class, 'save_control']);
+
 
 
 //end rapport
@@ -176,7 +182,7 @@ Route::post('/wp-admin/V-bu',[SystemController::class,'blockUnblock'])->name('bl
 Route::post('/wp-admin/V-update',[SystemController::class,'updateVendeur'])->name('update_vendeur2');
 Route::post('/wp-admin/add_vendeur',[SystemController::class,'addVendeur'])->name('addvendeur');
 
-Route::post('/wp-admin/C-abonnement',[SystemController::class,'addabonement'])->name('add_abonnement');
+Route::post('/wp-admin/C-abonnement',[abonnementController::class,'addabonement'])->name('add_abonnement');
 Route::get('/wp-admin/C-abonnementView',function(){
     return view('superadmin.abonnement');
 })->name('add_abonnement1');
@@ -187,6 +193,10 @@ Route::post('/wp-admin/addlo',[executeTirageAuto::class,'executeTirageAuto'])->n
 Route::get('/wp-admin/monitoring',function(){
   return view ('superadmin.monitoring');
 })->name('monitoring');
+
+Route::get('/wp-admin/historiqueabonnement',[abonnementController::class,'viewhistorique'])->name('historiquesaabonnement');
+Route::get('/wp-admin/historiquetransaction',[historiquetransaction::class,'viewtransaction'])->name('historiquestransaction');
+Route::post('/wp-admin/paiementdwe',[abonnementController::class,'paiementdwe'])->name('paiementsdwe');
 
 });
 
