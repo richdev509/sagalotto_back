@@ -10,6 +10,7 @@ use App\Models\tbladmin;
 use App\Models\User;
 use App\Models\abonnementhistoriqueuser;
 use App\Models\ticket_code;
+use App\Http\Controllers\superadmin\abonnementController;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -102,13 +103,26 @@ class SystemController extends Controller
             }
             return $results;
     }
+    public function montantplan($data){
+        $resultsmontant = [];
+            foreach ($data as $da) {
+                $distinctUserCount = DB::table('abonnementhistorique')
+                    ->where('idcompagnie', $da->id)
+                    ->where('dateabonnement', $da->dateplan)
+                    ->value('montant');
+    
+                $resultsmontant[$da->id] = $distinctUserCount;
+            }
+            return $resultsmontant;
+    }
     public function viewCompagnie()
     {
         if (session('role') == "admin" || session('role') == "comptable") {
             $data = DB::table('companies')->get();
             $results=$this->nombrevendeurmois($data);
+            $resultsmontant=$this->montantplan($data);
             if ($data) {
-                return view('superadmin.liste_compagnie', compact('data','results'));
+                return view('superadmin.liste_compagnie', compact('data','results','resultsmontant'));
             } else {
                 notify()->error('Compagnie non trouver');
                 return back();
@@ -207,7 +221,7 @@ class SystemController extends Controller
         ]);
 
         // Trouver la compagnie par ID
-        $company = \App\Models\Company::find($request->id);
+        $company =Company::find($request->id);
 
         // Vérifier si la compagnie existe
         if (!$company) {

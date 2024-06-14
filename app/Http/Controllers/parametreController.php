@@ -79,7 +79,7 @@ class parametreController extends Controller
                             'type' => $nametirage,
                             'opsyon' => $nameAssociatedWithType,
                             'boul' => $request->chiffre,
-                            'montant' => $request->montant,
+                            'montant' => 0,
                             'is_general'=>1,
                         ]);
                     }else{

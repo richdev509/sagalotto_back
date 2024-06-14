@@ -12,8 +12,20 @@ class abonnementhistoriqueuser extends Model
         'id',
         'iduser',
         'idcompagnie',
-        'nombremois',	
+        'nombremois',
+        'balance',	
         'action',
         'date',
+        'nombrepos',
+        'montant',
+        'etat',
+        'created_at',
+        'dateabonnement',
     ];
+
+
+    public function compagnie()
+    {
+        return $this->belongsTo(company::class,'idcompagnie','id');
+    }
 }

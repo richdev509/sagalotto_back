@@ -199,7 +199,7 @@
                     <input type="hidden" name="isgeneral" value="45" />
                     <input type="hidden" name="type" value="{{ $type }}" />
                     <input type="hidden" name="tirage" value="{{ $tirageId }}" />
-                    <input type="hidden" name="chiffre" value="{{ $vari }}" />
+                    <input type="hidden" name="chiffre" value="{{ $boul }}" />
                     <input type="hidden" name="montant" value="{{ $details['montant'] }}" />
                     <button type="submit">
                         @if ($block === 1)
@@ -398,8 +398,8 @@
 
     // Fonction pour comparer les valeurs des colonnes "montant"
     function compare(a, b) {
-        const montantA = parseFloat(a.cells[4].textContent); // Cinquième colonne
-        const montantB = parseFloat(b.cells[4].textContent); // Cinquième colonne
+        const montantA = parseFloat(a.cells[4]?.textContent || 0); // Cinquième colonne
+        const montantB = parseFloat(b.cells[4]?.textContent || 0); // Cinquième colonne
 
         if (montantA < montantB) {
             return 1;

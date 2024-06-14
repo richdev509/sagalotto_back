@@ -239,7 +239,7 @@ class ExecutionTirage implements ShouldQueue
                             $this->havegain = 1;
                             $i = $i + 1;
                         } else {
-                            $this->havegain = 0;
+                          
                         }
                     }
                 }
@@ -273,7 +273,7 @@ class ExecutionTirage implements ShouldQueue
                     $this->totalGains = $this->totalGains + $montantGagne;
                     $this->havegainmaryaj = 1;
                 } else {
-                    $this->havegainmaryaj = 0;
+                  
                 }
             }
         } else {
@@ -294,7 +294,7 @@ class ExecutionTirage implements ShouldQueue
                     $this->totalGains = $this->totalGains + $montantGagne;
                     $this->havegainloto3 = 1;
                 } else {
-                    $this->havegainloto3 = 0;
+                 
                 }
             }
         } else {
@@ -319,7 +319,7 @@ class ExecutionTirage implements ShouldQueue
                         $firsttest = 1;
                         $this->havegainloto4 = 1;
                     } else {
-                        $this->havegainloto4 = 0;
+                        
                     }
                 }
                 if (isset($fiche['option2'])) {
@@ -380,18 +380,13 @@ class ExecutionTirage implements ShouldQueue
                     // L'option2 est présente et correspond à la combinaison gagnante, multiplier le montant par le prix de l'option2
                     $montantGagne = $fiche['option2'] * $loto5Price;
                     $this->totalGains = $this->totalGains + $montantGagne;
-                    /*$options[] = [
-             'option2' => $fiche['option2']
-         ];*/
-                    $this->havegainloto5 = 1;
+                         $this->havegainloto5 = 1;
                 }
                 if (isset($fiche['option3']) && $boul1  == substr($gagnants->premierchiffre, -1) . $gagnants->secondchiffre . $gagnants->troisiemechiffre) {
                     // L'option3 est présente et correspond à la combinaison gagnante, multiplier le montant par le prix de l'option3
                     $montantGagne = $fiche['option3'] * $loto5Price;
                     $this->totalGains = $this->totalGains + $montantGagne;
-                    /*$options[] = [
-             'option3' => $fiche['option3']
-         ];*/
+                  
                     $this->havegainloto5 = 1;
                 }
             }
