@@ -237,6 +237,224 @@ class ticketController extends Controller
             ]
         ], 200,);
     }
+    public function creer_ticket2(Request $request)
+    {
+
+
+        // prix total
+        $amount_tot = 0;
+        //tirage
+
+        $ticketId = "";
+        // $array = $request->all();
+        // $allBolete = $array['bolete'];
+        //all mariage gratuit
+        //trouver compagnie
+        $comp = company::where([
+            ['id', '=', auth()->user()->compagnie_id],
+            ['is_delete', '=', 0],
+        ])->first();
+        if (!$comp) {
+            return response()->json([
+                'status' => 'false',
+                'message' => 'compagnie non trouve',
+                'code' => 404,
+            ], 404,);
+        }
+        //verifier si compagnie bloquer
+        if ($comp->is_block == '1') {
+            return response()->json([
+                'status' => 'false',
+                'message' => 'compagnie bloque',
+                'code' => 404,
+            ], 404,);
+        }
+        //trouver vendeur
+        $vendeur = User::where([
+            ['id', '=', auth()->user()->id],
+            ['is_delete', '=', 0],
+        ])->first();
+        if (!$vendeur) {
+            return response()->json([
+                'status' => 'false',
+                'message' => 'vendeur non trouve',
+                'code' => '404',
+            ], 404,);
+        }
+        //verifier si vendeur bloquer
+        if ($vendeur->is_block == '1') {
+            return response()->json([
+                'status' => 'false',
+                'message' => 'vendeur bloque',
+                'code' => '404',
+            ], 404,);
+        }
+        //check if mariage gratuit is active
+        $mg = maryajgratis::where([
+            ['compagnie_id', '=', auth()->user()->compagnie_id],
+            ['etat', '=', '1'],
+        ])->first();
+        //tchek if all tirage are open before proceed
+        foreach ($request->input('tirages') as $name) {
+            $tirage_record = tirage_record::where([
+                ['compagnie_id', '=', auth()->user()->compagnie_id],
+                ['is_active', '=', '1'],
+                ['name', '=', $name['name']]
+            ])->whereTime(
+                'hour',
+                '>',
+                Carbon::now()->format('H:i:s'),
+            )->first();
+            if (!$tirage_record) {
+                return response()->json([
+                    'status' => 'false',
+                    'message' => $name['name'] . ' ferme',
+                    'code' => '404',
+                ], 404,);
+            }
+        }
+        //verify number that are blocked
+        $resp = verify::verifierBoulesNonAutorisees($request);
+        if ($resp != '1') {
+            return $resp;
+        }
+        $i = 0;
+        //verify number that are limited in price
+        $resp_prix = verify::verifierLimitePrixJouer($request);
+        if ($resp_prix != '1') {
+            return $resp_prix;
+        }
+        //$ticketId[];
+        //tchek if all tirage are open before proceed
+        foreach ($request->input('tirages') as $name) {
+            $tirage_record = tirage_record::where([
+                ['compagnie_id', '=', auth()->user()->compagnie_id],
+                ['is_active', '=', '1'],
+                ['name', '=', $name['name']]
+            ])->whereTime(
+                'hour',
+                '>',
+                Carbon::now()->format('H:i:s'),
+            )->first();
+            if (!$tirage_record) {
+                return response()->json([
+                    'status' => 'false',
+                    'message' => $name['name'] . ' ferme',
+                    'code' => '404',
+                ], 404,);
+            }
+
+            //verify limit boule for each tirage before
+            $resp_boul = verify::verifierLimitePrixBoule($request, $name);
+            if ($resp_boul != '1') {
+                return $resp_boul;
+            }
+
+        }
+        foreach ($request->input('tirages') as $name) {
+
+
+            $tirage_record = tirage_record::where([
+                ['compagnie_id', '=', auth()->user()->compagnie_id],
+                ['is_active', '=', '1'],
+                ['name', '=', $name['name']]
+            ])->whereTime(
+                'hour',
+                '>',
+                Carbon::now()->format('H:i:s'),
+            )->first();
+            if (!$tirage_record) {
+                return response()->json([
+                    'status' => 'false',
+                    'message' => 'tirage ferme',
+                    'code' => '404',
+                ], 404,);
+            }
+            $tirage[] = $tirage_record->name . ', ' . $tirage_record->hour_tirer;
+
+            $montant = verify::calculer_montant($request);
+            $amount_tot = $amount_tot + $montant;
+
+            if ($i == '0') {
+                $created_at = Carbon::now();
+                $ticketId = time() . '-' . rand(1000, 9999);
+                $query = DB::table('ticket_code')->insertGetId([
+                    'code' => $ticketId,
+                    'user_id' => auth()->user()->id,
+                    'compagnie_id' => auth()->user()->compagnie_id,
+                    'created_at' =>  $created_at,
+                ]);
+                $boule[] = ['bolete' => $request->input('bolete')];
+                $boule[] = ['maryaj' => $request->input('maryaj')];
+                $boule[] = ['loto3' => $request->input('loto3')];
+                $boule[] = ['loto4' => $request->input('loto4')];
+                $boule[] = ['loto5' => $request->input('loto5')];
+                // $boule[] = ['mariage-gratis' =>[]];
+            }
+            //call mariage gratuit if is active
+            if ($mg) {
+                $mg_res = verify::generer_gratuit($mg, $montant, $name['name']);
+
+                if ($mg_res != false) {
+                    $maryaj_all[] =  array_merge($mg_res);
+                    $mergedResults = [];
+
+                    foreach ($maryaj_all as $drawResults) {
+                        // Add each draw's results to the merged list
+                        $mergedResults = array_merge($mergedResults, $drawResults);
+                    }
+                    if (array_key_exists(5, $boule)) {
+                        array_splice($boule, 5, 1);
+                      
+                    }
+                    $boule[] = ['mariage_gratis' => $mg_res];
+
+                }
+                unset($mg_res);
+            }
+            $query = DB::table('ticket_vendu')->insertGetId([
+                'ticket_code_id' => $ticketId,
+                'tirage_record_id' => $tirage_record->id,
+                'boule' => json_encode($boule),
+                'amount' =>  $montant,
+                'commission' => ($montant * auth()->user()->percent) / 100,
+
+                'created_at' =>  $created_at,
+            ]);
+
+            $i++;
+        }
+        if (!empty($maryaj_all)) {
+            if (array_key_exists(5, $boule)) {
+                array_splice($boule, 5, 1);
+            }
+
+
+            $boule[] = ['mariage-gratis' => $mergedResults];
+           
+        }else{
+            $boule[] = ['mariage-gratis' => []];
+
+        }
+        return response()->json([
+            'status' => 'true',
+            'message' => 'success',
+            'code' => '200',
+            'head' => [
+                'compagnie' => $comp->name,
+                'bank' => $vendeur->bank_name,
+                '#ticket' => $ticketId,
+                'date' => $created_at->format('d-m-y, H:i:s'),
+                'tirage' => $tirage
+            ],
+            'body' => $boule,
+
+            'foot' => [
+                'motant' => $amount_tot,
+                'info' => $comp->info,
+            ]
+        ], 200,);
+    }
     public function list_ticket(Request $request)
     {
 

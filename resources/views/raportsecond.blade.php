@@ -100,7 +100,8 @@
             top: 150px;
             border: 1px solid #dc61e7;
         }
-        .search_rapport{
+
+        .search_rapport {
             margin-top: 13px;
             margin-left: 5px;
             margin-right: 5px;
@@ -151,6 +152,23 @@
                 }
             }
         }
+        .head_rapport{
+            background-color: gray;
+
+        }
+        .head_rapport th{
+            font-weight: bold;
+        }
+        .body_rapport{
+            border: 1px solid #2a112d;
+        }
+        .balance div{
+        }
+        .row_head {
+            border: 1px solid blueviolet;
+            padding: 10px;
+            background-color: #2a112d
+        }
 
         /*General Styles*/
 
@@ -183,9 +201,83 @@
                 opacity: 1;
             }
         }
+        
     </style>
     <div class="container">
-        <div class="card">
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Rapo general pou chak bank</h4>
+                    <div class="row_head" >
+                        <form method="get" action="raport2" id="search" style="border: 1px solid rgb(251, 74, 242); margin-bottom: 10px;background-color: white; padding: 5px;">
+                            @csrf
+    
+                            <div class="col-12 col-sm-4">
+                                <div class="form-group local-forms">
+                                    <label for="dateFilter">komanse</label>
+                                    <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
+                                        name="date_debut" value="{{ $date_debut }}" required />
+    
+                                    <label for="dateFilter" style="margin-top: 5px;">Fini</label>
+                                    <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
+                                    name="date_fin" value="{{ $date_fin }}" required />
+
+                                  
+                                </div>
+                                <div class="student-submit">
+                                    <button style="margin-top: 18px;" type="submit"
+                                        class="btn btn-gradient-primary me-2">Rapo</button>
+                                </div>
+                            </div>         
+                           
+                        </form>
+                    </div>
+                    <div class="table-responsive">
+                       
+                        <table class="table table-striped">
+                       
+                           
+                            <thead class="head_rapport">
+                                <tr>
+                                    <th>Bank</th>
+                                    <th>Dat</th>
+                                    <th>Vant</th>
+                                    <th>Pedi</th>
+                                    <th>Komisyon</th>
+                                    <th>Balans</th>
+                                </tr>
+                            </thead>
+                            <tbody class="body_rapport">
+                                @foreach ($vendeur as $row)
+                                    <tr>
+                                        <td>{{ $row->bank_name }}</td>
+                                        <td>{{$date_debut}}=>{{$date_fin}}</td>
+
+                                        <td>{{ $row->vente }} HTG</td>
+
+
+                                        <td>{{ $row->perte }} HTG</td>
+                                        <td>{{ $row->commission }} HTG</td>
+                                        @if ($row->vente < $row->commission + $row->perte)
+                                            <td style="color:red;">{{ $row->vente - ($row->commission + $row->perte) }} HTG</td>
+                                        @else
+                                            <td style="color:green;">{{ $row->vente - ($row->commission + $row->perte) }} HTG</td>
+                                        @endif
+
+                                    </tr>
+                                @endforeach
+
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card" style='display: none;'>
             <div class="border-bottom-0 p-0 card-header">
                 <div class="nav-lb-tab nav card-header-undefined" role="tablist">
 
@@ -208,8 +300,8 @@
                                     <input class="form-control" type="date" name="date" required>
                                 </div>
                                 <div>
-                                    <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary search_rapport"
-                                        data-toggle="modal" data-target="#model">
+                                    <button type="submit" data-mdb-button-init data-mdb-ripple-init
+                                        class="btn btn-primary search_rapport" data-toggle="modal" data-target="#model">
                                         Chache
                                     </button>
                                 </div>
@@ -255,7 +347,7 @@
             </div>
         </div>
 
-        <div class="card" style="margin-top: 15px;">
+        <div class="card" style="margin-top: 15px;display:none;">
             <div class="border-bottom-0 p-0 card-header">
                 <h5>Historik peyman rapo yo</h5>
 
@@ -281,10 +373,10 @@
                                     <label>dat fini</label>
                                     <input class="form-control" type="date" name="date" required>
                                 </div>
-                                <div> 
+                                <div>
 
-                                    <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary search_rapport"
-                                        data-toggle="modal" data-target="#model">
+                                    <button type="submit" data-mdb-button-init data-mdb-ripple-init
+                                        class="btn btn-primary search_rapport" data-toggle="modal" data-target="#model">
                                         Chache
                                     </button>
                                 </div>
