@@ -55,7 +55,7 @@
                         <div class="form-group">
                             <label for="exampleInputUsername1">Date abonnement</label>
                             <input type="date" class="form-control" value="{{ $data->dateplan }}" name="compagnie"
-                                id="InputNomcompagnie" placeholder="Nom capagnie" minlength="4" required>
+                                id="InputNomcompagnie" placeholder="Nom capagnie" minlength="4" >
                         </div>
                         
                     </div>

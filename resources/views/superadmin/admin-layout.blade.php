@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="shortcut icon" href="/assets/images/favicon.ico" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    
 
 </head>
 
@@ -157,7 +158,7 @@
                             <i class="mdi mdi-home menu-icon"></i>
                         </a>
                     </li>
-                    @if (session('role')=="admin" || session('role')=="admin2")
+                    @if (session('role')=="admin" || session('role')=="admin2" || session('role')=="comptable")
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="collapse" href="#compagnie" aria-expanded="false"
                             aria-controls="ui-basic">
@@ -167,11 +168,22 @@
                         </a>
                         <div class="collapse" id="compagnie">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="/wp-admin/add-compagnie">Ajouter Compagnie</a>
+                                
+                                <li class="nav-item" @if (session('role')=="comptable") style="display:none;"@endif> 
+                                     <a class="nav-link" href="/wp-admin/add-compagnie">Ajouter Compagnie</a>
                                 </li>
                                 <li class="nav-item"> <a class="nav-link" href="/wp-admin/C-compagnie-2">Liste Compagnie</a></li>
-                                @if (session('role')=="admin" ) <li class="nav-item"> <a class="nav-link" href="/wp-admin/C-abonnementView">Update Abonnement</a></li>@endif
-                          
+                                @if (session('role')=="admin" )
+                                 <li class="nav-item"> 
+                                    <a class="nav-link" href="/wp-admin/C-abonnementView">Update Abonnement</a></li>@endif
+                              
+                                @if (session('role')=="comptable")
+                                    
+                                    <li class="nav-item" > <a class="nav-link" href="/wp-admin/historiqueabonnement">HistoriqueAbonnement</a></li>
+
+                                    <li class="nav-item" >  <a class="nav-link" href="/wp-admin/historiquetransaction">HistoriqueTransaction</a>
+                                </li>
+                                @endif
                             </ul>
                         </div>
                     </li>

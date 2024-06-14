@@ -143,7 +143,7 @@ class executeTirageController extends Controller
     ->whereDate('created_at', $formattedDate)
     ->pluck('code')
     ->toArray();
-    
+    //dd($codes);
     $fiches="";
    if($codes){
  // Récupérer les tickets vendus
@@ -254,7 +254,7 @@ if($codes){
                         
  
                      }
-                     // Vérification si la boul est gagnante
+                     
                      if ($boulGagnante == $gagnants->secondchiffre){
                          $montantGagne = $boul['montant'] * 20;
                          $this->totalGains=$this->totalGains+$montantGagne;
@@ -265,18 +265,13 @@ if($codes){
                          $this->totalGains=$this->totalGains+$montantGagne;
                          $is_tree=1;
                      }
-                     //calcul des montant de tout les fiches parcourus 
-                     //$this->totalMontantJouer=$this->totalMontantJouer+$boul['montant'];
+                    
                      if($is_one==1 || $is_two==1 || $is_tree==1){
-                        /* $this->gagnantsData['bolete'][] = [
-                             'boul'.$i.'' => $boul,
-                             'montant' =>$boul['montant'],
-                             
-                         ];*/
+                       
                          $this->havegain=1;
                          $i=$i+1;
                      }else{
-                         $this->havegain=0;
+                        // $this->havegain=0;
                      }
                     
  
@@ -285,8 +280,7 @@ if($codes){
              }
          }
      }else{
-       /*  $this->gagnantsData['bolete'][] = [
-         ];*/
+      
          $this->havegain=0;
      }
  
@@ -301,21 +295,23 @@ if($codes){
         $do=$fiche['boul2'];
          $boul1 = $fiche['boul1'];
          $boul2 = $fiche['boul2'];
-     
+           
          // Vérification si la combinaison boul1 et boul2 est gagnante
          if (
-             ($boul1 == $gagnants->premierchiffre && $boul2 == $gagnants->secondchiffre) ||
-             ($boul1 == $gagnants->premierchiffre && $boul2 == $gagnants->troisiemechiffre) ||
-             ($boul1 == $gagnants->secondchiffre && $boul2 == $gagnants->premierchiffre) ||
-             ($boul1 == $gagnants->secondchiffre && $boul2 == $gagnants->troisiemechiffre) ||
-             ($boul1 == $gagnants->troisiemechiffre && $boul2 == $gagnants->premierchiffre) ||
-             ($boul1 == $gagnants->troisiemechiffre && $boul2 == $gagnants->secondchiffre) 
+            ($boul1 == $gagnants->premierchiffre && $boul2 == $gagnants->secondchiffre) ||
+         ($boul1 == $gagnants->premierchiffre && $boul2 == $gagnants->troisiemechiffre) ||
+         ($boul1 == $gagnants->secondchiffre && $boul2 == $gagnants->premierchiffre) ||
+         ($boul1 == $gagnants->secondchiffre && $boul2 == $gagnants->troisiemechiffre) ||
+         ($boul1 == $gagnants->troisiemechiffre && $boul2 == $gagnants->premierchiffre) ||
+         ($boul1 == $gagnants->troisiemechiffre && $boul2 == $gagnants->secondchiffre)
          ) {
+               
              $montantGagne = $fiche['montant'] * $maryajPrice;
              $this->totalGains=$this->totalGains+$montantGagne;
              $this->havegainmaryaj=1;
+             
          }else{
-           $this->havegainmaryaj=0;
+          
          }
         
       }
@@ -338,18 +334,10 @@ if($codes){
              // Le boul1 correspond à la combinaison gagnante, multiplier le montant par le prix de "loto3"
              $montantGagne = $fiche['montant'] * $loto3Price;
              $this->totalGains=$this->totalGains+$montantGagne;
-             // Vous pouvez maintenant utiliser $montantGagne comme nécessaire
-            /* $this->gagnantsData['loto3'][] = [
-                 'boul1' => $boul1,
-                 'montant' => $fiche['montant'],
-                 
-             ];*/
+           
              $this->havegainloto3=1;
          }else{
-             /*$this->gagnantsData['loto3'][] = [
-                 
-             ];*/
-            $this->havegainloto3=0;
+           
          }
        
      }
@@ -377,7 +365,7 @@ if($codes){
                 $firsttest=1;
                 $this->havegainloto4=1;
             }else{
-                $this->havegainloto4=0;
+                
             }
          }
           // Vérification si le boul1 correspond à la combinaison de secondchiffre et troisiemechiffre
