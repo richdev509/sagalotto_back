@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\tirage_record;
 use Illuminate\Contracts\Session\Session;
-
+use Carbon\Carbon;
 class rapportController extends Controller
 {
     public function create_rapport(Request $request)
@@ -382,8 +382,15 @@ class rapportController extends Controller
            ['compagnie_id','=', Session('loginId')],
            ['is_delete','=', 0],
         ])->get();
-       
-        return view('raportsecond',['bank'=>$bank]);
+        //control historique
+        $control = DB::table('tbl_control')->where([
+            ['tbl_control.compagnie_id','=', Session('loginId')],
+         ])->join('users', 'users.code','=','tbl_control.id_user')
+         ->select('tbl_control.*','users.bank_name')
+         ->orderByDesc('date_rapport')
+         ->limit('50')
+         ->get();
+        return view('raportsecond',['bank'=>$bank, 'control'=>$control]);
     }
     public function get_control(Request $request){
         $user_id = $request->input('user');
@@ -392,7 +399,23 @@ class rapportController extends Controller
         $user = User::where([
            ['id','=', $user_id]
         ])->first();
-
+        $control = DB::table('tbl_control')->where([
+            ['id_user','=', $user_id],
+            ['compagnie_id','=', Session('loginId')]
+        ])->whereDate('date_rapport','=', $date)->first();
+        //get the control if it exist
+        if($control){
+            return response()->json([
+                'control'=>1,
+                'status'=>'true',
+                'bank_code'=>$user->code,
+                'bank'=>$user->bank_name,
+                'montant'=>$control->montant,
+                'balance'=>$control->balance,
+                'date'=> $date
+  
+            ]);
+        }
         $vente = DB::table('ticket_code')->where([
             ['ticket_code.compagnie_id', '=', Session('loginId')],
             ['ticket_code.user_id', '=', $user_id],
@@ -430,6 +453,7 @@ class rapportController extends Controller
 
           return response()->json([
               'status'=>'true',
+              'control'=>0,
               'bank_code'=>$user->code,
               'bank'=>$user->bank_name,
               'montant'=>$montant,
@@ -438,6 +462,50 @@ class rapportController extends Controller
           ]);
 
 
+
+    }
+    public function save_control(Request $request){
+        $validator = $request->validate([
+            "vendeur" => "required",
+            'ddate' =>'required',
+            'amount' =>'required',
+            'amount_' =>'required',
+        ]);
+        //get user id
+        if($request->input('amount_')> $request->input('amount')){
+            return response()->json([
+                'save'=>0,
+                'status'=>'false',
+                'message'=> 'montan pa dwe depase montan rapo a'
+            ]);
+        }
+        $control = DB::table('tbl_control')->where([
+            ['compagnie_id','=', Session('loginId')],
+            ['date_rapport','=', $request->input('ddate')],
+            ['id_user','=', $request->input('vendeur')]
+        ])->first();
+        if($control){
+            return response()->json([
+                'save'=>0,
+                'status'=>'false',
+                'message'=> 'rapo sa anregistre deja'
+            ]);
+        }else{
+            $query = DB::table('tbl_control')->insertGetId([
+                'compagnie_id' => Session('loginId'),
+                'date_rapport'=> $request->input('ddate'),
+                'id_user'=> $request->input('vendeur'),
+                'montant'=> $request->input('amount_'),
+                'balance'=> $request->input('amount') - $request->input('amount_'),
+                'created_at' => Carbon::now()
+            ]);
+            return response()->json([
+                'save'=>1,
+                'status'=>'true',
+                'message'=> 'anregistrement fet ak sikse'
+            ]);
+
+        }
 
     }
 }
