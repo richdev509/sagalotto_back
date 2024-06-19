@@ -88,14 +88,14 @@ class SystemController extends Controller
     public function nombrevendeurmois($data){
         $results = [];
             foreach ($data as $da) {
-                $date = Carbon::parse($da->dateplan);
-                $month = $date->month;
-                $year = $date->year;
+                $datedebut = Carbon::parse($da->dateplan)->format('Y-m-d');
+                $datefin = Carbon::parse($da->dateexpiration)->format('Y-m-d');
+                $debut = $datedebut;
+                $fin = $datefin;
     
                 $distinctUserCount = DB::table('ticket_code')
                     ->where('compagnie_id', $da->id)
-                    ->whereMonth('created_at', $month)
-                    ->whereYear('created_at', $year)
+                    ->whereBetween('created_at', [$debut, $fin])
                     ->distinct('user_id')
                     ->count('user_id');
     

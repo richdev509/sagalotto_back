@@ -41,7 +41,7 @@
                                 <th scope="col">Montant due</th>
                                 <th scope="col">Date Expiration</th>
                                 <th scope="col">Nombre de pos</th>
-                                @if(session('role')=='admin'|| session('role')=="addeur" || session("role")=="comptable")
+                                @if(session('role')=='admin'|| session('role')=="addeur" || session('role')=="comptable")
                                 <th scope="col">abonnement</th>
                                 @endif
 

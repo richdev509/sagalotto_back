@@ -29,8 +29,8 @@ class abonnementController extends Controller
     public function addabonement(Request $request)
     {
 
-
-        if (session('role') == "admin" || session('role') == "addeur" || session('role')=="comptable") {
+        
+        if(session('role')=='admin'|| session('role')=="addeur" || session('role')=="comptable") {
 
 
             $reponse = Company::where('name', $request->name)->where('phone', $request->phone)->first();
