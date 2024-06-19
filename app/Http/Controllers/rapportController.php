@@ -78,7 +78,18 @@ class rapportController extends Controller
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                         ->get()->count();
 
+                    $ticket_peye = DB::table('ticket_code')->where([
+                        ['ticket_code.compagnie_id', '=', Session('loginId')],
+                        // ['ticket_code.user_id', '=', auth()->user()->id],
+                        ['ticket_vendu.is_cancel', '=', 0],
+                        ['ticket_vendu.is_delete', '=', 0],
+                        ['ticket_vendu.is_payed', '=', 1],
 
+
+                    ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
+                        ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
+                        ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                        ->get()->count();
 
                     //get vendeur
                     $user = User::where([
@@ -92,7 +103,7 @@ class rapportController extends Controller
 
                     ])->select('tirage_record.id', 'tirage_record.name')
                         ->get();
-                    return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => 'Tout', 'tirage_' => 'Tout', 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission]);
+                    return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'ticket_paid' => $ticket_peye, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => 'Tout', 'tirage_' => 'Tout', 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission]);
                 } elseif ($request->input('bank') == 'Tout' && $request->input('tirage') != 'Tout') {
                     $vente = DB::table('ticket_code')->where([
                         ['ticket_code.compagnie_id', '=', Session('loginId')],
@@ -159,6 +170,18 @@ class rapportController extends Controller
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                         ->get()->count();
 
+                    $ticket_peye = DB::table('ticket_code')->where([
+                        ['ticket_code.compagnie_id', '=', Session('loginId')],
+                        // ['ticket_code.user_id', '=', auth()->user()->id],
+                        ['ticket_vendu.is_cancel', '=', 0],
+                        ['ticket_vendu.is_delete', '=', 0],
+                        ['ticket_vendu.is_payed', '=', 1],
+
+
+                    ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
+                        ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
+                        ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                        ->get()->count();
                     //get vendeur
                     $user = User::where([
                         ['compagnie_id', '=', Session('loginId')]
@@ -177,7 +200,7 @@ class rapportController extends Controller
                         ]
                     )->select('name')
                         ->first();
-                    return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => 'Tout', 'tirage_' => $name_tirage->name, 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission]);
+                    return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'ticket_paid' => $ticket_peye, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => 'Tout', 'tirage_' => $name_tirage->name, 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission]);
                 } elseif ($request->input('bank') != 'Tout' && $request->input('tirage') == 'Tout') {
                     $vente = DB::table('ticket_code')->where([
                         ['ticket_code.compagnie_id', '=', Session('loginId')],
@@ -245,6 +268,18 @@ class rapportController extends Controller
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                         ->get()->count();
 
+                    $ticket_peye = DB::table('ticket_code')->where([
+                        ['ticket_code.compagnie_id', '=', Session('loginId')],
+                        // ['ticket_code.user_id', '=', auth()->user()->id],
+                        ['ticket_vendu.is_cancel', '=', 0],
+                        ['ticket_vendu.is_delete', '=', 0],
+                        ['ticket_vendu.is_payed', '=', 1],
+
+
+                    ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
+                        ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
+                        ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                        ->get()->count();
                     //get vendeur
                     $user = User::where([
                         ['compagnie_id', '=', Session('loginId')]
@@ -261,7 +296,7 @@ class rapportController extends Controller
                         ['id', '=', $request->input('bank')]
                     ])->select('bank_name')
                         ->first();
-                    return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => $name_bank->bank_name, 'tirage_' => 'Tout', 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission]);
+                    return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'ticket_paid' => $ticket_peye, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => $name_bank->bank_name, 'tirage_' => 'Tout', 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission]);
                 } elseif ($request->input('bank') != 'Tout' && $request->input('tirage') != 'Tout') {
                     $vente = DB::table('ticket_code')->where([
                         ['ticket_code.compagnie_id', '=', Session('loginId')],
@@ -335,6 +370,18 @@ class rapportController extends Controller
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                         ->get()->count();
 
+                    $ticket_peye = DB::table('ticket_code')->where([
+                        ['ticket_code.compagnie_id', '=', Session('loginId')],
+                        // ['ticket_code.user_id', '=', auth()->user()->id],
+                        ['ticket_vendu.is_cancel', '=', 0],
+                        ['ticket_vendu.is_delete', '=', 0],
+                        ['ticket_vendu.is_payed', '=', 1],
+
+
+                    ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
+                        ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
+                        ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                        ->get()->count();
                     //get vendeur
                     $user = User::where([
                         ['compagnie_id', '=', Session('loginId')]
@@ -357,7 +404,7 @@ class rapportController extends Controller
                         ['id', '=', $request->input('bank')]
                     ])->select('bank_name')
                         ->first();
-                    return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => $name_bank->bank_name, 'tirage_' => $name_tirage->name, 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission]);
+                    return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'ticket_paid' => $ticket_peye, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => $name_bank->bank_name, 'tirage_' => $name_tirage->name, 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission]);
                 }
             } else {
                 //get vendeur
@@ -382,99 +429,189 @@ class rapportController extends Controller
     {
 
         if (Session('loginId')) {
-            
-            if(!Empty($request->input('date_debut')) && !Empty($request->input('date_debut')) ){
+
+            if (!empty($request->input('date_debut')) && !empty($request->input('date_debut'))) {
+
+                if ($request->input('period') == 'matin') {
+                    $vendeur = DB::table('users')
+                        ->join('ticket_code', 'ticket_code.user_id', '=', 'users.id')
+                        ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                        ->where([
+                            ['users.compagnie_id', '=', Session('loginId')],
+                            ['ticket_vendu.is_delete', '=', 0],
+                            ['users.is_delete', '=', 0],
+                            ['ticket_vendu.is_cancel', '=', 0],
+
+                        ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
+                        ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
+                        ->whereTime('ticket_code.created_at', '<=', '14:30:00')
+
+                        ->select(
+                            'ticket_code.user_id',
+                            'users.bank_name',
+
+                            // Add all other necessary columns from ticket_code
+                            DB::raw('SUM(ticket_vendu.amount) as vente'),
+                            DB::raw('SUM(ticket_vendu.winning) as perte'),
+                            DB::raw('SUM(ticket_vendu.commission) as commission'),
+
+                        )
+                        ->groupBy(
+                            'users.bank_name',
+                            'ticket_code.user_id',
+                            // List all other columns of ticket_code here
+                        )->paginate(20);;
+
+                    // dd($vendeur);
+                    $bank = User::where([
+                        ['compagnie_id', '=', Session('loginId')],
+                        ['is_delete', '=', 0],
+                    ])->get();
+
+                    //control historique
+                    $control = DB::table('tbl_control')->where([
+                        ['tbl_control.compagnie_id', '=', Session('loginId')],
+                    ])->join('users', 'users.code', '=', 'tbl_control.id_user')
+                        ->select('tbl_control.*', 'users.bank_name')
+                        ->orderByDesc('date_rapport')
+                        ->limit('50')
+                        ->get();
+                    return view('raportsecond', ['bank' => $bank, 'control' => $control, 'vendeur' => $vendeur, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'period' => 'Maten']);
+                } elseif ($request->input('period') == 'soir') {
+                    $vendeur = DB::table('users')
+                        ->join('ticket_code', 'ticket_code.user_id', '=', 'users.id')
+                        ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                        ->where([
+                            ['users.compagnie_id', '=', Session('loginId')],
+                            ['ticket_vendu.is_delete', '=', 0],
+                            ['users.is_delete', '=', 0],
+                            ['ticket_vendu.is_cancel', '=', 0],
+
+                        ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
+                        ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
+                        ->whereTime('ticket_code.created_at', '>', '14:30:00')
+
+                        ->select(
+                            'ticket_code.user_id',
+                            'users.bank_name',
+
+                            // Add all other necessary columns from ticket_code
+                            DB::raw('SUM(ticket_vendu.amount) as vente'),
+                            DB::raw('SUM(ticket_vendu.winning) as perte'),
+                            DB::raw('SUM(ticket_vendu.commission) as commission'),
+
+                        )
+                        ->groupBy(
+                            'users.bank_name',
+                            'ticket_code.user_id',
+                            // List all other columns of ticket_code here
+                        )->paginate(20);;
+
+                    // dd($vendeur);
+                    $bank = User::where([
+                        ['compagnie_id', '=', Session('loginId')],
+                        ['is_delete', '=', 0],
+                    ])->get();
+
+                    //control historique
+                    $control = DB::table('tbl_control')->where([
+                        ['tbl_control.compagnie_id', '=', Session('loginId')],
+                    ])->join('users', 'users.code', '=', 'tbl_control.id_user')
+                        ->select('tbl_control.*', 'users.bank_name')
+                        ->orderByDesc('date_rapport')
+                        ->limit('50')
+                        ->get();
+                    return view('raportsecond', ['bank' => $bank, 'control' => $control, 'vendeur' => $vendeur, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'period' => 'Swa']);
+                } else {
+                    $vendeur = DB::table('users')
+                    ->join('ticket_code', 'ticket_code.user_id', '=', 'users.id')
+                    ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                    ->where([
+                        ['users.compagnie_id', '=', Session('loginId')],
+                        ['ticket_vendu.is_delete', '=', 0],
+                        ['users.is_delete', '=', 0],
+                        ['ticket_vendu.is_cancel', '=', 0],
+
+                    ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
+                    ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
+
+                    ->select(
+                        'ticket_code.user_id',
+                        'users.bank_name',
+
+                        // Add all other necessary columns from ticket_code
+                        DB::raw('SUM(ticket_vendu.amount) as vente'),
+                        DB::raw('SUM(ticket_vendu.winning) as perte'),
+                        DB::raw('SUM(ticket_vendu.commission) as commission'),
+
+                    )
+                    ->groupBy(
+                        'users.bank_name',
+                        'ticket_code.user_id',
+                        // List all other columns of ticket_code here
+                    )->paginate(20);;
+
+                // dd($vendeur);
+                $bank = User::where([
+                    ['compagnie_id', '=', Session('loginId')],
+                    ['is_delete', '=', 0],
+                ])->get();
+
+                //control historique
+                $control = DB::table('tbl_control')->where([
+                    ['tbl_control.compagnie_id', '=', Session('loginId')],
+                ])->join('users', 'users.code', '=', 'tbl_control.id_user')
+                    ->select('tbl_control.*', 'users.bank_name')
+                    ->orderByDesc('date_rapport')
+                    ->limit('50')
+                    ->get();
+                return view('raportsecond', ['bank' => $bank, 'control' => $control, 'vendeur' => $vendeur, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'period' => 'Tout']);
+               
+                }
+            } else {
                 $vendeur = DB::table('users')
-                ->join('ticket_code', 'ticket_code.user_id', '=', 'users.id')
-                ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-                ->where([
-                    ['users.compagnie_id', '=', Session('loginId')],
-                    ['users.is_delete', '=', 0],
-                ])->whereDate('ticket_code.created_at','>=', $request->input('date_debut'))
-                ->whereDate('ticket_code.created_at','<=', $request->input('date_fin'))
-                ->select(
-                    'ticket_code.user_id',
-                    'users.bank_name',
-
-                    // Add all other necessary columns from ticket_code
-                    DB::raw('SUM(ticket_vendu.amount) as vente'),
-                    DB::raw('SUM(ticket_vendu.winning) as perte'),
-                    DB::raw('SUM(ticket_vendu.commission) as commission'),
-
-                )
-                ->groupBy(
-                    'users.bank_name',
-                    'ticket_code.user_id',
-                    // List all other columns of ticket_code here
-                )->paginate(20);
-                ;
-
-            // dd($vendeur);
-            $bank = User::where([
-                ['compagnie_id', '=', Session('loginId')],
-                ['is_delete', '=', 0],
-            ])->get();
-
-            //control historique
-            $control = DB::table('tbl_control')->where([
-                ['tbl_control.compagnie_id', '=', Session('loginId')],
-            ])->join('users', 'users.code', '=', 'tbl_control.id_user')
-                ->select('tbl_control.*', 'users.bank_name')
-                ->orderByDesc('date_rapport')
-                ->limit('50')
-                ->get();
-            return view('raportsecond', ['bank' => $bank, 'control' => $control, 'vendeur' => $vendeur, 'date_debut'=>Carbon::now()->format('Y-m-d'),'date_fin'=>Carbon::now()->format('Y-m-d')]);
-
-            
-            
+                    ->join('ticket_code', 'ticket_code.user_id', '=', 'users.id')
+                    ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                    ->where([
+                        ['users.compagnie_id', '=', Session('loginId')],
+                        ['users.is_delete', '=', 0],
+                        ['ticket_vendu.is_delete', '=', 0],
+                        ['ticket_vendu.is_cancel', '=', 0],
 
 
+                    ])->whereDate('ticket_code.created_at', '=', Carbon::now())
+                    ->select(
+                        'ticket_code.user_id',
+                        'users.bank_name',
 
+                        // Add all other necessary columns from ticket_code
+                        DB::raw('SUM(ticket_vendu.amount) as vente'),
+                        DB::raw('SUM(ticket_vendu.winning) as perte'),
+                        DB::raw('SUM(ticket_vendu.commission) as commission'),
 
-            }else{
-                $vendeur = DB::table('users')
-                ->join('ticket_code', 'ticket_code.user_id', '=', 'users.id')
-                ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-                ->where([
-                    ['users.compagnie_id', '=', Session('loginId')],
-                    ['users.is_delete', '=', 0],
-                ])->whereDate('ticket_code.created_at','=', Carbon::now())
-                ->select(
-                    'ticket_code.user_id',
-                    'users.bank_name',
+                    )
+                    ->groupBy(
+                        'users.bank_name',
+                        'ticket_code.user_id',
+                        // List all other columns of ticket_code here
+                    )->paginate(20);;
 
-                    // Add all other necessary columns from ticket_code
-                    DB::raw('SUM(ticket_vendu.amount) as vente'),
-                    DB::raw('SUM(ticket_vendu.winning) as perte'),
-                    DB::raw('SUM(ticket_vendu.commission) as commission'),
+                // dd($vendeur);
+                $bank = User::where([
+                    ['compagnie_id', '=', Session('loginId')],
+                    ['is_delete', '=', 0],
+                ])->get();
 
-                )
-                ->groupBy(
-                    'users.bank_name',
-                    'ticket_code.user_id',
-                    // List all other columns of ticket_code here
-                )->paginate(20);
-                ;
-
-            // dd($vendeur);
-            $bank = User::where([
-                ['compagnie_id', '=', Session('loginId')],
-                ['is_delete', '=', 0],
-            ])->get();
-
-            //control historique
-            $control = DB::table('tbl_control')->where([
-                ['tbl_control.compagnie_id', '=', Session('loginId')],
-            ])->join('users', 'users.code', '=', 'tbl_control.id_user')
-                ->select('tbl_control.*', 'users.bank_name')
-                ->orderByDesc('date_rapport')
-                ->limit('50')
-                ->get();
-            return view('raportsecond', ['bank' => $bank, 'control' => $control, 'vendeur' => $vendeur, 'date_debut'=>Carbon::now()->format('Y-m-d'),'date_fin'=>Carbon::now()->format('Y-m-d')]);
-
+                //control historique
+                $control = DB::table('tbl_control')->where([
+                    ['tbl_control.compagnie_id', '=', Session('loginId')],
+                ])->join('users', 'users.code', '=', 'tbl_control.id_user')
+                    ->select('tbl_control.*', 'users.bank_name')
+                    ->orderByDesc('date_rapport')
+                    ->limit('50')
+                    ->get();
+                return view('raportsecond', ['bank' => $bank, 'control' => $control, 'vendeur' => $vendeur, 'date_debut' => Carbon::now()->format('Y-m-d'), 'date_fin' => Carbon::now()->format('Y-m-d'), 'period' => 'Tout']);
             }
-            
-           
         } else {
             return view('login');
         }
