@@ -13,6 +13,8 @@ use App\Models\tirage_record;
 use Illuminate\Support\Carbon;
 use App\Models\BoulGagnant;
 use App\Models\participation;
+use App\Models\TicketVendu;
+use App\Models\ticket_code;
 
 class executeTirageAuto extends Controller
 {
@@ -20,7 +22,7 @@ class executeTirageAuto extends Controller
 
     public function switchActon(Request $request){
              if($request->action=='update'){
-
+                $this->executeTirageAuto($request);
              }elseif($request->action=='add'){
                 $this->executeTirageAuto($request);
              }
@@ -43,30 +45,45 @@ class executeTirageAuto extends Controller
             notify()->error($messagesErreur);
             return redirect()->back();
         }
-        if (strlen((string)$premierchiffre) == 1) {
-        }
-
+        
+         
+        //recuperation compagnie qui a service =1 et autotirage =1
         $compagnies = company::where('autoTirage', 1)->where('service', 1)->get();
         $date = date('Y-m-d', strtotime($request->date));
         $tirageid = $request->tirageid;
         $var = 0;
         //verifier heure tirage if >heure 
         $this->verificationHour($tirageid, $date);
+        
+
         foreach ($compagnies as $compagnie) {
-            //verifier etat service tirageRecord and have vendeur.
+            
+            //verifier etat service tirageRecord,if have vendeur ,  pour eviter toute erreur.
             if ($this->verificationService($compagnie->id, $tirageid) == true) {
+                $idtrecord= DB::table('tirage_record')->where('compagnie_id', $compagnie->id)->where('tirage_id', $tirageid)->value('id');
 
                 //verification si lo existe deja
-                if ($this->ifExisteLo($compagnie->id, $tirageid, $date) == false) {
-                    //enregistrement lo
+                if ($this->ifExisteLo($compagnie->id, $idtrecord, $date) == false) {
+                    
                     //verification si tout les services sont operationnel pour le compagnie en question.
                     if ($compagnie->service == 1) {
-                        $reponseStore = $this->store($compagnie->id, $tirageid, $date, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre);
+
+                     
+                         //renitialiser fiche et boulgagnant if $request->action=='update' modification boul gagnant.
+                        if($request->action=='update'){
+                            $this->rentier($date,$idtrecord,$compagnie->id);
+                            $this->supprimerBoulGagnant($compagnie->id, $idtrecord, $date);
+
+                        }
+
+
+                        //sauvegarde boulgagant.
+                        $reponseStore = $this->store($compagnie->id, $idtrecord, $date, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre);
                         //signer participation
                         $this->participation($compagnie->id, $tirageid, $date);
                         //lancement du job pour le compagnie en question.
                         if ($reponseStore) {
-                            dispatch(new ExecutionTirage($tirageid, $compagnie->id, $date, session('id')));
+                            dispatch(new ExecutionTirage($idtrecord, $compagnie->id, $date, session('id')));
                         }
                     }
                 } else {
@@ -200,4 +217,62 @@ class executeTirageAuto extends Controller
             'date_'=>$date,
         ]);
     }
+
+
+
+
+
+
+    public function rentier($date,$tirageName,$compagnie){
+        // Récupérer les codes fiches 
+        $numero = ticket_code::where('compagnie_id', $compagnie)
+                            ->whereDate('created_at', $date)
+                            ->pluck('code')
+                            ->toArray();
+               
+        if ($numero) {
+            // Récupérer les tickets vendus
+            $listefiche = TicketVendu::whereIn('ticket_code_id', $numero)
+                                     ->where('tirage_record_id', $tirageName)
+                                     ->where('is_win','1')
+                                     ->get();
+                                     
+                   // dd($listefiche,$date,$tirageName,$numero);                
+            if ($listefiche->count() > 0) {
+                // Parcourir chaque fiche et mettre à jour les champs
+                foreach ($listefiche as $fiche) {
+                    $fiche->update([
+                        'is_win' => '0', // Mettre à jour is_win à 0
+                        'winning' => 0,
+                        'is_calculated' =>0,
+                    ]);
+                }
+                return true; // Opération réussie
+            } else {
+                return true; // Pas de fiche à mettre à jour
+            }
+        } else {
+            return true; // Pas de codes de fiche trouvés
+        }
+}
+
+function supprimerBoulGagnant($compagnieId, $tirageId, $date)
+{
+    // Rechercher l'élément correspondant
+    $boulGagnant = BoulGagnant::where('compagnie_id', $compagnieId)
+                              ->where('tirage_id', $tirageId)
+                              ->where('created_', $date)
+                              ->first();
+
+    // Vérifier si l'élément existe
+    if ($boulGagnant) {
+        // Supprimer l'élément
+        return $boulGagnant->delete();
+    }
+
+    // Retourner False si l'élément n'existe pas
+    return false;
+}
+
+
 }
