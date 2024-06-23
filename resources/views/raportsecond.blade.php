@@ -152,23 +152,23 @@
                 }
             }
         }
-        .head_rapport{
+
+        .head_rapport {
             background-color: gray;
 
         }
-        .head_rapport th{
+
+        .head_rapport th {
             font-weight: bold;
         }
-        .body_rapport{
-            border: 1px solid #2a112d;
+
+        .body_rapport {
+            border: 1px solid #403c41;
         }
-        .balance div{
-        }
-        .row_head {
-            border: 1px solid blueviolet;
-            padding: 10px;
-            background-color: #2a112d
-        }
+
+        .balance div {}
+
+        .row_head {}
 
         /*General Styles*/
 
@@ -201,71 +201,97 @@
                 opacity: 1;
             }
         }
-        
     </style>
     <div class="container">
         <div class="row">
             <div class="card">
-                <div class="card-body">
+                <div class="card-body" style="padding: 22px 3px">
                     <h4 class="card-title">Rapo general pou chak bank</h4>
-                    <div class="row_head" >
-                        <form method="get" action="raport2" id="search" style="border: 1px solid rgb(251, 74, 242); margin-bottom: 10px;background-color: white; padding: 5px;">
+                    <div class="row_head">
+                        <form method="get" action="raport2" id="search"
+                            style="    border: 1px solid rgb(97 84 96 / 44%);
+    margin-bottom: 10px;
+    background-color: white;
+    padding: 5px;
+    border-radius: 4px;">
                             @csrf
-    
-                            <div class="col-12 col-sm-4">
-                                <div class="form-group local-forms">
-                                    <label for="dateFilter">komanse</label>
-                                    <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
-                                        name="date_debut" value="{{ $date_debut }}" required />
-    
-                                    <label for="dateFilter" style="margin-top: 5px;">Fini</label>
-                                    <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
-                                    name="date_fin" value="{{ $date_fin }}" required />
 
-                                  
+                            <div class="row">
+                                <div class="col-md-5"
+                                    style="flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;gap:20px;">
+                                    <div class="form-group">
+                                        <label>komanse</label>
+                                        <input type="date" class="form-control" name="date_debut"
+                                            value="{{ $date_debut }}" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Fini</label>
+                                        <input type="date" class="form-control" name="date_fin"
+                                            value="{{ $date_fin }}" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Peryod</label>
+                                        <select class="form-control" name="period" value="{{ old('period') }}" style="height: 47px;border: 1px solid black;">
+                                            <option value="tout">Tout</option>
+                                            <option value="matin">Matin(12H AM - 2H30 PM)</option>
+                                            <option value="soir">Soir(2H31 PM - 11H59 PM)</option>
+
+                                        </select>
+
+                                    </div>
+
                                 </div>
                                 <div class="student-submit">
-                                    <button style="margin-top: 18px;" type="submit"
-                                        class="btn btn-gradient-primary me-2">Rapo</button>
+                                    <button type="submit" class="btn btn-gradient-primary me-2">Rapo</button>
                                 </div>
-                            </div>         
-                           
+                            </div>
+
                         </form>
                     </div>
                     <div class="table-responsive">
-                       
+
                         <table class="table table-striped">
-                       
-                           
-                            <thead class="head_rapport">
+
+
+                            <thead class="head_rapport" style="background: #0d2a95;
+    color: white;">
                                 <tr>
-                                    <th>Bank</th>
-                                    <th>Dat</th>
-                                    <th>Vant</th>
-                                    <th>Pedi</th>
-                                    <th>Komisyon</th>
-                                    <th>Balans</th>
+                                    <th>Bank <i class="mdi mdi-cash-register mdi-16px float-right"></th>
+                                    <th>Dat <i class="mdi mdi-calendar mdi-16px"></i></th>
+                                    <th>Peryod <i class="mdi mdi-alarm mdi-16px"></i></th>
+
+                                    <th>Vant<i class="mdi mdi-tag mdi-16px"></i></th>
+                                    <th>Pedi <i class="mdi mdi-arrow-down-bold mdi-16px"></i></th>
+                                    <th>Komisyon <i class="mdi mdi-percent mdi-16px"></i></th>
+                                    <th>Balans <i class="mdi mdi-wallet mdi-16px"></i></th>
                                 </tr>
                             </thead>
                             <tbody class="body_rapport">
-                                @foreach ($vendeur as $row)
+                                @forelse ($vendeur as $row)
                                     <tr>
                                         <td>{{ $row->bank_name }}</td>
-                                        <td>{{$date_debut}}=>{{$date_fin}}</td>
-
+                                        <td>{{ $date_debut }}=>{{ $date_fin }}</td>
+                                        <td>{{ $period }}</td>
                                         <td>{{ $row->vente }} HTG</td>
-
-
                                         <td>{{ $row->perte }} HTG</td>
                                         <td>{{ $row->commission }} HTG</td>
                                         @if ($row->vente < $row->commission + $row->perte)
-                                            <td style="color:red;">{{ $row->vente - ($row->commission + $row->perte) }} HTG</td>
+                                            <td style="color:red;">{{ $row->vente - ($row->commission + $row->perte) }} HTG
+                                            </td>
                                         @else
-                                            <td style="color:green;">{{ $row->vente - ($row->commission + $row->perte) }} HTG</td>
+                                            <td style="color:green;">{{ $row->vente - ($row->commission + $row->perte) }}
+                                                HTG</td>
                                         @endif
 
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="6" style="text-align: center">Aucune donnée disponible</td>
+                                    </tr>
+                                @endforelse
 
 
 
