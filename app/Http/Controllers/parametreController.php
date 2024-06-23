@@ -298,6 +298,15 @@ class parametreController extends Controller
                 $maryajIsset->q_inter_3 = $request->input('q_inter_3');
                 $maryajIsset->min_inter_3 = $request->input('min_inter_3');
                 $maryajIsset->max_inter_3 = $request->input('max_inter_3');
+                $maryajIsset->q_inter_4 = $request->input('q_inter_4');
+                $maryajIsset->min_inter_4 = $request->input('min_inter_4');
+                $maryajIsset->max_inter_4 = $request->input('max_inter_4');
+                $maryajIsset->q_inter_5 = $request->input('q_inter_5');
+                $maryajIsset->min_inter_5 = $request->input('min_inter_5');
+                $maryajIsset->max_inter_5 = $request->input('max_inter_5');
+                $maryajIsset->q_inter_6 = $request->input('q_inter_6');
+                $maryajIsset->min_inter_6 = $request->input('min_inter_6');
+                $maryajIsset->max_inter_6 = $request->input('max_inter_6');
                 $maryajIsset->save(); 
 
                 notify()->success('tout paramet yo byen mofifye');

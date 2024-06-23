@@ -22,7 +22,6 @@ class ticketController extends Controller
     public function creer_ticket(Request $request)
     {
 
-
         // prix total
         $amount_tot = 0;
         //tirage
@@ -32,6 +31,9 @@ class ticketController extends Controller
         // $allBolete = $array['bolete'];
         //all mariage gratuit
         //trouver compagnie
+        //filter data to remove zero value before process
+        $filter_l4  = verify::removeZeroOptions($request);
+
         $comp = company::where([
             ['id', '=', auth()->user()->compagnie_id],
             ['is_delete', '=', 0],
@@ -169,7 +171,7 @@ class ticketController extends Controller
                 $boule[] = ['bolete' => $request->input('bolete')];
                 $boule[] = ['maryaj' => $request->input('maryaj')];
                 $boule[] = ['loto3' => $request->input('loto3')];
-                $boule[] = ['loto4' => $request->input('loto4')];
+                $boule[] = ['loto4' => $filter_l4['loto4']];
                 $boule[] = ['loto5' => $request->input('loto5')];
                 // $boule[] = ['mariage-gratis' =>[]];
             }
@@ -475,7 +477,7 @@ class ticketController extends Controller
                 ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                 ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
                 ->select('ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain', 'ticket_vendu.is_payed as payer')
-                ->orderByDesc('ticket_code.code')
+                ->orderBy('ticket_code.id','desc')
                 ->get();
             if ($vente->count() > 0) {
                 return response()->json([

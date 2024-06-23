@@ -178,16 +178,14 @@
                         <div class="col-12 col-sm-4" style="margin-right: -10px;">
                             <div class="form-group local-forms">
                                 <label for="dateFilter">Bank</label>
-                                <select class="form-control" name="bank"
-                                    value="{{ old('bank') }}">
+                                <select class="form-control" name="bank" value="{{ old('bank') }}">
                                     <option>Tout</option>
                                     @foreach ($vendeur as $row)
                                         <option value="{{ $row->id }}">{{ $row->bank_name }}</option>
                                     @endforeach
                                 </select>
                                 <label for="dateFilter" style="margin-top: 5px;">Tirage</label>
-                                <select class="form-control" name="tirage"
-                                    value="{{ old('tirage') }}">
+                                <select class="form-control" name="tirage" value="{{ old('tirage') }}">
                                     <option>Tout</option>
                                     @foreach ($tirage as $row)
                                         <option value="{{ $row->id }}">{{ $row->name }}</option>
@@ -227,6 +225,7 @@
                                 <th> Jwe</th>
                                 <th> Genyen</th>
                                 <th> Kakile</th>
+                                <th> Peye</th>
                                 <th> Dat</th>
                                 <th> Aksyon</th>
 
@@ -302,7 +301,11 @@
                                     @else
                                         <td style="color:#58dc0b;"> Wi </td>
                                     @endif
-
+                                    @if ($row->is_payed == 1)
+                                        <td style="color:green"> Wi </td>
+                                    @else
+                                        <td style="color:red"> Non </td>
+                                    @endif
 
                                     <td> {{ $row->date }} </td>
 
@@ -320,17 +323,21 @@
                                 </tr>
                             @endforeach
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>
+                                    {{ $ticket->links() }}
+
+                                </td>
+                            </tr>
+
+                        </tfoot>
 
                     </table>
 
                 </div>
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination">
-                        {{ $ticket->links()}}
-                        
-                    </ul>
-                  </nav>
-                
+               
+
 
             </div>
 

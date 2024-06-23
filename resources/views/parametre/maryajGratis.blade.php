@@ -175,7 +175,85 @@
                         <input type="number" name="min_inter_3" value="{{ isset($data) ? $data->min_inter_3 : '' }}" class="form-control"
                             placeholder="Min kob" required min="0">
 
-                        <input type="number" name="max_inter_3" value="{{ isset($data) ? $data->min_inter_3 : '' }}" class="form-control"
+                        <input type="number" name="max_inter_3" value="{{ isset($data) ? $data->max_inter_3 : '' }}" class="form-control"
+                            placeholder="Max kob" required min="0">
+
+
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Kantite maryaj</span>
+                        </div>
+                        <select class="form-control" name="q_inter_4">
+                            @if ($data)
+                                <option>{{ $data->q_inter_4 }}</option>
+                                <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
+                            @endif
+                            @for ($i = 0; $i <= 20; $i++)
+                                @if ($data && $data->q_inter_1 == $i) <!-- Assurez-vous que la valeur de données est ignorée -->
+                                    @continue
+                                @endif
+                                <option>{{ $i }}</option>
+                            @endfor
+
+                        </select>
+
+                        <input type="number" name="min_inter_4" value="{{ isset($data) ? $data->min_inter_4 : '' }}" class="form-control"
+                            placeholder="Min kob" required min="0">
+
+                        <input type="number" name="max_inter_4" value="{{ isset($data) ? $data->max_inter_4 : '' }}" class="form-control"
+                            placeholder="Max kob" required min="0">
+
+
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Kantite maryaj</span>
+                        </div>
+                        <select class="form-control" name="q_inter_5">
+                            @if ($data)
+                                <option>{{ $data->q_inter_5 }}</option>
+                                <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
+                            @endif
+                            @for ($i = 0; $i <= 25; $i++)
+                                @if ($data && $data->q_inter_1 == $i) <!-- Assurez-vous que la valeur de données est ignorée -->
+                                    @continue
+                                @endif
+                                <option>{{ $i }}</option>
+                            @endfor
+
+                        </select>
+
+                        <input type="number" name="min_inter_5" value="{{ isset($data) ? $data->min_inter_5 : '' }}" class="form-control"
+                            placeholder="Min kob" required min="0">
+
+                        <input type="number" name="max_inter_5" value="{{ isset($data) ? $data->max_inter_5 : '' }}" class="form-control"
+                            placeholder="Max kob" required min="0">
+
+
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Kantite maryaj</span>
+                        </div>
+                        <select class="form-control" name="q_inter_6">
+                            @if ($data)
+                                <option>{{ $data->q_inter_6 }}</option>
+                                <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
+                            @endif
+                            @for ($i = 0; $i <= 30; $i++)
+                                @if ($data && $data->q_inter_1 == $i) <!-- Assurez-vous que la valeur de données est ignorée -->
+                                    @continue
+                                @endif
+                                <option>{{ $i }}</option>
+                            @endfor
+
+                        </select>
+
+                        <input type="number" name="min_inter_6" value="{{ isset($data) ? $data->min_inter_6 : '' }}" class="form-control"
+                            placeholder="Min kob" required min="0">
+
+                        <input type="number" name="max_inter_6" value="{{ isset($data) ? $data->max_inter_6 : '' }}" class="form-control"
                             placeholder="Max kob" required min="0">
 
 

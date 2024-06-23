@@ -503,7 +503,7 @@ class verificationController extends Controller
             }
         }
         if (!empty($request->input('loto4'))) {
-
+            
             foreach ($request->input('loto4') as $option) {
                 if (!empty($option['option1'])) {
                     $montant_tot = $montant_tot + $option['option1'];
@@ -580,7 +580,56 @@ class verificationController extends Controller
             }
 
             return $mariage;
+        }elseif ($data->min_inter_4 <= $montant && $data->max_inter_4 >= $montant) {
+
+            for ($i = 1; $i <= $data->q_inter_4; $i++) {
+                $mariage[] = [
+                    'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
+                    'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
+                    'montant' => $tirage_name,
+                ];
+            }
+
+            return $mariage;
+        }elseif ($data->min_inter_5 <= $montant && $data->max_inter_5 >= $montant) {
+
+            for ($i = 1; $i <= $data->q_inter_5; $i++) {
+                $mariage[] = [
+                    'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
+                    'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
+                    'montant' => $tirage_name,
+                ];
+            }
+
+            return $mariage;
+        }elseif ($data->min_inter_6 <= $montant && $data->max_inter_6 >= $montant) {
+
+            for ($i = 1; $i <= $data->q_inter_6; $i++) {
+                $mariage[] = [
+                    'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
+                    'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
+                    'montant' => $tirage_name,
+                ];
+            }
+
+            return $mariage;
         }
         return false;
+    }
+
+    public static function removeZeroOptions($request)
+    {
+        $data = $request->all();
+        if (!empty($data['loto4'])) {
+            $data['loto4'] = array_map(function($item) {
+                return array_filter($item, function($value, $key) {
+                    return !($key === 'option1' && ($value == 0 || is_null($value))) &&
+                           !($key === 'option2' && ($value == 0 || is_null($value))) &&
+                           !($key === 'option3' && ($value == 0 || is_null($value)));
+                }, ARRAY_FILTER_USE_BOTH);
+            }, $data['loto4']);
+        }
+
+        return $data;
     }
 }

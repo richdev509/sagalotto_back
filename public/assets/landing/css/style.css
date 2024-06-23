@@ -2553,6 +2553,7 @@ small.text {
           transform: translateX(0);
   pointer-events: all;
   border-radius: 0;
+  
 }
 .side_menu.style-7.show li {
   opacity: 1;

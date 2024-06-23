@@ -257,6 +257,11 @@
 
                                 </tr>
                                 <tr>
+                                    <td>Fich Peye:</td>
+                                    <td>{{$ticket_paid}} / {{ $ticket_win }}</td>
+
+                                </tr>
+                                <tr>
                                     <td>Vant:</td>
                                     <td>{{ $vente }} HTG</td>
 
