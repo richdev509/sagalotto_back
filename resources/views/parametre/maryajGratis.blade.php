@@ -278,7 +278,7 @@
                             placeholder="Antre vale kob vle mete an">
 
                         @if ($data && $data->id)
-                            <button type="submit" class="btn btn-gradient-primary me-2">Mete a jou</button>
+                            <button type="submit" class="btn primary" style="background:rgb(0 94 254)">Mete a jou</button>
                         @endif
                     </div>
                 </div>

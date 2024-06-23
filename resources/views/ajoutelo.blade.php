@@ -96,9 +96,9 @@
                             <input type="checkbox" class="form-check-input">lot yo bon<i class="input-helper"></i></label>
                     </div>
                     @if (isset($record))
-                        <button type="mise a" class="btn btn-gradient-primary me-2">Modifye</button>
+                        <button type="mise a" class="btn primary" style="background:rgb(0 94 254)">Modifye</button>
                     @else
-                        <button type="submit" class="btn btn-gradient-primary me-2">Ajoute</button>
+                        <button type="submit" class="btn primary me-2" style="background:rgb(0 94 254)">Ajoute</button>
                     @endif
 
                 </form>

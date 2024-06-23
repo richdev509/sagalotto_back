@@ -3,7 +3,9 @@
 
 @section('content')
         <!-- partial -->
-      
+      <style>
+       
+      </style>
           
               <div class="page-header">
                 <h3 class="page-title"> Fom ajoute vandè </h3>
@@ -147,7 +149,7 @@
                         <div class="row">
                          
                          
-                          <button type="submit" class="btn btn-gradient-primary mb-2">Anrejistre</button>
+                          <button type="submit" class="btn primary" style="background:rgb(0 94 254)">Anrejistre</button>
                         </div>
                       </form>
                     </div>

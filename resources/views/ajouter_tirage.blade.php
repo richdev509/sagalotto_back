@@ -29,7 +29,7 @@
                               
                               <div class="col-sm-9">
                                 <label class="col-sm-3 col-form-label">Tiraj</label>
-                                <select class="form-control" name="tirage" value="{{old('tirage')}}">
+                                <select class="form-control" name="tirage" value="{{old('tirage')}}" style="outline-color: black">
                                     @foreach ($tirage as $row)
                                         <option>{{$row->name}}</option>
                                         
@@ -82,7 +82,7 @@
                         <div class="row">
                          
                          
-                          <button type="submit" class="btn btn-gradient-primary mb-2">Anrejistre</button>
+                          <button type="submit" class="btn primary" style="background:rgb(0 94 254)">Anrejistre</button>
                         </div>
                       </form>
                     </div>

@@ -123,7 +123,7 @@
 
                                     </td>
                                     <td class="text-center">
-                                        <button type="submit" class="btn btn-gradient-primary me-2">Enrejistre</button>
+                                        <button type="submit" class="btn primary" style="background:rgb(0 94 254)">Enrejistre</button>
                                     </td>
                                 </tr>
                             </form>
@@ -182,7 +182,7 @@
 
                                     </td>
                                     <td class="text-center">
-                                        <button type="submit" class="btn btn-gradient-primary me-2">Enrejistre</button>
+                                        <button type="submit" class="btn primary me-2" style="background:rgb(0 94 254)">Enrejistre</button>
                                     </td>
                                 </tr>
                             </form>

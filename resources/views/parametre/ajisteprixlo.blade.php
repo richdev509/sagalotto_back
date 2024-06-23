@@ -26,7 +26,7 @@
           <option value="2">60</option> 
         </select>
           @if(isset($data) && $data->id)
-          <button type="submit" class="btn btn-gradient-primary me-2">Mete a jou</button>
+          <button type="submit" class="btn primary" style="background:rgb(0 94 254)">Mete a jou</button>
           @endif
         </div>
       </div>

@@ -161,7 +161,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <span><i class="mdi mdi-bell-plus" style="color:orange;margin-left:10px;"></i>Byento nap gen nouvo koule nan menu pou pi bon manipilation</span>
+                        <span style="color: rgb(226, 156, 25)"><i class="mdi mdi-bell-plus" style="color:orange;margin-left:10px;"></i>Byento nap gen nouvo koule nan menu pou pi bon manipilation</span>
                         <a class="nav-link" href="admin">
                             <span class="menu-title">Akèy</span>
                             <i class="mdi mdi-home menu-icon"></i>

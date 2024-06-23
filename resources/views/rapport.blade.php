@@ -198,8 +198,8 @@
                         </div>
                         <div class="col-12">
                             <div class="student-submit">
-                                <button style="margin-top: 18px;" type="submit"
-                                    class="btn btn-gradient-primary me-2">Rapo</button>
+                                <button style="margin-top: 18px;background:rgb(0 94 254)" type="submit"
+                                    class="btn primary" >Rapo</button>
                             </div>
                         </div>
 

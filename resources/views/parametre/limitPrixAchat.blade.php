@@ -261,7 +261,7 @@
             </div>
               <div style="margin-top: 20px;"></div>
               <a href="/ajisteprix">
-                <button class="btn btn-primary me-1">Ajoute</button>
+                <button class="btn primary" style="background:rgb(0 94 254)">Ajoute</button>
                 </a>
           </div>
             <div class="table-responsive">
