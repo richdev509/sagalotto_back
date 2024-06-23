@@ -246,7 +246,7 @@
 
                                 </div>
                                 <div class="student-submit">
-                                    <button type="submit" class="btn btn-gradient-primary me-2">Rapo</button>
+                                    <button type="submit" class="btn primary me-2">Rapo</button>
                                 </div>
                             </div>
 
