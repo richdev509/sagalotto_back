@@ -24,13 +24,9 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
         crossorigin="anonymous"></script>
-
-        <link rel="stylesheet" href="{{ asset('/assets/landing/css/style.css')}}">
 </head>
 
 <body>
-    
-    
     <div class="container-scroller">
         <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
@@ -165,7 +161,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <span style="color:rgb(214, 147, 21)"><i class="mdi mdi-bell-plus" style="color:orange;margin-left:10px;"></i>Byento nap gen nouvo koule nan menu pou pi bon manipilation</span>
+                        <span><i class="mdi mdi-bell-plus" style="color:orange;margin-left:10px;"></i>Byento nap gen nouvo koule nan menu pou pi bon manipilation</span>
                         <a class="nav-link" href="admin">
                             <span class="menu-title">Akèy</span>
                             <i class="mdi mdi-home menu-icon"></i>
@@ -316,7 +312,6 @@
             </nav>
             <!-- partial -->
             <div class="main-panel">
-                
                 <div class="content-wrapper">
 
                     @yield('content')
@@ -362,7 +357,6 @@
     <script
         src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js') }}">
     </script>
-    
     <!-- End custom js for this page -->
     <x-notify::notify />
     @notifyJs
