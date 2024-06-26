@@ -17,4 +17,9 @@ class historiquesboulgagnant extends Model
         'etat',
         'created_',
     ];
+
+    public function tirage()
+    {
+        return $this->belongsTo(tirage::class,'tirage_id','id');
+    }
 }

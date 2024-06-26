@@ -178,6 +178,8 @@
                                     <a class="nav-link" href="/wp-admin/C-abonnementView">Update Abonnement</a></li>
                                     <li class="nav-item"> 
                                         <a class="nav-link" href="/wp-admin/ajouter_lo">Ajouter Lo</a></li>
+                                        <li class="nav-item"> 
+                                            <a class="nav-link" href="/wp-admin/listelo">Liste Lo</a></li>
                                     @endif
                                    
                                 @if (session('role')=="comptable")
