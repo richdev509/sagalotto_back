@@ -13,9 +13,10 @@
                 <p class="card-description">Mete lo ki tire yo: yon chif + pweye lo Ex:01 +dezyem lo ex:02 et twazyem lo
                     ex:03</p>
                 <form class="forms-sample"
-                    @if (isset($record)) action="{{ route('modifierlo') }}"  @else action="{{ route('addlo') }}" @endif
+                    @if (isset($record)) action="/wp-admin/addlo"  @else action="/wp-admin/addlo" @endif
                     method="POST" style="font-weight: bold;">
                     @csrf
+                    <input type="hidden" name="action" value="add" >
                     <div class="form-group">
                         <label for="exampleInputUsername1">Chazi dat la </label>
                         <input type="date" name="date"
