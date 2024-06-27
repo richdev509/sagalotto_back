@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\company;
 use Illuminate\Http\Request;
 use App\Models\maryajgratis;
 use App\Models\RulesOne;
@@ -379,7 +380,8 @@ class parametreController extends Controller
     {
         if (Session('loginId')) {
             $data = RulesOne::where('compagnie_id', session('loginId'))->first();
-            return view('parametre/ajisteprixlo', compact('data'));
+            $service = company::where('id', session('loginId'))->first();
+            return view('parametre/ajisteprixlo', ['data'=>$data, 'service'=>$service ]);
         } else {
             return view('login');
         }
@@ -387,21 +389,36 @@ class parametreController extends Controller
 
     public function storelopri(Request $request)
     {
-        if ($request->montant == 1) {
-            $montant = 50;
-        } elseif ($request->montant == 2) {
-            $montant = 60;
-        }
+       
         try {
-            $reponse = RulesOne::where('compagnie_id', session('loginId'))->first();
-            $reponse->update([
-                'prix' => $montant,
-            ]);
+          
+             $responce = RulesOne::where('compagnie_id', session('loginId'))->first();
+             $responce->update([
+                 'prix' => $request->input('montant'),
+             ]);
+                     
+             //store service auto tirage
+             if(!empty($request->tirage_auto)=='1'){
+                $service = company::where('id', session('loginId'))->first();
+                $service->update([
+                    'autoTirage' =>1,
+                     'service' =>1,
 
-            notify()->success('Pri pwemye lo ajiste a: ' . $montant);
+                ]);
+             }else{
+                $service = company::where('id', session('loginId'))->first();
+                $service->update([
+                    'autoTirage' =>0,
+                     'service' =>0,
+
+                ]);
+
+             }
+
+            notify()->success('Modifikasyon fet ak sikse');
             return redirect()->back();
         } catch (\Exception $e) {
-            notify()->error('Gen yon pwoblem kontakte ekip teknik');
+            notify()->error('Gen yon pwoblem kontakte ekip teknik',$e);
             return redirect()->back();
         }
     }
