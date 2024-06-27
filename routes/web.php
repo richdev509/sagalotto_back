@@ -16,6 +16,7 @@ use App\Http\Controllers\historiquetransaction;
 use App\Http\Controllers\statistiquegeneralController;
 use App\Http\Controllers\superadmin\abonnementController;
 use App\Http\Controllers\historiquetransanction;
+use App\Http\Controllers\superadmin\testjobcontroller;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +29,7 @@ use App\Http\Controllers\historiquetransanction;
 |
 */
 
-
+Route::get('/testjob',[testjobcontroller::class,'lancement']);
 Route::post('/wp-admin/auth2', [SystemController::class,'auth2']);
 Route::get('wp-admin/login', function(){
            return view('superadmin.login');
@@ -50,10 +51,13 @@ Route::get('/contactsaga', function () {
     return view('contactsaga');
 });
 
-Route::get('/login', function () {
-   return view('login');
-})->name('login2');
 
+Route::middleware(['web','HandleExpiredSession'])->group(function () {
+    Route::get('/login', function () {
+        return view('login');
+     })->name('login2');
+
+    });
 Route::get('/contact', function () {
     return view('contactapp');
 });
@@ -189,6 +193,7 @@ Route::get('/wp-admin/C-abonnementView',function(){
 
 Route::post('/wp-admin/C-abonnementViewNext',[SystemController::class,'getcompagnie'])->name('add_abonnement2');
 Route::get('/wp-admin/ajouter_lo',[SystemController::class,'viewajoutelo'])->name('ajouterlowp');
+Route::get('/wp-admin/listelo',[SystemController::class,'viewlistelo'])->name('wp-listelo');
 Route::post('/wp-admin/addlo',[executeTirageAuto::class,'executeTirageAuto'])->name('addlo');
 Route::get('/wp-admin/monitoring',function(){
   return view ('superadmin.monitoring');

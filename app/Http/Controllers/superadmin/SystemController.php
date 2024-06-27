@@ -9,6 +9,7 @@ use App\Models\company;
 use App\Models\tbladmin;
 use App\Models\User;
 use App\Models\abonnementhistoriqueuser;
+use App\Models\historiquesboulgagnant;
 use App\Models\ticket_code;
 use App\Http\Controllers\superadmin\abonnementController;
 
@@ -38,9 +39,16 @@ class SystemController extends Controller
         return view('superadmin.admin', compact('nombreCompagnie', 'nombrePos', 'Compagnieinactive'));
     }
 
-    public function viewajoutelo()
+    public function viewajoutelo(Request $request)
     {
         $list = DB::table('tirage')->get();
+        $id=$request->id;
+        $date=$request->dat_;
+
+        if ($id != "") {
+            $record = historiquesboulgagnant::where('id',$id)->where('created_',$date)->get();
+            return view('ajoutelo', compact('list', 'record'));
+        }
         return view('superadmin.ajouter_lo', compact('list'));
     }
     public function auth2(Request $request)
@@ -507,5 +515,12 @@ class SystemController extends Controller
                 return back();
             }
         }
+    }
+
+
+    //zone boulgagnant.
+    public function viewlistelo(){
+        $list = historiquesboulgagnant::orderBy('created_at', 'desc')->get();
+        return view('superadmin.list-lo',compact('list'));
     }
 }

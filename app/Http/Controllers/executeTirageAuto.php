@@ -15,6 +15,7 @@ use App\Models\BoulGagnant;
 use App\Models\participation;
 use App\Models\TicketVendu;
 use App\Models\ticket_code;
+use App\Models\historiquesboulgagnant;
 
 class executeTirageAuto extends Controller
 {
@@ -27,7 +28,7 @@ class executeTirageAuto extends Controller
                 $this->executeTirageAuto($request);
              }
     }
-    public function  executeTirageAuto($request)
+    public function  executeTirageAuto(Request $request)
     {
 
 
@@ -49,12 +50,16 @@ class executeTirageAuto extends Controller
          
         //recuperation compagnie qui a service =1 et autotirage =1
         $compagnies = company::where('autoTirage', 1)->where('service', 1)->get();
+        if ($compagnies->isEmpty()) {
+            notify()->info('Aucune compagnie trouvée');
+            return redirect()->back();
+        }
         $date = date('Y-m-d', strtotime($request->date));
         $tirageid = $request->tirageid;
         $var = 0;
         //verifier heure tirage if >heure 
         $this->verificationHour($tirageid, $date);
-        
+        $k=0;
 
         foreach ($compagnies as $compagnie) {
             
@@ -71,12 +76,23 @@ class executeTirageAuto extends Controller
                      
                          //renitialiser fiche et boulgagnant if $request->action=='update' modification boul gagnant.
                         if($request->action=='update'){
+                            $k=1;
+                            $z=0;
                             $this->rentier($date,$idtrecord,$compagnie->id);
                             $this->supprimerBoulGagnant($compagnie->id, $idtrecord, $date);
-
+                            
                         }
 
+                        if($k==0){
+                            $k=1;
+                            $z=1;
+                            $this->storehistorique($tirageid,$date,$unchiffre,$premierchiffre,$secondchiffre,$troisiemechiffre);
+                        }
+                        if($z==0){
+                            $z=1;
+                            $this->updatehistoriqueboulgagnant($tirageid,$date,$unchiffre,$premierchiffre,$secondchiffre,$troisiemechiffre);
 
+                        }
                         //sauvegarde boulgagant.
                         $reponseStore = $this->store($compagnie->id, $idtrecord, $date, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre);
                         //signer participation
@@ -103,6 +119,28 @@ class executeTirageAuto extends Controller
         return redirect()->route('monitoring');
     }
 
+    public function storehistorique($tirageId,$date, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre){
+        $formattedDate = $date; //Carbon::createFromFormat('m-d-Y', $date)->format('Y-m-d');
+        try {
+
+            $reponseadd = historiquesboulgagnant::create([
+                'tirage_id' => $tirageId,
+                'unchiffre' => $unchiffre,
+                'premierchiffre' => $premierchiffre,
+                'secondchiffre' => $secondchiffre,
+                'troisiemechiffre' => $troisiemechiffre,
+                'etat' => 'true',
+                'created_' => $formattedDate
+            ]);
+
+            if ($reponseadd) {
+                return true;
+            }
+        } catch (\Exception $e) {
+            // Gérer l'exception si la création échoue
+            return false;
+        }
+    }
     public function store($compagnieId, $tirageId, $date, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre)
     {
 
@@ -219,9 +257,21 @@ class executeTirageAuto extends Controller
     }
 
 
+    public function updatehistoriqueboulgagnant($tirage_id,$date, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre){
+              $ligne=historiquesboulgagnant::where('tirage_id',$tirage_id)->where('created_',$date)->first();
+              $ligne->update([
+                'unchiffre' => $unchiffre,
+                'premierchiffre' => $premierchiffre,
+                'secondchiffre' => $secondchiffre,
+                'troisiemechiffre' => $troisiemechiffre,
+              ]);
 
+              if($ligne){
+                    return true;
+              }
+              return false;
 
-
+    }
 
     public function rentier($date,$tirageName,$compagnie){
         // Récupérer les codes fiches 
