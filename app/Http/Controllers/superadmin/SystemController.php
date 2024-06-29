@@ -44,10 +44,11 @@ class SystemController extends Controller
         $list = DB::table('tirage')->get();
         $id=$request->id;
         $date=$request->dat_;
-
+      
         if ($id != "") {
-            $record = historiquesboulgagnant::where('id',$id)->where('created_',$date)->get();
-            return view('ajoutelo', compact('list', 'record'));
+            $record = historiquesboulgagnant::where('tirage_id',$id)->where('created_',$date)->first();
+           
+            return view('superadmin.ajouter_lo', compact('list', 'record'));
         }
         return view('superadmin.ajouter_lo', compact('list'));
     }

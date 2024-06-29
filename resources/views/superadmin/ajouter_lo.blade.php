@@ -16,7 +16,12 @@
                     @if (isset($record)) action="/wp-admin/addlo"  @else action="/wp-admin/addlo" @endif
                     method="POST" style="font-weight: bold;">
                     @csrf
+                    @if (isset($record))
+                    <input type="hidden" name="action" value="update" >
+                    @else
                     <input type="hidden" name="action" value="add" >
+                    @endif
+                  
                     <div class="form-group">
                         <label for="exampleInputUsername1">Chazi dat la </label>
                         <input type="date" name="date"
@@ -38,10 +43,9 @@
                             required>
 
                             @if (isset($record))
-                                <option value="{{ $record->tirage_record->id }}">{{ $record->tirage_record->name }}</option>
+                                <option value="{{ $record->tirage->id }}">{{ $record->tirage->name }}</option>
                             @else
                                 <option disabled>Lis tiraj</option>
-
                                 @foreach ($list as $liste)
                                     <option value="{{ $liste->id }}">{{ $liste->name }}</option>
                                 @endforeach

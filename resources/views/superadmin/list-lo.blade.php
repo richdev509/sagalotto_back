@@ -38,7 +38,8 @@
                     </td>
                     <td>Tiraj 100%</td>
                     <td class="text-end">
-                      <form action="{{route('/wp-admin/ajouter_lo')}}">
+                      <form action="/wp-admin/ajouter_lo">
+                        @csrf
                           <input type="hidden" name="id" value="{{$lists->tirage_id}}" />
                           <input type="hidden" name="dat_" value="{{$lists->created_}}" />
                           <button type="submit"><i class="mdi mdi-table-edit"></i></button>
