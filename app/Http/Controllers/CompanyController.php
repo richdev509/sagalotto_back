@@ -24,7 +24,7 @@ class CompanyController extends Controller
                 ['compagnie_id', '=', Session('loginId')],
                 ['is_delete', '=', 0]
             ])->get();
-            return view('lister_vendeur', ['vendeur' => $vendeur]);
+            return view('lister_vendeur',['vendeur'=>$vendeur]);
         } else {
             return view('login');
         }
@@ -35,14 +35,15 @@ class CompanyController extends Controller
         if (Session('loginId')) {
             $vendeur = user::where([
                 ['compagnie_id', '=', Session('loginId')],
-                ['id', '=', $request->input('id')],
+                ['id','=', $request->input('id')],  
                 ['is_delete', '=', 0]
             ])->first();
-            if (!$vendeur) {
+            if(!$vendeur){
                 notify()->error('Gen yon ere ki pase');
                 return back();
+
             }
-            return view('editer_vendeur', ['vendeur' => $vendeur]);
+            return view('editer_vendeur',['vendeur'=>$vendeur]);
         } else {
             return view('login');
         }
@@ -100,7 +101,7 @@ class CompanyController extends Controller
         $username =  $request->input('username');
         $password =  $request->input('password');
 
-        if (empty($username) || empty($password)) {
+        if (Empty($username) || Empty($password)) {
             notify()->error('ranpli tout chan yo');
             return back();
         } else {
@@ -140,63 +141,36 @@ class CompanyController extends Controller
         if (Session('loginId')) {
 
             $vente = DB::table('ticket_code')->where([
-                ['compagnie_id', '=', Session('loginId')],
+                ['compagnie_id','=', Session('loginId')],
                 ['ticket_vendu.is_delete', '=', 0],
                 ['ticket_vendu.is_cancel', '=', 0],
-            ])->whereDate('ticket_code.created_at', '=', Carbon::now())
-                ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-                ->sum('amount');
+            ])->whereDate('ticket_code.created_at','=', Carbon::now())
+            ->join('ticket_vendu','ticket_vendu.ticket_code_id','=','ticket_code.code')
+            ->sum('amount');
 
             $perte = DB::table('ticket_code')->where([
-                ['compagnie_id', '=', Session('loginId')],
+                ['compagnie_id','=', Session('loginId')],
                 ['ticket_vendu.is_delete', '=', 0],
                 ['ticket_vendu.is_cancel', '=', 0],
-            ])->whereDate('ticket_code.created_at', '=', Carbon::now())
-                ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-                ->sum('winning');
+            ])->whereDate('ticket_code.created_at','=', Carbon::now())
+            ->join('ticket_vendu','ticket_vendu.ticket_code_id','=','ticket_code.code')
+            ->sum('winning');
 
             $commission = DB::table('ticket_code')->where([
-                ['compagnie_id', '=', Session('loginId')],
+                ['compagnie_id','=', Session('loginId')],
                 ['ticket_vendu.is_delete', '=', 0],
                 ['ticket_vendu.is_cancel', '=', 0],
-            ])->whereDate('ticket_code.created_at', '=', Carbon::now())
-                ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-                ->sum('commission');
-
-         
-
-            $lista = BoulGagnant::where('compagnie_id', session('loginId'))
-                ->latest('created_at')
-                ->with(['ticketVendu', 'tirage_record'])
-                ->take(3)
-                ->get();
-
-            $list = [];
-
-            foreach ($lista as $boulGagnant) {
-                $vente = $boulGagnant->ticketVendu()
-                    ->whereDate('created_at','=', $boulGagnant->created_)
-                    ->sum('amount');
-                $perte = $boulGagnant->ticketVendu()
-                   ->whereDate('created_at','=', $boulGagnant->created_)
-                    ->sum('winning');
-                $commission = $boulGagnant->ticketVendu()
-                    ->whereDate('created_at','=', $boulGagnant->created_)
-                    ->sum('commission');
-                $tirageName = $boulGagnant->tirage_record->name;
-                $list[] = [
-                    'boulGagnant' => $boulGagnant,
-                    'vente' => $vente,
-                    'perte' => $perte,
-                    'commission' => $commission,
-                    'name'=>$tirageName
+            ])->whereDate('ticket_code.created_at','=', Carbon::now())
+            ->join('ticket_vendu','ticket_vendu.ticket_code_id','=','ticket_code.code')
+            ->sum('commission');
+            
+            $list = BoulGagnant::where('compagnie_id', session('loginId'))
+                    ->latest('created_at')
+                    ->take(5)
+                    ->get();
 
 
-                ];
-            }
-
-
-            return view('admin', ['vente' => $vente, 'perte' => $perte, 'list' => $list, 'commission' => $commission]);
+            return view('admin',['vente'=>$vente, 'perte'=>$perte, 'list'=>$list, 'commission'=>$commission]);
         } else {
             return view('login');
         }
@@ -224,38 +198,39 @@ class CompanyController extends Controller
     public function store_vendeur(Request $request)
     {
         if (Session('loginId')) {
-
+    
             $validator = $request->validate([
                 "name" => "required|max:50",
-                'bank_id' => 'required',
-                'phone' => 'required|numeric',
-                'percent' => 'required|max:100|numeric',
+                'bank_id' =>'required',
+                'phone'=>'required|numeric',
+                'percent'=>'required|max:100|numeric',
                 "bank_name" => "required|max:30",
                 "password" => "required|max:20",
                 "username" => "required|max:20|unique:users"
 
             ]);
             $vendeur = user::where([
-                ['compagnie_id', '=', Session('loginId')],
-                ['bank_name', '=', $request->bank_name]
+                ['compagnie_id','=', Session('loginId')],
+                ['bank_name','=', $request->bank_name]
             ])->first();
-            if ($vendeur) {
+            if($vendeur){
                 notify()->error('ou gen yon bank ak non sa deja');
                 return back();
             }
 
-            if ($request->input('block') == '1') {
-                $status = 1;
-            } else {
+            if($request->input('block') =='1'){
+                 $status = 1;
+
+            }else{
                 $status = 0;
             }
             $query = DB::table('users')->insertGetId([
                 'compagnie_id' => Session('loginId'),
                 'name' => $request->input('name'),
                 'address' => $request->input('address'),
-                'gender' => $request->input('gender'),
+                'gender' => $request->input('gender'),   
                 'phone' => $request->input('phone'),
-                'username' => $request->input('username'),
+                'username' => $request->input('username'),  
                 'percent' => $request->input('percent'),
                 'android_id' => $request->input('bank_id'),
                 'bank_name' => $request->input('bank_name'),
@@ -263,11 +238,12 @@ class CompanyController extends Controller
                 'is_block' => $status,
                 'created_at' => Carbon::now()
             ]);
-            $user = user::find($query);
-            $user->code = "V-00" . $query;
-            $user->save();
-            notify()->success('Vandè a anregistre avec siksè');
-            return back();
+             $user = user::find($query);
+             $user->code = "V-00".$query;
+             $user->save();
+             notify()->success('Vandè a anregistre avec siksè');
+             return back();
+
         } else {
             return view('login');
         }
@@ -275,38 +251,39 @@ class CompanyController extends Controller
 
     public function update_vendeur(Request $request)
     {
-
-        if (Session('loginId')) {
-
+        
+         if (Session('loginId')) {
+          
             $validator = $request->validate([
                 "name" => "required|max:50",
-                'bank_id' => 'required',
-                'phone' => 'required|numeric',
-                'percent' => 'required|max:100|numeric',
+                'bank_id' =>'required',
+                'phone'=>'required|numeric',
+                'percent'=>'required|max:100|numeric',
                 "bank_name" => "required|max:30",
-
-
+               
+              
 
             ]);
             $vendeur = user::where([
-                ['compagnie_id', '=', Session('loginId')],
-                ['id', '=', $request->input('id')]
+                ['compagnie_id','=', Session('loginId')],
+                ['id','=', $request->input('id')]
             ])->first();
-            if (!$vendeur) {
+            if(!$vendeur){
                 notify()->error('vande sa pa trouve');
                 return back();
             }
 
-            if ($request->input('block') == '1') {
-                $status = 1;
-            } else {
+            if($request->input('block') =='1'){
+                 $status = 1;
+
+            }else{
                 $status = 0;
             }
-            if (!empty($request->input('password'))) {
-                $user = user::where('id', $request->input('id'))->update([
+            if(!Empty($request->input('password'))){
+                $user = user::where('id',$request->input('id'))->update([
                     'name' => $request->input('name'),
                     'address' => $request->input('address'),
-                    'gender' => $request->input('gender'),
+                    'gender' => $request->input('gender'),   
                     'phone' => $request->input('phone'),
                     //'username' => $request->input('username'),  
                     'percent' => $request->input('percent'),
@@ -316,14 +293,16 @@ class CompanyController extends Controller
                     'is_block' => $status,
                     'created_at' => Carbon::now()
                 ]);
+                
+                 notify()->success('modifikasyon an fet avek siksè');
+                 return back();
+    
 
-                notify()->success('modifikasyon an fet avek siksè');
-                return back();
-            } else {
-                $user = user::where('id', $request->input('id'))->update([
+            }else{
+                $user = user::where('id',$request->input('id'))->update([
                     'name' => $request->input('name'),
                     'address' => $request->input('address'),
-                    'gender' => $request->input('gender'),
+                    'gender' => $request->input('gender'),   
                     'phone' => $request->input('phone'),
                     //'username' => $request->input('username'),  
                     'percent' => $request->input('percent'),
@@ -333,10 +312,13 @@ class CompanyController extends Controller
                     'is_block' => $status,
                     'created_at' => Carbon::now()
                 ]);
+                
+                 notify()->success('modifikasyon an fet avek siksè');
+                 return back();
+    
 
-                notify()->success('modifikasyon an fet avek siksè');
-                return back();
             }
+           
         } else {
             return view('login');
         }
@@ -346,28 +328,29 @@ class CompanyController extends Controller
     public function new_password(Request $request)
     {
         if (!empty(Session('loginId'))) {
-            $validateData = $request->validate([
-                'old_password' => 'required',
-                'password' => 'required|confirmed|max:20|min:8',
+                $validateData = $request->validate([
+                    'old_password' => 'required',
+                    'password' => 'required|confirmed|max:20|min:8',
 
-            ]);
-            if ($validateData) {
-                $user = Company::where([
-                    ['id', '=', Session('loginId')],
-                ])->first();
-                if (Hash::check($request->input('old_password'), $user->password)) {
-                    $user->password = Hash::make($request->input('password'));
-                    $user->save();
-                    notify()->success('mo de pass ou a chanje');
-                    return back();
+                ]);
+                if ($validateData) {
+                    $user = Company::where([
+                        ['id', '=', Session('loginId')],
+                    ])->first();
+                    if (Hash::check($request->input('old_password'), $user->password)) {
+                        $user->password = Hash::make($request->input('password'));
+                        $user->save();
+                        notify()->success('mo de pass ou a chanje');
+                        return back();
+                    } else {
+                        notify()->error('ansyen modepass la pa bon');
+                        return back();
+                    }
                 } else {
-                    notify()->error('ansyen modepass la pa bon');
+                    notify()->error('yon ere pase');
                     return back();
                 }
-            } else {
-                notify()->error('yon ere pase');
-                return back();
-            }
+
         } else {
 
             return view('login');

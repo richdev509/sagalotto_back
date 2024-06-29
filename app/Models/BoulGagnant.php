@@ -24,10 +24,4 @@ class BoulGagnant extends Model
     {
         return $this->belongsTo(tirage_record::class,'tirage_id','id');
     }
-
-    public function TicketVendu()
-    {
-        return $this->hasMany(TicketVendu::class, 'tirage_record_id', 'tirage_id');
-    }
-
 }
