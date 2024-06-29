@@ -197,9 +197,24 @@
                         </div>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#lo" aria-expanded="false"
+                            aria-controls="ui-basic">
+                            <span class="menu-title">Lo ki soti</span>
+                            <i class="menu-arrow"></i>
+                            <i class="mdi mdi-alarm menu-icon"></i>
+                        </a>
+                        <div class="collapse" id="lo">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="/ajout-lo">Ajoute lo
+                                    </a></li>
+                                <li class="nav-item"> <a class="nav-link" href="lister-lo">Liste lo</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="collapse" href="#autorisation" aria-expanded="false"
                             aria-controls="ui-basic">
-                            <span class="menu-title">Boul</span>
+                            <span class="menu-title">Bloke - limite pri</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-earth menu-icon"></i>
                         </a>
@@ -250,21 +265,8 @@
                         </div>
 
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#lo" aria-expanded="false"
-                            aria-controls="ui-basic">
-                            <span class="menu-title">Lo ki soti</span>
-                            <i class="menu-arrow"></i>
-                            <i class="mdi mdi-alarm menu-icon"></i>
-                        </a>
-                        <div class="collapse" id="lo">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="/ajout-lo">Ajoute lo
-                                    </a></li>
-                                <li class="nav-item"> <a class="nav-link" href="lister-lo">Liste lo</a></li>
-                            </ul>
-                        </div>
-                    </li>
+                    
+                    
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="collapse" href="#fich" aria-expanded="false"
                             aria-controls="ui-basic">
