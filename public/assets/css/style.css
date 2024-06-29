@@ -20828,7 +20828,7 @@ dl li {
 /* Sidebar */
 .sidebar {
   min-height: calc(100vh - 70px);
-  background: #0a1849;
+  background: #38353b;
   font-family: "ubuntu-regular", sans-serif;
   padding: 0;
   width: 260px;
