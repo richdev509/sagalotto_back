@@ -76,6 +76,7 @@ Route::get('/wp-admin/logout', [SystemController::class,'logout']);
 Route::middleware(['web', 'verify.session'])->group(function () {
     // Vos routes nécessitant une vérification de session vont ici
 
+Route::get('/load-more', [ajouterLotGagnantController::class, 'loadMore'])->name('load-more');
 
 Route::get('admin', [CompanyController::class,'admin']);
 Route::get('profil', [CompanyController::class,'profil']);

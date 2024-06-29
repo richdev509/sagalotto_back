@@ -15,9 +15,19 @@ class ajouterLotGagnantController extends Controller
 
     public function index()
     {
-        $list = BoulGagnant::where('compagnie_id', session('loginId'))->orderBy('created_at', 'desc')->get();
+        $list = BoulGagnant::where('compagnie_id', session('loginId'))->orderBy('created_at', 'desc')->paginate(10);;
         return view('list-lo', compact('list'));
     }
+    public function loadMore(Request $request)
+{
+    if ($request->ajax()) {
+        $list = BoulGagnant::where('compagnie_id', session('loginId'))->orderBy('created_at', 'desc')->paginate(10); // Paginer par 10 éléments, ajustez selon vos besoins
+        $view= view('partials.list-items', compact('list'))->render();
+        return response()->json(['html' => $view, 'hasMore' => $list->hasMorePages()]);
+    }
+}
+
+
 
     public function ajouterlo(Request $request)
     {

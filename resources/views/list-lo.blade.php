@@ -1,99 +1,112 @@
 @extends('admin-layout')
 @section('content')
-<div class="col-lg-12 grid-margin stretch-card">
-    
-    <div class="card">
-        
-      <div class="card-body">
-        
-        <h4 class="card-title">Lis lo ki ajoute</h4>
-       
-        </p>
-        <div class="form-group">
-          <label for="dateFilter">Filtrer par date:</label>
-          <input type="date" id="dateFilter" class="form-control input">
-          <button onclick="filterTable()" class="btn btn-gradient-primary me-2">Filtrer</button>
+
+<style>
+  .spinner-border {
+      width: 3rem;
+      height: 3rem;
+      border-width: 0.3rem;
+  }
+  </style>
+ 
+  <div class="col-lg-12 grid-margin stretch-card">
+      <div class="card">
+          <div class="card-body">
+              <h4 class="card-title">Lis lo ki ajoute</h4>
+              <div class="form-group">
+                  <label for="dateFilter">Filtrer par date:</label>
+                  <input type="date" id="dateFilter" class="form-control input">
+                  <button onclick="filterTable()" class="btn btn-gradient-primary me-2">Filtrer</button>
+              </div>
+              <div class="table-responsive">
+                  <table class="table table-bordered" id="dataTable">
+                      <thead>
+                          <tr>
+                              <th> Tiraj non </th>
+                              <th> Date </th>
+                              <th> Lo Yo </th>
+                              <th> Etat </th>
+                              <th> Action </th>
+                          </tr>
+                      </thead>
+                      <tbody id="table-body">
+                          @include('partials.list-items', ['list' => $list])
+                      </tbody>
+                  </table>
+              </div>
+              <div id="loader" style="display: none; text-align: center; padding: 10px;">
+                  <div class="spinner-border" role="status">
+                      <span class="sr-only">Loading...</span>
+                  </div>
+              </div>
+              <div id="no-more-data" style="display: none; text-align: center; padding: 10px;">
+                  <p>Il n'y a plus de données à charger.</p>
+              </div>
+          </div>
       </div>
-        <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable">
-              <thead>
-                <tr>
-                  <th> Tiraj non </th>
-                  <th> Date </th>
-                  <th> Lo Yo </th>
-                  <th> Etat </th>
-                  <th> Action </th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($list as $lists)
-                <tr>
-                    <td>{{$lists->tirage_record->name}}</td>
-                    <td>{{ \Carbon\Carbon::parse($lists->created_)->format('d-m-Y') }}
-                    </td>
-                    <td><button type="button" class="btn btn-social-icon btn-youtube btn-rounded">{{$lists->unchiffre}}</button>  
-                        <button type="button" class="btn btn-social-icon btn-facebook btn-rounded">{{$lists->premierchiffre}}</button>
-                        <button type="button" class="btn btn-social-icon btn-dribbble btn-rounded">{{$lists->secondchiffre}}</button>
-                        <button type="button" class="btn btn-social-icon btn-linkedin btn-rounded">{{$lists->troisiemechiffre}}</button>
-                    </td>
-                    <td>Tiraj 100%</td>
-                    <td class="text-end">
-                      <form action="{{route('ajoutlo')}}">
-                          <input type="hidden" name="id" value="{{$lists->tirage_id}}" />
-                          <input type="hidden" name="dat_" value="{{$lists->created_}}" />
-                          <button type="submit"><i class="mdi mdi-table-edit"></i></button>
-
-                      </form>
-
-
-                  </td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-        </div>
-
-
-
-      </div>
-    </div>
-</div>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-
-<script>
-    function filterTable() {
-    var inputDate = $('#dateFilter').val();
-    var table = $('#dataTable');
-
-    // Réinitialiser le filtre
-    table.find('tr').show();
-
-    // Filtrer par date
-    if (inputDate) {
-        console.log('input:'+inputDate);
-        table.find('tbody tr').each(function () {
-            var rowDate = $(this).find('td:eq(1)').text(); // Colonne de la date
-            console.log(rowDate);
-            // Reformater la date de la colonne au format YYYY-MM-DD
-            var formattedRowDate = formatDate(rowDate, 'DD-MM-YYYY', 'YYYY-MM-DD');
-            console.log('formatted suivi de row'+formattedRowDate);
-            if (formattedRowDate !== inputDate) {
-                $(this).hide();
-            }
-        });
-    }
-}
-
-// Fonction pour reformater une date
-function formatDate(dateString, inputFormat, outputFormat) {
-    return moment(dateString, inputFormat).format(outputFormat);
-}
-
-</script>
-
-
-
-
-
-@stop
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  
+  <script>
+  function filterTable() {
+      var inputDate = $('#dateFilter').val();
+      var table = $('#dataTable');
+  
+      table.find('tr').show();
+  
+      if (inputDate) {
+          table.find('tbody tr').each(function () {
+              var rowDate = $(this).find('td:eq(1)').text();
+              var formattedRowDate = formatDate(rowDate, 'DD-MM-YYYY', 'YYYY-MM-DD');
+              if (formattedRowDate !== inputDate) {
+                  $(this).hide();
+              }
+          });
+      }
+  }
+  
+  function formatDate(dateString, inputFormat, outputFormat) {
+      return moment(dateString, inputFormat).format(outputFormat);
+  }
+  
+  let page = 1;
+  let hasMore = true;
+  
+  $(window).scroll(function() {
+      if (hasMore && $(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+          page++;
+          loadMoreData(page);
+      }
+  });
+  
+  function loadMoreData(page) {
+      $.ajax({
+          url: '{{ route("load-more") }}?page=' + page,
+          type: 'get',
+          beforeSend: function() {
+              $('#loader').show();
+          }
+      })
+      .done(function(data) {
+          $('#loader').hide();
+          if (data.html === "") {
+              $('#no-more-data').show();
+              hasMore = false;
+              return;
+          }
+          $("#table-body").append(data.html);
+          if (!data.hasMore) {
+              $('#no-more-data').show();
+              hasMore = false;
+          }
+      })
+      .fail(function(jqXHR, ajaxOptions, thrownError) {
+          $('#loader').hide();
+          console.log('Server error occurred');
+      });
+  }
+  </script>
+  @stop
+  
