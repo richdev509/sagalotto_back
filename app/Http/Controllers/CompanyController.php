@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use App\Models\BoulGagnant;
+use App\Models\TicketVendu;
+use App\Models\ticket_code;
+
 //use Carbon\Carbon;
 class CompanyController extends Controller
 {
@@ -167,21 +170,31 @@ class CompanyController extends Controller
 
             $lista = BoulGagnant::where('compagnie_id', session('loginId'))
                 ->latest('created_at')
-                ->with(['ticketVendu', 'tirage_record'])
                 ->take(3)
                 ->get();
-
+           
             $list = [];
+           
 
             foreach ($lista as $boulGagnant) {
-                $vente = $boulGagnant->ticketVendu()
-                    ->whereDate('created_at','=', $boulGagnant->created_)
+                $codes = ticket_code::where('compagnie_id', session('loginId'))
+                ->whereDate('created_at', $boulGagnant->created_)
+                ->pluck('code')
+                ->toArray();
+
+             $vente= TicketVendu::whereIn('ticket_code_id', $codes)
+             ->where('tirage_record_id', $boulGagnant->tirage_id)
+             ->sum('amount');
+               /* $vente =TicketVendu::where('tirage_record_id',$boulGagnant->tirage_id)
+                    ->whereDate('created_at', $boulGagnant->created_)
                     ->sum('amount');
-                $perte = $boulGagnant->ticketVendu()
-                   ->whereDate('created_at','=', $boulGagnant->created_)
+                    dd($vente,);*/
+                $perte =TicketVendu::whereIn('ticket_code_id', $codes)
+                ->where('tirage_record_id', $boulGagnant->tirage_id)
                     ->sum('winning');
-                $commission = $boulGagnant->ticketVendu()
-                    ->whereDate('created_at','=', $boulGagnant->created_)
+
+                $commission =TicketVendu::whereIn('ticket_code_id', $codes)
+             ->where('tirage_record_id', $boulGagnant->tirage_id)
                     ->sum('commission');
                 $tirageName = $boulGagnant->tirage_record->name;
                 $list[] = [

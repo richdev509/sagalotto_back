@@ -103,16 +103,19 @@ class executeTirageAuto extends Controller
                         }
                         
                         $reponseStore = $this->store($compagnie->id, $idtrecord, $date, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre);
-                        if ($request->action == 'add') {
-                        $this->participation($compagnie->id, $tirageid, $date,'Ajouter');
-                        }else{
-                        $this->participation($compagnie->id, $tirageid, $date,'Ajouter');
+                      
+                        if ($request->action == 'update') {
+                        $this->participation($compagnie->id, $tirageid, $date,'update');
                         }
-                        /*
+                        if ($request->action == 'add') {
+                            $this->participation($compagnie->id, $tirageid, $date,'ajouter');
+                            }
+
+                        
                         if ($reponseStore) {
                             dispatch(new ExecutionTirage($idtrecord, $compagnie->id, $date, session('id')));
                         }
-                            */
+                            
                         } else {
                             $var = $var + 1;
                         }
@@ -271,12 +274,13 @@ class executeTirageAuto extends Controller
         }
     }
 
-    public function participation($compagnieId, $tirage, $date)
+    public function participation($compagnieId, $tirage, $date,$infos)
     {
         $resultat = participation::create([
             'compagnie_id' => $compagnieId,
             'tirage_id' => $tirage,
             'date_' => $date,
+            'infos'=>$infos,
         ]);
     }
 

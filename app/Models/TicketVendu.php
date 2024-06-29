@@ -10,7 +10,7 @@ class TicketVendu extends Model
     use HasFactory;
     protected $table ="ticket_vendu";
     protected $fillable = [
-       
+        'tirage_record_id',
         'is_win',
         'winning',
         'is_calculated',

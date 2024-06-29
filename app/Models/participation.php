@@ -13,6 +13,7 @@ class participation extends Model
     'compagnie_id',
     'tirage_id',
     'date_',
+    'infos',
     'updated_at',
     'created_at',
     ];	
