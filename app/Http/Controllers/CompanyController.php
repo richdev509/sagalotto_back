@@ -182,26 +182,26 @@ class CompanyController extends Controller
                 ->pluck('code')
                 ->toArray();
 
-             $vente= TicketVendu::whereIn('ticket_code_id', $codes)
+             $vent= TicketVendu::whereIn('ticket_code_id', $codes)
              ->where('tirage_record_id', $boulGagnant->tirage_id)
              ->sum('amount');
                /* $vente =TicketVendu::where('tirage_record_id',$boulGagnant->tirage_id)
                     ->whereDate('created_at', $boulGagnant->created_)
                     ->sum('amount');
                     dd($vente,);*/
-                $perte =TicketVendu::whereIn('ticket_code_id', $codes)
+                $pert =TicketVendu::whereIn('ticket_code_id', $codes)
                 ->where('tirage_record_id', $boulGagnant->tirage_id)
                     ->sum('winning');
 
-                $commission =TicketVendu::whereIn('ticket_code_id', $codes)
+                $commissio =TicketVendu::whereIn('ticket_code_id', $codes)
              ->where('tirage_record_id', $boulGagnant->tirage_id)
                     ->sum('commission');
                 $tirageName = $boulGagnant->tirage_record->name;
                 $list[] = [
                     'boulGagnant' => $boulGagnant,
-                    'vente' => $vente,
-                    'perte' => $perte,
-                    'commission' => $commission,
+                    'vent' => $vent,
+                    'pert' => $pert,
+                    'commissio' => $commissio,
                     'name'=>$tirageName
 
 

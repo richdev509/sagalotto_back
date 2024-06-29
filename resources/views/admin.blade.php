@@ -117,15 +117,15 @@
                                     </tr>
                                     <tr style="border: 1px solid black;">
                                         <td style="font-weight: bold;">
-                                            Vann: <span>{{ $lists['vente'] ?? 0}} HTG</span>
+                                            Vann: <span>{{ $lists['vent'] ?? 0}} HTG</span>
                                         </td>
 
                                         <td style="font-weight: bold;">
-                                            Pedi: <span>{{ $lists['perte'] ?? 0 }} HTG</span>
+                                            Pedi: <span>{{ $lists['pert'] ?? 0 }} HTG</span>
 
                                         </td>
                                         <td style="font-weight: bold;">
-                                            Balans: <span>{{ $lists['vente'] - ($lists['perte'] + $lists['commission']) }} HTG</span>
+                                            Balans: <span>{{ $lists['vent'] - ($lists['pert'] + $lists['commissio']) }} HTG</span>
 
                                         </td>
                                     </tr>
