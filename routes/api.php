@@ -15,11 +15,10 @@ use App\Http\Controllers\api\ticketController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
 Route::middleware('CheckBeforeAccess')->group(function () {
     // Routes protected by the middleware
-    // Route::post('api/auth/ticket/creer', [creer_ticketController::class,'creer_ticket']);
-    // Route::get('api/auth/tirage', [AuthController::class,'tirage']);
+  // Route::post('api/auth/ticket/creer', [creer_ticketController::class,'creer_ticket']);
+  // Route::get('api/auth/tirage', [AuthController::class,'tirage']);
 });
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -31,22 +30,28 @@ Route::group([
 
 ], function ($router) {
 
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::get('/profil', [AuthController::class, 'profil']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/tirage', [AuthController::class, 'tirage']);
-    Route::get('/tirage/tout', [AuthController::class, 'tirage_list']);
-    Route::get('/tirage/result', [AuthController::class, 'tirage_result']);
+    Route::post('/login', [AuthController::class,'login']);
+    Route::get('/profil', [AuthController::class,'profil']);
+    Route::post('/logout', [AuthController::class,'logout']);
+    Route::get('/tirage', [AuthController::class,'tirage']);
+    Route::get('/tirage/tout', [AuthController::class,'tirage_list']);
+    Route::get('/tirage/result', [AuthController::class,'tirage_result']);
 
 
 
-    Route::post('/ticket/creer', [ticketController::class, 'creer_ticket'])->middleware('filterJsonMiddleware');
-    Route::post('/ticket/creer2', [ticketController::class, 'creer_ticket2']);
+    Route::post('/ticket/creer', [ticketController::class,'creer_ticket']);
+    Route::post('/ticket/creer2', [ticketController::class,'creer_ticket2']);
 
-    Route::get('/ticket/list', [ticketController::class, 'list_ticket']);
-    Route::post('/ticket/cancel', [ticketController::class, 'cancel_ticket']);
-    Route::get('/ticket/report', [ticketController::class, 'report_ticket']);
-    Route::post('/ticket/peyer', [ticketController::class, 'payer_ticket']);
-    Route::post('/ticket/copier', [ticketController::class, 'copier_ticket']);
+    Route::get('/ticket/list', [ticketController::class,'list_ticket']);
+    Route::post('/ticket/cancel', [ticketController::class,'cancel_ticket']);
+    Route::get('/ticket/report', [ticketController::class,'report_ticket']);
+    Route::post('/ticket/peyer', [ticketController::class,'payer_ticket']);
+    Route::post('/ticket/copier', [ticketController::class,'copier_ticket']);
+
+
+
+
+
+
    
 });

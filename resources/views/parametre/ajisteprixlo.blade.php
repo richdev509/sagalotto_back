@@ -38,7 +38,7 @@
                         <div class="form-check">
                             <label class="form-check-label">
                                 <input type="checkbox" class="form-check-input" value='1' name='tirage_auto'
-                                    @if ($service->autoTirage=='1') checked @endif> Pemet sistem nan ajoute lo gayan pou
+                                    @if ($service->autoTirage) checked @endif> Pemet sistem nan ajoute lo gayan pou
                                 ou </label>
                         </div>
                     </div>

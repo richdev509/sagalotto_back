@@ -21,7 +21,7 @@ class ticketController extends Controller
 
     public function creer_ticket(Request $request)
     {
-        dd('vvvv');
+
         // prix total
         $amount_tot = 0;
         //tirage
@@ -33,7 +33,7 @@ class ticketController extends Controller
         //trouver compagnie
         //filter data to remove zero value before process
         $filter_l4  = verify::removeZeroOptions($request);
-       
+
         $comp = company::where([
             ['id', '=', auth()->user()->compagnie_id],
             ['is_delete', '=', 0],
@@ -104,7 +104,10 @@ class ticketController extends Controller
         }
         $i = 0;
         //verify number that are limited in price
-      
+        $resp_prix = verify::verifierLimitePrixJouer($request);
+        if ($resp_prix != '1') {
+            return $resp_prix;
+        }
         //$ticketId[];
         //tchek if all tirage are open before proceed
         foreach ($request->input('tirages') as $name) {
@@ -126,17 +129,10 @@ class ticketController extends Controller
             }
 
             //verify limit boule for each tirage before
-            $resp_boul = verify::verifierLimitePrixBoule($request, $name['name']);
+            $resp_boul = verify::verifierLimitePrixBoule($request, $name);
             if ($resp_boul != '1') {
                 return $resp_boul;
             }
-            $resp_prix = verify::verifierLimitePrixJouer($request, $name['name']);
-            if ($resp_prix != '1') {
-                return $resp_prix;
-            }
-
-
-
 
         }
         foreach ($request->input('tirages') as $name) {
@@ -200,8 +196,6 @@ class ticketController extends Controller
                 }
                 unset($mg_res);
             }
-            $resp_prix_jouer = verify::StockerLimitePrixJouer($request, $name['name']);
-           
             $query = DB::table('ticket_vendu')->insertGetId([
                 'ticket_code_id' => $ticketId,
                 'tirage_record_id' => $tirage_record->id,
@@ -244,7 +238,6 @@ class ticketController extends Controller
                 'info' => $comp->info,
             ]
         ], 200,);
-
     }
     public function creer_ticket2(Request $request)
     {
@@ -329,10 +322,10 @@ class ticketController extends Controller
         }
         $i = 0;
         //verify number that are limited in price
-       // $resp_prix = verify::verifierLimitePrixJouer($request);
-       // if ($resp_prix != '1') {
-           // return $resp_prix;
-      //  }
+        $resp_prix = verify::verifierLimitePrixJouer($request);
+        if ($resp_prix != '1') {
+            return $resp_prix;
+        }
         //$ticketId[];
         //tchek if all tirage are open before proceed
         foreach ($request->input('tirages') as $name) {
