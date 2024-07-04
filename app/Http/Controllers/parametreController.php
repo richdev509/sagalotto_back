@@ -392,24 +392,25 @@ class parametreController extends Controller
     {
        
         try {
-            // dd($request->input('tirage_auto'));
+          
              $responce = RulesOne::where('compagnie_id', session('loginId'))->first();
              $responce->update([
                  'prix' => $request->input('montant'),
              ]);
                      
              //store service auto tirage
-             if(!empty($request->input('tirage_auto')=='1')){
-                
-                $service = DB::table('companies')->where('id', session('loginId'))->update([
+             if(!empty($request->tirage_auto)=='1'){
+                $service = company::where('id', session('loginId'))->first();
+                $service->update([
                     'autoTirage' =>1,
-                    'service' =>1,
+                     'service' =>1,
 
                 ]);
              }else{
-                $service = company::where('id', session('loginId'))->update([
+                $service = company::where('id', session('loginId'))->first();
+                $service->update([
                     'autoTirage' =>0,
-                      'service' =>0,
+                     'service' =>0,
 
                 ]);
 

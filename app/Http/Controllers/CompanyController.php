@@ -166,6 +166,7 @@ class CompanyController extends Controller
                 ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                 ->sum('commission');
 
+         
 
             $lista = BoulGagnant::where('compagnie_id', session('loginId'))
                 ->latest('created_at')
@@ -182,18 +183,18 @@ class CompanyController extends Controller
                 ->toArray();
 
              $vent= TicketVendu::whereIn('ticket_code_id', $codes)
-             ->where('tirage_record_id', $boulGagnant->tirage_id)
+             ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete',0)->where('is_cancel',0)
              ->sum('amount');
                /* $vente =TicketVendu::where('tirage_record_id',$boulGagnant->tirage_id)
                     ->whereDate('created_at', $boulGagnant->created_)
                     ->sum('amount');
                     dd($vente,);*/
                 $pert =TicketVendu::whereIn('ticket_code_id', $codes)
-                ->where('tirage_record_id', $boulGagnant->tirage_id)
+                ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete',0)->where('is_cancel',0)
                     ->sum('winning');
 
                 $commissio =TicketVendu::whereIn('ticket_code_id', $codes)
-             ->where('tirage_record_id', $boulGagnant->tirage_id)
+             ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete',0)->where('is_cancel',0)
                     ->sum('commission');
                 $tirageName = $boulGagnant->tirage_record->name;
                 $list[] = [
