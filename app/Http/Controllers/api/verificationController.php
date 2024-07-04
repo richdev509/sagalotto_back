@@ -123,7 +123,7 @@ class verificationController extends Controller
                     ['boule', '=', $montant['boul1']],
                     ['type', '=', 'loto3']
                 ])->whereDate('created_at', '=', Carbon::now())
-                    ->sum('amount');
+                ->sum('amount');
                 if ($limit->loto3etat == '1' && $montant['montant'] + $play_amount > $limit->loto3) {
 
                     $limitePrixJouer[] = 'limit ' . $montant['boul1'] . ' nan ' . $tirage . ' se ' . $limit->loto3 - $play_amount . ' G';

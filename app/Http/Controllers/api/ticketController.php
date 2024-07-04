@@ -21,7 +21,6 @@ class ticketController extends Controller
 
     public function creer_ticket(Request $request)
     {
-        dd('vvvv');
         // prix total
         $amount_tot = 0;
         //tirage
