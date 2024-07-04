@@ -37,9 +37,6 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             
-            
-            
-            
         ],
 
         'api' => [
@@ -71,5 +68,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'verify.session' => \App\Http\Middleware\VerifySession::class,
         'chekadmin' => \App\Http\Middleware\CheckAdmin::class,
+        'HandleExpiredSession'=>\App\Http\Middleware\HandleExpiredSession::class,
     ];
 }
