@@ -152,10 +152,7 @@
                 }
             }
         }
-         #myRapport{
-            overflow: scroll;
-    
-         }
+
         .head_rapport {
             background-color: gray;
 
@@ -212,12 +209,19 @@
                     <h4 class="card-title">Rapo general pou chak bank</h4>
                     <div class="row_head">
                         <form method="get" action="raport2" id="search"
-                            style="border: 1px solid rgb(97 84 96 / 44%);margin-bottom: 10px;background-color: white; padding: 5px;border-radius: 4px;">
+                            style="    border: 1px solid rgb(97 84 96 / 44%);
+    margin-bottom: 10px;
+    background-color: white;
+    padding: 5px;
+    border-radius: 4px;">
                             @csrf
 
                             <div class="row">
                                 <div class="col-md-5"
-                                    style="flex-direction: row;display: flex;flex-wrap: wrap;width: 100%;gap:20px;">
+                                    style="flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;gap:20px;">
                                     <div class="form-group">
                                         <label>komanse</label>
                                         <input type="date" class="form-control" name="date_debut"
@@ -253,7 +257,8 @@
                         <table class="table table-striped" id="myRapport">
 
 
-                            <thead class="head_rapport" style="background: #0d2a95; color: white;">
+                            <thead class="head_rapport" style="background: #0d2a95;
+    color: white;">
                                 <tr>
                                     <th>Bank <i class="mdi mdi-cash-register mdi-16px float-right"></th>
                                     <th>Dat <i class="mdi mdi-calendar mdi-16px"></i></th>

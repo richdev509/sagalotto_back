@@ -3,14 +3,12 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
-use App\Models\limit_auto;
 use App\Models\limitprixachat;
 use App\Models\limitprixboul;
 use Illuminate\Http\Request;
 use App\Models\switchboul;
 use App\Models\tirage;
 use App\Models\tirage_record;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 
@@ -28,6 +26,7 @@ class verificationController extends Controller
         foreach ($request->input('tirages') as $name) {
             //rechercher le nom de chak tirages
             foreach ($name as $value) {
+
                 //prendre l'id du tirage
                 $tirage_id = tirage_record::where([
                     ['compagnie_id', '=', auth()->user()->compagnie_id],
@@ -68,9 +67,9 @@ class verificationController extends Controller
             return '1';
         }
     }
-    public static function verifierLimitePrixJouer(Request $request, $tirage)
+    public static function verifierLimitePrixJouer(Request $request)
     {
-        $limitePrixJouer = [];
+
         $limit = limitprixachat::where([
             ['compagnie_id', '=', auth()->user()->compagnie_id]
         ])->first();
@@ -78,45 +77,41 @@ class verificationController extends Controller
 
         if (!empty($request->input('bolete'))) {
 
+
             foreach ($request->input('bolete') as $montant) {
-                $play_amount = limit_auto::where([
-                    ['compagnie_id', '=', auth()->user()->compagnie_id],
-                    ['tirage', '=', $tirage],
-                    ['boule', '=', $montant['boul1']],
-                    ['type', '=', 'bolet']
-                ])->whereDate('created_at', '=', Carbon::now())
-                    ->sum('amount');
+                if ($limit->boletetat == '1' && $montant['montant'] > $limit->bolet) {
+                    return response()->json([
+                        'status' => 'false',
+                        'message' => [
+                            'info' => 'pri a depase limit pou boul la',
+                            'boule' => 'limit pou jwe yon boul se ' . $limit->bolet,
 
-                if ($limit->boletetat == '1' && ($montant['montant'] + $play_amount) > $limit->bolet) {
+                        ],
+                        'code' => '404'
 
-                    $limitePrixJouer[] = 'limit ' . $montant['boul1'] . ' nan ' . $tirage . ' se ' . $limit->bolet - $play_amount . ' G';
+                    ], 404,);
                 }
             }
         }
         if (!empty($request->input('maryaj'))) {
-
-
             foreach ($request->input('maryaj') as $montant) {
-                $play_amount = limit_auto::where([
-                    ['compagnie_id', '=', auth()->user()->compagnie_id],
-                    ['tirage', '=', $tirage],
-                    ['boule', '=', $montant['boul1'] . $montant['boul2']],
-                    ['type', '=', 'maryaj']
-                ])->orwhere([
-                    ['compagnie_id', '=', auth()->user()->compagnie_id],
-                    ['tirage', '=', $tirage],
-                    ['boule', '=', $montant['boul2'] . $montant['boul1']],
-                    ['type', '=', 'maryaj']
-                ])->whereDate('created_at', '=', Carbon::now())
-                    ->sum('amount');
-                if ($limit->maryajetat == '1' && $montant['montant'] + $play_amount > $limit->maryaj) {
+                if ($limit->maryajetat == '1' && $montant['montant'] > $limit->maryaj) {
+                    return response()->json([
+                        'status' => 'false',
+                        'message' => [
+                            'info' => 'pri a depase limit pou maryaj la',
+                            'boule' => 'limit pou jwe yon maryaj se ' . $limit->maryaj,
 
-                    $limitePrixJouer[] = 'limit ' . $montant['boul1'] . $montant['boul2'] . ' nan ' . $tirage . ' se ' . $limit->maryaj -  $play_amount . ' G';
+                        ],
+                        'code' => '404'
+
+                    ], 404,);
                 }
             }
         }
         if (!empty($request->input('loto3'))) {
             foreach ($request->input('loto3') as $montant) {
+<<<<<<< HEAD
                 $play_amount = limit_auto::where([
                     ['compagnie_id', '=', auth()->user()->compagnie_id],
                     ['tirage', '=', $tirage],
@@ -125,182 +120,121 @@ class verificationController extends Controller
                 ])->whereDate('created_at', '=', Carbon::now())
                 ->sum('amount');
                 if ($limit->loto3etat == '1' && $montant['montant'] + $play_amount > $limit->loto3) {
+=======
+                if ($limit->loto3etat == '1' && $montant['montant'] > $limit->loto3) {
+                    return response()->json([
+                        'status' => 'false',
+                        'message' => [
+                            'info' => 'pri a depase limit pou loto3',
+                            'boule' => 'limit pou jwe yon loto3 se ' . $limit->loto3,
+>>>>>>> 63d6a4e53ac94606a62958e241ddf56c819cc628
 
-                    $limitePrixJouer[] = 'limit ' . $montant['boul1'] . ' nan ' . $tirage . ' se ' . $limit->loto3 - $play_amount . ' G';
+                        ],
+                        'code' => '404'
+
+                    ], 404,);
                 }
             }
         }
         if (!empty($request->input('loto4'))) {
 
             foreach ($request->input('loto4') as $option) {
-                $option_c = 0;
-                $play_amount = limit_auto::where([
-                    ['compagnie_id', '=', auth()->user()->compagnie_id],
-                    ['tirage', '=', $tirage],
-                    ['boule', '=', $option['boul1']],
-                    ['type', '=', 'loto4']
-                ])->whereDate('created_at', '=', Carbon::now())
-                    ->sum('amount');
                 if (!empty($option['option1'])) {
-                    $option_c = $option_c + $option['option1'];
+                    if ($limit->loto4etat == '1' && $option['option1'] > $limit->loto4) {
+                        return response()->json([
+                            'status' => 'false',
+                            'message' => [
+                                'info' => 'pri a depase limit pou loto4',
+                                'boule' => 'limit pou jwe yon loto4 se ' . $limit->loto4,
+
+                            ],
+                            'code' => '404'
+
+                        ], 404,);
+                    }
                 }
                 if (!empty($option['option2'])) {
-                    $option_c = $option_c + $option['option2'];
+                    if ($limit->loto4etat == '1' && $option['option2'] > $limit->loto4) {
+                        return response()->json([
+                            'status' => 'false',
+                            'message' => [
+                                'info' => 'pri a depase limit pou loto4',
+                                'boule' => 'limit pou jwe yon loto4 se ' . $limit->loto4,
+
+                            ],
+                            'code' => '404'
+
+                        ], 404,);
+                    }
                 }
                 if (!empty($option['option3'])) {
-                    $option_c = $option_c + $option['option3'];
-                }
 
+                    if ($limit->loto4etat == '1' && $option['option3'] > $limit->loto4) {
+                        return response()->json([
+                            'status' => 'false',
+                            'message' => [
+                                'info' => 'pri a depase limit pou loto4',
+                                'boule' => 'limit pou jwe yon loto4 se ' . $limit->loto4,
 
-                if ($limit->loto4etat == '1' && $option_c + $play_amount > $limit->loto4) {
+                            ],
+                            'code' => '404'
 
-
-                    $limitePrixJouer[] = 'limit ' . $option['boul1'] . ' nan ' . $tirage . ' se ' . $limit->loto4 -  $play_amount . ' G ';
+                        ], 404,);
+                    }
                 }
             }
         }
         if (!empty($request->input('loto5'))) {
-
             foreach ($request->input('loto5') as $option) {
-                $option_c = 0;
-                $play_amount = limit_auto::where([
-                    ['compagnie_id', '=', auth()->user()->compagnie_id],
-                    ['tirage', '=', $tirage],
-                    ['boule', '=', $option['boul1']],
-                    ['type', '=', 'loto5']
-                ])->whereDate('created_at', '=', Carbon::now())
-                    ->sum('amount');
                 if (!empty($option['option1'])) {
-                    $option_c = $option_c + $option['option1'];
+                    if ($limit->loto5etat == '1' && $option['option1'] > $limit->loto5) {
+                        return response()->json([
+                            'status' => 'false',
+                            'message' => [
+                                'info' => 'pri a depase limit pou loto5',
+                                'boule' => 'limit pou jwe yon loto5 se ' . $limit->loto5,
+
+                            ],
+                            'code' => '404'
+
+                        ], 404,);
+                    }
                 }
                 if (!empty($option['option2'])) {
-                    $option_c = $option_c + $option['option2'];
+                    if ($limit->loto5etat == '1' && $option['option2'] > $limit->loto5) {
+                        return response()->json([
+                            'status' => 'false',
+                            'message' => [
+                                'info' => 'pri a depase limit pou loto5',
+                                'boule' => 'limit pou jwe yon loto3 se ' . $limit->loto5,
+
+                            ],
+                            'code' => '404'
+
+                        ], 404,);
+                    }
                 }
                 if (!empty($option['option3'])) {
-                    $option_c = $option_c + $option['option3'];
-                }
+                    if ($limit->loto5etat == '1' && $option['option3'] > $limit->loto5) {
+                        return response()->json([
+                            'status' => 'false',
+                            'message' => [
+                                'info' => 'pri a depase limit pou loto5',
+                                'boule' => 'limit pou jwe yon loto5 se ' . $limit->loto5,
 
+                            ],
+                            'code' => '404'
 
-                if ($limit->loto5etat == '1' && $option_c + $play_amount > $limit->loto5) {
-
-                    $limitePrixJouer[] = 'limit ' . $option['boul1'] . ' nan ' . $tirage . ' se ' . $limit->loto5 - $play_amount . ' G';
+                        ], 404,);
+                    }
                 }
             }
         }
-        if (!empty($limitePrixJouer)) {
-            return response()->json([
-                'status' => 'false',
-                'message' => [
-                    'info' => 'pri a depase limit la',
-                    'boule' => $limitePrixJouer,
-
-
-                ],
-                'code' => '404'
-
-            ], 404,);
-        } else {
-            return '1';
-        }
-    }
-    public static function StockerLimitePrixJouer(Request $request, $tirage)
-    {
-        if (!empty($request->input('bolete'))) {
-
-            foreach ($request->input('bolete') as $montant) {
-                $query = DB::table('limit_autos')->insert([
-                    'compagnie_id' => auth()->user()->compagnie_id,
-                    'tirage' => $tirage,
-                    'boule' => $montant['boul1'],
-                    'amount' =>  $montant['montant'],
-                    'type' => 'bolet',
-
-                    'created_at' => Carbon::now(),
-                ]);
-            }
-        }
-        if (!empty($request->input('maryaj'))) {
-
-            foreach ($request->input('maryaj') as $montant) {
-                $query = DB::table('limit_autos')->insert([
-                    'compagnie_id' => auth()->user()->compagnie_id,
-                    'tirage' => $tirage,
-                    'boule' => $montant['boul1'] . $montant['boul2'],
-                    'amount' =>  $montant['montant'],
-                    'type' => 'maryaj',
-
-                    'created_at' => Carbon::now(),
-                ]);
-            }
-        }
-        if (!empty($request->input('loto3'))) {
-            foreach ($request->input('loto3') as $montant) {
-                $query = DB::table('limit_autos')->insert([
-                    'compagnie_id' => auth()->user()->compagnie_id,
-                    'tirage' => $tirage,
-                    'boule' => $montant['boul1'],
-                    'amount' =>  $montant['montant'],
-                    'type' => 'loto3',
-
-                    'created_at' => Carbon::now(),
-                ]);
-            }
-        }
-        if (!empty($request->input('loto4'))) {
-
-            foreach ($request->input('loto4') as $option) {
-                $option_c = 0;
-
-                if (!empty($option['option1'])) {
-                    $option_c = $option_c + $option['option1'];
-                }
-                if (!empty($option['option2'])) {
-                    $option_c = $option_c + $option['option2'];
-                }
-                if (!empty($option['option3'])) {
-                    $option_c = $option_c + $option['option3'];
-                }
-                $query = DB::table('limit_autos')->insert([
-                    'compagnie_id' => auth()->user()->compagnie_id,
-                    'tirage' => $tirage,
-                    'boule' => $option['boul1'],
-                    'amount' =>  $option_c,
-                    'type' => 'loto4',
-
-                    'created_at' => Carbon::now(),
-                ]);
-            }
-        }
-        if (!empty($request->input('loto5'))) {
-
-            foreach ($request->input('loto5') as $option) {
-                $option_c = 0;
-
-                if (!empty($option['option1'])) {
-                    $option_c = $option_c + $option['option1'];
-                }
-                if (!empty($option['option2'])) {
-                    $option_c = $option_c + $option['option2'];
-                }
-                if (!empty($option['option2'])) {
-                    $option_c = $option_c + $option['option3'];
-                }
-                $query = DB::table('limit_autos')->insert([
-                    'compagnie_id' => auth()->user()->compagnie_id,
-                    'tirage' => $tirage,
-                    'boule' => $option['boul1'],
-                    'amount' =>  $option_c,
-                    'type' => 'loto5',
-
-                    'created_at' => Carbon::now(),
-                ]);
-            }
-        }
-
         return '1';
     }
     public static function verifierLimitePrixBoule(Request $request, $tirage)
     {
+
         if (!empty($request->input('bolete'))) {
 
 
@@ -580,7 +514,7 @@ class verificationController extends Controller
             }
         }
         if (!empty($request->input('loto4'))) {
-
+            
             foreach ($request->input('loto4') as $option) {
                 if (!empty($option['option1'])) {
                     $montant_tot = $montant_tot + $option['option1'];
@@ -657,7 +591,7 @@ class verificationController extends Controller
             }
 
             return $mariage;
-        } elseif ($data->min_inter_4 <= $montant && $data->max_inter_4 >= $montant) {
+        }elseif ($data->min_inter_4 <= $montant && $data->max_inter_4 >= $montant) {
 
             for ($i = 1; $i <= $data->q_inter_4; $i++) {
                 $mariage[] = [
@@ -668,7 +602,7 @@ class verificationController extends Controller
             }
 
             return $mariage;
-        } elseif ($data->min_inter_5 <= $montant && $data->max_inter_5 >= $montant) {
+        }elseif ($data->min_inter_5 <= $montant && $data->max_inter_5 >= $montant) {
 
             for ($i = 1; $i <= $data->q_inter_5; $i++) {
                 $mariage[] = [
@@ -679,7 +613,7 @@ class verificationController extends Controller
             }
 
             return $mariage;
-        } elseif ($data->min_inter_6 <= $montant && $data->max_inter_6 >= $montant) {
+        }elseif ($data->min_inter_6 <= $montant && $data->max_inter_6 >= $montant) {
 
             for ($i = 1; $i <= $data->q_inter_6; $i++) {
                 $mariage[] = [
@@ -696,67 +630,17 @@ class verificationController extends Controller
 
     public static function removeZeroOptions($request)
     {
-        $data = $request;
+        $data = $request->all();
         if (!empty($data['loto4'])) {
-            $data['loto4'] = array_map(function ($item) {
-                return array_filter($item, function ($value, $key) {
+            $data['loto4'] = array_map(function($item) {
+                return array_filter($item, function($value, $key) {
                     return !($key === 'option1' && ($value == 0 || is_null($value))) &&
-                        !($key === 'option2' && ($value == 0 || is_null($value))) &&
-                        !($key === 'option3' && ($value == 0 || is_null($value)));
+                           !($key === 'option2' && ($value == 0 || is_null($value))) &&
+                           !($key === 'option3' && ($value == 0 || is_null($value)));
                 }, ARRAY_FILTER_USE_BOTH);
             }, $data['loto4']);
         }
 
         return $data;
-    }
-    public static function  removeDuplicates($data)
-    {
-
-
-        // Retrieve JSON data from request
-        $jsonData = $data->json()->all();
-
-        // Function to filter unique boul1 values
-        $filterUniqueBoul1 = function ($items) {
-            $seen = [];
-            return array_values(array_filter($items, function ($item) use (&$seen) {
-                if (isset($item['boul1']) && !in_array($item['boul1'], $seen)) {
-                    $seen[] = $item['boul1'];
-                    return true;
-                }
-                return false;
-            }));
-        };
-        $filterMaryaj = function ($items) {
-            $seen = [];
-            return array_values(array_filter($items, function ($item) use (&$seen) {
-                $identifier1 = $item['boul1'] . '-' . $item['boul2'];
-                $identifier2 = $item['boul2'] . '-' . $item['boul1'];
-                if (isset($item['boul1']) && isset($item['boul2']) && !in_array($identifier1, $seen) && !in_array($identifier2, $seen)) {
-                    $seen[] = $identifier1;
-                    $seen[] = $identifier2;
-                    return true;
-                }
-                return false;
-            }));
-        };
-
-        // Apply filter to each data collection if needed
-        foreach ($jsonData as $key => $collection) {
-            if ($key === 'maryaj') {
-                $jsonData[$key] = $filterMaryaj($collection);
-            } else {
-                if (is_array($collection)) {
-                    $jsonData[$key] = $filterUniqueBoul1($collection);
-                }
-            }
-        }
-
-        // Example: Using additional parameters ($param1 and $param2)
-        // You can use $param1 and $param2 here for any specific logic
-
-        // Return filtered data as JSON response
-        return $jsonData;
-        
     }
 }
