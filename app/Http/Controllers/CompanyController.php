@@ -183,18 +183,18 @@ class CompanyController extends Controller
                 ->toArray();
 
              $vent= TicketVendu::whereIn('ticket_code_id', $codes)
-             ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete',0)->where('is_cancel',0)
+             ->where('tirage_record_id', $boulGagnant->tirage_id)
              ->sum('amount');
                /* $vente =TicketVendu::where('tirage_record_id',$boulGagnant->tirage_id)
                     ->whereDate('created_at', $boulGagnant->created_)
                     ->sum('amount');
                     dd($vente,);*/
                 $pert =TicketVendu::whereIn('ticket_code_id', $codes)
-                ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete',0)->where('is_cancel',0)
+                ->where('tirage_record_id', $boulGagnant->tirage_id)
                     ->sum('winning');
 
                 $commissio =TicketVendu::whereIn('ticket_code_id', $codes)
-             ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete',0)->where('is_cancel',0)
+             ->where('tirage_record_id', $boulGagnant->tirage_id)
                     ->sum('commission');
                 $tirageName = $boulGagnant->tirage_record->name;
                 $list[] = [
