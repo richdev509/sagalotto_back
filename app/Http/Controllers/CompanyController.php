@@ -166,7 +166,6 @@ class CompanyController extends Controller
                 ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                 ->sum('commission');
 
-         
 
             $lista = BoulGagnant::where('compagnie_id', session('loginId'))
                 ->latest('created_at')
