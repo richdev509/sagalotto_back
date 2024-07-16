@@ -116,6 +116,15 @@ class AuthController extends Controller
 
         ]);
     }
+    public function update()
+    {
+        return response()->json([
+            "status"=>true,
+            "latest_version"=>'1.0.4',
+            "url"=>'https://sagaloto.com/sagaloto_v1.0.3',
+            "code"=>200,
+        ], 200);
+    }
     public function tirage(Request $request)
     {
 

@@ -42,7 +42,7 @@ class ticketController extends Controller
                         ->join('users', 'ticket_code.user_id', 'users.id')
                         ->select('ticket_vendu.*', 'ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain', 'users.bank_name as bank')
                         ->orderByDesc('id')
-                        ->paginate(100);
+                        ->paginate(20);
                     return view('lister-ticket', ['ticket' => $ticket, 'vendeur' => $user, 'tirage' => $tirage]);
                 } elseif ($request->input('bank') != 'Tout' && $request->input('tirage') == 'Tout') {
                     //get bank
@@ -71,7 +71,7 @@ class ticketController extends Controller
                         ->join('users', 'ticket_code.user_id', 'users.id')
                         ->select('ticket_vendu.*', 'ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain', 'users.bank_name as bank')
                         ->orderByDesc('id')
-                        ->paginate(100);
+                        ->paginate(20);
                     return view('lister-ticket', ['ticket' => $ticket, 'vendeur' => $user, 'tirage' => $tirage]);
                 } elseif ($request->input('bank') != 'Tout' && $request->input('tirage') != 'Tout') {
                     //get bank
@@ -103,7 +103,7 @@ class ticketController extends Controller
                         ->join('users', 'ticket_code.user_id', 'users.id')
                         ->select('ticket_vendu.*', 'ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain', 'users.bank_name as bank')
                         ->orderByDesc('id')
-                        ->paginate(100);
+                        ->paginate(20);
                     return view('lister-ticket', ['ticket' => $ticket, 'vendeur' => $user, 'tirage' => $tirage]);
                 } elseif ($request->input('bank') == 'Tout' && $request->input('tirage') != 'Tout') {
                     //get bank
@@ -134,7 +134,7 @@ class ticketController extends Controller
                         ->join('users', 'ticket_code.user_id', 'users.id')
                         ->select('ticket_vendu.*', 'ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain', 'users.bank_name as bank')
                         ->orderByDesc('id')
-                        ->paginate(100);
+                        ->paginate(20);
                     return view('lister-ticket', ['ticket' => $ticket, 'vendeur' => $user, 'tirage' => $tirage]);
                 } else {
                     $user = User::where([
@@ -162,7 +162,7 @@ class ticketController extends Controller
                         ->join('users', 'ticket_code.user_id', 'users.id')
                         ->select('ticket_vendu.*', 'ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain', 'users.bank_name as bank')
                         ->orderByDesc('id')
-                        ->paginate(100);
+                        ->paginate(20);
                     return view('lister-ticket', ['ticket' => $ticket, 'vendeur' => $user, 'tirage' => $tirage]);
                 }
             } elseif (!empty($request->input('ticket'))) {
@@ -189,7 +189,7 @@ class ticketController extends Controller
                     ->join('users', 'ticket_code.user_id', 'users.id')
                     ->select('ticket_vendu.*', 'ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain', 'users.bank_name as bank')
                     ->orderByDesc('id')
-                    ->paginate(100);
+                    ->paginate(20);
                 return view('lister-ticket', ['ticket' => $ticket, 'vendeur' => $user, 'tirage'=>$tirage]);
             } else {
                 $user = User::where([
@@ -214,7 +214,7 @@ class ticketController extends Controller
                     ->join('users', 'ticket_code.user_id', 'users.id')
                     ->select('ticket_vendu.*', 'ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain', 'users.bank_name as bank')
                     ->orderByDesc('id')
-                    ->paginate(100);
+                    ->paginate(20);
                 return view('lister-ticket', ['ticket' => $ticket, 'vendeur' => $user, 'tirage' => $tirage]);
             }
         } else {

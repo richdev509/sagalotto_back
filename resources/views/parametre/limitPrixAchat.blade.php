@@ -268,11 +268,12 @@
                 <table class="table table-bordered" id="dataTable">
                   <thead>
                     <tr>
+                    
                       <th>Tiraj</th>
                       <th>boul</th>
                       <th>Montan HTG</th>
                       <th>General
-                      <th>Aksyon</th>
+                      <th>Aksyon </th>
                       
                     </tr>
                   </thead>

@@ -4,7 +4,11 @@
 @section('content')
         <!-- partial -->
       <style>
-       
+             .col-sm-9 select{
+
+               height: 45px;
+               border: 1px groove black;
+             }
       </style>
           
               <div class="page-header">
@@ -81,6 +85,19 @@
                                 <span class="error">@error('percent') 
                                   {{$message}}
                                  @enderror</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group row">
+                              <label class="col-sm-3 col-form-label">Branch</label>
+                              <div class="col-sm-9">
+                                <select class="form-control" name="branch" value="{{old('branch')}}">
+                                  @foreach ($branch as $row)
+                                  <option value="{{$row->id}}">{{$row->name}}</option>
+                                  @endforeach
+                                
+                                </select>
                               </div>
                             </div>
                           </div>

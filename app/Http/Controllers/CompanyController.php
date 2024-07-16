@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use App\Models\BoulGagnant;
+use App\Models\branch;
 use App\Models\TicketVendu;
 use App\Models\ticket_code;
 
@@ -228,7 +229,10 @@ class CompanyController extends Controller
     public function create_vendeur()
     {
         if (Session('loginId')) {
-            return view('ajouter_vendeur');
+            $branch = branch::where([
+               ['compagnie_id','=', Session('loginId')]
+            ])->get();
+            return view('ajouter_vendeur',['branch'=>$branch]);
         } else {
             return view('login');
         }
@@ -243,6 +247,8 @@ class CompanyController extends Controller
                 'bank_id' => 'required',
                 'phone' => 'required|numeric',
                 'percent' => 'required|max:100|numeric',
+                'branch' => 'required',
+
                 "bank_name" => "required|max:30",
                 "password" => "required|max:20",
                 "username" => "required|max:20|unique:users"
@@ -270,6 +276,8 @@ class CompanyController extends Controller
                 'phone' => $request->input('phone'),
                 'username' => $request->input('username'),
                 'percent' => $request->input('percent'),
+                'branch_id' => $request->input('branch'),
+
                 'android_id' => $request->input('bank_id'),
                 'bank_name' => $request->input('bank_name'),
                 'password' => Hash::make($request->input('password')),

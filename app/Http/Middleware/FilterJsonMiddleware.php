@@ -15,7 +15,8 @@ class FilterJsonMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-           try{
+       
+        try{
            // Retrieve JSON data from request
            $jsonData = $request->json()->all();
            // Function to filter unique boul1 values

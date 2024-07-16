@@ -8,6 +8,7 @@ use App\Models\maryajgratis;
 use App\Models\RulesOne;
 use App\Models\limitprixachat;
 use App\Models\limitprixboul;
+use App\Models\ticket_code;
 use App\Models\tirage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -23,209 +24,219 @@ class parametreController extends Controller
         return view('parametre.maryajGratis', compact('data'));
     }
 
-    public function limitprixview(){
-      
-      
-        $limitprix= limitprixachat::where('compagnie_id', session('loginId'))->first();
-        if(!$limitprix){
+    public function limitprixview()
+    {
+
+
+        $limitprix = limitprixachat::where('compagnie_id', session('loginId'))->first();
+        if (!$limitprix) {
             $query = limitprixachat::insert([
-                 'compagnie_id'=> Session('loginId'),
+                'compagnie_id' => Session('loginId'),
             ]);
-            $limitprix= limitprixachat::where('compagnie_id', session('loginId'))->first();
-
+            $limitprix = limitprixachat::where('compagnie_id', session('loginId'))->first();
         }
-        $listetirage=tirage_record::where('compagnie_id',session('loginId'))->get();
-        $limitprixboul=limitprixboul::where('compagnie_id',session('loginId'))->orderBy('tirage_record') // Triez par tirage_record
-        ->get();
-      
+        $listetirage = tirage_record::where('compagnie_id', session('loginId'))->get();
+        $limitprixboul = limitprixboul::where('compagnie_id', session('loginId'))->orderBy('tirage_record') // Triez par tirage_record
+            ->get();
 
-        $listjwet=DB::table('listejwet')->get();
-        return view('parametre.limitPrixAchat', compact('limitprix','listetirage','limitprixboul','listjwet'));
+
+        $listjwet = DB::table('listejwet')->get();
+        return view('parametre.limitPrixAchat', compact('limitprix', 'listetirage', 'limitprixboul', 'listjwet'));
     }
 
-    public function ajoutlimitprixboulView(){
-        $list=tirage_record::where('compagnie_id',session('loginId'))->get();
-        $listjwet=DB::table('listejwet')->get();
-        return view('parametre.ajouterLimitPrixBoul', compact('list','listjwet'));
+    public function ajoutlimitprixboulView()
+    {
+        $list = tirage_record::where('compagnie_id', session('loginId'))->get();
+        $listjwet = DB::table('listejwet')->get();
+        return view('parametre.ajouterLimitPrixBoul', compact('list', 'listjwet'));
     }
 
-    public function saveprixlimit(Request $request){
-                $reponse=$this->regles($request);
-                $nametirage=tirage_record::where('compagnie_id',session('loginId'))->where('id',$request->tirage)->value('name');
+    public function saveprixlimit(Request $request)
+    {
+        $reponse = $this->regles($request);
+       
+        //verification si opsyon koresponn ak boul
+        if ($reponse == false) {
+            notify()->error('verifye ke boul la korespon ak opsyon an, oubyen li ajoute deja');
+            return redirect()->back();
+        } else {
+            //insert boul for each tirage
+            foreach ($request->input('tirage') as $tirage_input) {
+                $nametirage = tirage_record::where('compagnie_id', session('loginId'))->where('id', $tirage_input)->value('name');
                 $nameAssociatedWithType = DB::table('listejwet')->where('id', $request->type)->value('name');
-                //verification si opsyon koresponn ak boul
-                if($reponse==false){
-                    notify()->error('verifye ke boul la korespon ak opsyon an, oubyen li ajoute deja');
-                return redirect()->back();
-                }else{
-                       //verifier si limit 10 boul lan rive 
-                    $count = DB::table('limit_prix_boul')->where('opsyon',$nameAssociatedWithType )->where('compagnie_id',session('loginId'))->count();
-                    if($count==500){
-                        notify()->error('Ou rive nan limit 10 boul la deja pou option sa');
-                        return redirect()->back();
-                    }
-                       //verifier si boul sa existe deja pou 
-                    $boule=DB::table('limit_prix_boul')->where('opsyon',$nameAssociatedWithType)->where('compagnie_id',session('loginId'))->where('tirage_record',$request->tirage)->where('boul',$request->chiffre)->first();
-                     
-                    if($boule){
-                        notify()->error('boul sa ekziste deja pou Tiraj sa e opsyon sa sa');
-                        return redirect()->back();
-                    }
-                    
-                    //$this->vericationMaryajDouble($request,$request->type,$nameAssociatedWithType);
-                    if(isset($request->isgeneral) && $request->isgeneral==45){
-                        $reponse = limitprixboul::create([
-                            'tirage_record' => $request->tirage,
-                            'compagnie_id' => session('loginId'),
-                            'type' => $nametirage,
-                            'opsyon' => $nameAssociatedWithType,
-                            'boul' => $request->chiffre,
-                            'montant' => 0,
-                            'is_general'=>1,
-                        ]);
-                    }else{
-                        $reponse = limitprixboul::create([
-                            'tirage_record' => $request->tirage,
-                            'compagnie_id' => session('loginId'),
-                            'type' => $nametirage,
-                            'opsyon' => $nameAssociatedWithType,
-                            'boul' => $request->chiffre,
-                            'montant' => $request->montant,
-                        ]);
-                    }
-                    
-
-                    if($reponse){
-                        if(isset($request->isgeneral) && $request->isgeneral==45){
-                            notify()->success('Bloke success');
-                            return redirect()->back();
-                        }else{
-                        notify()->success('Ajouter success');
-                        return redirect()->route('limitprix');
-                    }
-                    }
+                $count = DB::table('limit_prix_boul')->where('opsyon', $nameAssociatedWithType)->where('compagnie_id', session('loginId'))->count();
+                if ($count >= 500) {
+                    notify()->error('Ou rive nan limit 500 boul la deja pou option sa');
+                    return redirect()->back();
                 }
+                //verifier si boul sa existe deja pou 
+                $boule = DB::table('limit_prix_boul')->where('opsyon', $nameAssociatedWithType)->where('compagnie_id', session('loginId'))->where('tirage_record', $tirage_input)->where('boul', $request->chiffre)->first();
+
+                if ($boule) {
+                    notify()->error('boul sa ekziste deja pou Tiraj sa e opsyon sa sa');
+                    return redirect()->back();
+                }
+
+                //$this->vericationMaryajDouble($request,$request->type,$nameAssociatedWithType);
+                if (isset($request->isgeneral) && $request->isgeneral == 45) {
+                    $reponse = limitprixboul::create([
+                        'tirage_record' => $tirage_input,
+                        'compagnie_id' => session('loginId'),
+                        'type' => $nametirage,
+                        'opsyon' => $nameAssociatedWithType,
+                        'boul' => $request->chiffre,
+                        'montant' => 0,
+                        'is_general' => 1,
+                    ]);
+                } else {
+                    $reponse = limitprixboul::create([
+                        'tirage_record' => $tirage_input,
+                        'compagnie_id' => session('loginId'),
+                        'type' => $nametirage,
+                        'opsyon' => $nameAssociatedWithType,
+                        'boul' => $request->chiffre,
+                        'montant' => $request->montant,
+                        'montant1' => $request->montant,
+
+                    ]);
+                }
+            }
+            //verifier si limit 10 boul lan rive 
+
+
+            if ($reponse) {
+                if (isset($request->isgeneral) && $request->isgeneral == 45) {
+                    notify()->success('Bloke success');
+                    return redirect()->back();
+                } else {
+                    notify()->success('Ajouter success');
+                    return redirect()->route('limitprix');
+                }
+            }
+        }
     }
-   //fonction de suppresion dans la table limitprixboul
-    public function modifierLimitePrix(Request $request){
-        $reponse=limitprixboul::where('id',$request->id)->where('compagnie_id',session('loginId'))->delete();
-        if($reponse){
+    //fonction de suppresion dans la table limitprixboul
+    public function modifierLimitePrix(Request $request)
+    {
+        $reponse = limitprixboul::where('id', $request->id)->where('compagnie_id', session('loginId'))->delete();
+        if ($reponse) {
             notify()->success('Siprime avek sikse');
             return redirect()->route('limitprix');
-        }else{
+        } else {
             notify()->error('Sipresyon pa posib, sil pesiste kontakte ekip teknik');
             return redirect()->back();
         }
     }
 
-    public function vericationMaryajDouble($request,$type,$nameAssociatedWithType){
-        $chiffre=$request->chiffre;
+    public function vericationMaryajDouble($request, $type, $nameAssociatedWithType)
+    {
+        $chiffre = $request->chiffre;
         $deuxPremiersChiffres = substr($chiffre, 0, 2);
         $deuxDerniersChiffres = substr($chiffre, -2);
-        $chiffresFinal = $deuxDerniersChiffres.$deuxPremiersChiffres;
-        
-        $boule=DB::table('limit_prix_boul')->where('opsyon',$nameAssociatedWithType)->where('compagnie_id',session('loginId'))->where('tirage_record',$request->tirage)->where('boul',$chiffresFinal)->first();
-       
-        if($boule){
-           return true;
-        }else{
+        $chiffresFinal = $deuxDerniersChiffres . $deuxPremiersChiffres;
+
+        $boule = DB::table('limit_prix_boul')->where('opsyon', $nameAssociatedWithType)->where('compagnie_id', session('loginId'))->where('tirage_record', $request->tirage)->where('boul', $chiffresFinal)->first();
+
+        if ($boule) {
+            return true;
+        } else {
             return false;
-        }        
+        }
     }
-    public function regles($request){
+    public function regles($request)
+    {
         $type = request()->input('type');
         $value = $request->chiffre;
         $nameAssociatedWithType = DB::table('listejwet')->where('id', $type)->value('name');
-        
+
         switch ($nameAssociatedWithType) {
             case 'Bolet':
-                $mg=strlen($value);
-               
-                if($mg==2){
-                return true;
-            }else{
-                return false;
-            }
-            case 'Maryaj':
-                
-                $mg=strlen($value);
-               
-                if($mg==4){
-                    $reponse=$this->vericationMaryajDouble($request,$type,$nameAssociatedWithType);
-                    if($reponse==true){
-                        
-                        return false;
-                    }else{
+                $mg = strlen($value);
+
+                if ($mg == 2) {
                     return true;
+                } else {
+                    return false;
                 }
-                }else{
+            case 'Maryaj':
+
+                $mg = strlen($value);
+
+                if ($mg == 4) {
+                    $reponse = $this->vericationMaryajDouble($request, $type, $nameAssociatedWithType);
+                    if ($reponse == true) {
+
+                        return false;
+                    } else {
+                        return true;
+                    }
+                } else {
                     return false;
                 }
             case 'Loto3':
-                $mg=strlen($value);
-               
-                if($mg==3){
+                $mg = strlen($value);
+
+                if ($mg == 3) {
                     return true;
-                }else{
+                } else {
                     return false;
                 }
             case 'Loto4':
-                $mg=strlen($value);
-               
-                if($mg==4){
+                $mg = strlen($value);
+
+                if ($mg == 4) {
                     return true;
-                }else{
+                } else {
                     return false;
                 }
             case 'Loto5':
-                $mg=strlen($value);
-               
-                if($mg==5){
+                $mg = strlen($value);
+
+                if ($mg == 5) {
                     return true;
-                }else{
+                } else {
                     return false;
                 }
             default:
                 return false; // Si le nom n'est pas reconnu, la validation échoue
         }
-
     }
-    public function limitprixstore(Request $request){
-        if(!Empty($request->active) && $request->prix>0 && !Empty($request->prix)){
-         $active=true;
-        }else{
-            $active=false;
+    public function limitprixstore(Request $request)
+    {
+        if (!empty($request->active) && $request->prix > 0 && !empty($request->prix)) {
+            $active = true;
+        } else {
+            $active = false;
         }
-        
+
         try {
             $key = $request->id . 'etat';
             // Recherche de la ligne correspondante avec 'compagnie_id'
             $limitprix = limitprixachat::where('compagnie_id', session('loginId'))->first();
-        
+
             if ($limitprix) {
                 // Mise à jour de la ligne existante
                 $limitprix->update([
-                 $request->id => $request->prix,
-            
-     $key=>$active,
+                    $request->id => $request->prix,
+
+                    $key => $active,
                 ]);
-                
             } else {
                 // Création d'une nouvelle ligne
                 $limitprix = Limitprixachat::create([
                     'compagnie_id' => session('loginId'),
-                     $request->id => $request->prix
+                    $request->id => $request->prix
                 ]);
             }
             notify()->success('Modifikasyon sikse');
             return redirect()->route('limitprix');
             // Réponse ou traitement supplémentaire
         } catch (\Exception $e) {
-                notify()->error('Gen yon pwoblem kontakte ekip teknik');
-                return redirect()->back();
+            notify()->error('Gen yon pwoblem kontakte ekip teknik');
+            return redirect()->back();
         }
     }
-    
+
 
 
     public function store()
@@ -281,14 +292,14 @@ class parametreController extends Controller
     }
     public function updatePrixMaryajGratis(Request $request)
     {
-        
+
         try {
             // Récupérer le modèle existant que vous souhaitez mettre à jour
             $maryajIsset = maryajgratis::where('compagnie_id', session('loginId'))
                 ->first();
 
             if ($maryajIsset) {
-                
+
                 // Mettre à jour les champs nécessaires
                 $maryajIsset->prix = $request->input('montant');
                 $maryajIsset->q_inter_1 = $request->input('q_inter_1');
@@ -309,7 +320,7 @@ class parametreController extends Controller
                 $maryajIsset->q_inter_6 = $request->input('q_inter_6');
                 $maryajIsset->min_inter_6 = $request->input('min_inter_6');
                 $maryajIsset->max_inter_6 = $request->input('max_inter_6');
-                $maryajIsset->save(); 
+                $maryajIsset->save();
 
                 notify()->success('tout paramet yo byen mofifye');
                 return redirect()->back();
@@ -382,7 +393,7 @@ class parametreController extends Controller
         if (Session('loginId')) {
             $data = RulesOne::where('compagnie_id', session('loginId'))->first();
             $service = company::where('id', session('loginId'))->first();
-            return view('parametre/ajisteprixlo', ['data'=>$data, 'service'=>$service ]);
+            return view('parametre/ajisteprixlo', ['data' => $data, 'service' => $service]);
         } else {
             return view('login');
         }
@@ -390,51 +401,58 @@ class parametreController extends Controller
 
     public function storelopri(Request $request)
     {
-       
+
         try {
-          
-             $responce = RulesOne::where('compagnie_id', session('loginId'))->first();
-             $responce->update([
-                 'prix' => $request->input('montant'),
-             ]);
-                     
-             //store service auto tirage
-             if(!empty($request->tirage_auto)=='1'){
-                $service = company::where('id', session('loginId'))->first();
-                $service->update([
-                    'autoTirage' =>1,
-                     'service' =>1,
+
+            $responce = RulesOne::where('compagnie_id', session('loginId'))->first();
+            $responce->update([
+                'prix' => $request->input('montant'),
+            ]);
+
+            //store service auto tirage
+            if (!empty($request->input('tirage_auto')) == '1') {
+                $service = company::where('id', session('loginId'))->update([
+                    'autoTirage' => 1,
+                    'service' => 1,
 
                 ]);
-             }else{
-                $service = company::where('id', session('loginId'))->first();
-                $service->update([
-                    'autoTirage' =>0,
-                     'service' =>0,
+            } else {
+                $service = company::where('id', session('loginId'))->update([
+                    'autoTirage' => 0,
+                    'service' => 0,
 
                 ]);
-
-             }
+            }
 
             notify()->success('Modifikasyon fet ak sikse');
             return redirect()->back();
         } catch (\Exception $e) {
-            notify()->error('Gen yon pwoblem kontakte ekip teknik',$e);
+            notify()->error('Gen yon pwoblem kontakte ekip teknik', $e);
             return redirect()->back();
         }
     }
 
 
     //gestion plan
-    public function viewinfo(Request $request){
-        $data=DB::table('companies')->where('id',session('loginId'))->first();
-        $nombre=$this->getDaysRemaining($data->dateplan,$data->dateexpiration);
-        return view('plan', compact('data','nombre'));
+    public function viewinfo(Request $request)
+    {
+        $data = DB::table('companies')->where('id', session('loginId'))->first();
+        $nombre = $this->getDaysRemaining($data->dateplan, $data->dateexpiration);
+        //active user that create ticket last 30 days
+        $vendeur = ticket_code::where([
+            ['created_at', '>=', Carbon::now()->subDays(30)],
+            ['compagnie_id', '=', Session('loginId')]
+
+        ])->distinct()
+            ->pluck('user_id')
+            ->count();
+
+        return view('plan', compact('data', 'nombre', 'vendeur'));
     }
 
-    function getDaysRemaining($dateplan,$datefin)
+    function getDaysRemaining($dateplan, $datefin)
     {
-        
+
         $startDate = Carbon::parse($dateplan);
         $endDate = Carbon::parse($datefin);
         $currentDate = Carbon::now();
@@ -444,34 +462,32 @@ class parametreController extends Controller
             $daysRemaining = $currentDate->diffInDays($endDate);
             return  $daysRemaining;
         } else {
-            return $d= 0;
-            
+            return $d = 0;
         }
     }
 
-     //update is_generale
-     public function update_general(Request $request){
-        $data=limitprixboul::where('id',$request->id)->where('compagnie_id',session('loginId'))->first();
-         // dd($request->id);
-        if($data){
-            $var=0;
-            $is_generale=$data->is_general;
+    //update is_generale
+    public function update_general(Request $request)
+    {
+        $data = limitprixboul::where('id', $request->id)->where('compagnie_id', session('loginId'))->first();
+        // dd($request->id);
+        if ($data) {
+            $var = 0;
+            $is_generale = $data->is_general;
 
-            if($is_generale==0){
-               $var=1;
+            if ($is_generale == 0) {
+                $var = 1;
             }
-           $reponse=$data->update([
-                  'is_general'=>$var,  
-           ]);
-           if($reponse){
-            notify()->success('Modifikasyon sikse');
-            return redirect()->back();
-           }else{
-            notify()->error('Erreur');
-            return redirect()->back();
-           }
+            $reponse = $data->update([
+                'is_general' => $var,
+            ]);
+            if ($reponse) {
+                notify()->success('Modifikasyon sikse');
+                return redirect()->back();
+            } else {
+                notify()->error('Erreur');
+                return redirect()->back();
+            }
         }
-
-     }
-
+    }
 }

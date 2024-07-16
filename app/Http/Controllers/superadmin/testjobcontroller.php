@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Jobs\testjob;
 use Illuminate\Support\Carbon;
-
+use Illuminate\Support\Facades\DB;
 class testjobcontroller extends Controller
 {
     
@@ -20,6 +20,15 @@ class testjobcontroller extends Controller
         dispatch($job);
 
         return response()->json(['message' => 'Job dispatched successfully']);
+    }
+    public function jobUpdateLimit()
+    {
+        DB::table('limit_prix_boul')->update([
+            'montant' => DB::raw('montant1')
+        ]);
+
+        // Log to confirm the handle function was called
+        dd('CopyMontant1ToMontant2 job executed.');
     }
   
 }

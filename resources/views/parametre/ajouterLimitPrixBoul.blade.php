@@ -12,19 +12,15 @@
 
             <div class="card-body">
                 <h4 class="card-title">Espas pou antre limit prix boul</h4>
-                
+
                 <form class="forms-sample"
                     @if (isset($record)) action="{{ route('updateprixboul') }}"  @else action="{{ route('saveprixlimit') }}" @endif
                     method="POST" style="font-weight: bold;">
                     @csrf
                     <div class="form-group" style="margin-bottom: 10px;">
                         <label for="exampleInputUsername1">chwazi tiraj</label>
-                        <select name="tirage" class="form-control" id="select" placeholder="List tiraj"
-                            style="height: 49px;
-                    border-color: #b0e914;
-                    
-                    border-style: double;
-                    border-width: 1px;font-size:18px;color:#1469e9; @if (isset($record)) pointer-events:none; @endif"
+                        <select name="tirage[]" class="form-control selectpicker" data-live-search="true" multiple id="select" placeholder="Chwazi youn ou plizye tiraj"
+                            style="height: 49px;border-color: #b0e914;  border-style: double; border-width: 1px;font-size:18px;color:#1469e9; @if (isset($record)) pointer-events:none; @endif"
                             required>
 
                             @if (isset($record))
@@ -33,7 +29,7 @@
                                 <option disabled>Lis tiraj</option>
 
                                 @foreach ($list as $liste)
-                                    <option value="{{ $liste->id }}">{{ $liste->name }}</option>
+                                    <option value="{{ $liste->id }}" style="height: 49px; color:#1469e9;" >{{ $liste->name }}</option>
                                 @endforeach
 
                             @endif
@@ -49,18 +45,18 @@
                     border-width: 1px;font-size:18px;color:#1469e9; @if (isset($record)) pointer-events:none; @endif"
                             required>
 
-                            
-                                @foreach ( $listjwet as $lis)
-                                    <option value="{{ $lis->id }}">{{ $lis->name }}</option>
-                                @endforeach
 
-                           
+                            @foreach ($listjwet as $lis)
+                                <option value="{{ $lis->id }}">{{ $lis->name }}</option>
+                            @endforeach
+
+
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="exampleInputUsername1">Antre Boul la</label>
                         <input type="number" @if (isset($record)) value="{{ $record->unchiffre }}" @endif
-                            name="chiffre"  class="form-control input" id="1"
+                            name="chiffre" class="form-control input" id="1"
                             placeholder="loto Ex:34 , Maryaj Ex:3453"
                             style="border-color: #1469e9;
                     
@@ -78,7 +74,7 @@
                 border-style: double;
                 border-width: 1px;">
                     </div>
-                   
+
                     @if (isset($record))
                         <button type="mise a" class="btn btn-gradient-primary me-2">Modifye</button>
                     @else
@@ -89,7 +85,7 @@
             </div>
         </div>
     </div>
-   
+
 
 
 

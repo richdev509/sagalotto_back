@@ -22,19 +22,61 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap-grid.min.css"
         integrity="sha512-Aa+z1qgIG+Hv4H2W3EMl3btnnwTQRA47ZiSecYSkWavHUkBF2aPOIIvlvjLCsjapW1IfsGrEO3FU693ReouVTA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
         crossorigin="anonymous"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            font-family: "Lato", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+
+        .containerr {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            margin-top: 0px;
+            margin-bottom: -20px;
+            width: 100%;
+        }
+
+       
+
+        .scroll-left span {
+            clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
+        }
+    </style>
 </head>
 
 <body>
+
     <div class="container-scroller">
         <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+
+            <div class="containerr scroll-right">
+                <marquee behavior="" direction="left">Apati de jodia sistem nan ap mete boul ki soti pou ou, pou 3 tirage ki plis konnen yo</marquee>
+            </div>
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+
+
                 <a class="navbar-brand brand-logo" href="admin"><img src="assets/images/logo1.png"
                         alt="logo" /></a>
                 <a class="navbar-brand brand-logo-mini" href="admin"><img src="assets/images/logo-mini.png"
                         alt="logo" /></a>
+
             </div>
+
             <div class="navbar-menu-wrapper d-flex align-items-stretch">
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                     <span class="mdi mdi-menu"></span>
@@ -141,6 +183,7 @@
                 </button>
             </div>
         </nav>
+
         <!-- partial -->
         <div class="container-fluid page-body-wrapper">
             <!-- partial:partials/_sidebar.html -->
@@ -161,7 +204,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <span style="color: rgb(226, 156, 25)"><i class="mdi mdi-bell-plus" style="color:orange;margin-left:10px;"></i>Byento nap gen nouvo koule nan menu pou pi bon manipilation</span>
+
                         <a class="nav-link" href="admin">
                             <span class="menu-title">Akèy</span>
                             <i class="mdi mdi-home menu-icon"></i>
@@ -251,22 +294,24 @@
                             <span class="menu-title">Statistik</span>
                             <i class="mdi mdi-bell-plus" style="color:orange;margin-left:10px;"></i>
                             <i class="menu-arrow"></i>
-                            
+
                             <i class="mdi mdi-chart-line menu-icon"></i>
                         </a>
                         <div class="collapse" id="statistique">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link" href="/stat">statistiqueUnique
                                     </a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="{{route('statistique')}}">statistique General
+                                <li class="nav-item"> <a class="nav-link"
+                                        href="{{ route('statistique') }}">statistique General
                                     </a></li>
-                               
+
                             </ul>
                         </div>
 
                     </li>
-                    
-                    
+
+
+                   
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="collapse" href="#fich" aria-expanded="false"
                             aria-controls="ui-basic">
@@ -277,6 +322,23 @@
                         <div class="collapse" id="fich">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link" href="lister-ticket">Chache
+                                    </a></li>
+
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#fich" aria-expanded="false"
+                            aria-controls="ui-basic">
+                            <span class="menu-title">Branch</span>
+                            <i class="menu-arrow"></i>
+                            <i class="mdi mdi-ticket menu-icon"></i>
+                        </a>
+                        <div class="collapse" id="fich">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="creer_branch">Ajoute branch
+                                    </a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="lister-ticket">Liste branch
                                     </a></li>
 
                             </ul>
@@ -301,7 +363,7 @@
                                 <li class="nav-item"> <a class="nav-link" href="{{ route('lotconfig') }}">Lot
                                         Konfigirasyon
                                     </a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="/plan">Compte & Plan
+                                <li class="nav-item"> <a class="nav-link" href="/plan">Compte & Plan
                                     </a></li>
 
                             </ul>
@@ -333,6 +395,7 @@
         </div>
         <!-- page-body-wrapper ends -->
     </div>
+
     <!-- container-scroller -->
     <!-- plugins:js -->
 
@@ -362,6 +425,13 @@
     <!-- End custom js for this page -->
     <x-notify::notify />
     @notifyJs
+    <script>
+        $(document).ready(function() {
+            $('.navbar-toggler').on('click', function() {
+                $('.scroll-right').hide();
+            });
+        });
+    </script>
 </body>
 
 </html>

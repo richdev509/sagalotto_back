@@ -44,7 +44,6 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\CheckBeforeAccess::class,
-            \App\Http\Middleware\FilterJsonMiddleware::class,
         ]
     ];
 
@@ -70,5 +69,7 @@ class Kernel extends HttpKernel
         'verify.session' => \App\Http\Middleware\VerifySession::class,
         'chekadmin' => \App\Http\Middleware\CheckAdmin::class,
         'HandleExpiredSession'=>\App\Http\Middleware\HandleExpiredSession::class,
+        'filterJson'=>\App\Http\Middleware\FilterJsonMiddleware::class,
+
     ];
 }

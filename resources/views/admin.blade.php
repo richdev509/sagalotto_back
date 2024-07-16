@@ -1,6 +1,11 @@
 @extends('admin-layout')
 
 @section('content')
+    <style>
+        .vendeur div{
+            display: inline-block;
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <div class="page-header">
         <h3 class="page-title">
@@ -52,8 +57,8 @@
             </div>
         </div>
     </div>
-
-    <div class="row">
+  
+    <div class="row" style="margin-top: 10px;">
         <div class="col-12 grid-margin">
             <div class="card">
                 <div class="card-body">
@@ -117,7 +122,7 @@
                                     </tr>
                                     <tr style="border: 1px solid black;">
                                         <td style="font-weight: bold;">
-                                            Vann: <span>{{ $lists['vent'] ?? 0}} HTG</span>
+                                            Vann: <span>{{ $lists['vent'] ?? 0 }} HTG</span>
                                         </td>
 
                                         <td style="font-weight: bold;">
@@ -125,7 +130,8 @@
 
                                         </td>
                                         <td style="font-weight: bold;">
-                                            Balans: <span>{{ $lists['vent'] - ($lists['pert'] + $lists['commissio']) }} HTG</span>
+                                            Balans: <span>{{ $lists['vent'] - ($lists['pert'] + $lists['commissio']) }}
+                                                HTG</span>
 
                                         </td>
                                     </tr>

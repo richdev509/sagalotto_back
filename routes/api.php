@@ -31,6 +31,8 @@ Route::group([
 ], function ($router) {
 
     Route::post('/login', [AuthController::class,'login']);
+    Route::get('/update', [AuthController::class,'update']);
+
     Route::get('/profil', [AuthController::class,'profil']);
     Route::post('/logout', [AuthController::class,'logout']);
     Route::get('/tirage', [AuthController::class,'tirage']);
@@ -39,8 +41,7 @@ Route::group([
 
 
 
-    Route::post('/ticket/creer', [ticketController::class,'creer_ticket']);
-    Route::post('/ticket/creer2', [ticketController::class,'creer_ticket2']);
+    Route::post('/ticket/creer', [ticketController::class,'creer_ticket'])->middleware('filterJson');
 
     Route::get('/ticket/list', [ticketController::class,'list_ticket']);
     Route::post('/ticket/cancel', [ticketController::class,'cancel_ticket']);
