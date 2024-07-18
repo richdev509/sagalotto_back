@@ -169,6 +169,7 @@ class ticketController extends Controller
                     'code' => $ticketId,
                     'user_id' => auth()->user()->id,
                     'compagnie_id' => auth()->user()->compagnie_id,
+                    'branch_id'=> auth()->user()->branch_id,
                     'created_at' =>  $created_at,
                 ]);
                 $boule[] = ['bolete' => $request->input('bolete')];
