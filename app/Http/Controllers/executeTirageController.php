@@ -161,8 +161,22 @@ $ficheDatas="";
 $i=1;
 if($fiches!=""){
 
-
+    
+ $rules =RulesOne::where('compagnie_id', $compagnieId)->get();
  foreach ($fiches as $fiche) {
+    $numerobranch = $fiche->ticketcode->branch_id;
+    $borletePrice = 50;
+    // Trouver la règle correspondant au branch_id
+    $rule = $rules->firstWhere('branch_id', $numerobranch);
+    
+    // Vérifier si la règle a été trouvée
+    if ($rule) {
+        // Obtenir le prix à partir de la règle
+        $borletePrice = $rule->prix;
+    } 
+
+    dd($numerobranch);
+    
     $ficheData = json_decode($fiche->boule, true);
     $ficheDatas=$ficheData;
      //recuperation de l'id du fiche

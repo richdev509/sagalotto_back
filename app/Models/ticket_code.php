@@ -8,5 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class ticket_code extends Model
 {
     protected $table="ticket_code";
+
+    protected $fillable = [
+        'code',
+    ];
     
 }

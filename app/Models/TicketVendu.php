@@ -10,9 +10,15 @@ class TicketVendu extends Model
     use HasFactory;
     protected $table ="ticket_vendu";
     protected $fillable = [
+        'ticket_code_id',
         'tirage_record_id',
         'is_win',
         'winning',
         'is_calculated',
     ];
+
+    public function ticketcode()
+    {
+        return $this->belongsTo(ticket_code::class,'ticket_code_id','code');
+    }
 }
