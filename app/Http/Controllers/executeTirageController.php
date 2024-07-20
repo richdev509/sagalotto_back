@@ -161,7 +161,7 @@ $ficheDatas="";
 $i=1;
 if($fiches!=""){
 
-    
+
  $rules =RulesOne::where('compagnie_id', $compagnieId)->get();
  foreach ($fiches as $fiche) {
     $numerobranch = $fiche->ticketcode->branch_id;
@@ -175,7 +175,7 @@ if($fiches!=""){
         $borletePrice = $rule->prix;
     } 
 
-    dd($numerobranch);
+    //dd($numerobranch);
     
     $ficheData = json_decode($fiche->boule, true);
     $ficheDatas=$ficheData;
