@@ -389,6 +389,7 @@ class verificationController extends Controller
     }
     public static function verifierLimitePrixBoule(Request $request, $tirage)
     {
+       
         if (!empty($request->input('bolete'))) {
 
 

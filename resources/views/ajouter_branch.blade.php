@@ -78,13 +78,13 @@
                        
                         </div>
                       
-                        <p class="card-description">Info ajan</p>
+                        <p class="card-description">Info sipevize</p>
                         <div class="row">
                           <div class="col-md-6">
                             <div class="form-group row">
                               <label class="col-sm-3 col-form-label">Non konple</label>
                               <div class="col-sm-9">
-                                <input type="text" name="agent_name" value="{{old('agent_name')}}" class="form-control" placeholder="Tout nom ajan" />
+                                <input type="text" name="agent_name" value="{{old('agent_name')}}" class="form-control" placeholder="Tout nom sipevize a" />
                                 <span class="error">@error('agent_name')
                                     {{$message}}
                                 @enderror</span>

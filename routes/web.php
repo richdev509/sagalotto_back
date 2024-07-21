@@ -135,6 +135,9 @@ Route::middleware(['web', 'verify.session'])->group(function () {
     Route::post('updatemontantmg', [parametreController::class, 'updatePrixMaryajGratis'])->name('updatemontantmg');
     Route::post('updatestatutmg', [parametreController::class, 'updatestatut']);
     Route::get('ajistelo', [parametreController::class, 'ajistelo'])->name('ajisteprilo');
+    Route::post('getByBranch', [parametreController::class, 'getPrixLo']);
+
+
     Route::post('ajistelo', [parametreController::class, 'storelopri'])->name('updateprilo');
     Route::get('lotconfig', [parametreController::class, 'create_config'])->name('lotconfig');
     Route::post('editerdelai', [parametreController::class, 'update_delai']);
@@ -163,7 +166,7 @@ Route::middleware(['web', 'verify.session'])->group(function () {
     Route::get('creer_branch', [branchController::class, 'create_branch']);
     Route::post('creerBranch', [branchController::class, 'store_branch']);
     Route::get('editer_branch', [branchController::class, 'edit_branch']);
-    Route::get('editerBranch', [branchController::class, 'store_branch']);
+    Route::post('editerBranch', [branchController::class, 'update_branch']);
     Route::get('lister_branch', [branchController::class, 'index_branch']);
 });
 

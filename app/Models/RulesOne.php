@@ -12,6 +12,7 @@ class RulesOne extends Model
     protected $fillable = [
           'id',
           'compagnie_id',
+          'branch_id',
           'prix',
     ];
 }

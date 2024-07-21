@@ -338,7 +338,7 @@
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link" href="creer_branch">Ajoute branch
                                     </a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="lister-ticket">Liste branch
+                                    <li class="nav-item"> <a class="nav-link" href="lister_branch">Liste branch
                                     </a></li>
 
                             </ul>

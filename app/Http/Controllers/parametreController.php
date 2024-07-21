@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\branch;
 use App\Models\company;
 use Illuminate\Http\Request;
 use App\Models\maryajgratis;
@@ -54,7 +55,7 @@ class parametreController extends Controller
     public function saveprixlimit(Request $request)
     {
         $reponse = $this->regles($request);
-       
+
         //verification si opsyon koresponn ak boul
         if ($reponse == false) {
             notify()->error('verifye ke boul la korespon ak opsyon an, oubyen li ajoute deja');
@@ -266,7 +267,6 @@ class parametreController extends Controller
             $etat = $reponse->etat;
             $valeur = 1;
 
-
             if ($etat == 1) {
                 $valeur = 0;
             }
@@ -391,9 +391,48 @@ class parametreController extends Controller
     public function ajistelo()
     {
         if (Session('loginId')) {
+            //prix premye lo
             $data = RulesOne::where('compagnie_id', session('loginId'))->first();
+            //service info
             $service = company::where('id', session('loginId'))->first();
-            return view('parametre/ajisteprixlo', ['data' => $data, 'service' => $service]);
+            //get all branch
+            $branch = branch::where([
+                ['compagnie_id', '=', Session('loginId')],
+                ['is_delete', '=', 0]
+            ])->get();
+            return view('parametre/ajisteprixlo', ['data' => $data, 'service' => $service, 'branch' => $branch]);
+        } else {
+            return view('login');
+        }
+    }
+    public function getPrixLo(Request $request)
+    {
+        if (Session('loginId')) {
+            //prix premye lo
+            $data = RulesOne::where([
+                ['compagnie_id', '=', session('loginId')],
+                ['branch_id', '=', $request->id]
+            ])->first();
+            if (!$data) {
+                RulesOne::insert([
+                    'compagnie_id' => Session('loginId'),
+                    'branch_id' => $request->id,
+                    'prix' => 50
+
+
+                ]);
+                //get
+                $data = RulesOne::where([
+                    ['compagnie_id', '=', Session('loginId')],
+                    ['branch_id', '=', $request->id]
+                ])->first();
+            }
+            //service info
+
+            return response()->json([
+                'status' => 'true',
+                'data' => $data
+            ]);
         } else {
             return view('login');
         }
@@ -404,7 +443,11 @@ class parametreController extends Controller
 
         try {
 
-            $responce = RulesOne::where('compagnie_id', session('loginId'))->first();
+            $responce = RulesOne::where([
+                ['compagnie_id', session('loginId')],
+                ['branch_id', $request->branch],
+
+            ])->first();
             $responce->update([
                 'prix' => $request->input('montant'),
             ]);
