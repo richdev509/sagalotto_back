@@ -77,6 +77,7 @@ class ticketController extends Controller
         $mg = maryajgratis::where([
             ['compagnie_id', '=', auth()->user()->compagnie_id],
             ['etat', '=', '1'],
+            ['branch_id','=', auth()->user()->branch_id]
         ])->first();
         //tchek if all tirage are open before proceed
         foreach ($request->input('tirages') as $name) {

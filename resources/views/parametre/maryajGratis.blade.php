@@ -78,13 +78,10 @@
         <div class="card-body">
             <h4 class="card-title">Maryaj Gratis</h4>
             <p class="card-description">Espas parametraj</p>
-            @if (!$data)
-                <p class="card-description" id="alert3" style="color:chocolate">Ou poko gen maryaj gratis :veuiller
-                    l'initialiser sur ON</p>
-            @endif
+           
             <div class="flipswitch" style="margin-top: 13px;">
                 <input type="checkbox" name="flipswitch" class="flipswitch-cb" id="fs"
-                    @if ($data && $data->etat == 1) checked @endif >
+                    >
                 <label class="flipswitch-label" for="fs">
                     <div class="flipswitch-inner"></div>
                     <div class="flipswitch-switch"></div>
@@ -107,30 +104,37 @@
             @endif
             <form class="forms-sample" action="{{ route('updatemontantmg') }}" method="POST">
                 @csrf
+                <label>Branch</label>
+                <select name="branch" id="branch"
+                    style="border-style: solid;     border-color: royalblue;  border-width: thin; font-size: x-large;"
+                    class="form-control" aria-label="Montant (ajoute montant a mise a jour)">
+                    <option value="" disabled selected>Chwazi branch wap parametre a</option>
+                    @foreach ($branch as $row)
+                        <option value="{{ $row->id }}">{{ $row->name }}</option>
+                    @endforeach
+
+                </select>
                 <div class="form-group">
+
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">Kantite maryaj</span>
                         </div>
                         <select class="form-control" name="q_inter_1">
-                            @if ($data)
-                                <option>{{ $data->q_inter_1 }}</option>
-                                <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
-                            @endif
-                            @for ($i = 0; $i <= 6; $i++)
-                                @if ($data && $data->q_inter_1 == $i) <!-- Assurez-vous que la valeur de données est ignorée -->
-                                    @continue
-                                @endif
-                                <option>{{ $i }}</option>
-                            @endfor
+                            <option id='q_inter_1'></option>
+                            <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
                         </select>
-                        
 
-                        <input type="number" name="min_inter_1" class="form-control" placeholder="Min kob"
-                            value="{{ isset($data) ? $data->min_inter_1 : '' }}" required min="0">
 
-                        <input type="number" name="max_inter_1" value="{{ isset($data) ? $data->max_inter_1 : '' }}" class="form-control"
-                            placeholder="Max kob" required min="0">
+                        <input type="number" name="min_inter_1" class="form-control" placeholder="Min kob" id="min_inter_1"
+                            required min="0">
+
+                        <input type="number" name="max_inter_1" id="max_inter_1" class="form-control" placeholder="Max kob"
+                            required min="0">
 
                     </div>
                     <div class="input-group">
@@ -138,20 +142,26 @@
                             <span class="input-group-text">Kantite maryaj</span>
                         </div>
                         <select class="form-control" name="q_inter_2">
-                            @if ($data)
-                            <option>{{ $data->q_inter_2}}</option>
+
+                            <option id="q_inter_2"></option>
                             <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
-                        @endif
-                        @for ($i = 0; $i <= 10; $i++)
-                            @if ($data && $data->q_inter_1 == $i) <!-- Assurez-vous que la valeur de données est ignorée -->
-                                @continue
-                            @endif
-                            <option>{{ $i }}</option>
-                        @endfor
+
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+
+
+
+
+
                         </select>
-                        <input type="number" name="min_inter_2" value="{{ isset($data) ? $data->min_inter_2 : '' }}" class="form-control" placeholder="Min kob" required min="0">
-                        <input type="number" name="max_inter_2" value="{{ isset($data) ? $data->max_inter_2 : '' }}" class="form-control"
-                            placeholder="Min kob" required min="0">
+                        <input type="number" name="min_inter_2" id="min_inter_2" class="form-control" placeholder="Min kob"
+                            required min="0">
+                        <input type="number" name="max_inter_2" id="max_inter_2" class="form-control" placeholder="Min kob"
+                            required min="0">
 
                     </div>
                     <div class="input-group">
@@ -159,24 +169,27 @@
                             <span class="input-group-text">Kantite maryaj</span>
                         </div>
                         <select class="form-control" name="q_inter_3">
-                            @if ($data)
-                                <option>{{ $data->q_inter_3 }}</option>
-                                <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
-                            @endif
-                            @for ($i = 0; $i <= 15; $i++)
-                                @if ($data && $data->q_inter_1 == $i) <!-- Assurez-vous que la valeur de données est ignorée -->
-                                    @continue
-                                @endif
-                                <option>{{ $i }}</option>
-                            @endfor
+                            <option id="q_inter_3"></option>
+                            <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
+
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+
+
+
 
                         </select>
 
-                        <input type="number" name="min_inter_3" value="{{ isset($data) ? $data->min_inter_3 : '' }}" class="form-control"
-                            placeholder="Min kob" required min="0">
+                        <input type="number" name="min_inter_3" id="min_inter_3" class="form-control" placeholder="Min kob"
+                            required min="0">
 
-                        <input type="number" name="max_inter_3" value="{{ isset($data) ? $data->max_inter_3 : '' }}" class="form-control"
-                            placeholder="Max kob" required min="0">
+                        <input type="number" name="max_inter_3" id="max_inter_3" class="form-control" placeholder="Max kob"
+                            required min="0">
 
 
                     </div>
@@ -185,23 +198,24 @@
                             <span class="input-group-text">Kantite maryaj</span>
                         </div>
                         <select class="form-control" name="q_inter_4">
-                            @if ($data)
-                                <option>{{ $data->q_inter_4 }}</option>
-                                <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
-                            @endif
-                            @for ($i = 0; $i <= 20; $i++)
-                                @if ($data && $data->q_inter_1 == $i) <!-- Assurez-vous que la valeur de données est ignorée -->
-                                    @continue
-                                @endif
-                                <option>{{ $i }}</option>
-                            @endfor
 
+                            <option id="q_inter_4"></option>
+                            <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
+
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                            <option>11</option>
                         </select>
 
-                        <input type="number" name="min_inter_4" value="{{ isset($data) ? $data->min_inter_4 : '' }}" class="form-control"
+                        <input type="number" name="min_inter_4" id="min_inter_4" class="form-control"
                             placeholder="Min kob" required min="0">
 
-                        <input type="number" name="max_inter_4" value="{{ isset($data) ? $data->max_inter_4 : '' }}" class="form-control"
+                        <input type="number" name="max_inter_4" id="max_inter_4" class="form-control"
                             placeholder="Max kob" required min="0">
 
 
@@ -211,23 +225,28 @@
                             <span class="input-group-text">Kantite maryaj</span>
                         </div>
                         <select class="form-control" name="q_inter_5">
-                            @if ($data)
-                                <option>{{ $data->q_inter_5 }}</option>
-                                <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
-                            @endif
-                            @for ($i = 0; $i <= 25; $i++)
-                                @if ($data && $data->q_inter_1 == $i) <!-- Assurez-vous que la valeur de données est ignorée -->
-                                    @continue
-                                @endif
-                                <option>{{ $i }}</option>
-                            @endfor
+
+                            <option id="q_inter_5"></option>
+                            <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                            <option>11</option>
+                            <option>12</option>
+                            <option>13</option>
+
+
 
                         </select>
 
-                        <input type="number" name="min_inter_5" value="{{ isset($data) ? $data->min_inter_5 : '' }}" class="form-control"
+                        <input type="number" name="min_inter_5" id="min_inter_5" class="form-control"
                             placeholder="Min kob" required min="0">
 
-                        <input type="number" name="max_inter_5" value="{{ isset($data) ? $data->max_inter_5 : '' }}" class="form-control"
+                        <input type="number" name="max_inter_5" id="max_inter_5" class="form-control"
                             placeholder="Max kob" required min="0">
 
 
@@ -237,23 +256,33 @@
                             <span class="input-group-text">Kantite maryaj</span>
                         </div>
                         <select class="form-control" name="q_inter_6">
-                            @if ($data)
-                                <option>{{ $data->q_inter_6 }}</option>
-                                <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
-                            @endif
-                            @for ($i = 0; $i <= 30; $i++)
-                                @if ($data && $data->q_inter_1 == $i) <!-- Assurez-vous que la valeur de données est ignorée -->
-                                    @continue
-                                @endif
-                                <option>{{ $i }}</option>
-                            @endfor
+                            <option id="q_inter_6"></option>
+                            <option disabled>----</option> <!-- Ajoutez une option désactivée pour séparer les valeurs -->
+
+                            <option>5</option>
+                            <option>6</option>
+
+                            <option>7</option>
+
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                            <option>11</option>
+                            <option>12</option>
+                            <option>13</option>
+                            <option>14</option>
+                            <option>15</option>
+                            <option>16</option>
+                            <option>17</option>
+                            <option>18</option>
+
 
                         </select>
 
-                        <input type="number" name="min_inter_6" value="{{ isset($data) ? $data->min_inter_6 : '' }}" class="form-control"
+                        <input type="number" name="min_inter_6" id="min_inter_6" class="form-control"
                             placeholder="Min kob" required min="0">
 
-                        <input type="number" name="max_inter_6" value="{{ isset($data) ? $data->max_inter_6 : '' }}" class="form-control"
+                        <input type="number" name="max_inter_6" id="max_inter_6" class="form-control"
                             placeholder="Max kob" required min="0">
 
 
@@ -265,32 +294,28 @@
                         </div>
                         <div class="input-group-prepend">
 
-                            <span class="input-group-text">
-                                @if ($data && $data->prix > 0)
-                                    {{ $data->prix }}
-                                @else
-                                    0.00
-                                @endif
+                            <span class="input-group-text" id="labelPrice">
+                               
                             </span>
                         </div>
                         <input type="text" name="montant" class="form-control"
-                            aria-label="Montant (ajoute montant a mise a jour)" value=" @if ($data) {{ $data->prix }} @endif"
+                            aria-label="Montant (ajoute montant a mise a jour)"
+                            id="price"
                             placeholder="Antre vale kob vle mete an">
 
-                        @if ($data && $data->id)
-                            <button type="submit" class="btn primary" style="background:rgb(0 94 254)">Mete a jou</button>
-                        @endif
+                            <button type="submit" class="btn primary" style="background:rgb(0 94 254)">Mete a
+                                jou</button>
                     </div>
                 </div>
             </form>
 
         </div>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
             var flipswitches = document.querySelectorAll('.flipswitch-cb');
-
             flipswitches.forEach(function(flipswitch) {
 
                 flipswitch.addEventListener('change', function() {
@@ -298,6 +323,7 @@
                     var inner = this.nextElementSibling.querySelector('.flipswitch-inner');
                     var switchElem = this.nextElementSibling.querySelector('.flipswitch-switch');
                     var status = this.checked ? 1 : 0; // Vérifier l'état de l'interrupteur
+                    var branch = document.getElementById('branch');
 
 
                     $.ajax({
@@ -309,6 +335,7 @@
                         data: {
 
                             status: status,
+                            branch: branch.value,
 
 
                         },
@@ -345,6 +372,83 @@
 
                 });
             });
+            //load maryaj depend on branch choose
+            document.getElementById('branch').addEventListener('change', function() {
+                let current_id = this.value;
+                // document.getElementById('selectedDate').innerText = 'Selected date: ' + selectedDate;
+
+                $.ajax({
+                    url: 'maryajByBranch',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: current_id
+                    },
+                    success: function(response) {
+                        if (response.status == 'true') {
+                            //interval 1
+                            document.getElementById('q_inter_1').innerText = response.data
+                            .q_inter_1;
+                            document.getElementById('min_inter_1').value = response.data.min_inter_1;
+                            document.getElementById('max_inter_1').value = response.data
+                            .max_inter_1;
+                              //interval 2
+                              document.getElementById('q_inter_2').innerText = response.data
+                            .q_inter_2;
+                            document.getElementById('min_inter_2').value = response.data.min_inter_2;
+                            document.getElementById('max_inter_2').value = response.data
+                            .max_inter_2;
+                              //interval 3
+                              document.getElementById('q_inter_3').innerText = response.data
+                            .q_inter_3;
+                            document.getElementById('min_inter_3').value = response.data.min_inter_3;
+                            document.getElementById('max_inter_3').value = response.data
+                            .max_inter_3;
+                              //interval 4
+                              document.getElementById('q_inter_4').innerText = response.data
+                            .q_inter_4;
+                            document.getElementById('min_inter_4').value = response.data.min_inter_4;
+                            document.getElementById('max_inter_4').value = response.data
+                            .max_inter_4;
+                              //interval 1
+                              document.getElementById('q_inter_5').innerText = response.data
+                            .q_inter_5;
+                            document.getElementById('min_inter_5').value = response.data.min_inter_5;
+                            document.getElementById('max_inter_5').value = response.data
+                            .max_inter_5;
+                              //interval 1
+                              document.getElementById('q_inter_6').innerText = response.data
+                            .q_inter_6;
+                            document.getElementById('min_inter_6').value = response.data.min_inter_6;
+                            document.getElementById('max_inter_6').value = response.data
+                            .max_inter_6;
+                            //price
+                            document.getElementById('labelPrice').innerText = response.data
+                            .prix;
+
+                            document.getElementById('price').value = response.data
+                            .prix;
+                            //status
+                            var etat = document.getElementById('fs');
+                            if(response.data.etat==1){
+                                etat.checked = true;
+                            }else{
+                                etat.checked = false;
+                            }
+                           
+
+                            
+                          
+                          
+
+
+
+                        }
+
+                    }
+                });
+            });
+
         });
     </script>
 

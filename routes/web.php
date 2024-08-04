@@ -136,6 +136,10 @@ Route::middleware(['web', 'verify.session'])->group(function () {
     Route::post('updatestatutmg', [parametreController::class, 'updatestatut']);
     Route::get('ajistelo', [parametreController::class, 'ajistelo'])->name('ajisteprilo');
     Route::post('getByBranch', [parametreController::class, 'getPrixLo']);
+    Route::post('maryajByBranch', [parametreController::class, 'getPrixMaryaj']);
+    Route::get('script', [parametreController::class, 'updateBranch']);
+
+  
 
 
     Route::post('ajistelo', [parametreController::class, 'storelopri'])->name('updateprilo');

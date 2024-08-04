@@ -222,17 +222,17 @@
     display: flex;
     flex-wrap: wrap;
     width: 100%;gap:20px;">
-                                    <div class="form-group">
+                                    <div class="form-group col-12 col-md-3">
                                         <label>komanse</label>
                                         <input type="date" class="form-control" name="date_debut"
                                             value="{{ $date_debut }}" required />
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group col-12 col-md-3">
                                         <label>Fini</label>
                                         <input type="date" class="form-control" name="date_fin"
                                             value="{{ $date_fin }}" required />
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group col-12 col-md-3">
                                         <label>Peryod</label>
                                         <select class="form-control" name="period" value="{{ old('period') }}"
                                             style="height: 47px;border: 1px solid black;">

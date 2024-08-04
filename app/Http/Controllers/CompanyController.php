@@ -42,11 +42,16 @@ class CompanyController extends Controller
                 ['id', '=', $request->input('id')],
                 ['is_delete', '=', 0]
             ])->first();
+
+            $branch = branch::where([
+                ['compagnie_id','=',  Session('loginId')],
+                ['is_delete', '=', 0]
+            ])->get();
             if (!$vendeur) {
                 notify()->error('Gen yon ere ki pase');
                 return back();
             }
-            return view('editer_vendeur', ['vendeur' => $vendeur]);
+            return view('editer_vendeur', ['vendeur' => $vendeur,'branch'=>$branch]);
         } else {
             return view('login');
         }
@@ -305,6 +310,7 @@ class CompanyController extends Controller
                 'phone' => 'required|numeric',
                 'percent' => 'required|max:100|numeric',
                 "bank_name" => "required|max:30",
+                'branch' => 'required',
 
 
 
@@ -332,6 +338,7 @@ class CompanyController extends Controller
                     //'username' => $request->input('username'),  
                     'percent' => $request->input('percent'),
                     'android_id' => $request->input('bank_id'),
+                    'branch_id'=>$request->input('branch'),
                     'bank_name' => $request->input('bank_name'),
                     'password' => Hash::make($request->input('password')),
                     'is_block' => $status,
@@ -349,6 +356,8 @@ class CompanyController extends Controller
                     //'username' => $request->input('username'),  
                     'percent' => $request->input('percent'),
                     'android_id' => $request->input('bank_id'),
+                    'branch_id'=>$request->input('branch'),
+
                     'bank_name' => $request->input('bank_name'),
                     //'password' => Hash::make($request->input('bank_name')),
                     'is_block' => $status,

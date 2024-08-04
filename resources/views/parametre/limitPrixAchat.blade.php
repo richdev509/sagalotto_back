@@ -37,7 +37,7 @@
                                     <td>Bolet</td>
                                     <td>
                                         @if ($limitprix)
-                                            <input style="height:10px;" type="number" class="form-control"
+                                            <input style="height:10px;padding-left: 1px;padding-right:1px;min-width:60px" type="number" class="form-control"
                                                 value="{{ $limitprix->bolet != null ? $limitprix->bolet : '' }}"
                                                 name="prix" />
                                         @else
@@ -73,7 +73,7 @@
                                     <td>Maryaj</td>
                                     <td>
                                         @if ($limitprix)
-                                            <input style="height:10px;" type="number" class="form-control"
+                                            <input style="height:10px;padding-left: 1px;padding-right:1px;min-width:60px" type="number" class="form-control"
                                                 value="{{ $limitprix->maryaj != null ? $limitprix->maryaj : '' }}"
                                                 name="prix" />
                                         @else
@@ -109,7 +109,7 @@
                                     <td>Loto3</td>
                                     <td>
                                         @if ($limitprix)
-                                            <input style="height:10px;" type="number" class="form-control"
+                                            <input style="height:10px;padding-left: 1px;padding-right:1px;min-width:60px" type="number" class="form-control"
                                                 value="{{ $limitprix->loto3 != null ? $limitprix->loto3 : '' }}"
                                                 name="prix" />
                                         @else
@@ -146,7 +146,7 @@
                                     <td>Loto4</td>
                                     <td>
                                         @if ($limitprix)
-                                            <input style="height:10px;" type="number" class="form-control"
+                                            <input style="height:10px;padding-left: 1px;padding-right:1px;min-width:60px" type="number" class="form-control"
                                                 value="{{ $limitprix->loto4 != null ? $limitprix->loto4 : '' }}"
                                                 name="prix" />
                                         @else
@@ -184,7 +184,7 @@
                                     <td>Loto5</td>
                                     <td>
                                         @if ($limitprix)
-                                            <input style="height: 10px;"
+                                            <input style="height: 20px;padding-left: 1px;padding-right:1px;min-width:60px"
                                                 type="number" class="form-control"
                                                 value="{{ $limitprix->loto5 != null ? $limitprix->loto5 : '' }}"
                                                 name="prix" />

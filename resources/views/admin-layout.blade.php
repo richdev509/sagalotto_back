@@ -65,7 +65,7 @@
         <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
 
             <div class="containerr scroll-right">
-                <marquee behavior="" direction="left">Apati de jodia sistem nan ap mete boul ki soti pou ou, pou 3 tirage ki plis konnen yo</marquee>
+                <marquee behavior="" direction="left">kounya ou ka kreye yon branch pouw mete vande ou vle parametre avek tarif spesifik</marquee>
             </div>
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
 
@@ -332,7 +332,7 @@
                             aria-controls="ui-basic">
                             <span class="menu-title">Branch</span>
                             <i class="menu-arrow"></i>
-                            <i class="mdi mdi-ticket menu-icon"></i>
+                            <i class="mdi mdi-source-branch"></i>
                         </a>
                         <div class="collapse" id="fich">
                             <ul class="nav flex-column sub-menu">

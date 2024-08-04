@@ -429,21 +429,24 @@ class rapportController extends Controller
     {
 
         if (Session('loginId')) {
+            $loginId = Session('loginId');
+            $dateDebut = $request->input('date_debut');
+            $dateFin = $request->input('date_fin');
 
-            if (!empty($request->input('date_debut')) && !empty($request->input('date_debut'))) {
+            if (!empty($dateDebut) && !empty($dateFin)) {
 
                 if ($request->input('period') == 'matin') {
                     $vendeur = DB::table('users')
                         ->join('ticket_code', 'ticket_code.user_id', '=', 'users.id')
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                         ->where([
-                            ['users.compagnie_id', '=', Session('loginId')],
+                            ['users.compagnie_id', '=', $loginId],
                             ['ticket_vendu.is_delete', '=', 0],
                             ['users.is_delete', '=', 0],
                             ['ticket_vendu.is_cancel', '=', 0],
 
-                        ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
-                        ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
+                        ])->whereDate('ticket_code.created_at', '>=', $dateDebut)
+                        ->whereDate('ticket_code.created_at', '<=', $dateFin)
                         ->whereTime('ticket_code.created_at', '<=', '14:30:00')
 
                         ->select(
@@ -455,7 +458,7 @@ class rapportController extends Controller
                             DB::raw('SUM(ticket_vendu.winning) as perte'),
                             DB::raw('SUM(ticket_vendu.commission) as commission'),
 
-                        )
+                        )->orderBy('ticket_code.user_id')
                         ->groupBy(
                             'users.bank_name',
                             'ticket_code.user_id',
@@ -476,19 +479,19 @@ class rapportController extends Controller
                         ->orderByDesc('date_rapport')
                         ->limit('50')
                         ->get();
-                    return view('raportsecond', ['bank' => $bank, 'control' => $control, 'vendeur' => $vendeur, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'period' => 'Maten']);
+                    return view('raportsecond', ['bank' => $bank, 'control' => $control, 'vendeur' => $vendeur, 'date_debut' => $request->$dateDebut, 'date_fin' => $dateFin, 'period' => 'Maten']);
                 } elseif ($request->input('period') == 'soir') {
                     $vendeur = DB::table('users')
                         ->join('ticket_code', 'ticket_code.user_id', '=', 'users.id')
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                         ->where([
-                            ['users.compagnie_id', '=', Session('loginId')],
+                            ['users.compagnie_id', '=', $loginId],
                             ['ticket_vendu.is_delete', '=', 0],
                             ['users.is_delete', '=', 0],
                             ['ticket_vendu.is_cancel', '=', 0],
 
-                        ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
-                        ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
+                        ])->whereDate('ticket_code.created_at', '>=', $dateDebut)
+                        ->whereDate('ticket_code.created_at', '<=', $dateFin)
                         ->whereTime('ticket_code.created_at', '>', '14:30:00')
 
                         ->select(
@@ -500,7 +503,7 @@ class rapportController extends Controller
                             DB::raw('SUM(ticket_vendu.winning) as perte'),
                             DB::raw('SUM(ticket_vendu.commission) as commission'),
 
-                        )
+                        )->orderBy('ticket_code.user_id')
                         ->groupBy(
                             'users.bank_name',
                             'ticket_code.user_id',
@@ -521,20 +524,19 @@ class rapportController extends Controller
                         ->orderByDesc('date_rapport')
                         ->limit('50')
                         ->get();
-                    return view('raportsecond', ['bank' => $bank, 'control' => $control, 'vendeur' => $vendeur, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'period' => 'Swa']);
+                    return view('raportsecond', ['bank' => $bank, 'control' => $control, 'vendeur' => $vendeur, 'date_debut' => $dateDebut, 'date_fin' =>$dateFin, 'period' => 'Swa']);
                 } else {
                     $vendeur = DB::table('users')
                     ->join('ticket_code', 'ticket_code.user_id', '=', 'users.id')
                     ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                     ->where([
-                        ['users.compagnie_id', '=', Session('loginId')],
+                        ['users.compagnie_id', '=', $loginId],
                         ['ticket_vendu.is_delete', '=', 0],
                         ['users.is_delete', '=', 0],
                         ['ticket_vendu.is_cancel', '=', 0],
 
-                    ])->whereDate('ticket_code.created_at', '>=', $request->input('date_debut'))
-                    ->whereDate('ticket_code.created_at', '<=', $request->input('date_fin'))
-
+                    ])->whereDate('ticket_code.created_at', '>=', $dateDebut)
+                    ->whereDate('ticket_code.created_at', '<=', $dateFin)
                     ->select(
                         'ticket_code.user_id',
                         'users.bank_name',
@@ -544,12 +546,12 @@ class rapportController extends Controller
                         DB::raw('SUM(ticket_vendu.winning) as perte'),
                         DB::raw('SUM(ticket_vendu.commission) as commission'),
 
-                    )
+                    )->orderBy('ticket_code.user_id')
                     ->groupBy(
                         'users.bank_name',
                         'ticket_code.user_id',
                         // List all other columns of ticket_code here
-                    )->paginate(20);;
+                    )->paginate(20);
 
                 // dd($vendeur);
                 $bank = User::where([
@@ -565,7 +567,7 @@ class rapportController extends Controller
                     ->orderByDesc('date_rapport')
                     ->limit('50')
                     ->get();
-                return view('raportsecond', ['bank' => $bank, 'control' => $control, 'vendeur' => $vendeur, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'period' => 'Tout']);
+                return view('raportsecond', ['bank' => $bank, 'control' => $control, 'vendeur' => $vendeur, 'date_debut' => $dateDebut, 'date_fin' => $dateFin, 'period' => 'Tout']);
                
                 }
             } else {
@@ -589,7 +591,7 @@ class rapportController extends Controller
                         DB::raw('SUM(ticket_vendu.winning) as perte'),
                         DB::raw('SUM(ticket_vendu.commission) as commission'),
 
-                    )
+                    )->orderBy('ticket_code.user_id')
                     ->groupBy(
                         'users.bank_name',
                         'ticket_code.user_id',

@@ -11,6 +11,7 @@ class maryajgratis extends Model
     protected $fillable = [
         'id',
         'prix',
+        'branch_id',
         'etat',
         'compagnie_id',
         

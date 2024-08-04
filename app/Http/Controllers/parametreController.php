@@ -21,8 +21,11 @@ class parametreController extends Controller
 
     public  function indexmaryaj()
     {
-        $data = maryajgratis::where('compagnie_id', session('loginId'))->first();
-        return view('parametre.maryajGratis', compact('data'));
+        $data = maryajgratis::where([
+            ['compagnie_id', session('loginId')],
+        ])->first();
+        $branch = branch::where('compagnie_id', session('loginId'))->get();
+        return view('parametre.maryajGratis', compact('data', 'branch'));
     }
 
     public function limitprixview()
@@ -259,8 +262,15 @@ class parametreController extends Controller
 
     public  function updatestatut(Request $request)
     {
+        $validator = $request->validate([
+            'branch' => 'required',
+        ]);
         $statut = $request->status;
-        $reponse = maryajgratis::where('compagnie_id', session('loginId'))->first();
+        $reponse = maryajgratis::where([
+            ['compagnie_id', session('loginId')],
+            ['branch_id', $request->branch]
+
+        ])->first();
 
         if ($reponse) {
 
@@ -295,8 +305,10 @@ class parametreController extends Controller
 
         try {
             // Récupérer le modèle existant que vous souhaitez mettre à jour
-            $maryajIsset = maryajgratis::where('compagnie_id', session('loginId'))
-                ->first();
+            $maryajIsset = maryajgratis::where([
+                ['compagnie_id', session('loginId')],
+                ['branch_id', $request->input('branch')]
+            ])->first();
 
             if ($maryajIsset) {
 
@@ -437,6 +449,40 @@ class parametreController extends Controller
             return view('login');
         }
     }
+    public function getPrixMaryaj(Request $request)
+    {
+        if (Session('loginId')) {
+            //prix premye lo
+            $data = maryajgratis::where([
+                ['compagnie_id', '=', session('loginId')],
+                ['branch_id', '=', $request->id]
+            ])->first();
+            if (!$data) {
+                maryajgratis::insert([
+                    'compagnie_id' => Session('loginId'),
+                    'branch_id' => $request->id,
+                    'prix' => 0
+
+
+                ]);
+                //get
+                $data = maryajgratis::where([
+                    ['compagnie_id', '=', Session('loginId')],
+                    ['branch_id', '=', $request->id]
+                ])->first();
+            }
+            //service info
+
+            return response()->json([
+                'status' => 'true',
+                'data' => $data
+            ]);
+        } else {
+            return view('login');
+        }
+    }
+
+
 
     public function storelopri(Request $request)
     {
@@ -533,4 +579,13 @@ class parametreController extends Controller
             }
         }
     }
+    //job
+    public function updateBranch()
+    {
+        // Récupérer tous les IDs des compagnies
+      
+
+        dd('sikse');
+    }
+
 }
