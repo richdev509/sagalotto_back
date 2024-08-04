@@ -117,7 +117,9 @@ class ExecutionTirage implements ShouldQueue
         $ficheDatas = "";
         $i = 1;
         if ($fiches != "") {
-            
+            $rules =RulesOne::where('compagnie_id', $compagnieId)->get();
+            $rules2 =maryajgratis::where('compagnie_id', $compagnieId)->get();
+
             $this->compagnieId=$compagnieId;
             $this->totalfiche=$fiches->count();
             $kl=0;
@@ -131,6 +133,20 @@ class ExecutionTirage implements ShouldQueue
 
             $codemonitor=$query->id;
             foreach ($fiches as $fiche) {
+                $numerobranch = $fiche->ticketcode->branch_id;
+                $borletePrice = 50;
+                // Trouver la règle correspondant au branch_id
+                $rule = $rules->firstWhere('branch_id', $numerobranch);
+                $rule2=$rules2->firstWhere('branch_id',$numerobranch);
+                // Vérifier si la règle a été trouvée
+                if ($rule) {
+                    // Obtenir le prix à partir de la règle
+                    $borletePrice = $rule->prix;
+                }
+                if($rule2){
+                    $maryajgratis=$rule2->prix;
+                } 
+
                 $ficheData = json_decode($fiche->boule, true);
                 
                 $ficheDatas = $ficheData;
