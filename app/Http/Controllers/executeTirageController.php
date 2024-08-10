@@ -139,7 +139,7 @@ class executeTirageController extends Controller
           ->first();
       
      //Recupere liste des codes vendu pour le jour en question.
-     $codes = ticket_code::where('compagnie_id', $compagnieId)
+   /*  $codes = ticket_code::where('compagnie_id', $compagnieId)
     ->whereDate('created_at', $formattedDate)
     ->pluck('code')
     ->toArray();
@@ -151,7 +151,16 @@ class executeTirageController extends Controller
  ->where('tirage_record_id', $tirageName)
  ->get();
  
-   }
+   }*/
+
+   // Récupérer les tickets vendus en une seule requête
+$fiches = TicketVendu::whereHas('ticketCode', function ($query) use ($compagnieId, $formattedDate) {
+    $query->where('compagnie_id', $compagnieId)
+          ->whereDate('created_at', $formattedDate);
+})
+->where('tirage_record_id', $tirageName)
+->get();
+
    
     
     
@@ -237,7 +246,7 @@ if($fiches!=""){
 }
 
 
-if($codes){
+if($fiches){ //$code
      return $statut=1;  
 }else{
     
