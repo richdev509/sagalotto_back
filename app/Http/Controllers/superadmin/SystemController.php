@@ -27,6 +27,12 @@ class SystemController extends Controller
             $id = DB::table('companies')->where('type', 'production')->pluck('id')
                 ->toArray();
             $nombrePos = User::whereIn('compagnie_id', $id)->count();
+            //count active for the last 30 days
+            $actifPos = ticket_code::where('created_at', '>=', Carbon::now()->subDays(30))
+            ->distinct()
+            ->pluck('user_id')
+            ->count();
+
             $Compagnieinactive = DB::table('companies')->where('type', 'production')->where('is_active', 0)->count();
         } else {
             $Compagnie = DB::table('companies')->where('type', 'production')->where('actionUser', session('id'))->get();
@@ -34,9 +40,14 @@ class SystemController extends Controller
             $id = DB::table('companies')->where('type', 'production')->where('actionuser', session('id'))->pluck('id')
                 ->toArray();
             $nombrePos = User::whereIn('compagnie_id', $id)->count();
+               //count active for the last 30 days
+               $actifPos = ticket_code::where('created_at', '>=', Carbon::now()->subDays(30))
+               ->distinct()
+               ->pluck('user_id')
+               ->count();
             $Compagnieinactive = DB::table('companies')->where('type', 'production')->where('actionuser', session('id'))->where('is_active', 0)->count();
         }
-        return view('superadmin.admin', compact('nombreCompagnie', 'nombrePos', 'Compagnieinactive'));
+        return view('superadmin.admin', compact('nombreCompagnie', 'nombrePos', 'Compagnieinactive','actifPos'));
     }
 
     public function viewajoutelo(Request $request)

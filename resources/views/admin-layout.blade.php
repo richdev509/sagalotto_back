@@ -35,7 +35,8 @@
             padding: 0;
         }
 
-        html, body {
+        html,
+        body {
             font-family: "Lato", sans-serif;
             font-weight: 400;
             font-style: normal;
@@ -51,7 +52,7 @@
             width: 100%;
         }
 
-       
+
 
         .scroll-left span {
             clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
@@ -63,10 +64,10 @@
 
     <div class="container-scroller">
         <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-
-            <div class="containerr scroll-right">
-                <marquee behavior="" direction="left">kounya ou ka kreye yon branch pouw mete vande ou vle parametre avek tarif spesifik</marquee>
+            <div class="containerr scroll-right" style="background:orange;color:black;">
+                <marquee behavior="" direction="left">Rale raport rapid pou nenpot enteval dat, ni kote vendeur ni kote admin panel</marquee>
             </div>
+           
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
 
 
@@ -311,7 +312,7 @@
                     </li>
 
 
-                   
+
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="collapse" href="#fich" aria-expanded="false"
                             aria-controls="ui-basic">
@@ -338,7 +339,7 @@
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link" href="creer_branch">Ajoute branch
                                     </a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="lister_branch">Liste branch
+                                <li class="nav-item"> <a class="nav-link" href="lister_branch">Liste branch
                                     </a></li>
 
                             </ul>
@@ -395,7 +396,12 @@
         </div>
         <!-- page-body-wrapper ends -->
     </div>
-
+    <div id="preloader" style="display: none;">
+        <div id="loading-wrapper" class="show">
+            <div id="loading-text"> <img src="{{ asset('/assets/landing/img/saga.png') }}" alt=""> </div>
+            <div id="loading-content"></div>
+        </div>
+    </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
 
@@ -430,7 +436,22 @@
             $('.navbar-toggler').on('click', function() {
                 $('.scroll-right').hide();
             });
+            hideLoader()
         });
+
+        function showLoader() {
+            document.getElementById('preloader').style.display = 'flex';
+        }
+
+        function hideLoader() {
+            document.getElementById('preloader').style.display = 'none';
+        }
+        window.onload = function() {
+            showLoader();
+
+            setTimeout(hideLoader,100);
+        };
+      
     </script>
 </body>
 

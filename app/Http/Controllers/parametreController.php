@@ -207,7 +207,7 @@ class parametreController extends Controller
     }
     public function limitprixstore(Request $request)
     {
-        if (!empty($request->active) && $request->prix > 0 && !empty($request->prix)) {
+        if (!empty($request->active)) {
             $active = true;
         } else {
             $active = false;

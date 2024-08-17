@@ -276,20 +276,27 @@
                                 @endphp
                                 @forelse ($vendeur as $row)
                                     <tr>
-                                        <td>{{ $row->bank_name }}</td>
+                                        <td>
+                                            <?php
+                                            $value = DB::table('users')->where('id', $row['bank_name'])->value('bank_name');
+                                            ?>
+                                            {{$value}}
+                                        </td>
                                         <td>{{ $date_debut }}=>{{ $date_fin }}</td>
                                         <td>{{ $period }}</td>
-                                        <td>{{ $row->vente }} HTG</td>
-                                        <td>{{ $row->perte }} HTG</td>
-                                        <td>{{ $row->commission }} HTG</td>
+                                        <td>{{ $row['vente'] }} HTG</td>
+                                        <td>{{ $row['perte'] }} HTG</td>
+                                        <td>{{ $row['commission'] }} HTG</td>
                                         @php
-                                            $total = $total + ($row->vente - ($row->commission + $row->perte));
+                                            $total = $total + ($row['vente'] - ($row['commission'] + $row['perte']));
                                         @endphp
-                                        @if ($row->vente < $row->commission + $row->perte)
-                                            <td style="color:red;">{{ $row->vente - ($row->commission + $row->perte) }} HTG
+                                        @if ($row['vente'] < $row['commission'] + $row['perte'])
+                                            <td style="color:red;">
+                                                {{ $row['vente'] - ($row['commission'] + $row['perte']) }} HTG
                                             </td>
                                         @else
-                                            <td style="color:green;">{{ $row->vente - ($row->commission + $row->perte) }}
+                                            <td style="color:green;">
+                                                {{ $row['vente'] - ($row['commission'] + $row['perte']) }}
                                                 HTG</td>
                                         @endif
 
@@ -319,7 +326,6 @@
 
                             </tfoot>
                         </table>
-                        {{ $vendeur->links() }}
 
                     </div>
                 </div>

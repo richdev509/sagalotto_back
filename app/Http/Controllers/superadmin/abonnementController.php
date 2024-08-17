@@ -53,14 +53,14 @@ class abonnementController extends Controller
 
 
                 if (!$nouvelleDate) {
-                    $dateexpiration = $dateExpirations->addMonths($dureemois)->addDays(10);
+                    $dateexpiration = $dateExpirations->addMonths($dureemois);
                     $datedebut = $dateExpirationS->addDays(1);
                 } else {
                     if ($nouvelleDate->lessThan($dateExpirationS)) {
                         notify()->error('La nouvelle date est inférieure à la date d\'expiration.');
                         return redirect()->route('listecompagnie');
                     }
-                    $dateexpiration = $nouvelleDate->addMonths($dureemois)->addDays(10);
+                    $dateexpiration = $nouvelleDate->addMonths($dureemois);
                     $datedebut = $nouvelleDate2;
                 }
 

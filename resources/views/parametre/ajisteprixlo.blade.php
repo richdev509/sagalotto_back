@@ -19,7 +19,7 @@
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text"> pri ki la se : X fwa</span>
+                            <span class="input-group-text"> pri ki la se: X fwa</span>
                         </div>
                         <div class="input-group-prepend">
 

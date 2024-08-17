@@ -141,6 +141,7 @@
                 width: 70%;
             }
         }
+        
     </style>
     <div class="page-header">
         <h3 class="page-title">Rapo</h3>
@@ -162,7 +163,7 @@
                     <form method="get" action="rapport" id="search">
                         @csrf
 
-                        <div class="col-12 col-sm-4">
+                        <div class="col-12 col-md-5">
                             <div class="form-group local-forms">
                                 <label for="dateFilter">komanse</label>
                                 <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
@@ -175,7 +176,7 @@
                             </div>
                         </div>
 
-                        <div class="col-12 col-sm-4">
+                        <div class="col-12  col-md-5">
                             <div class="form-group local-forms">
                                 <label for="dateFilter">Bank</label>
                                 <select class="form-control" name="bank"
@@ -256,11 +257,7 @@
                                     <td>{{ $ticket_lose }}</td>
 
                                 </tr>
-                                <tr>
-                                    <td>Fich Peye:</td>
-                                    <td>{{$ticket_paid}} / {{ $ticket_win }}</td>
-
-                                </tr>
+                                
                                 <tr>
                                     <td>Vant:</td>
                                     <td>{{ $vente }} HTG</td>

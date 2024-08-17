@@ -44,14 +44,14 @@ class CompanyController extends Controller
             ])->first();
 
             $branch = branch::where([
-                ['compagnie_id','=',  Session('loginId')],
+                ['compagnie_id', '=',  Session('loginId')],
                 ['is_delete', '=', 0]
             ])->get();
             if (!$vendeur) {
                 notify()->error('Gen yon ere ki pase');
                 return back();
             }
-            return view('editer_vendeur', ['vendeur' => $vendeur,'branch'=>$branch]);
+            return view('editer_vendeur', ['vendeur' => $vendeur, 'branch' => $branch]);
         } else {
             return view('login');
         }
@@ -148,59 +148,57 @@ class CompanyController extends Controller
     {
         if (Session('loginId')) {
 
-            $vente = DB::table('ticket_code')->where([
-                ['compagnie_id', '=', Session('loginId')],
-                ['ticket_vendu.is_delete', '=', 0],
-                ['ticket_vendu.is_cancel', '=', 0],
-            ])->whereDate('ticket_code.created_at', '=', Carbon::now())
-                ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-                ->sum('amount');
+            $today = Carbon::now();
+            
+            $ticketCodes = DB::table('ticket_code')
+            ->where('compagnie_id', '=', Session('loginId'))
+            ->whereDate('created_at', '=', $today)
+            ->pluck('code');
 
-            $perte = DB::table('ticket_code')->where([
-                ['compagnie_id', '=', Session('loginId')],
-                ['ticket_vendu.is_delete', '=', 0],
-                ['ticket_vendu.is_cancel', '=', 0],
-            ])->whereDate('ticket_code.created_at', '=', Carbon::now())
-                ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-                ->sum('winning');
+            $data = DB::table('ticket_vendu')
+                ->whereIn('ticket_code_id', $ticketCodes)
+                ->where([
+                    ['is_delete', '=', 0],
+                    ['is_cancel', '=', 0],
+                ])
+                ->selectRaw('SUM(ticket_vendu.amount) as total_amount, 
+                             SUM(ticket_vendu.winning) as total_winning, 
+                             SUM(ticket_vendu.commission) as total_commission')
+                ->first();
 
-            $commission = DB::table('ticket_code')->where([
-                ['compagnie_id', '=', Session('loginId')],
-                ['ticket_vendu.is_delete', '=', 0],
-                ['ticket_vendu.is_cancel', '=', 0],
-            ])->whereDate('ticket_code.created_at', '=', Carbon::now())
-                ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-                ->sum('commission');
+            $vente = $data->total_amount;
+            $perte = $data->total_winning;
+            $commission = $data->total_commission;
 
-         
+
 
             $lista = BoulGagnant::where('compagnie_id', session('loginId'))
                 ->latest('created_at')
                 ->take(3)
                 ->get();
-           
+
             $list = [];
-           
+
 
             foreach ($lista as $boulGagnant) {
                 $codes = ticket_code::where('compagnie_id', session('loginId'))
-                ->whereDate('created_at', $boulGagnant->created_)
-                ->pluck('code')
-                ->toArray();
+                    ->whereDate('created_at', $boulGagnant->created_)
+                    ->pluck('code')
+                    ->toArray();
 
-             $vent= TicketVendu::whereIn('ticket_code_id', $codes)
-             ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete',0)->where('is_cancel',0)
-             ->sum('amount');
-               /* $vente =TicketVendu::where('tirage_record_id',$boulGagnant->tirage_id)
+                $vent = TicketVendu::whereIn('ticket_code_id', $codes)
+                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)
+                    ->sum('amount');
+                /* $vente =TicketVendu::where('tirage_record_id',$boulGagnant->tirage_id)
                     ->whereDate('created_at', $boulGagnant->created_)
                     ->sum('amount');
                     dd($vente,);*/
-                $pert =TicketVendu::whereIn('ticket_code_id', $codes)
-                ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete',0)->where('is_cancel',0)
+                $pert = TicketVendu::whereIn('ticket_code_id', $codes)
+                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)
                     ->sum('winning');
 
-                $commissio =TicketVendu::whereIn('ticket_code_id', $codes)
-             ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete',0)->where('is_cancel',0)
+                $commissio = TicketVendu::whereIn('ticket_code_id', $codes)
+                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)
                     ->sum('commission');
                 $tirageName = $boulGagnant->tirage_record->name;
                 $list[] = [
@@ -208,7 +206,7 @@ class CompanyController extends Controller
                     'vent' => $vent,
                     'pert' => $pert,
                     'commissio' => $commissio,
-                    'name'=>$tirageName
+                    'name' => $tirageName
 
 
                 ];
@@ -235,9 +233,9 @@ class CompanyController extends Controller
     {
         if (Session('loginId')) {
             $branch = branch::where([
-               ['compagnie_id','=', Session('loginId')]
+                ['compagnie_id', '=', Session('loginId')]
             ])->get();
-            return view('ajouter_vendeur',['branch'=>$branch]);
+            return view('ajouter_vendeur', ['branch' => $branch]);
         } else {
             return view('login');
         }
@@ -338,7 +336,7 @@ class CompanyController extends Controller
                     //'username' => $request->input('username'),  
                     'percent' => $request->input('percent'),
                     'android_id' => $request->input('bank_id'),
-                    'branch_id'=>$request->input('branch'),
+                    'branch_id' => $request->input('branch'),
                     'bank_name' => $request->input('bank_name'),
                     'password' => Hash::make($request->input('password')),
                     'is_block' => $status,
@@ -356,7 +354,7 @@ class CompanyController extends Controller
                     //'username' => $request->input('username'),  
                     'percent' => $request->input('percent'),
                     'android_id' => $request->input('bank_id'),
-                    'branch_id'=>$request->input('branch'),
+                    'branch_id' => $request->input('branch'),
 
                     'bank_name' => $request->input('bank_name'),
                     //'password' => Hash::make($request->input('bank_name')),
