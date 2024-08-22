@@ -221,6 +221,10 @@ Route::middleware(['web', 'chekadmin'])->group(function () {
 
 
     Route::get('/wp-admin/historiqueabonnement', [abonnementController::class, 'viewhistorique'])->name('historiquesaabonnement');
+    Route::get('/wp-admin/facture', [abonnementController::class, 'viewFacture'])->name('facture');
+    Route::post('/wp-admin/genererfacture', [abonnementController::class, 'genererFacture'])->name('genererfacture');
+
+
     Route::get('/wp-admin/historiquetransaction', [historiquetransaction::class, 'viewtransaction'])->name('historiquestransaction');
     Route::post('/wp-admin/paiementdwe', [abonnementController::class, 'paiementdwe'])->name('paiementsdwe');
 });

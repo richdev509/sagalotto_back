@@ -10,16 +10,22 @@
             <form method="POST" action="{{ route('add_abonnement') }}">
                 @csrf
                 <div class="row">
+
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="exampleInputUsername1">Telephone Compagnie</label>
-                            <input type="number" class="form-control" name="phone"
-                                placeholder="numeroTelephone Compagnie" required />
+                            <label for="exampleInputUsername1">Code compagnie</label>
+                            @if (isset($data))
+                                <input type="text" class="form-control" name="code" value="{{ $data->code }}"
+                                    placeholder="code" required />
+                            @else
+                                <input type="text" class="form-control" name="code" value="" placeholder="code"
+                                    required />
+                            @endif
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="exampleInputUsername1">Nom Compagnie</label>
+                            <label for="exampleInputUsername1">Nom compagnie</label>
                             @if (isset($data))
                                 <input type="text" class="form-control" name="name" value="{{ $data->name }}"
                                     placeholder="Nom Compagnie" required />

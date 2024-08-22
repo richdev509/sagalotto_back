@@ -53,7 +53,7 @@
             </div>
         </div>
     </div>
-    <div class="row" style="display: none;">
+    <div class="row" style="">
         <div class="col-md-7 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">

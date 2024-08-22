@@ -74,11 +74,10 @@ class parametreController extends Controller
                     return redirect()->back();
                 }
                 //verifier si boul sa existe deja pou 
-                $boule = DB::table('limit_prix_boul')->where('opsyon', $nameAssociatedWithType)->where('compagnie_id', session('loginId'))->where('tirage_record', $tirage_input)->where('boul', $request->chiffre)->first();
+                $boule = limitprixboul::where('opsyon', $nameAssociatedWithType)->where('compagnie_id', session('loginId'))->where('tirage_record', $tirage_input)->where('boul', $request->chiffre)->first();
 
                 if ($boule) {
-                    notify()->error('boul sa ekziste deja pou Tiraj sa e opsyon sa sa');
-                    return redirect()->back();
+                    $boule->delete();
                 }
 
                 //$this->vericationMaryajDouble($request,$request->type,$nameAssociatedWithType);
