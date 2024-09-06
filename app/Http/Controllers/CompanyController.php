@@ -225,8 +225,11 @@ class CompanyController extends Controller
             Session()->forget('name');
             Session()->forget('logo');
             return view('login');
-        } else {
-            return view('login');
+        }
+        if(Session('branchId')) {
+            Session()->forget('loginId');
+
+            return view('superviseur/login');
         }
     }
     public function create_vendeur()

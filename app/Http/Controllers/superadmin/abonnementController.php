@@ -57,7 +57,7 @@ class abonnementController extends Controller
                 ->pluck('user_id')
                 ->count();
     
-            return  view('superadmin.facture', compact('data', 'facture','compagnie','vendeur','date'));
+            return  view('superadmin.facturePay', compact('data', 'facture','compagnie','vendeur','date'));
         }
     }
     public function addabonement(Request $request)
@@ -67,7 +67,7 @@ class abonnementController extends Controller
         if (session('role') == 'admin' || session('role') == "addeur" || session('role') == "comptable") {
 
 
-            $reponse = Company::where('code', $request->code)->where('name', $request->name)->first();
+            $reponse = Company::where('code', $request->code)->first();
 
             if ($reponse) {
                 $retour = $this->getDaysRemaining($reponse->dateplan, $reponse->dateexpiration);

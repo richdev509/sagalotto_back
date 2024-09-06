@@ -1,4 +1,4 @@
-@extends('admin-layout')
+@extends('superviseur.admin-layout')
 
 @section('content')
     <style>
@@ -51,7 +51,7 @@
                     <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
                     <h4 class="font-weight-normal mb-3">Balans <i class="mdi mdi-diamond mdi-24px float-right"></i>
                     </h4>
-                    <h2 class="mb-5">HTG {{round($vente - ($perte + $commission), 2) }}</h2>
+                    <h2 class="mb-5">HTG {{ $vente - ($perte + $commission) }}</h2>
                     <h6 class="card-text"></h6>
                 </div>
             </div>

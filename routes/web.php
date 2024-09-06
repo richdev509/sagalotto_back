@@ -18,6 +18,8 @@ use App\Http\Controllers\superadmin\abonnementController;
 use App\Http\Controllers\historiquetransanction;
 use App\Http\Controllers\superadmin\testjobcontroller;
 use App\Http\Controllers\branchController;
+use App\Http\Controllers\superviseur\adminController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -31,9 +33,16 @@ use App\Http\Controllers\branchController;
 
 Route::get('/testjob', [testjobcontroller::class, 'lancement']);
 Route::post('/wp-admin/auth2', [SystemController::class, 'auth2']);
+
 Route::get('wp-admin/login', function () {
     return view('superadmin.login');
 })->name('wplogin');
+//superviseur
+Route::post('/superviseur/auth2', [adminController::class, 'login']);
+
+Route::get('superviseur/login', function () {
+    return view('superviseur.login');
+})->name('suplogin');
 
 
 
@@ -176,7 +185,15 @@ Route::middleware(['web', 'verify.session'])->group(function () {
 
 
 
+Route::middleware(['web', 'CheckSuperviseur'])->group(function () {
 
+
+    Route::get('/superviseur', [adminController::class, 'admin']);
+    Route::get('/sup_rapport2', [adminController::class, 'create_rapport2']);
+
+  
+    
+});
 
 
 

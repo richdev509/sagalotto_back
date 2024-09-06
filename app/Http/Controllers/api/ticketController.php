@@ -203,7 +203,7 @@ class ticketController extends Controller
                 'tirage_record_id' => $tirage_record->id,
                 'boule' => json_encode($boule),
                 'amount' =>  $montant,
-                'commission' => ($montant * auth()->user()->percent) / 100,
+                'commission' => ($montant * $vendeur->percent) / 100,
 
                 'created_at' =>  $created_at,
             ]);
@@ -324,7 +324,7 @@ class ticketController extends Controller
                     }
                     return response()->json([
                         'status' => 'true',
-                        "code" => '202',
+                        "code" => '404',
                         "ticket" => [
                             'ticket_id' => $ticket_id,
                             'date' => $date,
@@ -503,6 +503,26 @@ class ticketController extends Controller
 
             ]);
             //find for all tirage
+            $comp = DB::table('companies')->where('id','=',auth()->user()->compagnie_id)->first();
+            if($comp->is_block ==1){
+                return response()->json([
+                    'status' => 'true',
+                    "code" => '200',
+                    "date" => 'Compagnie bloke',
+                    'tirage' => 'Compagnie bloke',
+                    "rapport" => 'Compagnie bloke',
+                    "ticket_gain" => 'Compagnie bloke',
+                    "ticket_perte" => 'Compagnie bloke',
+                    "ticket_total" => 'Compagnie bloke',
+                    "vente" => 'Compagnie bloke',
+                    "perte" => 'Compagnie bloke',
+                    'commission' => 'Compagnie bloke',
+                    "balance" => 'Compagnie bloke',
+
+
+                ], 200,);
+
+            }
             if ($request->input('tirage') == "Tout") {
 
                 // Step 1: Fetch relevant ticket_code records based on date and compagnie_id

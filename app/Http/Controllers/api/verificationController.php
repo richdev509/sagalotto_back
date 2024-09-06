@@ -709,18 +709,19 @@ class verificationController extends Controller
         // Use Laravel's Collection class for easy manipulation
         $result = collect($words)->map(function ($word) {
             // Get the first two characters of each word
-            return substr($word, 0, 2);
+            return substr($word, 0, 1);
         });
 
         // Return the result as a string
         $tirage_name = $result->implode(' ');
+        $tirage_name = str_replace(' ', '', $tirage_name);
         if ($data->min_inter_1 <= $montant && $data->max_inter_1 >= $montant) {
 
             for ($i = 1; $i <= $data->q_inter_1; $i++) {
                 $mariage[] = [
                     'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
                     'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
-                    'montant' => $tirage_name,
+                    'montant' => $tirage_name.' '.$data->prix.'G',
                 ];
             }
             return $mariage;
@@ -730,7 +731,8 @@ class verificationController extends Controller
                 $mariage[] = [
                     'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
                     'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
-                    'montant' => $tirage_name,
+                    'montant' => $tirage_name.' '.$data->prix.'G',
+
                 ];
             }
 
@@ -741,7 +743,8 @@ class verificationController extends Controller
                 $mariage[] = [
                     'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
                     'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
-                    'montant' => $tirage_name,
+                    'montant' => $tirage_name.' '.$data->prix.'G',
+
                 ];
             }
 
@@ -752,7 +755,8 @@ class verificationController extends Controller
                 $mariage[] = [
                     'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
                     'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
-                    'montant' => $tirage_name,
+                    'montant' => $tirage_name.' '.$data->prix.'G',
+
                 ];
             }
 
@@ -763,7 +767,8 @@ class verificationController extends Controller
                 $mariage[] = [
                     'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
                     'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
-                    'montant' => $tirage_name,
+                    'montant' => $tirage_name.' '.$data->prix.'G',
+
                 ];
             }
 
@@ -774,7 +779,8 @@ class verificationController extends Controller
                 $mariage[] = [
                     'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
                     'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
-                    'montant' => $tirage_name,
+                    'montant' => $tirage_name.' '.$data->prix.'G',
+
                 ];
             }
 
