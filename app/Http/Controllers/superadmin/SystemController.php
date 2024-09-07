@@ -63,6 +63,19 @@ class SystemController extends Controller
         }
         return view('superadmin.ajouter_lo', compact('list'));
     }
+    public function HttpViewAjoutelo(Request $request)
+    {
+        $list = DB::table('tirage')->get();
+        $id=$request->id;
+        $date=$request->dat_;
+      
+        if ($id != "") {
+            $record = historiquesboulgagnant::where('tirage_id',$id)->where('created_',$date)->first();
+           
+            return view('superadmin.HttpAjouter_lo', compact('list', 'record'));
+        }
+        return view('superadmin.HttpAjouter_lo', compact('list'));
+    }
     public function auth2(Request $request)
     {
         $username =  $request->input('username');

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\addTirageHttp;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\tirageController;
@@ -227,6 +228,12 @@ Route::middleware(['web', 'chekadmin'])->group(function () {
     Route::get('/wp-admin/ajouter_lo', [SystemController::class, 'viewajoutelo'])->name('ajouterlowp');
     Route::get('/wp-admin/listelo', [SystemController::class, 'viewlistelo'])->name('wp-listelo');
     Route::post('/wp-admin/addlo', [executeTirageAuto::class, 'executeTirageAuto'])->name('addlo');
+    //route for add lot withou job
+    Route::get('/wp-admin/HttpAjouter_lo', [SystemController::class, 'HttpViewAjoutelo'])->name('HttpAjouterlowp');
+    Route::post('/wp-admin/HttpAddlo', [addTirageHttp::class, 'executeTirageAuto'])->name('HttpAddlo');
+
+    
+    
     Route::get('/wp-admin/monitoring', function () {
         return view('superadmin.monitoring');
     })->name('monitoring');
