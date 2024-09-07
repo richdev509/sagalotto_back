@@ -68,6 +68,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'verify.session' => \App\Http\Middleware\VerifySession::class,
         'chekadmin' => \App\Http\Middleware\CheckAdmin::class,
+        'CheckSuperviseur' => \App\Http\Middleware\CheckSuperviseur::class,
+
         'HandleExpiredSession'=>\App\Http\Middleware\HandleExpiredSession::class,
         'filterJson'=>\App\Http\Middleware\FilterJsonMiddleware::class,
 

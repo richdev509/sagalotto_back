@@ -1,4 +1,4 @@
-@extends('admin-layout')
+@extends('superviseur.admin-layout')
 
 
 @section('content')
@@ -208,7 +208,7 @@
                 <div class="card-body" style="padding: 22px 3px">
                     <h4 class="card-title">Rapo general pou chak bank</h4>
                     <div class="row_head">
-                        <form method="get" action="raport2" id="search"
+                        <form method="get" action="sup_rapport2" id="search"
                             style="    border: 1px solid rgb(97 84 96 / 44%);
     margin-bottom: 10px;
     background-color: white;
@@ -273,14 +273,17 @@
                             <tbody class="body_rapport">
                                 @php
                                     $total = 0;
+                                    $vent = 0;
                                 @endphp
                                 @forelse ($vendeur as $row)
                                     <tr>
                                         <td>
                                             <?php
-                                            $value = DB::table('users')->where('id', $row['bank_name'])->value('bank_name');
+                                            $value = DB::table('users')
+                                                ->where('id', $row['bank_name'])
+                                                ->value('bank_name');
                                             ?>
-                                            {{$value}}
+                                            {{ $value }}
                                         </td>
                                         <td>{{ $date_debut }}=>{{ $date_fin }}</td>
                                         <td>{{ $period }}</td>
@@ -289,6 +292,7 @@
                                         <td>{{ $row['commission'] }} HTG</td>
                                         @php
                                             $total = $total + ($row['vente'] - ($row['commission'] + $row['perte']));
+                                            $vent = $vent + $row['vente'];
                                         @endphp
                                         @if ($row['vente'] < $row['commission'] + $row['perte'])
                                             <td style="color:red;">
@@ -320,8 +324,22 @@
                                             <span style="color: red;">{{ $total }} HTG </span>
                                         @endif
                                     </td>
-
-
+                                   
+                                </tr>
+                                <tr>
+                                    <td class="text-right" colspan="6">% superviseur <i
+                                        class="mdi mdi-wallet mdi-16px"></i>:
+                                    <span style="color: green;">{{ $vent * (session('percent') / 100) }} HTG </span>
+                                </td>
+                                <td class="text-right" colspan="6">Balans <i class="mdi mdi-wallet mdi-16px"></i>:
+                                    @if ($total > 0)
+                                        <span style="color: green;">{{ $total - $vent * (session('percent') / 100) }}
+                                            HTG </span>
+                                    @else
+                                        <span style="color: red;">{{ $total - $vent * (session('percent') / 100) }}
+                                            HTG </span>
+                                    @endif
+                                </td>
                                 </tr>
 
                             </tfoot>

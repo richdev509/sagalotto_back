@@ -24,9 +24,7 @@
                                         <div class="mb-4 mb-lg-0 col-lg-6 col-md-12 col-12">
                                             <div class="mb-3 mb-lg-0">
                                                 <div class="form-check"><label
-                                                        for="shippingBillingAddress1" class="form-check-label"><span
-                                                            class="d-block mb-3 text-dark fw-bold">Enfomasyon Konpayi
-                                                            Non</span><span class="d-block text-dark fw-medium fs-4">{{$data->name}}</span>
+                                                        for="shippingBillingAddress1" class="form-check-label"><span class="d-block text-dark fw-medium fs-4">{{$data->name}}</span>
                                                         <span class="d-block mb-4">{{$data->address}}, {{$data->city}}
                                                            </span>
                                                         </label></div>
@@ -65,10 +63,10 @@
                                             <p class="text-muted mb-0">Pos aktif</p>
                                             <p>Nombre pos::== {{ $vendeur}}</p>
                                             <h3 class="mt-2 mb-3 fw-bold">Demare le - {{ \Carbon\Carbon::parse($data->dateplan)->format('j M Y') }} </h3>
-                                            <p>Sa se plan kew genyen ki aktive li debite nan dat kew te peye e lap kanpe 5 Jou apre dat ekspirasyon an
+                                            <p>Fini {{ \Carbon\Carbon::parse($data->dateexpiration)->format('j M Y') }},<Span style="color:red"> NB:  apre plan fini sistem nan ap bow 5 jou delai apresa lap blokew otomatik</span>
                                             <p>
 
-                                                <i class="fe fe-info fs-4 me-2 text-muted icon-xs"></i>Wap gen pou peye nan lel expire:
+                                                </i>Wap gen pou peye nan lel expire:
                                                 <span class="text-primary">${{$data->plan * $vendeur}} USD </span><span
                                                     class="text-dark fw-bold"> {{ \Carbon\Carbon::parse($data->dateexpiration)->format('j M Y') }}
                                                 </span>

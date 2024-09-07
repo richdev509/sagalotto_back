@@ -6,13 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Sagalotto dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="/assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="/assets/vendors/css/vendor.bundle.base.css">
     @notifyCss
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="shortcut icon" href="/assets/images/favicon.ico" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    
+
 
 </head>
 
@@ -121,7 +123,7 @@
                         </div>
                     </li>
                     <li class="nav-item nav-logout d-none d-lg-block">
-                        <a class="nav-link"  href="/wp-admin/logout">
+                        <a class="nav-link" href="/wp-admin/logout">
                             <i class="mdi mdi-power"></i>
                         </a>
                     </li>
@@ -141,13 +143,13 @@
                     <li class="nav-item nav-profile">
                         <a href="#" class="nav-link">
                             <div class="nav-profile-image">
-                                <img src="{{session('logo')}}" alt="profile">
+                                <img src="{{ session('logo') }}" alt="profile">
                                 <span class="login-status online"></span>
                                 <!--change to offline or busy as needed-->
                             </div>
                             <div class="nav-profile-text d-flex flex-column">
-                                <span class="font-weight-bold mb-2">{{session('fullname')}}</span>
-                                <span class="text-secondary text-small">{{session('role')}}</span>
+                                <span class="font-weight-bold mb-2">{{ session('fullname') }}</span>
+                                <span class="text-secondary text-small">{{ session('role') }}</span>
                             </div>
                             <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
                         </a>
@@ -158,58 +160,69 @@
                             <i class="mdi mdi-home menu-icon"></i>
                         </a>
                     </li>
-                    @if (session('role')=="admin" || session('role')=="admin2" || session('role')=="comptable")
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#compagnie" aria-expanded="false"
-                            aria-controls="ui-basic">
-                            <span class="menu-title">Compagnie</span>
-                            <i class="menu-arrow"></i>
-                            <i class="mdi mdi-account menu-icon"></i>
-                        </a>
-                        <div class="collapse" id="compagnie">
-                            <ul class="nav flex-column sub-menu">
-                                
-                                <li class="nav-item" @if (session('role')=="comptable") style="display:none;"@endif> 
-                                     <a class="nav-link" href="/wp-admin/add-compagnie">Ajouter Compagnie</a>
-                                </li>
-                                <li class="nav-item"> <a class="nav-link" href="/wp-admin/C-compagnie-2">Liste Compagnie</a></li>
-                                @if (session('role')=="admin" )
-                                 <li class="nav-item"> 
-                                    <a class="nav-link" href="/wp-admin/C-abonnementView">Update Abonnement</a></li>
-                                    <li class="nav-item"> 
-                                        <a class="nav-link" href="/wp-admin/ajouter_lo">Ajouter Lo</a></li>
-                                        <li class="nav-item"> 
-                                            <a class="nav-link" href="/wp-admin/listelo">Liste Lo</a></li>
-                                    @endif
-                                   
-                                @if (session('role')=="comptable")
-                                    
-                                    <li class="nav-item" > <a class="nav-link" href="/wp-admin/historiqueabonnement">HistoriqueAbonnement</a></li>
+                    @if (session('role') == 'admin' || session('role') == 'admin2' || session('role') == 'comptable')
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="collapse" href="#compagnie" aria-expanded="false"
+                                aria-controls="ui-basic">
+                                <span class="menu-title">Compagnie</span>
+                                <i class="menu-arrow"></i>
+                                <i class="mdi mdi-account menu-icon"></i>
+                            </a>
+                            <div class="collapse" id="compagnie">
+                                <ul class="nav flex-column sub-menu">
 
-                                    <li class="nav-item" >  <a class="nav-link" href="/wp-admin/historiquetransaction">HistoriqueTransaction</a>
-                                </li>
-                                @endif
-                            </ul>
-                        </div>
-                    </li>
+                                    <li class="nav-item"
+                                        @if (session('role') == 'comptable') style="display:none;" @endif>
+                                        <a class="nav-link" href="/wp-admin/add-compagnie">Ajouter Compagnie</a>
+                                    </li>
+                                    <li class="nav-item"> <a class="nav-link" href="/wp-admin/C-compagnie-2">Liste
+                                            Compagnie</a></li>
+                                    @if (session('role') == 'admin')
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/wp-admin/C-abonnementView">Update
+                                                Abonnement</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/wp-admin/ajouter_lo">Ajouter Lo</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/wp-admin/listelo">Liste Lo</a>
+                                        </li>
+                                    @endif
+
+                                    @if (session('role') == 'comptable')
+                                        <li class="nav-item"> <a class="nav-link"
+                                                href="/wp-admin/historiqueabonnement">HistoriqueAbonnement</a></li>
+
+                                        <li class="nav-item"> <a class="nav-link"
+                                                href="/wp-admin/historiquetransaction">HistoriqueTransaction</a>
+                                        </li>
+                                        <li class="nav-item"> <a class="nav-link"
+                                                href="/wp-admin/facture">Facture</a></li>
+                                    @endif
+                                </ul>
+                            </div>
+                        </li>
                     @endif
-                    @if (session('role')=="admin")
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#utilisateur" aria-expanded="false"
-                            aria-controls="ui-basic">
-                            <span class="menu-title">utilisateur</span>
-                            <i class="menu-arrow"></i>
-                            <i class="mdi mdi-account menu-icon"></i>
-                        </a>
-                        <div class="collapse" id="utilisateur" style="display: none;">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="/wp-admin/add-utilisateur">Ajouter utilisateur</a>
-                                </li>
-                                <li class="nav-item"> <a class="nav-link" href="/wp-admin/U-liste">Liste utilisateur</a></li>
-                                 
-                            </ul>
-                        </div>
-                    </li>
+                    @if (session('role') == 'admin')
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="collapse" href="#utilisateur" aria-expanded="false"
+                                aria-controls="ui-basic">
+                                <span class="menu-title">utilisateur</span>
+                                <i class="menu-arrow"></i>
+                                <i class="mdi mdi-account menu-icon"></i>
+                            </a>
+                            <div class="collapse" id="utilisateur" style="display: none;">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"> <a class="nav-link"
+                                            href="/wp-admin/add-utilisateur">Ajouter utilisateur</a>
+                                    </li>
+                                    <li class="nav-item"> <a class="nav-link" href="/wp-admin/U-liste">Liste
+                                            utilisateur</a></li>
+
+                                </ul>
+                            </div>
+                        </li>
                     @endif
 
                 </ul>
@@ -227,7 +240,7 @@
                     <div class="container-fluid d-flex justify-content-between">
                         <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright ©
                             Sagalotto.com 2024</span>
-                       
+
                     </div>
                 </footer>
                 <!-- partial -->
@@ -250,6 +263,9 @@
     <script src="/assets/js/misc.js"></script>
     <!-- endinject -->
     <!-- Custom js for this page -->
+    <script
+        src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js') }}">
+    </script>
     <script src="/assets/js/dashboard.js"></script>
     <script src="/assets/js/todolist.js"></script>
     <!-- End custom js for this page -->

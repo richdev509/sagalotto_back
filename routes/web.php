@@ -18,6 +18,8 @@ use App\Http\Controllers\superadmin\abonnementController;
 use App\Http\Controllers\historiquetransanction;
 use App\Http\Controllers\superadmin\testjobcontroller;
 use App\Http\Controllers\branchController;
+use App\Http\Controllers\superviseur\adminController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -31,9 +33,16 @@ use App\Http\Controllers\branchController;
 
 Route::get('/testjob', [testjobcontroller::class, 'lancement']);
 Route::post('/wp-admin/auth2', [SystemController::class, 'auth2']);
+
 Route::get('wp-admin/login', function () {
     return view('superadmin.login');
 })->name('wplogin');
+//superviseur
+Route::post('/superviseur/auth2', [adminController::class, 'login']);
+
+Route::get('superviseur/login', function () {
+    return view('superviseur.login');
+})->name('suplogin');
 
 
 
@@ -176,7 +185,15 @@ Route::middleware(['web', 'verify.session'])->group(function () {
 
 
 
+Route::middleware(['web', 'CheckSuperviseur'])->group(function () {
 
+
+    Route::get('/superviseur', [adminController::class, 'admin']);
+    Route::get('/sup_rapport2', [adminController::class, 'create_rapport2']);
+
+  
+    
+});
 
 
 
@@ -221,6 +238,10 @@ Route::middleware(['web', 'chekadmin'])->group(function () {
 
 
     Route::get('/wp-admin/historiqueabonnement', [abonnementController::class, 'viewhistorique'])->name('historiquesaabonnement');
+    Route::get('/wp-admin/facture', [abonnementController::class, 'viewFacture'])->name('facture');
+    Route::post('/wp-admin/genererfacture', [abonnementController::class, 'genererFacture'])->name('genererfacture');
+
+
     Route::get('/wp-admin/historiquetransaction', [historiquetransaction::class, 'viewtransaction'])->name('historiquestransaction');
     Route::post('/wp-admin/paiementdwe', [abonnementController::class, 'paiementdwe'])->name('paiementsdwe');
 });

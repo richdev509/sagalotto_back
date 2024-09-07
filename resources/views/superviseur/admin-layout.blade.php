@@ -206,13 +206,31 @@
                     </li>
                     <li class="nav-item">
 
-                        <a class="nav-link" href="admin">
+                        <a class="nav-link" href="superviseur">
                             <span class="menu-title">Akèy</span>
                             <i class="mdi mdi-home menu-icon"></i>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#vendeur" aria-expanded="false"
+                        <a class="nav-link" data-bs-toggle="collapse" href="#rapo" aria-expanded="false"
+                            aria-controls="ui-basic">
+                            <span class="menu-title">Rapo</span>
+                            <i class="menu-arrow"></i>
+                            <i class="mdi mdi-chart-line menu-icon"></i>
+                        </a>
+                        <div class="collapse" id="rapo">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="/sup_rapport2">Rapo/vande
+                                </a></li>
+                                <li class="nav-item"> <a class="nav-link disabled" href="/sup_rapport">Rapo general
+                                    </a></li>
+                              
+                            </ul>
+                        </div>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" data-bs-toggle="collapse" href="#vendeur" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Vandè</span>
                             <i class="menu-arrow"></i>
@@ -220,14 +238,14 @@
                         </a>
                         <div class="collapse" id="vendeur">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="ajouter-vendeur">Ajoute vandè</a>
+                                <li class="nav-item"> <a class="nav-link disabled" href="ajouter-vendeur">Ajoute vandè</a>
                                 </li>
-                                <li class="nav-item"> <a class="nav-link" href="lister-vendeur">Lis vandè</a></li>
+                                <li class="nav-item"> <a class="nav-link disabled" href="lister-vendeur">Lis vandè</a></li>
                             </ul>
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#tirage" aria-expanded="false"
+                        <a class="nav-link disabled" data-bs-toggle="collapse" href="#tirage" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Tiraj</span>
                             <i class="menu-arrow"></i>
@@ -241,7 +259,7 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#lo" aria-expanded="false"
+                        <a class="nav-link disabled" data-bs-toggle="collapse" href="#lo" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Lo ki soti</span>
                             <i class="menu-arrow"></i>
@@ -256,7 +274,7 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#autorisation" aria-expanded="false"
+                        <a class="nav-link disabled" data-bs-toggle="collapse" href="#autorisation" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Bloke - limite pri</span>
                             <i class="menu-arrow"></i>
@@ -272,25 +290,9 @@
                             </ul>
                         </div>
                     </li>
+               
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#rapo" aria-expanded="false"
-                            aria-controls="ui-basic">
-                            <span class="menu-title">Rapo</span>
-                            <i class="menu-arrow"></i>
-                            <i class="mdi mdi-chart-line menu-icon"></i>
-                        </a>
-                        <div class="collapse" id="rapo">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="/rapport">Rapo general
-                                    </a></li>
-                                <li class="nav-item"> <a class="nav-link" href="/raport2">Rapo/vande
-                                    </a></li>
-                            </ul>
-                        </div>
-
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#statistique" aria-expanded="false"
+                        <a class="nav-link disabled" data-bs-toggle="collapse" href="#statistique" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Statistik</span>
                             <i class="mdi mdi-bell-plus" style="color:orange;margin-left:10px;"></i>
@@ -314,7 +316,7 @@
 
 
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#fich" aria-expanded="false"
+                        <a class="nav-link disabled" data-bs-toggle="collapse" href="#fich" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Fich</span>
                             <i class="menu-arrow"></i>
@@ -329,7 +331,7 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#fich" aria-expanded="false"
+                        <a class="nav-link disabled" data-bs-toggle="collapse" href="#fich" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Branch</span>
                             <i class="menu-arrow"></i>
@@ -346,7 +348,7 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#paramet" aria-expanded="false"
+                        <a class="nav-link disabled" data-bs-toggle="collapse" href="#paramet" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Paramet</span>
                             <i class="menu-arrow"></i>

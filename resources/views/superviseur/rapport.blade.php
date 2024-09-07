@@ -1,4 +1,4 @@
-@extends('admin-layout')
+@extends('superviseur.admin-layout')
 
 
 @section('content')

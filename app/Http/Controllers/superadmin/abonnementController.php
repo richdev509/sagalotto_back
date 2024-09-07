@@ -19,22 +19,56 @@ use Illuminate\Support\Facades\DB;
 class abonnementController extends Controller
 {
 
+
+    public function viewhistorique()
+    {
+        if (session('role') == "admin" || session('role') == "comptable") {
+            $data = abonnementhistoriqueuser::orderBy('created_at', 'desc')->get();
+            return  view('superadmin.historiqueabonnement', compact('data'));
+        }
+    }
+    public function viewFacture()
+    {
+        if (session('role') == "admin" || session('role') == "comptable") {
+            $data = company::all();
+            $facture = 0;
+            return  view('superadmin.facture', compact('data', 'facture'));
+        }
+    }
+    public function genererFacture(Request $request)
+    {
+        if (session('role') == "admin" || session('role') == "comptable") {
+            $validator = $request->validate([
+               
+                'company' => 'required',
+                'date' => 'required',
+            ]);
+            $date = Carbon::create($request->date);
+            $datee = $date;
+            $date =$date->format('Y-m-d');
+            $data = company::all();
+            $compagnie =company::where('id', $request->company)->first();
+            $facture = 1;
+            $vendeur = ticket_code::where([
+                ['created_at', '>=', $datee->subDays(15)],
+                ['compagnie_id', '=', $compagnie->id]
     
-    public function viewhistorique(){
-           if(session('role')=="admin" || session('role')=="comptable"){
-            $data=abonnementhistoriqueuser::orderBy('created_at', 'desc')->get();
-            return  view('superadmin.historiqueabonnement',compact('data'));
-           }
+            ])->distinct()
+                ->pluck('user_id')
+                ->count();
+    
+            return  view('superadmin.facturePay', compact('data', 'facture','compagnie','vendeur','date'));
+        }
     }
     public function addabonement(Request $request)
     {
 
-        
-        if(session('role')=='admin'|| session('role')=="addeur" || session('role')=="comptable") {
+
+        if (session('role') == 'admin' || session('role') == "addeur" || session('role') == "comptable") {
 
 
-            $reponse = Company::where('name', $request->name)->where('phone', $request->phone)->first();
- 
+            $reponse = Company::where('code', $request->code)->first();
+
             if ($reponse) {
                 $retour = $this->getDaysRemaining($reponse->dateplan, $reponse->dateexpiration);
                 //$datedebutplan = Carbon::parse($request->date);
@@ -42,9 +76,9 @@ class abonnementController extends Controller
 
                 $datedebutplan = Carbon::parse($reponse->dateexpiration);
                 $dureemois = $request->duree;
-                $dateplan= Carbon::parse($reponse->dateplan);
-                $dateplan=$dateplan->format('Y-m-d');
-               
+                $dateplan = Carbon::parse($reponse->dateplan);
+                $dateplan = $dateplan->format('Y-m-d');
+
 
                 $dateExpirations = Carbon::parse($reponse->dateexpiration);
                 $dateExpirationS = Carbon::parse($reponse->dateexpiration);
@@ -53,45 +87,45 @@ class abonnementController extends Controller
 
 
                 if (!$nouvelleDate) {
-                    $dateexpiration = $dateExpirations->addMonths($dureemois)->addDays(10);
+                    $dateexpiration = $dateExpirations->addMonths($dureemois);
                     $datedebut = $dateExpirationS->addDays(1);
                 } else {
                     if ($nouvelleDate->lessThan($dateExpirationS)) {
                         notify()->error('La nouvelle date est inférieure à la date d\'expiration.');
                         return redirect()->route('listecompagnie');
                     }
-                    $dateexpiration = $nouvelleDate->addMonths($dureemois)->addDays(10);
+                    $dateexpiration = $nouvelleDate->addMonths($dureemois);
                     $datedebut = $nouvelleDate2;
                 }
 
 
 
                 // Mettre à jour l'abonnement dans la base de données
-                
 
 
-                $nb=$this->calculnombreuser($reponse->id,$dateplan,$dateExpirations->format('Y-m-d'));
-                $summ=$this->calculbalance($reponse->id,$dateplan);
-                
-                $montantdisponible=$this->findmontant($reponse->id,$dateplan);
-                
-                if($summ && $summ>0){
+
+                $nb = $this->calculnombreuser($reponse->id, $dateplan, $dateExpirations->format('Y-m-d'));
+                $summ = $this->calculbalance($reponse->id, $dateplan);
+
+                $montantdisponible = $this->findmontant($reponse->id, $dateplan);
+
+                if ($summ && $summ > 0) {
                     notify()->error('Une balance doit être acquittée');
-                    return redirect()->route('historiquesaabonnement')->with('error', 'La balance de :'.$reponse->name.' :doit être acquittée');
+                    return redirect()->route('historiquesaabonnement')->with('error', 'La balance de :' . $reponse->name . ' :doit être acquittée');
                 }
-                $balance=0;
-                $etat=null;
-                if($nb==0){
-                    $nombrepos=0;
-                }else{
-                    $nombrepos=$nb;
-                   
-                    $montantdue=$nombrepos*$reponse->plan;
-                    $montantdisponible=$this->findmontant($reponse->id,$dateplan);
-                    if($montantdue>$montantdisponible){
-                         $calculbalance=$montantdue-$montantdisponible;
-                         $balance=$calculbalance;
-                         $etat="dwe";
+                $balance = 0;
+                $etat = null;
+                if ($nb == 0) {
+                    $nombrepos = 0;
+                } else {
+                    $nombrepos = $nb;
+
+                    $montantdue = $nombrepos * $reponse->plan;
+                    $montantdisponible = $this->findmontant($reponse->id, $dateplan);
+                    if ($montantdue > $montantdisponible) {
+                        $calculbalance = $montantdue - $montantdisponible;
+                        $balance = $calculbalance;
+                        $etat = "dwe";
                     }
                 }
                 $reponse->update([
@@ -104,26 +138,27 @@ class abonnementController extends Controller
                     'idcompagnie' => $reponse->id,
                     'iduser' => session('id'),
                     'nombremois' => $request->duree,
-                    'nombrepos'=>$nombrepos,
-                    'montant'=>$request->montant,
-                    'balance'=>$balance,
+                    'nombrepos' => $nombrepos,
+                    'montant' => $request->montant,
+                    'balance' => $balance,
                     'date' => Carbon::now()->format('Y-m-d'),
-                    'dateabonnement'=>$datedebut->format('Y-m-d'),
+                    'dateabonnement' => $datedebut->format('Y-m-d'),
                     'action' => 'Ajoute Abonnement',
                     'created_at' => Carbon::now(),
-                    'etat'=>$etat,
+                    'etat' => $etat,
                 ]);
-                    $libelle='Paiement addabonement';
-                    $query2=historiquetransanction::insertGetId([
-                        'iduser'=>session('id'),
-                        'idCompagnie'=>$reponse->id,
-                        'montant'=>$request->montant,
-                        'libelle'=>$libelle,
-                        'idabonnement'=>$query,
-                    
+                $libelle = 'Paiement addabonement';
+                $query2 = historiquetransanction::insertGetId(
+                    [
+                        'iduser' => session('id'),
+                        'idCompagnie' => $reponse->id,
+                        'montant' => $request->montant,
+                        'libelle' => $libelle,
+                        'idabonnement' => $query,
+
                     ]
-            );
-                        
+                );
+
                 notify()->success('Abonnement mis à jour avec succès');
                 return redirect()->route('listecompagnie');
             } else {
@@ -136,32 +171,32 @@ class abonnementController extends Controller
         }
     }
 
-    public function paiementdwe(Request $request) {
-        
+    public function paiementdwe(Request $request)
+    {
+
         try {
             // Récupérer l'enregistrement correspondant
             $reponse = abonnementhistoriqueuser::where('id', $request->id)->first();
-            if($reponse->balance!=$request->montant){
+            if ($reponse->balance != $request->montant) {
                 notify()->error('Une erreur est survenue lors du traitement du paiement. Veuillez réessayer.');
                 return redirect()->route('historiquesaabonnement')->with('error', 'Une erreur est survenue montant inferieure au montant due. Veuillez réessayer.');
-          
             }
             // Mettre à jour l'enregistrement
             $reponse->update([
                 'montant' => $reponse->montant + $request->montant,
                 'etat' => 'ok',
-                'balance'=>0,
+                'balance' => 0,
             ]);
-    
+
             // Insérer une nouvelle transaction dans historiquetransanction
             $query2 = historiquetransanction::insertGetId([
                 'iduser' => session('id'),
                 'idCompagnie' => $reponse->idcompagnie,
                 'montant' => $request->montant,
-                'libelle' => 'paiement POS supplement du mois:'.$reponse->dateabonnement.'',
+                'libelle' => 'paiement POS supplement du mois:' . $reponse->dateabonnement . '',
                 'idabonnement' => $reponse->id,
             ]);
-    
+
             // Afficher une notification de succès
             notify()->success('Paiement ajouté avec succès');
             return redirect()->route('historiquesaabonnement');
@@ -170,9 +205,8 @@ class abonnementController extends Controller
             notify()->error('Une erreur est survenue lors du traitement du paiement. Veuillez réessayer.');
             return redirect()->route('historiquesaabonnement')->with('error', 'Une erreur est survenue lors du traitement du paiement. Veuillez réessayer.');
         }
-       
     }
-    
+
 
 
 
@@ -191,34 +225,37 @@ class abonnementController extends Controller
             return $d = 0;
         }
     }
-    public function calculnombreuser($compagnieid,$datedebut, $datefin){
-        $userCount=null;
+    public function calculnombreuser($compagnieid, $datedebut, $datefin)
+    {
+        $userCount = null;
 
         $userCount = DB::table('ticket_code')
-    ->where('compagnie_id', $compagnieid)
-    ->whereBetween('created_at', [$datedebut,  $datefin])
-    ->distinct('user_id')
-    ->count('user_id');
-             if(!$userCount){
-                $userCount=0;
-             }
-    return $userCount;
+            ->where('compagnie_id', $compagnieid)
+            ->whereBetween('created_at', [$datedebut,  $datefin])
+            ->distinct('user_id')
+            ->count('user_id');
+        if (!$userCount) {
+            $userCount = 0;
+        }
+        return $userCount;
     }
 
 
-    public function calculbalance($compagnieid, $date) {
-      
+    public function calculbalance($compagnieid, $date)
+    {
+
         $result = abonnementhistoriqueUser::where('idcompagnie', $compagnieid)
             ->where('etat', 'dwe') // Assurez-vous que 'dwe' correspond à la valeur attendue dans la base de données
             ->where('dateabonnement', $date)
             ->where('balance', '>', 0)
             ->value('balance');
-    
+
         return $result;
     }
-    
-    public function findmontant($compagnieid,$date){
-        $result=abonnementhistoriqueuser::where('idcompagnie',$compagnieid)->where('dateabonnement',$date)->where('balance',0)->value('montant');
+
+    public function findmontant($compagnieid, $date)
+    {
+        $result = abonnementhistoriqueuser::where('idcompagnie', $compagnieid)->where('dateabonnement', $date)->where('balance', 0)->value('montant');
         return $result;
     }
 }
