@@ -50,7 +50,7 @@ class executeTirageHttp extends Controller
         $this->date_ = $date;
         $this->compagnie = $compagnies;
         $this->sesyon=$sesyon;
-        
+        $this->execute($this->tiragename,$this->compagnie,$this->date_);
     }
 
     public function execute($tirage, $compagnies, $date)
