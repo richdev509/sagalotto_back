@@ -50,7 +50,7 @@ class abonnementController extends Controller
             $compagnie =company::where('id', $request->company)->first();
             $facture = 1;
             $vendeur = ticket_code::where([
-                ['created_at', '>=', $datee->subDays(15)],
+                ['created_at', '>=', $datee->subDays(7)],
                 ['compagnie_id', '=', $compagnie->id]
     
             ])->distinct()

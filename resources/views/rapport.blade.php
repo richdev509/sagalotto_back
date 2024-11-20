@@ -153,34 +153,31 @@
         </nav>
     </div>
 
-    <div class="row">
+    <div class="row" style="margin: 10px;border-style:ridge; border-width:1px; border-color:rgb(209, 163, 252);">
 
 
 
         <div class="card">
             <div class="card-body">
-                <div class="row_head">
+                <div class="row align-items-center" >
                     <form method="get" action="rapport" id="search">
                         @csrf
 
                         <div class="col-12 col-md-5">
-                            <div class="form-group local-forms">
                                 <label for="dateFilter">komanse</label>
                                 <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
                                     name="date_debut" value="{{ old('date_debut') }}" required />
 
-                                <label for="dateFilter" style="margin-top: 5px;">Fini</label>
+                               <label for="dateFilter" style="margin-top: 5px;">Fini</label>
 
                                 <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
                                     value="" name="date_fin" value="{{ old('date_fin') }}" required />
-                            </div>
                         </div>
 
                         <div class="col-12  col-md-5">
-                            <div class="form-group local-forms">
                                 <label for="dateFilter">Bank</label>
                                 <select class="form-control" name="bank"
-                                    value="{{ old('bank') }}">
+                                    value="{{ old('bank') }}" style="height:32px;margin-top: 10px;border: 1px solid black;">
                                     <option>Tout</option>
                                     @foreach ($vendeur as $row)
                                         <option value="{{ $row->id }}">{{ $row->bank_name }}</option>
@@ -188,19 +185,18 @@
                                 </select>
                                 <label for="dateFilter" style="margin-top: 5px;">Tiraj</label>
                                 <select class="form-control" name="tirage"
-                                    value="{{ old('bank') }}">
+                                    value="{{ old('bank') }}" style="height:32px;margin-top: 10px; border: 1px solid black;">
                                     <option>Tout</option>
                                     @foreach ($tirage as $row)
                                         <option value="{{ $row->id }}">{{ $row->name }}</option>
                                     @endforeach
                                 </select>
 
-                            </div>
                         </div>
                         <div class="col-12">
                             <div class="student-submit">
                                 <button style="margin-top: 18px;background:rgb(0 94 254)" type="submit"
-                                    class="btn primary" >Rapo</button>
+                                    class="btn primary loa" >Rapo</button>
                             </div>
                         </div>
 
@@ -260,22 +256,22 @@
                                 
                                 <tr>
                                     <td>Vant:</td>
-                                    <td>{{ $vente }} HTG</td>
+                                    <td>{{ $vente }} {{Session('devise')}}</td>
 
                                 </tr>
                                 <tr>
                                     <td>Pet:</td>
-                                    <td>{{ $perte }} HTG</td>
+                                    <td>{{ $perte }} {{Session('devise')}}</td>
 
                                 </tr>
                                 <tr>
                                     <td>Komisyon:</td>
-                                    <td>{{ $commission }} HTG</td>
+                                    <td>{{ $commission }} {{Session('devise')}}</td>
 
                                 </tr>
                                 <tr>
                                     <td>Balans:</td>
-                                    <td>{{ $vente - ($perte + $commission) }} HTG</td>
+                                    <td>{{ $vente - ($perte + $commission) }} {{Session('devise')}}</td>
 
                                 </tr>
                                 <!--
@@ -294,6 +290,7 @@
 
 
         </div>
+    </div>
         <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"

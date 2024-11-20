@@ -176,61 +176,7 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="row_head">
-                <form method="get" action="lister-ticket" id="search">
-                    @csrf
-
-                    <div class="col-12 col-sm-4">
-                        <div class="form-group local-forms">
-                            <label for="dateFilter">komanse</label>
-                            <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
-                                name="date_debut" value="{{ old('date_debut') }}" />
-
-                            <label for="dateFilter" style="margin-top: 5px;">Fini</label>
-
-                            <input style="height:10px;margin-top: 10px;" type="date" class="form-control" value=""
-                                name="date_fin" value="{{ old('date_fin') }}" />
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-sm-4" style="margin-right: -10px;">
-                        <div class="form-group local-forms">
-                            <label for="dateFilter">Bank</label>
-                            <select class="form-control" name="bank" value="{{ old('bank') }}">
-                                <option>Tout</option>
-                                @foreach ($vendeur as $row)
-                                    <option value="{{ $row->id }}">{{ $row->bank_name }}</option>
-                                @endforeach
-                            </select>
-                            <label for="dateFilter" style="margin-top: 5px;">Tirage</label>
-                            <select class="form-control" name="tirage" value="{{ old('tirage') }}">
-                                <option>Tout</option>
-                                @foreach ($tirage as $row)
-                                    <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                @endforeach
-                            </select>
-
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-4">
-                        <div class="form-group local-forms">
-                            <label for="dateFilter" style="margin-top: 5px;">#fich</label>
-
-                            <input style="height:10px;margin-top: 10px;" type="text" class="form-control" value=""
-                                name="ticket" placeholder="antre yon #fich" />
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="student-submit">
-                            <button style="margin-top: 18px;" type="submit"
-                                class="btn btn-gradient-primary me-2 loa">Chache</button>
-                        </div>
-                    </div>
-                </form>
-
-
-
-            </div>
+           
             <div class="table-responsive">
 
                 <table class="table table-striped">
@@ -241,14 +187,9 @@
                             <th> Tirage </th>
                             <th> Boul </th>
                             <th> Jwe</th>
-                            <th> Genyen</th>
-                            <th> Kakile</th>
-                            <th> Peye</th>
+                            <th> anile</th>
+                            <th> siprime</th>
                             <th> Dat</th>
-                            <th> Aksyon</th>
-
-
-
                         </tr>
                     </thead>
                     <tbody>
@@ -301,20 +242,8 @@
                                 </td>
 
                                 <td> {{ $row->amount }} HTG</td>
-
-
-                                @if ($row->winning == null)
-                                    <td style="color: red">
-                                        {{ 0 }} HTG
-
-                                    </td>
-                                @else
-                                    <td style="color: green;">
-                                        {{ $row->winning }} HTG
-                                    </td>
-                                @endif
                                 </td>
-                                @if ($row->is_calculated == 0)
+                                @if ($row->is_cancel == 0)
                                     <td style="color: red;"> Non </td>
                                 @else
                                     <td style="color:#58dc0b;"> Wi </td>

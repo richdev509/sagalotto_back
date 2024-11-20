@@ -24,11 +24,16 @@ class CompanyController extends Controller
     public function index_vendeur()
     {
         if (Session('loginId')) {
+            $branch = branch::where([
+                ['compagnie_id', '=', Session('loginId')],
+                ['is_delete', '=', 0]
+            ])->get();
+
             $vendeur = user::where([
                 ['compagnie_id', '=', Session('loginId')],
                 ['is_delete', '=', 0]
             ])->get();
-            return view('lister_vendeur', ['vendeur' => $vendeur]);
+            return view('lister_vendeur', ['vendeur' => $vendeur,'branch'=>$branch]);
         } else {
             return view('login');
         }
@@ -126,6 +131,8 @@ class CompanyController extends Controller
                         $request->session()->put('loginId', $user->id);
                         $request->session()->put('name', $user->name);
                         $request->session()->put('logo', $user->logo);
+                        $request->session()->put('devise', $user->devise);
+
                         notify()->success('Bienvenue  ' . $user->name);
                         return redirect('/admin');
                     } else {
@@ -160,6 +167,8 @@ class CompanyController extends Controller
                 ->where([
                     ['is_delete', '=', 0],
                     ['is_cancel', '=', 0],
+                    ['pending', '=', 0],
+
                 ])
                 ->selectRaw('SUM(ticket_vendu.amount) as total_amount, 
                              SUM(ticket_vendu.winning) as total_winning, 
@@ -187,18 +196,18 @@ class CompanyController extends Controller
                     ->toArray();
 
                 $vent = TicketVendu::whereIn('ticket_code_id', $codes)
-                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)
+                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)->where('pending', 0)
                     ->sum('amount');
                 /* $vente =TicketVendu::where('tirage_record_id',$boulGagnant->tirage_id)
                     ->whereDate('created_at', $boulGagnant->created_)
                     ->sum('amount');
                     dd($vente,);*/
                 $pert = TicketVendu::whereIn('ticket_code_id', $codes)
-                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)
+                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)->where('is_cancel', 0)
                     ->sum('winning');
 
                 $commissio = TicketVendu::whereIn('ticket_code_id', $codes)
-                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)
+                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)->where('is_cancel', 0)
                     ->sum('commission');
                 $tirageName = $boulGagnant->tirage_record->name;
                 $list[] = [
@@ -225,11 +234,17 @@ class CompanyController extends Controller
             Session()->forget('name');
             Session()->forget('logo');
             return view('login');
+        }else{
+            return view('login');
+
         }
         if(Session('branchId')) {
             Session()->forget('loginId');
 
             return view('superviseur/login');
+        }else{
+            return view('superviseur/login');
+
         }
     }
     public function create_vendeur()

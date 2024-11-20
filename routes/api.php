@@ -42,6 +42,8 @@ Route::group([
 
 
     Route::post('/ticket/creer', [ticketController::class,'creer_ticket'])->middleware('filterJson');
+    Route::post('/ticket/creer2', [ticketController::class,'creer_ticket2'])->middleware('filterJson');
+    Route::get('/ticket/creer_confirm', [ticketController::class,'confirm_ticket'])->middleware('filterJson');
 
     Route::get('/ticket/list', [ticketController::class,'list_ticket']);
     Route::post('/ticket/cancel', [ticketController::class,'cancel_ticket']);

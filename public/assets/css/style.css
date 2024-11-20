@@ -16592,7 +16592,8 @@ code {
 /* Utilities */
 .grid-margin,
 .purchase-popup {
-  margin-bottom: 2.5rem;
+  margin-bottom: 1rem;
+  padding: 2px;
 }
 
 @media (min-width: 576px) {
@@ -21376,7 +21377,7 @@ button.primary {
   left: 0;
   top: 0;
   z-index: 999;
-  background-color: rgba(0, 0, 0, 0.3333333333);
+  background-color: rgba(0, 0, 0, 0.5);
   display: none;
   -webkit-transition: all 0.5s ease;
   -o-transition: all 0.5s ease;
@@ -21517,3 +21518,47 @@ button.primary {
 }
 
 /* --------------- End Preloader --------------- */
+
+/* our custom style */
+
+.page-header {
+  margin: 2px;
+  border-style:ridge; 
+  border-width: 1px;
+  padding: 2px;
+ border-color:rgb(209, 163, 252);
+}
+.row {
+   margin: 2px;
+   padding: 2px;
+}
+.main-row {
+  margin: 2px;
+  border-style:ridge; 
+  border-width:1px; 
+  border-color:rgb(209, 163, 252);
+}
+.grid-margin{
+  padding: 2px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

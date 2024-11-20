@@ -14,7 +14,7 @@
                   </ol>
                 </nav>
               </div>
-              <div class="row">          
+              <div class="row" style="margin: 10px;border-style:ridge; border-width:1px; border-color:rgb(209, 163, 252);">          
                 <div class="col-12">
                   <div class="card">
                     <div class="card-body">
@@ -23,7 +23,7 @@
                         @csrf
                         <p class="card-description">Info sou tiraj la </p>
 
-                        <div class="row">
+                        <div class="row" >
                           <div class="col-md-6">
                             <div class="form-group row">
                               

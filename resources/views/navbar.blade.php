@@ -37,14 +37,19 @@
                 </li>
             </ul>
             <div class="nav-side">
-                <div class="d-flex align-items-center">
-                    <a href="#" class="search-icon me-4">
-                        <i class="bi bi-person"></i>
-                    </a>
-                    <a href="/login" class="btn rounded-pill brd-gray hover-blue4 sm-butn fw-bold">
-                        <span>Akse kont Directeur<i class="bi bi-arrow-right ms-1"></i> </span>
-                    </a>
-                </div>
+                    <li class="nav-item dropdown" style="list-style-type: none;">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px; background-color: #5842BC; color: white; border-radius: 10px;">
+                            <i class="fas fa-user" style="margin-right: 5px;"> </i >Konekte    
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                            <li><a class="dropdown-item" href="/login">Directeur</a></li>
+                            <li><a class="dropdown-item" href="/superviseur/login">Superviseur</a></li>
+                        </ul>
+                    </li>
+
+                   <!-- <a href="/login" class="btn rounded-pill brd-gray hover-blue4 sm-butn fw-bold">
+                        <span><i class="fas fa-user"></i> Akse kont Directeur<i class="bi bi-arrow-right ms-1"></i> </span>
+                    </a> -->
             </div>
         </div>
     </div>

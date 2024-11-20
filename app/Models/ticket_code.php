@@ -12,5 +12,8 @@ class ticket_code extends Model
     protected $fillable = [
         'code',
     ];
+    public function TicketVendus() {
+        return $this->hasMany(TicketVendu::class, 'ticket_code_id');
+    }
     
 }

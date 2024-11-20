@@ -41,7 +41,9 @@
             font-weight: 400;
             font-style: normal;
         }
+        #preloader{
 
+        }
 
         .containerr {
             display: flex;
@@ -64,8 +66,8 @@
 
     <div class="container-scroller">
         <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-            <div class="containerr scroll-right" style="background:orange;color:black;">
-                <marquee behavior="" direction="left">Rale raport rapid pou nenpot enteval dat, ni kote vendeur ni kote admin panel</marquee>
+            <div class="containerr scroll-right" style="background:rgb(241, 163, 37);color:black; width: 100%;">
+                <marquee behavior="" direction="left">Aswe a kise dimanch pou lendi maten gen mise a jou kap fet sou system nan, epi nap invite tout client ki gen problem pou mande nou lot version application kap disponib demain sDv</marquee>
             </div>
            
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
@@ -98,7 +100,7 @@
                         <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
 
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/logout">
+                            <a class="dropdown-item loa" href="/logout">
                                 <i class="mdi mdi-logout me-2 text-primary"></i>Dekonekte</a>
                         </div>
                     </li>
@@ -107,7 +109,7 @@
                         <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
 
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/logout">
+                            <a class="dropdown-item loa" href="/logout">
                                 <i class="mdi mdi-logout me-2 text-primary"></i> Dekonekte </a>
                         </div>
                     </li>
@@ -207,7 +209,7 @@
                     <li class="nav-item">
 
                         <a class="nav-link" href="admin">
-                            <span class="menu-title">Akèy</span>
+                            <span class="menu-title loa">Akèy</span>
                             <i class="mdi mdi-home menu-icon"></i>
                         </a>
                     </li>
@@ -220,9 +222,9 @@
                         </a>
                         <div class="collapse" id="vendeur">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="ajouter-vendeur">Ajoute vandè</a>
+                                <li class="nav-item"> <a class="nav-link loa" href="ajouter-vendeur">Ajoute vandè</a>
                                 </li>
-                                <li class="nav-item"> <a class="nav-link" href="lister-vendeur">Lis vandè</a></li>
+                                <li class="nav-item"> <a class="nav-link loa" href="lister-vendeur">Lis vandè</a></li>
                             </ul>
                         </div>
                     </li>
@@ -235,8 +237,8 @@
                         </a>
                         <div class="collapse" id="tirage">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="ajouter-tirage">Ajoute Tiraj</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="lister-tirage">Lis Tiraj</a></li>
+                                <li class="nav-item"> <a class="nav-link loa" href="ajouter-tirage">Ajoute Tiraj</a></li>
+                                <li class="nav-item"> <a class="nav-link loa" href="lister-tirage">Lis Tiraj</a></li>
                             </ul>
                         </div>
                     </li>
@@ -249,9 +251,9 @@
                         </a>
                         <div class="collapse" id="lo">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="/ajout-lo">Ajoute lo
+                                <li class="nav-item"> <a class="nav-link loa" href="/ajout-lo">Ajoute lo
                                     </a></li>
-                                <li class="nav-item"> <a class="nav-link" href="lister-lo">Liste lo</a></li>
+                                <li class="nav-item"> <a class="nav-link loa" href="lister-lo">Liste lo</a></li>
                             </ul>
                         </div>
                     </li>
@@ -264,9 +266,9 @@
                         </a>
                         <div class="collapse" id="autorisation">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="/block">Bloke/Debloke
+                                <li class="nav-item"> <a class="nav-link loa" href="/block">Bloke/Debloke
                                     </a></li>
-                                <li class="nav-item"> <a class="nav-link" href="{{ route('limitprix') }}">Ajiste
+                                <li class="nav-item"> <a class="nav-link loa" href="{{ route('limitprix') }}">Ajiste
                                         Limit Prix Achat
                                     </a></li>
                             </ul>
@@ -281,9 +283,9 @@
                         </a>
                         <div class="collapse" id="rapo">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="/rapport">Rapo general
+                                <li class="nav-item"> <a class="nav-link loa" href="/rapport">Rapo general
                                     </a></li>
-                                <li class="nav-item"> <a class="nav-link" href="/raport2">Rapo/vande
+                                <li class="nav-item"> <a class="nav-link loa" href="/raport2">Rapo/vande
                                     </a></li>
                             </ul>
                         </div>
@@ -300,9 +302,9 @@
                         </a>
                         <div class="collapse" id="statistique">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="/stat">statistiqueUnique
+                                <li class="nav-item"> <a class="nav-link loa" href="/stat">statistiqueUnique
                                     </a></li>
-                                <li class="nav-item"> <a class="nav-link"
+                                <li class="nav-item"> <a class="nav-link loa"
                                         href="{{ route('statistique') }}">statistique General
                                     </a></li>
 
@@ -322,7 +324,7 @@
                         </a>
                         <div class="collapse" id="fich">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="lister-ticket">Chache
+                                <li class="nav-item"> <a class="nav-link loa" href="lister-ticket">Chache
                                     </a></li>
 
                             </ul>
@@ -337,9 +339,9 @@
                         </a>
                         <div class="collapse" id="fich">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="creer_branch">Ajoute branch
+                                <li class="nav-item"> <a class="nav-link loa" href="creer_branch">Ajoute branch
                                     </a></li>
-                                <li class="nav-item"> <a class="nav-link" href="lister_branch">Liste branch
+                                <li class="nav-item"> <a class="nav-link loa" href="lister_branch">Liste branch
                                     </a></li>
 
                             </ul>
@@ -354,17 +356,17 @@
                         </a>
                         <div class="collapse" id="paramet">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="{{ route('maryajGratis') }}">Maryaj
+                                <li class="nav-item"> <a class="nav-link loa" href="{{ route('maryajGratis') }}">Maryaj
                                         Gratis
                                     </a></li>
-                                <li class="nav-item"> <a class="nav-link" href="{{ route('ajisteprilo') }}">Ajiste
+                                <li class="nav-item"> <a class="nav-link loa" href="{{ route('ajisteprilo') }}">Ajiste
                                         pri premye lo
                                     </a></li>
 
-                                <li class="nav-item"> <a class="nav-link" href="{{ route('lotconfig') }}">Lot
+                                <li class="nav-item"> <a class="nav-link loa" href="{{ route('lotconfig') }}">Lot
                                         Konfigirasyon
                                     </a></li>
-                                <li class="nav-item"> <a class="nav-link" href="/plan">Compte & Plan
+                                <li class="nav-item"> <a class="nav-link loa" href="/plan">Compte & Plan
                                     </a></li>
 
                             </ul>
@@ -398,7 +400,7 @@
     </div>
     <div id="preloader" style="display: none;">
         <div id="loading-wrapper" class="show">
-            <div id="loading-text"> <img src="{{ asset('/assets/landing/img/saga.png') }}" alt=""> </div>
+            <div id="loading-text"> <img src="{{ asset('/assets/images/logo.png') }}" alt=""> </div>
             <div id="loading-content"></div>
         </div>
     </div>
@@ -436,21 +438,27 @@
             $('.navbar-toggler').on('click', function() {
                 $('.scroll-right').hide();
             });
+            $('.loa').on('click', function() {
+                showLoader();
+            });
+
             hideLoader()
         });
 
         function showLoader() {
             document.getElementById('preloader').style.display = 'flex';
+             //  setTimeout(hideLoader,100);
         }
 
         function hideLoader() {
             document.getElementById('preloader').style.display = 'none';
         }
-        window.onload = function() {
-            showLoader();
+        // window.onload = function() {
+        //     showLoader();
 
-            setTimeout(hideLoader,100);
-        };
+        //     setTimeout(hideLoader,100);
+        // };
+      //  function 
       
     </script>
 </body>

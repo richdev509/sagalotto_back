@@ -21,51 +21,51 @@
             </ul>
         </nav>
     </div>
-    <div class="row">
-        <div class="col-md-4 stretch-card grid-margin">
+    <div class="row" style="margin: 2px;padding:2px;border-style:ridge; border-width:1px; border-color:rgb(209, 163, 252);">
+        <div class="col-md-4 stretch-card grid-margin" style="padding: 2px;">
             <div class="card bg-gradient-danger card-img-holder text-white">
                 <div class="card-body">
                     <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
                     <h4 class="font-weight-normal mb-3">Kob ou vann jodia <i
                             class="mdi mdi-chart-line mdi-24px float-right"></i>
                     </h4>
-                    <h2 class="mb-5">HTG {{ $vente }}</h2>
+                    <h2 class="mb-5">{{Session('devise')}} {{ $vente }}</h2>
                     <!--<h6 class="card-text">Vandè ki vann plis jodia:  <span style="font-weight: bold;">Bank #12</span></h6>-->
                 </div>
             </div>
         </div>
-        <div class="col-md-4 stretch-card grid-margin">
+        <div class="col-md-4 stretch-card grid-margin" style="padding: 2px;">
             <div class="card bg-gradient-info card-img-holder text-white">
                 <div class="card-body">
                     <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
                     <h4 class="font-weight-normal mb-3">Kob ou peye jodia <i
                             class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
                     </h4>
-                    <h2 class="mb-5">HTG {{ $perte }}</h2>
+                    <h2 class="mb-5">{{Session('devise')}} {{ $perte }}</h2>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 stretch-card grid-margin">
+        <div class="col-md-4 stretch-card grid-margin" style="padding: 2px;">
             <div class="card bg-gradient-success card-img-holder text-white">
                 <div class="card-body">
                     <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
                     <h4 class="font-weight-normal mb-3">Balans <i class="mdi mdi-diamond mdi-24px float-right"></i>
                     </h4>
-                    <h2 class="mb-5">HTG {{round($vente - ($perte + $commission), 2) }}</h2>
+                    <h2 class="mb-5">{{Session('devise')}} {{round($vente - ($perte + $commission), 2) }}</h2>
                     <h6 class="card-text"></h6>
                 </div>
             </div>
         </div>
     </div>
   
-    <div class="row" style="margin-top: 10px;">
-        <div class="col-12 grid-margin">
+    <div class="row" style="margin: 2px;padding: 2px;border-style:ridge; border-width:1px; border-color:rgb(209, 163, 252);">
+        <div class="col-12 grid-margin" style="padding:2px;">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">3 Denye tiraj ki tire @php echo "L'heure du serveur est : " . date('Y-m-d H:i:s') . "\n";@endphp</h4>
-                    <a href="/"> <label class="badge badge-gradient-info">Gade plis</label></a>
+                    <h4 class="card-title">3 Denye tiraj ki tire yo, lè sèvè se: @php echo date('Y-m-d H:i:s') . "\n";@endphp</h4>
+                    <a href="/lister-lo"> <label class="badge badge-gradient-info">Gade plis</label></a>
                     <div class="table-responsive">
-                        <table class="table  table-striped">
+                        <table class="table  table-striped" style="margin: 1px;padding:1px;">
                             <thead>
                                 <tr>
                                     <th>Tiraj Nom</th>
@@ -122,16 +122,16 @@
                                     </tr>
                                     <tr style="border: 1px solid black;">
                                         <td style="font-weight: bold;">
-                                            Vann: <span>{{ $lists['vent'] ?? 0 }} HTG</span>
+                                            Vann: <span>{{ $lists['vent'] ?? 0 }} {{Session('devise')}} </span>
                                         </td>
 
                                         <td style="font-weight: bold;">
-                                            Pedi: <span>{{ $lists['pert'] ?? 0 }} HTG</span>
+                                            Pedi: <span>{{ $lists['pert'] ?? 0 }} {{Session('devise')}} </span>
 
                                         </td>
                                         <td style="font-weight: bold;">
                                             Balans: <span>{{ $lists['vent'] - ($lists['pert'] + $lists['commissio']) }}
-                                                HTG</span>
+                                                {{Session('devise')}} </span>
 
                                         </td>
                                     </tr>

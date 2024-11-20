@@ -9,7 +9,7 @@
   }
   </style>
  
-  <div class="col-lg-12 grid-margin stretch-card">
+  <div class="col-lg-12 grid-margin stretch-card" style="margin: 10px;border-style:ridge; border-width:1px; border-color:rgb(209, 163, 252);">
       <div class="card">
           <div class="card-body">
               <h4 class="card-title">Lis lo ki ajoute</h4>

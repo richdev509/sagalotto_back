@@ -10,7 +10,7 @@
         </style>
         <div class="card">
 
-            <div class="card-body">
+            <div class="card-body" style="margin: 2px;border-style:ridge; border-width:1px; border-color:rgb(209, 163, 252);">
                 <h4 class="card-title">Espas pou antre lo ki tire</h4>
                 <p class="card-description">Mete lo ki tire yo: yon chif + pweye lo Ex:01 +dezyem lo ex:02 et twazyem lo
                     ex:03</p>

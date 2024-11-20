@@ -6,6 +6,25 @@
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
 
 <body style='font-family:Tahoma;font-size:12px;color: #333333;background-color:#FFFFFF;'>
+    <?php  
+    if($compagnie->plan == 10){
+     if($vendeur >= 1 && $vendeur <=10 ){
+        $plan =10;
+     }elseif($vendeur >= 11 && $vendeur <= 20 ){
+        $plan = 9;
+     }elseif($vendeur >= 21 && $vendeur <= 30 ){
+        $plan = 8;
+     }elseif($vendeur >= 31 && $vendeur <= 50){
+        $plan = 7;
+     }elseif($vendeur >= 51 && $vendeur <= 10000){
+        $plan =6;
+     }
+         
+    }else{
+        $plan = $compagnie->plan;
+    }   
+
+    ?>
     <table align='center' border='0' cellpadding='0' cellspacing='0' style='height:842px; width:595px;font-size:12px;'>
         <tr>
             <td valign='top'>
@@ -39,7 +58,7 @@
                 <table width='100%' height='100' cellspacing='0' cellpadding='0'>
                     <tr>
                         <td>
-                            <div align='center' style='font-size: 14px;font-weight: bold;'>Facture № 553 </div>
+                            <div align='center' style='font-size: 14px;font-weight: bold;'>Facture № 556 </div>
                         </td>
                     </tr>
                 </table>
@@ -53,14 +72,15 @@
                         <td bordercolor='#ccc' bgcolor='#f2f2f2' style='font-size:12px;'><strong>Total</strong></td>
 
                     </tr>
+                   
                     <tr style="display:none;">
                         <td colspan="*">
                     <tr>
 
                         <td valign='top' style='font-size:12px;'>Bank actif</td>
                         <td valign='top' style='font-size:12px;'>{{$vendeur}}</td>
-                        <td valign='top' style='font-size:12px;'>{{$compagnie->plan}} $</td>
-                        <td valign='top' style='font-size:12px;'>{{ $vendeur * $compagnie->plan}} $</td>
+                        <td valign='top' style='font-size:12px;'>{{$plan}} $</td>
+                        <td valign='top' style='font-size:12px;'>{{ $vendeur * $plan}} $</td>
 
                     </tr>
                   

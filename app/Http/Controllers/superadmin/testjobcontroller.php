@@ -30,5 +30,38 @@ class testjobcontroller extends Controller
         // Log to confirm the handle function was called
         dd('CopyMontant1ToMontant2 job executed.');
     }
+
+    public function jobAutoActive(){
+        if (Carbon::now()->isSunday()) {
+            DB::table('tirage_record')
+                ->where('is_active', '=', '1')
+                ->where([
+                    ['tirage_id','>=', 7],
+                    ['tirage_id','<=', 12]
+
+                ])
+                ->update([
+                    'is_active' => '0',
+                    'autoActive' =>'1'
+
+                ]);
+        }
+        if(Carbon::now()->isMonday()) {
+            DB::table('tirage_record')
+            ->where([
+                ['is_active', '=', 0],
+                ['autoActive', '=', 1],
+                ['tirage_id','>=', 7],
+                ['tirage_id','<=', 12]
+
+            ])->update([
+                'is_active' => 1,
+                'autoActive'=> ''
+
+            ]);
+
+        }
+        dd('job run ');
+    }
   
 }

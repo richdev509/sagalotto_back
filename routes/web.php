@@ -212,6 +212,8 @@ Route::middleware(['web', 'chekadmin'])->group(function () {
     Route::post('/wp-admin/C-add', [SystemController::class, 'addCompagnie'])->name('add_compagnie');
     Route::post('/wp-admin/C-edite', [SystemController::class, 'editCompagnie'])->name('edit_compagnie');
     Route::post('/wp-admin/C-compagnie', [SystemController::class, 'viewCompagnieUnique'])->name('listecompagnieU');
+    Route::get('/wp-admin/C-login', [SystemController::class, 'login_as_company'])->name('login_as_company');
+
     Route::get('/wp-admin/C-compagnie-2', [SystemController::class, 'viewCompagnie'])->name('listecompagnie');
     Route::post('/wp-admin/update', [SystemController::class, 'updateCompagnie'])->name('update_compagnie');
     Route::post('/wp-admin/V-edit', [SystemController::class, 'editVendeur'])->name('edit_vendeur2');
@@ -240,6 +242,7 @@ Route::middleware(['web', 'chekadmin'])->group(function () {
 
     //run job
     Route::get('/updateLimitPrix', [testjobcontroller::class, 'jobUpdateLimit']);
+    Route::get('/updateAutoActive', [testjobcontroller::class, 'jobAutoActive']);
 
 
 

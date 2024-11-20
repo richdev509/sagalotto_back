@@ -32,6 +32,8 @@ class adminController extends Controller
                 ->where([
                     ['is_delete', '=', 0],
                     ['is_cancel', '=', 0],
+                    ['pending', '=', 0],
+
                 ])
                 ->selectRaw('SUM(ticket_vendu.amount) as total_amount, 
                              SUM(ticket_vendu.winning) as total_winning, 
@@ -169,6 +171,8 @@ class adminController extends Controller
                             ->where([
                                 ['is_cancel', '=', 0],
                                 ['is_delete', '=', 0],
+                                ['pending', '=', 0],
+
                             ])
                             ->select(
                                 DB::raw('SUM(ticket_vendu.amount) as vente'),
@@ -218,6 +222,8 @@ class adminController extends Controller
                             ->where([
                                 ['is_cancel', '=', 0],
                                 ['is_delete', '=', 0],
+                                ['pending', '=', 0],
+
                             ])
                             ->select(
                                 DB::raw('SUM(ticket_vendu.amount) as vente'),
@@ -264,6 +270,8 @@ class adminController extends Controller
                             ->where([
                                 ['is_cancel', '=', 0],
                                 ['is_delete', '=', 0],
+                                ['pending', '=', 0],
+
                             ])
                             ->select(
                                 DB::raw('SUM(ticket_vendu.amount) as vente'),
@@ -310,6 +318,8 @@ class adminController extends Controller
                         ->where([
                             ['is_cancel', '=', 0],
                             ['is_delete', '=', 0],
+                            ['pending', '=', 0],
+
                         ])
                         ->select(
                             DB::raw('SUM(ticket_vendu.amount) as vente'),

@@ -151,7 +151,8 @@ class SystemController extends Controller
     public function viewCompagnie()
     {
         if (session('role') == "admin" || session('role') == "comptable") {
-            $data = DB::table('companies')->get();
+            $data = DB::table('companies')
+            ->get();
             $results=$this->nombrevendeurmois($data);
             $resultsmontant=$this->montantplan($data);
             if ($data) {
@@ -547,5 +548,31 @@ class SystemController extends Controller
     public function viewlistelo(){
         $list = historiquesboulgagnant::orderBy('created_at', 'desc')->get();
         return view('superadmin.list-lo',compact('list'));
+    }
+    //login as a company access their panel
+    public function login_as_company(Request $request){
+       
+            $user = company::where([
+                ['id', '=', $request->id],
+            ])->first();
+            //try to know if user
+            if ($user) {
+                //User found let tcheck the password
+                    //Password match let find if user not block
+                        $request->session()->put('loginId', $user->id);
+                        $request->session()->put('name', $user->name);
+                        $request->session()->put('logo', $user->logo);
+                        $request->session()->put('devise', $user->devise);
+
+                        notify()->success('Bienvenue  ' . $user->name);
+                        return redirect('/admin');
+                
+             
+            } else {
+                notify()->error('non itilizate a inkorek');
+
+                return redirect('/login')->with('error', 'Utilisateur non trouve');
+            }
+        
     }
 }

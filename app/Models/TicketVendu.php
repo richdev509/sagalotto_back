@@ -21,4 +21,7 @@ class TicketVendu extends Model
     {
         return $this->belongsTo(ticket_code::class,'ticket_code_id','code');
     }
+    public function tirageRecord() {
+        return $this->belongsTo(tirage_record::class, 'tirage_record_id');
+    }
 }

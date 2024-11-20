@@ -14,7 +14,7 @@
                   </ol>
                 </nav>
               </div>
-              <div class="col-lg-12 stretch-card">
+              <div class="col-lg-12 stretch-card" style="margin: 10px;border-style:ridge; border-width:1px; border-color:rgb(209, 163, 252);">
                 <div class="card">
                   <div class="card-body">
                     <div class="table-responsive">

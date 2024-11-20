@@ -20,8 +20,8 @@
                   </ol>
                 </nav>
               </div>
-              <div class="row">          
-                <div class="col-12">
+              <div class="row" style="margin: 10px;padding:2px;border-style:ridge; border-width:1px; border-color:rgb(209, 163, 252);">          
+                <div class="col-12" style="margin: 2px;padding:2px;">
                   <div class="card">
                     <div class="card-body">
                       
