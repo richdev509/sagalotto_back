@@ -48,7 +48,7 @@ class statistiquegeneralController extends Controller
 
         $formattedDate = now()->toDateString();
         $codes = ticket_code::where('compagnie_id', session('loginId'))
-            ->whereDate('created_at', '2024-04-22')//2024-04-22
+            ->whereDate('created_at', $formattedDate)
             ->pluck('code')
             ->toArray();
 
@@ -56,7 +56,12 @@ class statistiquegeneralController extends Controller
         if ($codes) {
             // Récupérer les tickets vendus
             $fiches = TicketVendu::whereIn('ticket_code_id', $codes)
-                ->get();
+            ->where([
+                ['is_delete', '=', 0],
+                ['is_cancel', '=', 0],
+                ['pending', '=', 0],
+                ])    
+            ->get();
         }
 
         return $fiches;

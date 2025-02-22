@@ -60,15 +60,15 @@ class branchController extends Controller
                 notify()->error('branch sa pa trouve');
                 return back();
             }
-            if (!empty($request->input('password'))) {
+            if (!empty($request->input('agent_password'))) {
                 $user = branch::where('id', $request->input('id'))->update([
                     'name' => $request->input('name'),
                     'address' => $request->input('address'),
                     'phone' => $request->input('phone'),
                     'description'=>$request->input('description'),
-                    'agent_fullname' => $request->input('agent_fullname'),
+                    'agent_fullname' => $request->input('agent_name'),
                     'agent_password' => Hash::make($request->input('agent_password')),
-                    
+                    'agent_username' => $request->input('agent_username'),
                     'updated_at' => Carbon::now()
                 ]);
 
@@ -80,7 +80,8 @@ class branchController extends Controller
                     'address' => $request->input('address'),
                     'phone' => $request->input('phone'),
                     'description'=>$request->input('description'),
-                    'agent_fullname' => $request->input('agent_fullname'),
+                    'agent_fullname' => $request->input('agent_name'),
+                    'agent_username' => $request->input('agent_username'),
                   
                     'updated_at' => Carbon::now()
                 ]);
@@ -116,9 +117,9 @@ class branchController extends Controller
                 'name' => $request->input('name'),
                 'address' => $request->input('address'),
                 'phone' => $request->input('phone'),
-                'agent_username' => $request->input('username'), 
+                'agent_username' => $request->input('agent_username'), 
                 'agent_fullname' => $request->input('agent_name'),              
-                'agent_password' => Hash::make($request->input('password')),  
+                'agent_password' => Hash::make($request->input('agent_password')),  
                 'created_at' => Carbon::now()
             ]);
             $branch = branch::find($query);

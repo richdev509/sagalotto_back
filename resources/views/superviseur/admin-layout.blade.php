@@ -65,15 +65,16 @@
     <div class="container-scroller">
         <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
             <div class="containerr scroll-right" style="background:orange;color:black;">
-                <marquee behavior="" direction="left">Rale raport rapid pou nenpot enteval dat, ni kote vendeur ni kote admin panel</marquee>
+                <marquee behavior="" direction="left">Rale raport rapid pou nenpot enteval dat, ni kote vendeur ni
+                    kote admin panel</marquee>
             </div>
-           
+
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
 
 
-                <a class="navbar-brand brand-logo" href="admin"><img src="assets/images/logo1.png"
+                <a class="navbar-brand brand-logo" href="superviseur"><img src="assets/images/logo1.png"
                         alt="logo" /></a>
-                <a class="navbar-brand brand-logo-mini" href="admin"><img src="assets/images/logo-mini.png"
+                <a class="navbar-brand brand-logo-mini" href="superviseur"><img src="assets/images/logo-mini.png"
                         alt="logo" /></a>
 
             </div>
@@ -98,7 +99,7 @@
                         <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
 
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/logout">
+                            <a class="dropdown-item" href="superviseur/login">
                                 <i class="mdi mdi-logout me-2 text-primary"></i>Dekonekte</a>
                         </div>
                     </li>
@@ -107,7 +108,7 @@
                         <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
 
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/logout">
+                            <a class="dropdown-item" href="/superviseur/login">
                                 <i class="mdi mdi-logout me-2 text-primary"></i> Dekonekte </a>
                         </div>
                     </li>
@@ -221,16 +222,16 @@
                         <div class="collapse" id="rapo">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link" href="/sup_rapport2">Rapo/vande
-                                </a></li>
-                                <li class="nav-item"> <a class="nav-link disabled" href="/sup_rapport">Rapo general
                                     </a></li>
-                              
+                                <li class="nav-item"> <a class="nav-link" href="/sup_rapport">Rapo general
+                                    </a></li>
+
                             </ul>
                         </div>
 
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled" data-bs-toggle="collapse" href="#vendeur" aria-expanded="false"
+                        <a class="nav-link" data-bs-toggle="collapse" href="#vendeur" aria-expanded="false"
                             aria-controls="ui-basic">
                             <span class="menu-title">Vandè</span>
                             <i class="menu-arrow"></i>
@@ -238,12 +239,14 @@
                         </a>
                         <div class="collapse" id="vendeur">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link disabled" href="ajouter-vendeur">Ajoute vandè</a>
-                                </li>
-                                <li class="nav-item"> <a class="nav-link disabled" href="lister-vendeur">Lis vandè</a></li>
+                               
+                                <li class="nav-item"> <a class="nav-link" href="sup_list-vendeur">Lis
+                                        vandè</a></li>
                             </ul>
                         </div>
                     </li>
+                    <!--
+
                     <li class="nav-item">
                         <a class="nav-link disabled" data-bs-toggle="collapse" href="#tirage" aria-expanded="false"
                             aria-controls="ui-basic">
@@ -273,9 +276,12 @@
                             </ul>
                         </div>
                     </li>
+                -->
+                                    <!--
+
                     <li class="nav-item">
-                        <a class="nav-link disabled" data-bs-toggle="collapse" href="#autorisation" aria-expanded="false"
-                            aria-controls="ui-basic">
+                        <a class="nav-link disabled" data-bs-toggle="collapse" href="#autorisation"
+                            aria-expanded="false" aria-controls="ui-basic">
                             <span class="menu-title">Bloke - limite pri</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-earth menu-icon"></i>
@@ -290,10 +296,10 @@
                             </ul>
                         </div>
                     </li>
-               
+
                     <li class="nav-item">
-                        <a class="nav-link disabled" data-bs-toggle="collapse" href="#statistique" aria-expanded="false"
-                            aria-controls="ui-basic">
+                        <a class="nav-link disabled" data-bs-toggle="collapse" href="#statistique"
+                            aria-expanded="false" aria-controls="ui-basic">
                             <span class="menu-title">Statistik</span>
                             <i class="mdi mdi-bell-plus" style="color:orange;margin-left:10px;"></i>
                             <i class="menu-arrow"></i>
@@ -312,7 +318,6 @@
                         </div>
 
                     </li>
-
 
 
                     <li class="nav-item">
@@ -373,7 +378,7 @@
                         </div>
 
                     </li>
-
+                    -->
                 </ul>
 
             </nav>
@@ -451,9 +456,8 @@
         window.onload = function() {
             showLoader();
 
-            setTimeout(hideLoader,100);
+            setTimeout(hideLoader, 100);
         };
-      
     </script>
 </body>
 

@@ -33,7 +33,7 @@ class CompanyController extends Controller
                 ['compagnie_id', '=', Session('loginId')],
                 ['is_delete', '=', 0]
             ])->get();
-            return view('lister_vendeur', ['vendeur' => $vendeur,'branch'=>$branch]);
+            return view('lister_vendeur', ['vendeur' => $vendeur, 'branch' => $branch]);
         } else {
             return view('login');
         }
@@ -156,11 +156,16 @@ class CompanyController extends Controller
         if (Session('loginId')) {
 
             $today = Carbon::now();
-            
-            $ticketCodes = DB::table('ticket_code')
+
+            $ticketData = DB::table('ticket_code')
             ->where('compagnie_id', '=', Session('loginId'))
             ->whereDate('created_at', '=', $today)
-            ->pluck('code');
+            ->select('code', 'user_id')
+            ->groupBy('code', 'user_id')
+            ->get();
+        
+        $user_actif = $ticketData->pluck('user_id')->unique()->count();
+        $ticketCodes = $ticketData->pluck('code');
 
             $data = DB::table('ticket_vendu')
                 ->whereIn('ticket_code_id', $ticketCodes)
@@ -170,15 +175,36 @@ class CompanyController extends Controller
                     ['pending', '=', 0],
 
                 ])
-                ->selectRaw('SUM(ticket_vendu.amount) as total_amount, 
+                ->selectRaw(
+                    'SUM(ticket_vendu.amount) as total_amount, 
                              SUM(ticket_vendu.winning) as total_winning, 
-                             SUM(ticket_vendu.commission) as total_commission')
-                ->first();
+                             SUM(ticket_vendu.commission) as total_commission,
+                             COUNT(CASE WHEN is_win > 0 THEN 1 ELSE NULL END) as winning_count,
+                             COUNT(CASE WHEN is_win >= 0 THEN 1 ELSE NULL END) as ticket_total'
 
+                )->first();
+                //get delete ticket
+                $ticket_delete = DB::table('ticket_vendu')
+                ->whereIn('ticket_code_id', $ticketCodes)
+                ->where(function ($query) {
+                    $query->where('is_delete', '=', 1)
+                          ->orWhere('is_cancel', '=', 1);
+                })
+                ->select('id')
+                ->count();
+            //get count user
+            $vendeur = user::where([
+                ['compagnie_id', '=', Session('loginId')],
+                ['is_delete', '=', 0]
+            ])->select('id')
+            ->get();
+            $user_total = $vendeur->count();
             $vente = $data->total_amount;
             $perte = $data->total_winning;
             $commission = $data->total_commission;
-
+            //fich value
+            $ticket_win = $data->winning_count;
+            $ticket_total = $data->ticket_total;
 
 
             $lista = BoulGagnant::where('compagnie_id', session('loginId'))
@@ -222,7 +248,7 @@ class CompanyController extends Controller
             }
 
 
-            return view('admin', ['vente' => $vente, 'perte' => $perte, 'list' => $list, 'commission' => $commission]);
+            return view('admin', ['vente' => $vente, 'perte' => $perte, 'list' => $list, 'commission' => $commission,'total_user'=>$user_total,'actif_user'=>$user_actif,'ticket_win'=>$ticket_win,'ticket_total'=>$ticket_total,'ticket_delete'=>$ticket_delete]);
         } else {
             return view('login');
         }
@@ -234,17 +260,15 @@ class CompanyController extends Controller
             Session()->forget('name');
             Session()->forget('logo');
             return view('login');
-        }else{
+        } else {
             return view('login');
-
         }
-        if(Session('branchId')) {
+        if (Session('branchId')) {
             Session()->forget('loginId');
 
             return view('superviseur/login');
-        }else{
+        } else {
             return view('superviseur/login');
-
         }
     }
     public function create_vendeur()

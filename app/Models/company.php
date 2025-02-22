@@ -15,6 +15,7 @@ class company extends Model
             'address',
             'city',
             'phone',
+            'logo',
             'email',
             'plan',
             'info',

@@ -221,12 +221,16 @@ class ticketController extends Controller
                 ])->select('id', 'name')
                     ->get();
                 $formattedDate = now()->toDateString();
+                $formattedDate = now()->toDateString() . ' 00:00:00';
+                $formattedDate1 = now()->toDateString() . ' 23:59:00';
+
+
 
                 $ticket = DB::table('ticket_code')
                     ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                     ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
                     ->join('users', 'ticket_code.user_id', '=', 'users.id')
-                    ->whereDate('ticket_code.created_at', $formattedDate)
+                    ->whereBetween('ticket_code.created_at', [$formattedDate, $formattedDate1])
                     ->where('ticket_code.compagnie_id', Session('loginId'))
                     ->where('ticket_vendu.is_delete', 0)
                     ->where('ticket_vendu.is_cancel', 0)
@@ -273,34 +277,29 @@ class ticketController extends Controller
     }
     public function destroy(Request $request)
     {
-
         if (Session('loginId')) {
-            $ticket = DB::table('ticket_code')->where([
+            $ticket_id = $request->input('id');
+    
+            // Optimized query to find the ticket and update it
+            $updatedRows = TicketVendu::where([
                 ['ticket_code.compagnie_id', '=', Session('loginId')],
                 ['ticket_vendu.is_delete', '=', 0],
                 ['ticket_vendu.is_cancel', '=', 0],
-                ['ticket_vendu.id', '=', $request->input('id')]
-
-            ])->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-                ->first();
-            if ($ticket) {
-                $ticket_id = $request->id;
-                $ticket_del = TicketVendu::find($ticket_id);
-                $ticket_del->is_delete = 1;
-                $ticket_del->save();
-                if ($ticket) {
-                    notify()->success('Fich la siprime avek sikse');
-                    return back();
-                } else {
-                    notify()->error('Ere pase fich pa siprime');
-                    return back();
-                }
+                ['ticket_vendu.id', '=', $ticket_id]
+            ])
+            ->join('ticket_code', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+            ->update(['ticket_vendu.is_delete' => 1]);
+    
+            if ($updatedRows) {
+                notify()->success('Fich la siprime avek sikse');
+                return back();
             } else {
-                notify()->error('Fich sa pa trouve');
+                notify()->error('Ere pase fich pa siprime');
                 return back();
             }
         } else {
             return view('login');
         }
+
     }
 }

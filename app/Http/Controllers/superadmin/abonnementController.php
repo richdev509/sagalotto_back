@@ -37,7 +37,7 @@ class abonnementController extends Controller
     }
     public function genererFacture(Request $request)
     {
-        if (session('role') == "admin" || session('role') == "comptable") {
+        if (session('role') == "admin" || session('role') == "comptable" || session('role') == "admin2") {
             $validator = $request->validate([
                
                 'company' => 'required',
@@ -50,7 +50,7 @@ class abonnementController extends Controller
             $compagnie =company::where('id', $request->company)->first();
             $facture = 1;
             $vendeur = ticket_code::where([
-                ['created_at', '>=', $datee->subDays(7)],
+                ['created_at', '>=', $datee->subDays(5)],
                 ['compagnie_id', '=', $compagnie->id]
     
             ])->distinct()

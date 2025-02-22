@@ -28,7 +28,7 @@
         </div>
         <div class="copywrite text-center">
             <small class="small">
-                © 2024 Copyrights by <a href="#" class="fw-bold text-decoration-underline">Sagacetech .
+                © {{ \Carbon\Carbon::now()->year }} Copyrights by <a href="#" class="fw-bold text-decoration-underline">Sagacetech .
             </small>
         </div>
     </div>

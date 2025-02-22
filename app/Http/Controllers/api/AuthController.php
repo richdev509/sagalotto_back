@@ -53,14 +53,35 @@ class AuthController extends Controller
             $user = user::where([
                 ['username', '=', $request->input('username')],
                 ['android_id', '=', $request->input('id')],
-            ])
-                ->first();
-            if (!$user) {
+            ])->first();
 
-                return response()->json([
-                    'status' => false,
-                    "message" => "utilisateur ou android id inccorrect",
-                ], 404,);
+            if (!$user) {
+                $user1 = user::where([
+                    ['username', '=', $request->input('username')],
+                ])->first();
+                if ($user1) {
+                    if ($user1->android_id == '1' && Hash::check($request->input('password'), $user1->password)) {
+                        $fuser  = User::find($user1->id);
+                        $fuser->android_id = $request->input('id');
+                        $fuser->save();
+
+                        $user = user::where([
+                            ['username', '=', $request->input('username')],
+                            ['android_id', '=', $request->input('id')],
+                        ])->first();
+                    }else{
+                        return response()->json([
+                            'status' => false,
+                            "message" => "utilisateur ou android id inccorrect",
+                        ], 404,);
+                    }
+                }else{
+                    return response()->json([
+                        'status' => false,
+                        "message" => "utilisateur ou android id inccorrect",
+                    ], 404,);
+                }
+               
             }
             if (!Hash::check($request->input('password'), $user->password)) {
 
@@ -83,6 +104,16 @@ class AuthController extends Controller
                 ['id', '=', $user->compagnie_id],
             ])->select('name', 'city', 'address', 'phone', 'logo')
                 ->first();
+            $branche = DB::table('branches')->where('id', $user->branch_id)->first();
+            if ($branche) {
+                if (!empty($branche->address) && $branche->address !== '0' && $branche->address !== 'inconnu') {
+                    $compagnie->address = $branche->address;
+                }
+            
+                if (!empty($branche->phone) && $branche->phone !== '0' && $branche->phone !== 'inconnu') {
+                    $compagnie->phone = $branche->phone;
+                }
+            }
             return $this->createNewToken($token, $compagnie);
         } catch (\Throwable $th) {
             return response()->json([
@@ -119,10 +150,10 @@ class AuthController extends Controller
     public function update()
     {
         return response()->json([
-            "status"=>true,
-            "latest_version"=>'1.0.4',
-            "url"=>'https://sagaloto.com/sagaloto_v1.0.3',
-            "code"=>200,
+            "status" => true,
+            "latest_version" => '1.0.4',
+            "url" => 'https://sagaloto.com/sagaloto_v1.0.3',
+            "code" => 200,
         ], 200);
     }
     public function tirage(Request $request)
@@ -144,7 +175,7 @@ class AuthController extends Controller
                 '<',
                 Carbon::now()->format('H:i:s'),
             )
-            ->select('name', 'hour')
+                ->select('name', 'hour')
                 ->orderBy('hour', 'asc')
                 ->get();
 

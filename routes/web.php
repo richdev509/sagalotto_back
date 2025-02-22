@@ -1,6 +1,6 @@
 <?php
-
-use App\Http\Controllers\addTirageHttp;
+use Tymon\JWTAuth\Providers\Auth\Illuminate;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\tirageController;
@@ -38,6 +38,9 @@ Route::post('/wp-admin/auth2', [SystemController::class, 'auth2']);
 Route::get('wp-admin/login', function () {
     return view('superadmin.login');
 })->name('wplogin');
+Route::get('start-app', function () {
+    return view('start_app');
+})->name('start-app');
 //superviseur
 Route::post('/superviseur/auth2', [adminController::class, 'login']);
 
@@ -154,6 +157,10 @@ Route::middleware(['web', 'verify.session'])->group(function () {
 
     Route::post('ajistelo', [parametreController::class, 'storelopri'])->name('updateprilo');
     Route::get('lotconfig', [parametreController::class, 'create_config'])->name('lotconfig');
+    Route::get('fich', [parametreController::class, 'config_fich'])->name('fich');
+    Route::post('fich_update', [parametreController::class, 'config_fichUpdate'])->name('fichUpdate');
+
+
     Route::post('editerdelai', [parametreController::class, 'update_delai']);
     Route::get('limitprix', [parametreController::class, 'limitprixview'])->name('limitprix');
     Route::post('limitprixstore', [parametreController::class, 'limitprixstore'])->name('limitprixstore');
@@ -188,9 +195,11 @@ Route::middleware(['web', 'verify.session'])->group(function () {
 
 Route::middleware(['web', 'CheckSuperviseur'])->group(function () {
 
-
+    Route::get('/sup_list-vendeur', [adminController::class, 'index_vendeur']);
     Route::get('/superviseur', [adminController::class, 'admin']);
     Route::get('/sup_rapport2', [adminController::class, 'create_rapport2']);
+    Route::get('/sup_rapport', [adminController::class, 'create_rapport']);
+
 
   
     
@@ -203,7 +212,8 @@ Route::middleware(['web', 'chekadmin'])->group(function () {
 
     Route::get('/wp-admin/admin', [SystemController::class, 'viewadmin']);
     Route::get('/wp-admin/add-compagnie', function () {
-        return view('superadmin.ajouter_compagnie');
+        $reference = DB::table('reference')->get();
+        return view('superadmin.ajouter_compagnie',['reference'=>$reference]);
     });
     Route::get('/wp-admin/add-vendeur', function (Request $request) {
         $idc = $request->query('idC');

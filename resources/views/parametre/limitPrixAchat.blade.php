@@ -10,7 +10,8 @@
             </ol>
         </nav>
     </div>
-    <div class="col-lg-12 stretch-card">
+    <div class="col-lg-12 stretch-card"
+        style="margin: 2px;padding: 2px;border-style:ridge; border-width:1px; border-color:rgb(209, 163, 252);">
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
@@ -37,7 +38,8 @@
                                     <td>Bolet</td>
                                     <td>
                                         @if ($limitprix)
-                                            <input style="height:10px;padding-left: 1px;padding-right:1px;min-width:60px" type="number" class="form-control"
+                                            <input style="height:10px;padding-left: 1px;padding-right:1px;min-width:60px"
+                                                type="number" class="form-control"
                                                 value="{{ $limitprix->bolet != null ? $limitprix->bolet : '' }}"
                                                 name="prix" />
                                         @else
@@ -73,7 +75,8 @@
                                     <td>Maryaj</td>
                                     <td>
                                         @if ($limitprix)
-                                            <input style="height:10px;padding-left: 1px;padding-right:1px;min-width:60px" type="number" class="form-control"
+                                            <input style="height:10px;padding-left: 1px;padding-right:1px;min-width:60px"
+                                                type="number" class="form-control"
                                                 value="{{ $limitprix->maryaj != null ? $limitprix->maryaj : '' }}"
                                                 name="prix" />
                                         @else
@@ -109,7 +112,8 @@
                                     <td>Loto3</td>
                                     <td>
                                         @if ($limitprix)
-                                            <input style="height:10px;padding-left: 1px;padding-right:1px;min-width:60px" type="number" class="form-control"
+                                            <input style="height:10px;padding-left: 1px;padding-right:1px;min-width:60px"
+                                                type="number" class="form-control"
                                                 value="{{ $limitprix->loto3 != null ? $limitprix->loto3 : '' }}"
                                                 name="prix" />
                                         @else
@@ -146,7 +150,8 @@
                                     <td>Loto4</td>
                                     <td>
                                         @if ($limitprix)
-                                            <input style="height:10px;padding-left: 1px;padding-right:1px;min-width:60px" type="number" class="form-control"
+                                            <input style="height:10px;padding-left: 1px;padding-right:1px;min-width:60px"
+                                                type="number" class="form-control"
                                                 value="{{ $limitprix->loto4 != null ? $limitprix->loto4 : '' }}"
                                                 name="prix" />
                                         @else
@@ -220,111 +225,112 @@
         </div>
     </div>
 
-    <div class="col-lg-12 grid-margin stretch-card">
-    
-        <div class="card">
-            
-          <div class="card-body">
-            
-            <h4 class="card-title">Limit pri pa boul</h4>
-            
-            </p>
-            <div class="form-group">
+    <div class="col-lg-12 grid-margin stretch-card"
+        style="margin: 2px;padding: 2px;border-style:ridge; border-width:1px; border-color:rgb(209, 163, 252);">
 
-                <div style="display: flex;gap:8px;flex-wrap:wrap;">
-              <label for="dateFilter">Filtre par Tiraj:</label>
-             
-              <select class="form-control" name="selecttirage" id="selecttiraj" style="width: 192px;
+        <div class="card">
+
+            <div class="card-body">
+
+                <h4 class="card-title">Limit pri pa boul</h4>
+
+                </p>
+                <div class="form-group">
+
+                    <div style="display: flex;gap:8px;flex-wrap:wrap;">
+                        <label for="dateFilter">Filtre par Tiraj:</label>
+
+                        <select class="form-control" name="selecttirage" id="selecttiraj"
+                            style="width: 192px;
               border-color: blue;
               outline-color: rgb(23, 9, 82);
               color: #41374b;">
-              <option></option>
-              @foreach($listetirage as $lists)
-                <option value="{{$lists->name}}">
-                         {{$lists->name}}
-                </option>
-                @endforeach
-              </select>
-              <label for="dateFilter">Filtre par opsyon:</label>
-             
-              <select class="form-control" name="selectoption" id="selectopsyon" style="width: 192px;
+                            <option></option>
+                            @foreach ($listetirage as $lists)
+                                <option value="{{ $lists->name }}">
+                                    {{ $lists->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <label for="dateFilter">Filtre par opsyon:</label>
+
+                        <select class="form-control" name="selectoption" id="selectopsyon"
+                            style="width: 192px;
               border-color: blue;
               outline-color: rgb(42, 13, 124);
               color: #41374b;">
-              <option></option>
-              @foreach($listjwet as $jwet)
-                <option value="{{$jwet->name}}">
-                         {{$jwet->name}}
-                </option>
-                @endforeach
-              </select>
+                            <option></option>
+                            @foreach ($listjwet as $jwet)
+                                <option value="{{ $jwet->name }}">
+                                    {{ $jwet->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div style="margin-top: 20px;"></div>
+                    <a href="/ajisteprix">
+                        <button class="btn primary" style="background:rgb(0 94 254)">Ajoute</button>
+                    </a>
+                </div>
+                <div class="table-responsive table-striped" >
+                    <table class="table table-bordered" id="dataTable">
+                        <thead>
+                            <tr>
+
+                                <th>Tiraj</th>
+                                <th>Boul</th>
+                                <th>Deja jwe | Limit</th>
+                                <th>Aksyon </th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($list as $limit)
+                                <tr>
+                                    @if ($limit['created_at']->format('Y-m-d') == \Carbon\Carbon::now()->format('Y-m-d'))
+                                        <td style="color: green;">{{ $limit['type'] != null ? $limit['type'] : '' }}</td>
+                                    @else
+                                        <td style="color: red;">{{ $limit['type'] != null ? $limit['type'] : '' }}</td>
+                                    @endif
+                                    <td> {{ $limit['opsyon'] }}:{{ $limit['boul'] }}
+                                    </td>
+                                    <td><span
+                                            style="color: green;">{{ $limit['montant_play'] != null ? $limit['montant_play'] : 0 }}</span>
+                                        |<span style="color: red;">
+                                            {{ $limit['montant_limit'] != null ? $limit['montant_limit'] : 0 }}</span>
+                                    </td>
+
+                                    </td>
+
+                                    <td class="text-end" style="justify-content: center;">
+                                        
+                                            <form action="" style="display:none;">
+                                                @csrf
+                                                <input type="hidden" name="id"
+                                                    value="{{ $limit['id'] != null ? $limit['id'] : '' }}" />
+                                                <button type="submit" style="color: rgb(0, 132, 255);"><i
+                                                        class="mdi mdi-table-edit"></i>Siprime</button>
+                                            </form>
+                                            <form action="{{ route('modifierLimitePrix') }}" method="POST"
+                                                style="display: flex;gap:3px;">
+                                                @csrf
+                                                <input type="hidden" name="id"
+                                                    value="{{ $limit['id'] != null ? $limit['id'] : '' }}" />
+                                                <button type="submit" style="color: red; padding: 3px; border: 1px groove red;"><i
+                                                        class="mdi mdi-delete"></i>Siprime</button>
+                                            </form>
+                                        
+                                    </td>
+                                </tr>
+                            @endforeach
+
+                        </tbody>
+                    </table>
+                </div>
+
+
+
             </div>
-              <div style="margin-top: 20px;"></div>
-              <a href="/ajisteprix">
-                <button class="btn primary" style="background:rgb(0 94 254)">Ajoute</button>
-                </a>
-          </div>
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable">
-                  <thead>
-                    <tr>
-                    
-                      <th>Tiraj</th>
-                      <th>boul</th>
-                      <th>Montan HTG</th>
-                      <th>General
-                      <th>Aksyon </th>
-                      
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @foreach ($limitprixboul as $limit)
-                    <tr>
-                        @if($limit->created_at->format('Y-m-d') == \Carbon\Carbon::now()->format('Y-m-d'))
-                        <td style="color: green;">{{ $limit->type != null ? $limit->type : '' }}</td>
-
-
-                        @else
-                        <td style="color: red;">{{ $limit->type != null ? $limit->type : '' }}</td>
-
-
-                        @endif
-                        <td> {{$limit->opsyon != null ? $limit->opsyon : ''}}:{{ $limit->boul != null ? $limit->boul : '' }}
-                        </td>
-                        <td> {{ $limit->montant != null ? $limit->montant : '' }}</td>
-                        <td style="color: green;display: flex;
-                        justify-content: space-between;">{{ $limit->is_general != 0 ? 'YES' : 'No' }}
-                          <form action="{{route('up-g')}}" method="POST">
-                            @csrf
-                        <input type="hidden" name="id" value="{{ $limit->id != null ? $limit->id : '' }}" />
-                        <button><i class="mdi mdi-file-check btn-icon-append" style="
-                            color: blue;
-                        "></i></button>
-                          </form>    
-                    </td>
-
-                        <td class="text-end">
-                          <form action="" style="display:none;">
-                            @csrf
-                              <input type="hidden" name="id" value="{{ $limit->id != null ? $limit->id : '' }}" />
-                              <button type="submit" style="color: rgb(0, 132, 255);"><i class="mdi mdi-table-edit"></i></button>
-                          </form>
-                          <form action="{{route('modifierLimitePrix')}}" method="POST" style="display: flex;gap:3px;">
-                            @csrf
-                            <input type="hidden" name="id" value="{{ $limit->id != null ? $limit->id : '' }}" />
-                            <button type="submit" style="color: red;"><i class="mdi mdi-delete"></i></button>
-                          </form>
-                        </td>
-                    </tr>
-                   @endforeach
-                    
-                  </tbody>
-                </table>
-            </div>
-    
-    
-    
-          </div>
         </div>
     </div>
     <script>
@@ -362,8 +368,6 @@
         // Écouteurs d'événements pour les changements dans les selects
         document.getElementById('selecttiraj').addEventListener('change', filterTable);
         document.getElementById('selectopsyon').addEventListener('change', filterTable);
-
-       
     </script>
 
 

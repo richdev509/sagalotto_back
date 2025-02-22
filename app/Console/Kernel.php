@@ -15,8 +15,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->job(new updateLimitPrix())->dailyAt('03:22');
-        $schedule->job(new truncateLimit())->dailyAt('04:00');
+        $schedule->job(new updateLimitPrix())->dailyAt('00:01');
+        $schedule->job(new truncateLimit())->dailyAt('00:01');
         $schedule->job(new autoActiveTirage())->dailyAt('00:01');
 
 

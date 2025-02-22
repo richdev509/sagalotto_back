@@ -9,9 +9,11 @@ use App\Models\company;
 use App\Models\User;
 use App\Http\Controllers\api\verificationController as verify;
 use App\Models\maryajgratis;
+use App\Models\seting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Models\tirage_record;
+use App\Models\ticket_code;
 
 class ticketController extends Controller
 {
@@ -97,6 +99,18 @@ class ticketController extends Controller
             ['etat', '=', '1'],
             ['branch_id', '=', auth()->user()->branch_id]
         ])->first();
+        //check setting et call method
+        $setting = seting::where([
+            ['compagnie_id', '=', auth()->user()->compagnie_id],
+        ])->first();
+        if ($setting) {
+            $sett = verify::limiteNumberPlay($request, $setting);
+            if ($sett != '1') {
+                return $sett;
+            }
+        }
+        //verify number that are limited in price
+
         //tchek if all tirage are open before proceed
         foreach ($request->input('tirages') as $name) {
             $tirage_record = tirage_record::where([
@@ -337,6 +351,16 @@ class ticketController extends Controller
             ['etat', '=', '1'],
             ['branch_id', '=', auth()->user()->branch_id]
         ])->first();
+        //check setting et call method
+        $setting = seting::where([
+            ['compagnie_id', '=', auth()->user()->compagnie_id],
+        ])->first();
+        if ($setting) {
+            $sett = verify::limiteNumberPlay($request, $setting);
+            if ($sett != '1') {
+                return $sett;
+            }
+        }
         //tchek if all tirage are open before proceed
         foreach ($request->input('tirages') as $name) {
             $tirage_record = tirage_record::where([
@@ -462,7 +486,7 @@ class ticketController extends Controller
                 'boule' => json_encode($boule),
                 'amount' =>  $montant,
                 'commission' => ($montant * $vendeur->percent) / 100,
-                'pending' =>1,
+                'pending' => 1,
                 'created_at' =>  $created_at,
             ]);
 
@@ -499,14 +523,15 @@ class ticketController extends Controller
             ]
         ], 200,);
     }
-    public function confirm_ticket(Request $request){
+    public function confirm_ticket(Request $request)
+    {
         $validator = $request->validate([
             "id" => "required",
         ]);
         $ticket = DB::table('ticket_vendu')->where([
             ['ticket_code_id', '=', $request->input('id')]
         ])->first();
-        if($ticket){
+        if ($ticket) {
             $ticket_vendu = DB::table('ticket_vendu')->where([
                 ['ticket_code_id', '=', $request->input('id')]
             ])->update([
@@ -517,22 +542,16 @@ class ticketController extends Controller
                 'status' => 'true',
                 "code" => '200',
                 "message" => 'ticket confirmer'
-    
-            ], 200,);
 
-        }else{
+            ], 200,);
+        } else {
             return response()->json([
                 'status' => 'false',
                 "code" => '404',
                 "message" => 'ticket pas trouver'
-    
+
             ], 200,);
-
         }
-       
-       
-
-
     }
 
     public function list_ticket(Request $request)
@@ -545,27 +564,27 @@ class ticketController extends Controller
 
             ]);
             $vente = DB::table('ticket_code')
-            ->where([
-                ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
-                ['ticket_code.user_id', '=', auth()->user()->id],
-                ['ticket_vendu.is_cancel', '=', 0],
-                ['ticket_vendu.is_delete', '=', 0],
-                ['ticket_vendu.pending', '=', 0]
-            ])
-            ->whereDate('ticket_code.created_at', '>=', $request->date_debut)
-            ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
-            ->select(
-                'ticket_code.code as ticket_id',
-                'ticket_code.created_at as date',
-                DB::raw('(SELECT name FROM tirage_record WHERE tirage_record.id = ticket_vendu.tirage_record_id LIMIT 1) as tirage'),
-                'ticket_vendu.amount as montant',
-                'ticket_vendu.winning as gain',
-                'ticket_vendu.is_payed as payer'
-            )
-            ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code') // join is still used for ticket_vendu
-            ->orderBy('ticket_code.id', 'desc')
-            ->get();
-        
+                ->where([
+                    ['ticket_code.compagnie_id', '=', auth()->user()->compagnie_id],
+                    ['ticket_code.user_id', '=', auth()->user()->id],
+                    ['ticket_vendu.is_cancel', '=', 0],
+                    ['ticket_vendu.is_delete', '=', 0],
+                    ['ticket_vendu.pending', '=', 0]
+                ])
+                ->whereDate('ticket_code.created_at', '>=', $request->date_debut)
+                ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
+                ->select(
+                    'ticket_code.code as ticket_id',
+                    'ticket_code.created_at as date',
+                    DB::raw('(SELECT name FROM tirage_record WHERE tirage_record.id = ticket_vendu.tirage_record_id LIMIT 1) as tirage'),
+                    'ticket_vendu.amount as montant',
+                    'ticket_vendu.winning as gain',
+                    'ticket_vendu.is_payed as payer'
+                )
+                ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code') // join is still used for ticket_vendu
+                ->orderBy('ticket_code.id', 'desc')
+                ->get();
+
             if ($vente->count() > 0) {
                 return response()->json([
                     'status' => 'true',
@@ -753,18 +772,22 @@ class ticketController extends Controller
 
                     $hour_creation = $hhour . ":" . $mminute . ":" . $ssecond;
                     // dd($hour_creation);
-
+                    $difff = $datet->diff($now);
                     // Parse the times into Carbon instances with a default date
                     $carbonTime1 = Carbon::createFromFormat('H:i:s', $hour_creation);
-
-                    $carbonTime2 = Carbon::createFromFormat('H:i:s', $delai_conversion);
+                    $carbonTime1->addHours($difff->h)
+                        ->addMinutes($difff->i)
+                        ->addSeconds($difff->s);
+                    // $carbonTime2 = Carbon::createFromFormat('H:i:s', $delai_conversion);
                     // Add the second time to the first time
 
-                    $summedTime = $carbonTime1->addHours($carbonTime2->hour)->addMinutes($carbonTime2->minute)->addSeconds($carbonTime2->second);
+                    // $summedTime = $carbonTime1->addHours($carbonTime2->hour)->addMinutes($carbonTime2->minute)->addSeconds($carbonTime2->second);
                     // Format the summed time as desired (optional)
-                    $timesum = $summedTime->format('H:i:s');
+                    // $timesum = $summedTime->format('H:i:s');
                     //dd($timesum, $tirage_record->hour);
-                    if ($timesum > $tirage_record->hour) {
+                    //dd($carbonTime1, $tirage_record->hour);
+                    $recordHour = Carbon::createFromFormat('H:i:s',  $tirage_record->hour);
+                    if ($carbonTime1 >  $recordHour) {
                         return response()->json([
                             'status' => 'false',
                             "code" => '404',
@@ -804,8 +827,8 @@ class ticketController extends Controller
 
             ]);
             //find for all tirage
-            $comp = DB::table('companies')->where('id','=',auth()->user()->compagnie_id)->first();
-            if($comp->is_block ==1){
+            $comp = DB::table('companies')->where('id', '=', auth()->user()->compagnie_id)->first();
+            if ($comp->is_block == 1) {
                 return response()->json([
                     'status' => 'true',
                     "code" => '200',
@@ -822,28 +845,32 @@ class ticketController extends Controller
 
 
                 ], 200,);
-
             }
             if ($request->input('tirage') == "Tout" || $request->input('tirage') == "") {
 
-                // Step 1: Fetch relevant ticket_code records based on date and compagnie_id
-                $ticketCodes = DB::table('ticket_code')
-                    ->where([
-                        ['compagnie_id', '=', auth()->user()->compagnie_id],
-                        ['user_id', '=', auth()->user()->id],
-                    ])
-                    ->whereDate('created_at', '>=', $request->input('date_debut'))
-                    ->whereDate('created_at', '<=', $request->input('date_fin'))
-                    ->pluck('code');
 
-                // Step 2: Execute each query separately using the plucked ticket_code_id
-                $baseQuery = DB::table('ticket_vendu')
-                    ->whereIn('ticket_code_id', $ticketCodes)
-                    ->where([
-                        ['is_cancel', '=', 0],
-                        ['is_delete', '=', 0],
-                        ['pending','=', 0]
-                    ]);
+                $startDate = $request->input('date_debut') . ' 00:00:00';
+                $endDate = $request->input('date_fin') . ' 23:59:59';
+                $ticketCodes = ticket_Code::where('compagnie_id', auth()->user()->compagnie_id)
+                    ->where('user_id', auth()->user()->id)
+                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->pluck('code');
+                //i use a batch for divide the query to void long time process querie
+                $batchSize = 500;  // Define a reasonable chunk size for the batch
+                $baseQuery = collect();
+
+                foreach (array_chunk($ticketCodes->toArray(), $batchSize) as $chunk) {
+                    $chunkResults = DB::table('ticket_vendu')
+                        ->whereIn('ticket_code_id', $chunk)
+                        ->where([
+                            ['is_cancel', '=', 0],
+                            ['is_delete', '=', 0],
+                            ['pending', '=', 0],
+                        ])
+                        ->get();
+
+                    $baseQuery = $baseQuery->merge($chunkResults);
+                }
 
                 // Calculate sums
                 $vente = (clone $baseQuery)->sum('amount');
@@ -888,22 +915,27 @@ class ticketController extends Controller
 
 
                 // Step 1: Fetch relevant ticket_code records based on date and compagnie_id
-                $ticketCodes = DB::table('ticket_code')
-                    ->where([
-                        ['compagnie_id', '=', auth()->user()->compagnie_id],
-                        ['user_id', '=', auth()->user()->id],
-                    ])
-                    ->whereDate('created_at', '>=', $request->input('date_debut'))
-                    ->whereDate('created_at', '<=', $request->input('date_fin'))
+                // $ticketCodes = DB::table('ticket_code')
+                //     ->where([
+                //         ['compagnie_id', '=', auth()->user()->compagnie_id],
+                //         ['user_id', '=', auth()->user()->id],
+                //     ])
+                //     ->whereDate('created_at', '>=', $request->input('date_debut'))
+                //     ->whereDate('created_at', '<=', $request->input('date_fin'))
+                //     ->pluck('code');
+                $startDate = $request->input('date_debut') . ' 00:00:00';
+                $endDate = $request->input('date_fin') . ' 23:59:59';
+                $ticketCodes = ticket_Code::where('compagnie_id', auth()->user()->compagnie_id)
+                    ->where('user_id', auth()->user()->id)
+                    ->whereBetween('created_at', [$startDate, $endDate])
                     ->pluck('code');
-
                 // Step 2: Execute each query separately using the plucked ticket_code_id
                 $baseQuery = DB::table('ticket_vendu')
                     ->whereIn('ticket_code_id', $ticketCodes)
                     ->where([
                         ['is_cancel', '=', 0],
                         ['is_delete', '=', 0],
-                        ['pending','=', 0],
+                        ['pending', '=', 0],
                         ['ticket_vendu.tirage_record_id', '=', $tirage_record->id],
 
                     ]);

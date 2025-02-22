@@ -203,60 +203,49 @@
         }
     </style>
 
-    <div class="row" style="margin: 10px;border-style:ridge; border-width:1px; border-color:rgb(209, 163, 252);">
-        <div class="card">
-            <div class="card-body" style="padding: 22px 3px">
-                <div class="row align-items-center">
-                    <h4 class="card-title">Rapo general pou chak bank</h4>
-                    <div class="row_head">
-                        <form method="get" action="raport2" id="search">
-                            @csrf
-
-                            <div class="row ">
-
-
-                                <div class="col-12 col-md-5">
-                                    <label>komanse</label>
-                                    <input type="date" class="form-control" name="date_debut" value="{{ $date_debut }}"
-                                        required style="height: 32px;"/>
-                                </div>
-                                <div class="col-12 col-md-5">
-                                    <label>Fini</label>
-                                    <input type="date" class="form-control" name="date_fin" value="{{ $date_fin }}"
-                                        required style="height: 32px;"/>
-                                </div>
-                                <div class="col-12 col-md-5">
-                                    <label>Peryod</label>
-                                    <select class="form-control" name="period" value="{{ old('period') }}"
-                                        style="height: 32px;border: 1px solid black;">
-                                        <option value="tout">Tout</option>
-                                        <option value="matin">Matin(12H AM - 2H30 PM)</option>
-                                        <option value="soir">Soir(2H31 PM - 11H59 PM)</option>
-
-                                    </select>
-
-                                </div>
-
+<div class="row" style="margin: 10px; border-style: ridge; border-width: 1px; border-color: rgb(209, 163, 252); border-radius: 10px; background-color: #f9f9f9;">
+    <div class="card">
+        <div class="card-body" style="padding: 22px 3px;">
+            <div class="row align-items-center">
+                <h4 class="card-title" style="color: #0d2a95; font-weight: bold; text-align: center; margin-bottom: 20px;">Rapo general pou chak bank</h4>
+                <div class="row_head">
+                    <form method="get" action="raport2" id="search">
+                        @csrf
+                        <div class="row col-12">
+                            <div class="col-12 col-md-4">
+                                <label style="font-weight: bold;">Komanse</label>
+                                <input type="date" class="form-control" name="date_debut" value="{{ $date_debut }}" required style="height: 40px; border-radius: 5px; border: 1px solid #ccc;"/>
                             </div>
-                            <div class="student-submit">
-                                <button type="submit" class="btn primary me-2 loa">Rapo</button>
+                            <div class="col-12 col-md-4">
+                                <label style="font-weight: bold;">Fini</label>
+                                <input type="date" class="form-control" name="date_fin" value="{{ $date_fin }}" required style="height: 40px; border-radius: 5px; border: 1px solid #ccc;"/>
                             </div>
-                    </div>
+                            <div class="col-12 col-md-4">
+                                <label style="font-weight: bold;">Branch</label>
+                                <select class="form-control" name="branch" value="{{ old('period') }}" style="height: 40px; border-radius: 5px; border: 1px solid #ccc;">
+                                    <option value="tout">Tout</option>
+                                    @foreach ($branch as $row)
+                                    <option value="{{$row->id }}">{{$row->name}}</option>
+                                    @endforeach
 
+                                </select>
+                            </div>
+                           
+                           
+                        </div>
+                        <div class="student-submit" style="text-align: center; margin-top: 10px;">
+                            <button type="submit" class="btn primary me-2 loa" style="color: white; padding: 12px 15px; border-radius: 5px; border: none; cursor: pointer; font-size: 16px;">Fe rapo</button>
+                        </div>
                     </form>
                 </div>
-                <div class="table-responsive">
-
-                    <table class="table table-striped" id="myRapport">
-
-
-                        <thead class="head_rapport" style="background: #0d2a95;color: white;">
+                <div class="table-responsive" style="margin-top: 30px;">
+                    <table class="table table-striped" id="myRapport" style="border-radius: 10px; overflow: hidden;">
+                        <thead class="head_rapport" style="background: #0d2a95; color: white;">
                             <tr>
-                                <th>Bank <i class="mdi mdi-cash-register mdi-16px float-right"></th>
+                                <th>Bank <i class="mdi mdi-cash-register mdi-16px float-right"></i></th>
                                 <th>Dat <i class="mdi mdi-calendar mdi-16px"></i></th>
-                                <th>Peryod <i class="mdi mdi-alarm mdi-16px"></i></th>
-
-                                <th>Vant<i class="mdi mdi-tag mdi-16px"></i></th>
+                                <th>Branch <i class="mdi mdi-source-branch mdi-16px"></i></th>
+                                <th>Vant <i class="mdi mdi-tag mdi-16px"></i></th>
                                 <th>Pedi <i class="mdi mdi-arrow-down-bold mdi-16px"></i></th>
                                 <th>Komisyon <i class="mdi mdi-percent mdi-16px"></i></th>
                                 <th>Balans <i class="mdi mdi-wallet mdi-16px"></i></th>
@@ -266,18 +255,25 @@
                             @php
                                 $total = 0;
                             @endphp
-                            @forelse ($vendeur as $row)
+                            @foreach ($vendeur as $row)
                                 <tr>
                                     <td>
                                         <?php
                                         $value = DB::table('users')
                                             ->where('id', $row['bank_name'])
-                                            ->value('bank_name');
+                                            ->first(['bank_name','branch_id'])
                                         ?>
-                                        {{ $value }}
+                                        {{ $value->bank_name }}</td>
                                     </td>
-                                    <td>{{ $date_debut }}=>{{ $date_fin }}</td>
-                                    <td>{{ $period }}</td>
+                                    <td>{{ $date_debut }} => {{ $date_fin }}</td>
+                                    <td>
+                                        <?php
+                                         $branch = DB::table('branches')
+                                             ->where('id', $value->branch_id)
+                                             ->value('name');
+
+                                        ?>
+                                        {{ $branch }}</td>
                                     <td>{{ $row['vente'] }} {{ Session('devise') }}</td>
                                     <td>{{ $row['perte'] }} {{ Session('devise') }}</td>
                                     <td>{{ $row['commission'] }} {{ Session('devise') }}</td>
@@ -285,48 +281,44 @@
                                         $total = $total + ($row['vente'] - ($row['commission'] + $row['perte']));
                                     @endphp
                                     @if ($row['vente'] < $row['commission'] + $row['perte'])
-                                        <td style="color:red;">
+                                        <td style="color: red;">
                                             {{ $row['vente'] - ($row['commission'] + $row['perte']) }}
                                             {{ Session('devise') }}
                                         </td>
                                     @else
-                                        <td style="color:green;">
+                                        <td style="color: green;">
                                             {{ $row['vente'] - ($row['commission'] + $row['perte']) }}
-                                            {{ Session('devise') }}</td>
+                                            {{ Session('devise') }}
+                                        </td>
                                     @endif
-
                                 </tr>
-                            @empty
+                           @endforeach
+                           @if($vendeur->isEmpty())
                                 <tr>
-                                    <td colspan="6" style="text-align: center">Aucune donnée disponible</td>
+                                    <td colspan="7" style="text-align: center;">Aucune donnée disponible</td>
                                 </tr>
-                            @endforelse
-
-
-
+                          @endif
                         </tbody>
-                        <tfoot style="background: #0d2a95;color:white;height: 30px;padding: 0px;">
-                            <tr style="height:30px;">
-                                <td><button id="exportJPG" class="btn primary" style="padding: 5px;margin: 0px;">Telechaje</button></td>
-                                <td class="text-right" style="" colspan="6">Total <i class="mdi mdi-wallet mdi-16px"></i>:
+                        <tfoot style="background: #0d2a95; color: white; height: 50px; padding: 0px;">
+                            <tr style="height: 50px;">
+                               
+                                <td class="text-right" colspan="7">
+                                    Total <i class="mdi mdi-wallet mdi-16px"></i>:
                                     @if ($total > 0)
-                                        <span style="color: green;">{{ $total }} {{ Session('devise') }}
-                                        </span>
+                                        <span style="color: green;">{{ $total }} {{ Session('devise') }}</span>
                                     @else
-                                        <span style="color: red;">{{ $total }} {{ Session('devise') }} </span>
+                                        <span style="color: red;">{{ $total }} {{ Session('devise') }}</span>
                                     @endif
                                 </td>
-
-
                             </tr>
-
                         </tfoot>
                     </table>
-
+                        <button id="exportJPG" class="btn primary" style=" color: white; padding: 12px 24px; border-radius: 5px; border: none; cursor: pointer; font-size: 16px;">Telechaje</button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
 

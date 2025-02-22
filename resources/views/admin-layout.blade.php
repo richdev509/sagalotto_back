@@ -41,9 +41,8 @@
             font-weight: 400;
             font-style: normal;
         }
-        #preloader{
 
-        }
+        #preloader {}
 
         .containerr {
             display: flex;
@@ -66,10 +65,10 @@
 
     <div class="container-scroller">
         <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-            <div class="containerr scroll-right" style="background:rgb(241, 163, 37);color:black; width: 100%;">
-                <marquee behavior="" direction="left">Aswe a kise dimanch pou lendi maten gen mise a jou kap fet sou system nan, epi nap invite tout client ki gen problem pou mande nou lot version application kap disponib demain sDv</marquee>
+            <div class="containerr scroll-right" style="background:rgb(247, 229, 201);color:black; width: 100%;">
+                <marquee behavior="" direction="left">Bonjou/Bonswa, nou rankontre yon problem ak numero support a, nap envitew desormais ekri nou sou<span style="font-weight: bold; color: red;"> +50931071890</span>. mesi!</marquee>
             </div>
-           
+
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
 
 
@@ -192,12 +191,12 @@
             <!-- partial:partials/_sidebar.html -->
             <nav class="sidebar sidebar-offcanvas" id="sidebar">
                 <ul class="nav">
+                    <!-- Profile Section -->
                     <li class="nav-item nav-profile">
                         <a href="#" class="nav-link">
                             <div class="nav-profile-image">
                                 <img src="{{ session('logo') }}" alt="profile">
                                 <span class="login-status online"></span>
-                                <!--change to offline or busy as needed-->
                             </div>
                             <div class="nav-profile-text d-flex flex-column">
                                 <span class="font-weight-bold mb-2">{{ session('name') }}</span>
@@ -206,176 +205,193 @@
                             <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
                         </a>
                     </li>
+            
+                    <!-- Home Link -->
                     <li class="nav-item">
-
                         <a class="nav-link" href="admin">
                             <span class="menu-title loa">Akèy</span>
                             <i class="mdi mdi-home menu-icon"></i>
                         </a>
                     </li>
+            
+                    <!-- Vendors Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#vendeur" aria-expanded="false"
-                            aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#vendeur" aria-expanded="false" aria-controls="ui-basic">
                             <span class="menu-title">Vandè</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-account menu-icon"></i>
                         </a>
                         <div class="collapse" id="vendeur">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link loa" href="ajouter-vendeur">Ajoute vandè</a>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="ajouter-vendeur">Ajoute vandè</a>
                                 </li>
-                                <li class="nav-item"> <a class="nav-link loa" href="lister-vendeur">Lis vandè</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="lister-vendeur">Lis vandè</a>
+                                </li>
                             </ul>
                         </div>
                     </li>
+            
+                    <!-- Draws Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#tirage" aria-expanded="false"
-                            aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#tirage" aria-expanded="false" aria-controls="ui-basic">
                             <span class="menu-title">Tiraj</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-timetable menu-icon"></i>
                         </a>
                         <div class="collapse" id="tirage">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link loa" href="ajouter-tirage">Ajoute Tiraj</a></li>
-                                <li class="nav-item"> <a class="nav-link loa" href="lister-tirage">Lis Tiraj</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="ajouter-tirage">Ajoute Tiraj</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="lister-tirage">Lis Tiraj</a>
+                                </li>
                             </ul>
                         </div>
                     </li>
+            
+                    <!-- Results Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#lo" aria-expanded="false"
-                            aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#lo" aria-expanded="false" aria-controls="ui-basic">
                             <span class="menu-title">Lo ki soti</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-alarm menu-icon"></i>
                         </a>
                         <div class="collapse" id="lo">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link loa" href="/ajout-lo">Ajoute lo
-                                    </a></li>
-                                <li class="nav-item"> <a class="nav-link loa" href="lister-lo">Liste lo</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="/ajout-lo">Ajoute lo</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="lister-lo">Liste lo</a>
+                                </li>
                             </ul>
                         </div>
                     </li>
+            
+                    <!-- Blocking and Price Limits Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#autorisation" aria-expanded="false"
-                            aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#autorisation" aria-expanded="false" aria-controls="ui-basic">
                             <span class="menu-title">Bloke - limite pri</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-earth menu-icon"></i>
                         </a>
                         <div class="collapse" id="autorisation">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link loa" href="/block">Bloke/Debloke
-                                    </a></li>
-                                <li class="nav-item"> <a class="nav-link loa" href="{{ route('limitprix') }}">Ajiste
-                                        Limit Prix Achat
-                                    </a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="/block">Bloke/Debloke</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="{{ route('limitprix') }}">Ajiste Limit Prix Achat</a>
+                                </li>
                             </ul>
                         </div>
                     </li>
+            
+                    <!-- Reports Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#rapo" aria-expanded="false"
-                            aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#rapo" aria-expanded="false" aria-controls="ui-basic">
                             <span class="menu-title">Rapo</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-chart-line menu-icon"></i>
                         </a>
                         <div class="collapse" id="rapo">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link loa" href="/rapport">Rapo general
-                                    </a></li>
-                                <li class="nav-item"> <a class="nav-link loa" href="/raport2">Rapo/vande
-                                    </a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="/rapport">Rapo general</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="/raport2">Rapo/vande</a>
+                                </li>
                             </ul>
                         </div>
-
                     </li>
+            
+                    <!-- Statistics Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#statistique" aria-expanded="false"
-                            aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#statistique" aria-expanded="false" aria-controls="ui-basic">
                             <span class="menu-title">Statistik</span>
                             <i class="mdi mdi-bell-plus" style="color:orange;margin-left:10px;"></i>
                             <i class="menu-arrow"></i>
-
                             <i class="mdi mdi-chart-line menu-icon"></i>
                         </a>
                         <div class="collapse" id="statistique">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link loa" href="/stat">statistiqueUnique
-                                    </a></li>
-                                <li class="nav-item"> <a class="nav-link loa"
-                                        href="{{ route('statistique') }}">statistique General
-                                    </a></li>
-
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="/stat">statistiqueUnique</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="{{ route('statistique') }}">statistique General</a>
+                                </li>
                             </ul>
                         </div>
-
                     </li>
-
-
-
+            
+                    <!-- Tickets Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#fich" aria-expanded="false"
-                            aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#fich" aria-expanded="false" aria-controls="ui-basic">
                             <span class="menu-title">Fich</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-ticket menu-icon"></i>
                         </a>
                         <div class="collapse" id="fich">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link loa" href="lister-ticket">Chache
-                                    </a></li>
-
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="lister-ticket">Chache</a>
+                                </li>
                             </ul>
                         </div>
                     </li>
+            
+                    <!-- Branches Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#fich" aria-expanded="false"
-                            aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#branch" aria-expanded="false" aria-controls="ui-basic">
                             <span class="menu-title">Branch</span>
                             <i class="menu-arrow"></i>
-                            <i class="mdi mdi-source-branch"></i>
+                            <i class="mdi mdi-source-branch menu-icon"></i>
                         </a>
-                        <div class="collapse" id="fich">
+                        <div class="collapse" id="branch">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link loa" href="creer_branch">Ajoute branch
-                                    </a></li>
-                                <li class="nav-item"> <a class="nav-link loa" href="lister_branch">Liste branch
-                                    </a></li>
-
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="creer_branch">Ajoute branch</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="lister_branch">Liste branch</a>
+                                </li>
                             </ul>
                         </div>
                     </li>
+            
+                    <!-- Settings Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#paramet" aria-expanded="false"
-                            aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#paramet" aria-expanded="false" aria-controls="ui-basic">
                             <span class="menu-title">Paramet</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-settings-box menu-icon"></i>
                         </a>
                         <div class="collapse" id="paramet">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link loa" href="{{ route('maryajGratis') }}">Maryaj
-                                        Gratis
-                                    </a></li>
-                                <li class="nav-item"> <a class="nav-link loa" href="{{ route('ajisteprilo') }}">Ajiste
-                                        pri premye lo
-                                    </a></li>
-
-                                <li class="nav-item"> <a class="nav-link loa" href="{{ route('lotconfig') }}">Lot
-                                        Konfigirasyon
-                                    </a></li>
-                                <li class="nav-item"> <a class="nav-link loa" href="/plan">Compte & Plan
-                                    </a></li>
-
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="{{ route('maryajGratis') }}">Maryaj Gratis</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="{{ route('ajisteprilo') }}">Ajiste pri premye lo</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="{{ route('fich') }}">Fich</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="{{ route('lotconfig') }}">Lot Konfigirasyon</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="/plan">Compte & Plan</a>
+                                </li>
                             </ul>
                         </div>
-
                     </li>
-
                 </ul>
-
             </nav>
             <!-- partial -->
             <div class="main-panel">
@@ -388,7 +404,7 @@
                 <footer class="footer">
                     <div class="container-fluid d-flex justify-content-between">
                         <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright ©
-                            Sagalotto.com 2024</span>
+                            Sagaloto.com {{ \Carbon\Carbon::now()->year }}</span>
 
                     </div>
                 </footer>
@@ -447,7 +463,7 @@
 
         function showLoader() {
             document.getElementById('preloader').style.display = 'flex';
-             //  setTimeout(hideLoader,100);
+            //  setTimeout(hideLoader,100);
         }
 
         function hideLoader() {
@@ -458,8 +474,7 @@
 
         //     setTimeout(hideLoader,100);
         // };
-      //  function 
-      
+        //  function 
     </script>
 </body>
 

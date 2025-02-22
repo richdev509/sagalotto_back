@@ -188,9 +188,11 @@
                                         <li class="nav-item">
                                             <a class="nav-link" href="/wp-admin/listelo">Liste Lo</a>
                                         </li>
+                                        <li class="nav-item"> <a class="nav-link"
+                                            href="/wp-admin/facture">Facture</a></li>
                                     @endif
 
-                                    @if (session('role') == 'comptable')
+                                    @if (session('role') == 'comptable' || session('role') == 'admin')
                                         <li class="nav-item"> <a class="nav-link"
                                                 href="/wp-admin/historiqueabonnement">HistoriqueAbonnement</a></li>
 
@@ -239,7 +241,7 @@
                 <footer class="footer">
                     <div class="container-fluid d-flex justify-content-between">
                         <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright ©
-                            Sagalotto.com 2024</span>
+                            Sagaloto.com {{ \Carbon\Carbon::now()->year }}</span>
 
                     </div>
                 </footer>

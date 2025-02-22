@@ -4,84 +4,98 @@
 
     <div class="card">
         <div class="p-0 card-body">
-            <div class="row">
 
-                <form id="rapport_form">
-                    @csrf
-                    <div class="form-group" style="display:inline-flex;border: 1px solid #ab61e7;padding: 0px;">
-
-                        <div>
-                            <input class="form-control" type="text" name="text" placeholder="recherche(nom ou phone)"
-                                required>
-                        </div>
-                        <div>
-                            <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary">
-                                Chache
-                            </button>
-                        </div>
-                    </div>
-
-
-
-
-                </form>
-            </div>
             <div class="tab-content">
+
                 <div role="tabpanel" id="react-aria-292-tabpane-design" aria-labelledby="react-aria-292-tab-design"
                     class="fade pb-4 p-4 tab-pane active show">
+
                     <div class="table-responsive">
+
                         <table class="text table" id="rapport_table">
+                            <div class="row col-12">
+                                <div class="form-group col-12">
+                                    <label for="searchInput">Recherche par:</label>
+                                    <input class="form-control" type="text" id="searchInput" name="text"
+                                        placeholder="Recherche (nom compagnie,phone, code, date expiration, bloquer (oui non))" onkeyup="filterTable()" required />
+                                </div>
+                               
+                                
+                            </div>
                             <thead style="background: #10439F;color:antiquewhite;">
                                 <tr>
                                     <th>Action</th>
-                                    <th>Login</th>
-                                    <th>View</th>
                                     <th scope="col">Compagnie</th>
+                                    <th scope="col">Code</th>
                                     <th scope="col">Phone</th>
-                                    <th scope="col">plan</th>
-                                    <th scope="col">Montant initial</th>
-                                    <th scope="col">Montant due</th>
-                                    <th scope="col">Date Abornement</th>
+                                    <th scope="col">Plan</th>
+                                    <th scope="col">Date Abonnement</th>
                                     <th scope="col">Date Expiration</th>
                                     <th scope="col">Bloquer</th>
                                     @if (session('role') == 'admin' || session('role') == 'addeur' || session('role') == 'comptable')
-                                        <th scope="col">abonnement</th>
+                                        <th scope="col">Abonnement</th>
                                     @endif
-
                                 </tr>
                             </thead>
-                            <tbody style="">
+                            <tbody id="tableBody">
                                 @foreach ($data as $donnee)
                                     <tr>
-                                        @if (session('role') == 'admin' || session('role') == 'admin2' || session('role') == 'addeur')
-                                            <td>
-                                                <form action="{{ route('edit_compagnie') }}" method="POST"> @csrf <input
-                                                        type="hidden" name="id" value="{{ $donnee->id }}" /><button
-                                                        type="submit"><i class="mdi mdi-pencil mdi-24px"></i></button>
-                                                </form>
-                                            </td>
-                                        @else
-                                            <td></td>
-                                        @endif
                                         <td>
-                                            <form action="{{ route('login_as_company') }}" method="get" target="_blank"> @csrf <input
-                                                type="hidden" name="id" value="{{ $donnee->id }}" /><button
-                                                type="submit"><i class="mdi mdi-pencil mdi-24px"></i>Login</button>
-                                        </form>
-                                        </td>
-                                        <td>
-                                            <form action="{{ route('listecompagnieU') }}" method="POST"> @csrf <input
-                                                    type="hidden" name="idcompagnie" value="{{ $donnee->id }}" /><button
-                                                    type="submit"><i class="mdi mdi-eye mdi-24px"></i></button></form>
+                                            <div class="dropdown">
+                                                <button class="btn btn-primary dropdown-toggle" type="button"
+                                                    id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" >
+                                                    Actions
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    @if (session('role') == 'admin' || session('role') == 'admin2' || session('role') == 'addeur')
+                                                        <li>
+                                                            <form action="{{ route('edit_compagnie') }}" method="POST"
+                                                                class="d-inline">
+                                                                @csrf
+                                                                <input type="hidden" name="id"
+                                                                    value="{{ $donnee->id }}" />
+                                                                <button type="submit" class="dropdown-item">Edit</button>
+                                                            </form>
+                                                        </li>
+                                                    @endif
+                                                    <li>
+                                                        <form action="{{ route('login_as_company') }}" method="GET"
+                                                            target="_blank" class="d-inline">
+                                                            @csrf
+                                                            <input type="hidden" name="id"
+                                                                value="{{ $donnee->id }}" />
+                                                            <button type="submit" class="dropdown-item">Login</button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form action="genererfacture" method="POST"
+                                                            target="_blank" class="d-inline">
+                                                            @csrf
+                                                            <input type="hidden" name="company"
+                                                                value="{{ $donnee->id }}" />
+                                                                <input type="hidden" name="date"
+                                                                value="{{ $donnee->dateexpiration }}" />
+                                                            <button type="submit" class="dropdown-item">Generer Facture</button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form action="{{ route('listecompagnieU') }}" method="POST"
+                                                            class="d-inline">
+                                                            @csrf
+                                                            <input type="hidden" name="idcompagnie"
+                                                                value="{{ $donnee->id }}" />
+                                                            <button type="submit" class="dropdown-item">View</button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </td>
 
+
                                         <td>{{ $donnee->name }}</td>
+                                        <td>{{ $donnee->code }}</td>
                                         <td>{{ $donnee->phone }}</td>
                                         <td>{{ $donnee->plan }}</td>
-                                        <td> {{ $resultsmontant[$donnee->id] }}</td>
-                                        <td>
-                                            {{ $results[$donnee->id] * $donnee->plan }} USD</li>
-                                        </td>
                                         <td>{{ $donnee->dateplan }}</td>
 
                                         <td>
@@ -109,8 +123,7 @@
                                             @if ($donnee->is_block == 1)
                                                 <label class="badge" style="background: red;">Oui</label>
                                             @else
-                                                <label class="badge"
-                                                    style="background: rgb(3, 148, 34);">Non</label>
+                                                <label class="badge" style="background: rgb(3, 148, 34);">Non</label>
                                             @endif
                                         </td>
                                         @if (session('role') == 'admin' || session('role') == 'comptable')
@@ -121,15 +134,40 @@
                                                             class="mdi mdi-calendar-check mdi-24px"></i></button></form>
                                         @endif
                                     </tr>
+                                    </tr>
                                 @endforeach
-
                             </tbody>
                         </table>
+
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
+
+    <script>
+        function filterTable() {
+            const input = document.getElementById("searchInput");
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById("rapport_table");
+            const rows = table.querySelectorAll("tbody tr");
+
+            rows.forEach((row) => {
+                const cells = row.querySelectorAll("td");
+                const rowText = Array.from(cells)
+                    .map((cell) => cell.textContent.toLowerCase())
+                    .join(" ");
+
+                if (rowText.includes(filter)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+
+        
+    </script>
+
 
 @stop

@@ -3,161 +3,292 @@
 
 @section('content')
     <style type="text/css">
-        .content {
-            position: fixed;
-            margin-top: 100px;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 70%;
-            height: 400px;
-            text-align: center;
-            background-color: white;
-            border: 1px solid blueviolet;
-            box-sizing: border-box;
-            padding: 10px;
-            z-index: 100;
-            display: none;
-            overflow-y: scroll;
-            overflow-x: scroll;
-            /*to hide popup initially*/
+        /* General Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
         }
 
-        #search div {
-            display: inline-block;
+        .page-header {
+            margin-bottom: 20px;
         }
 
-        .row_head {
-            border: 1px solid blueviolet;
-            padding: 10px;
-
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .content-clear td {
-            font-size: 11px;
-        }
-
-
-        .close-btn {
-            position: absolute;
-            right: 20px;
-            top: 15px;
-            background-color: black;
-            color: white;
-            border-radius: 50%;
-            padding: 4px;
-            width: 26px;
-            cursor: pointer;
-        }
-
-        h1 {
-            text-align: center;
-            font-family: Tahoma, Arial, sans-serif;
-            color: #06D85F;
-            margin: 80px 0;
-        }
-
-        .box {
-            width: 40%;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 35px;
-            border: 2px solid #fff;
-            border-radius: 20px/50px;
-            background-clip: padding-box;
-            text-align: center;
-        }
-
-        .button {
-            font-size: 1em;
-            padding: 10px;
-            color: gray;
-            border-radius: 20px/50px;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s ease-out;
-        }
-
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.7);
-            transition: opacity 500ms;
-            visibility: hidden;
-            opacity: 0;
-        }
-
-        .overlay:target {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .popup {
-            margin: 200px auto;
+        .card-body {
             padding: 20px;
-            background: #fff;
-            border-radius: 5px;
-            width: 50%;
-            position: relative;
-            transition: all 5s ease-in-out;
         }
 
-        .popup h2 {
-            margin-top: 0;
-            color: #333;
-            font-family: Tahoma, Arial, sans-serif;
+        .table-responsive {
+            overflow-x: auto;
         }
 
-        .popup .close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            transition: all 200ms;
-            font-size: 30px;
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
             font-weight: bold;
-            text-decoration: none;
-            color: #333;
         }
 
-        .popup .close:hover {
-            color: black;
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f9f9f9;
         }
 
-        .popup .content {
-            max-height: auto;
-            overflow: auto;
-        }
-
-        /* Uniform input size across all fields */
-        .input-custom {
-            height: 38px;
-            /* Standard height for all inputs */
-            padding: 6px 12px;
+        .btn {
+            padding: 8px 16px;
+            border-radius: 5px;
             font-size: 14px;
-            line-height: 1.5;
-            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
-        /* Make sure the form controls are consistent in appearance */
+        .btn-gradient-primary {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+        }
+
+        .btn-gradient-primary:hover {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
         .form-control {
-            box-sizing: border-box;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
         }
 
         .form-group label {
             font-weight: bold;
+            margin-bottom: 5px;
         }
 
-        @media screen and (max-width: 700px) {
-            .box {
-                width: 70%;
+        /* Popup Styling */
+        .content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            z-index: 1000;
+            display: none;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content {
+                width: 90%;
             }
 
-            .popup {
-                width: 70%;
+            .table th,
+            .table td {
+                padding: 8px;
+            }
+        }
+
+        /* Table Styling */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* Button Styling */
+        .btn-icon {
+            padding: 8px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #6a11cb;
+            border: none;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2575fc;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        /* Pagination Styling */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination li {
+            margin: 0 5px;
+        }
+
+        .pagination li a {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            color: #6a11cb;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination li a:hover {
+            background-color: #f1f3f5;
+        }
+
+        .pagination .active a {
+            background-color: #6a11cb;
+            color: white;
+            border-color: #6a11cb;
+        }
+
+        /* Form Styling */
+        .row_head {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control-lg {
+            height: 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control-lg:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+        }
+
+        .btn-gradient-primary {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .btn-gradient-primary:hover {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-control-lg {
+                height: 30px;
+                font-size: 14px;
+            }
+
+            .btn-gradient-primary {
+                width: 100%;
+                padding: 10px;
             }
         }
     </style>
@@ -179,179 +310,132 @@
             <div class="row_head">
                 <form method="get" action="lister-ticket" id="search">
                     @csrf
-
-                    <div class="col-12 col-sm-4">
-                        <div class="form-group local-forms">
-                            <label for="dateFilter">komanse</label>
-                            <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
-                                name="date_debut" value="{{ old('date_debut') }}" />
-
-                            <label for="dateFilter" style="margin-top: 5px;">Fini</label>
-
-                            <input style="height:10px;margin-top: 10px;" type="date" class="form-control" value=""
-                                name="date_fin" value="{{ old('date_fin') }}" />
+                    <div class="row">
+                        <!-- Date Filters -->
+                        <div class="col-12 col-md-3">
+                            <div class="form-group">
+                                <label for="date_debut" class="form-label">Komanse</label>
+                                <input type="date" class="form-control form-control-lg" name="date_debut"
+                                    value="{{ old('date_debut') }}" />
+                            </div>
+                            <div class="form-group">
+                                <label for="date_fin" class="form-label">Fini</label>
+                                <input type="date" class="form-control form-control-lg" name="date_fin"
+                                    value="{{ old('date_fin') }}" />
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="col-12 col-sm-4" style="margin-right: -10px;">
-                        <div class="form-group local-forms">
-                            <label for="dateFilter">Bank</label>
-                            <select class="form-control" name="bank" value="{{ old('bank') }}">
-                                <option>Tout</option>
-                                @foreach ($vendeur as $row)
-                                    <option value="{{ $row->id }}">{{ $row->bank_name }}</option>
-                                @endforeach
-                            </select>
-                            <label for="dateFilter" style="margin-top: 5px;">Tirage</label>
-                            <select class="form-control" name="tirage" value="{{ old('tirage') }}">
-                                <option>Tout</option>
-                                @foreach ($tirage as $row)
-                                    <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                @endforeach
-                            </select>
-
+                        <!-- Bank and Tirage Filters -->
+                        <div class="col-12 col-md-3">
+                            <div class="form-group">
+                                <label for="bank" class="form-label">Bank</label>
+                                <select class="form-control form-control-lg" name="bank">
+                                    <option value="Tout">Tout</option>
+                                    @foreach ($vendeur as $row)
+                                        <option value="{{ $row->id }}" {{ old('bank') == $row->id ? 'selected' : '' }}>
+                                            {{ $row->bank_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tirage" class="form-label">Tirage</label>
+                                <select class="form-control form-control-lg" name="tirage">
+                                    <option value='Tout'>Tout</option>
+                                    @foreach ($tirage as $row)
+                                        <option value="{{ $row->id }}"
+                                            {{ old('tirage') == $row->id ? 'selected' : '' }}>
+                                            {{ $row->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-12 col-sm-4">
-                        <div class="form-group local-forms">
-                            <label for="dateFilter" style="margin-top: 5px;">#fich</label>
 
-                            <input style="height:10px;margin-top: 10px;" type="text" class="form-control" value=""
-                                name="ticket" placeholder="antre yon #fich" />
+                        <!-- Ticket Number Filter -->
+                        <div class="col-12 col-md-4">
+                            <div class="form-group">
+                                <label for="ticket" class="form-label">#Fich</label>
+                                <input type="text" class="form-control form-control-lg" name="ticket"
+                                    placeholder="Antre yon #fich" value="{{ old('ticket') }}" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="student-submit">
-                            <button style="margin-top: 18px;" type="submit"
-                                class="btn btn-gradient-primary me-2 loa">Chache</button>
+
+                        <!-- Submit Button -->
+                        <div class="col-12 text-center mt-4">
+                            <button type="submit" class="btn btn-gradient-primary btn-lg">
+                                <i class="mdi mdi-magnify"></i> Chache
+                            </button>
                         </div>
                     </div>
                 </form>
-
-
-
             </div>
             <div class="table-responsive">
-
-                <table class="table table-striped">
+                <table class="table table-striped table-hover">
                     <thead>
                         <tr>
-                            <th> #fich </th>
-                            <th> Bank </th>
-                            <th> Tirage </th>
-                            <th> Boul </th>
-                            <th> Jwe</th>
-                            <th> Genyen</th>
-                            <th> Kakile</th>
-                            <th> Peye</th>
-                            <th> Dat</th>
-                            <th> Aksyon</th>
-
-
-
+                            <th>#Fich</th>
+                            <th>Bank</th>
+                            <th>Tirage</th>
+                            <th>Boul</th>
+                            <th>Jwe</th>
+                            <th>Genyen</th>
+                            <th>Kakile</th>
+                            <th>Peye</th>
+                            <th>Dat</th>
+                            <th>Aksyon</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($ticket as $row)
                             <tr>
-                                <td> {{ $row->ticket_id }} </td>
-                                <td class="py-1">
-                                    {{ $row->bank }}
+                                <td>{{ $row->ticket_id }}</td>
+                                <td>{{ $row->bank }}</td>
+                                <td
+                                    style="color: {{ $row->tirage == 'NewYork Soir' ? 'blue' : ($row->tirage == 'NewYork Matin' ? '#06aafd' : ($row->tirage == 'Florida Matin' ? '#53ca8c' : ($row->tirage == 'Florida Soir' ? '#30be64' : ($row->tirage == 'Georgia Matin' ? '#be3030' : ($row->tirage == 'Georgia ApresMidi' ? '#fa8e8e' : 'inherit'))))) }};">
+                                    {{ $row->tirage }}
                                 </td>
-                                @if ($row->tirage == 'NewYork Soir')
-                                    <td style="color:blue;">
-                                        {{ $row->tirage }}
-                                    </td>
-                                @elseif($row->tirage == 'NewYork Matin')
-                                    <td style="color: #06aafd">
-                                        {{ $row->tirage }}
-                                    </td>
-                                @elseif($row->tirage == 'Florida Matin')
-                                    <td style="color: #53ca8c">
-                                        {{ $row->tirage }}
-                                    </td>
-                                @elseif($row->tirage == 'Florida Soir')
-                                    <td style="color: #30be64">
-                                        {{ $row->tirage }}
-                                    </td>
-                                @elseif($row->tirage == 'Georgia Matin')
-                                    <td style="color: #be3030">
-                                        {{ $row->tirage }}
-                                    </td>
-                                @elseif($row->tirage == 'Georgia ApresMidi')
-                                    <td style="color: #fa8e8e">
-                                        {{ $row->tirage }}
-                                    </td>
-                                @else
-                                    <td>
-                                        {{ $row->tirage }}
-                                    </td>
-                                @endif
                                 <td class="text-center">
                                     <form action="boule-show" method="GET" class="form">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $row->id }}">
-                                        <button type="submit" style="color: blue;" id="btn_boule"><i
-                                                class="mdi mdi-eye btn_boule"></i></button>
-
+                                        <button type="submit" class="btn btn-icon btn-primary btn_boule">
+                                            <i class="mdi mdi-eye"></i>
+                                        </button>
                                     </form>
-
-
-
                                 </td>
-
-                                <td> {{ $row->amount }} HTG</td>
-
-
-                                @if ($row->winning == null)
-                                    <td style="color: red">
-                                        {{ 0 }} HTG
-
-                                    </td>
-                                @else
-                                    <td style="color: green;">
-                                        {{ $row->winning }} HTG
-                                    </td>
-                                @endif
+                                <td>{{ $row->amount }} HTG</td>
+                                <td style="color: {{ $row->winning ? 'green' : 'red' }};">
+                                    {{ $row->winning ?? 0 }} HTG
                                 </td>
-                                @if ($row->is_calculated == 0)
-                                    <td style="color: red;"> Non </td>
-                                @else
-                                    <td style="color:#58dc0b;"> Wi </td>
-                                @endif
-                                @if ($row->is_payed == 1)
-                                    <td style="color:green"> Wi </td>
-                                @else
-                                    <td style="color:red"> Non </td>
-                                @endif
-
-                                <td> {{ $row->date }} </td>
-
+                                <td style="color: {{ $row->is_calculated ? '#58dc0b' : 'red' }};">
+                                    {{ $row->is_calculated ? 'Wi' : 'Non' }}
+                                </td>
+                                <td style="color: {{ $row->is_payed ? 'green' : 'red' }};">
+                                    {{ $row->is_payed ? 'Wi' : 'Non' }}
+                                </td>
+                                <td>{{ $row->date }}</td>
                                 <td class="text-center">
                                     <form action="delete-ticket?id={{ $row->id }}" method="get"
                                         class="deleting_form">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $row->id }}">
-                                        <button type="submit" style="color: red;"><i class="mdi mdi-delete"></i></button>
+                                        <button type="submit" class="btn btn-icon btn-danger">
+                                            <i class="mdi mdi-delete"></i>
+                                        </button>
                                     </form>
-
                                 </td>
-
                             </tr>
                         @endforeach
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td>
+                            <td colspan="10">
                                 {{ $ticket->links() }}
-
                             </td>
                         </tr>
-
                     </tfoot>
-
                 </table>
-
             </div>
 
 

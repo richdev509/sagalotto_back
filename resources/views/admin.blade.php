@@ -2,11 +2,165 @@
 
 @section('content')
     <style>
-        .vendeur div{
-            display: inline-block;
+        /* Modern color palette */
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --success-color: #00b894;
+            --danger-color: #d63031;
+            --info-color: #0984e3;
+            --warning-color: #fdcb6e;
+            --background-color: #f8f9fa;
+            --text-color: #2d3436;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-img-holder {
+            position: relative;
+        }
+
+        .card-img-absolute {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            opacity: 0.2;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .card-text {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-gradient-info {
+            background: linear-gradient(135deg, var(--info-color), var(--secondary-color));
+            color: white;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .table thead th {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-weight: 600;
+        }
+
+        .table tbody tr {
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .table tbody tr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .table tbody td {
+            padding: 15px;
+            border: none;
+        }
+
+        .btn-rounded {
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-social-icon {
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 2px;
+        }
+
+        .cont {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .column {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            flex: 1;
+            min-width: 250px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .column:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        .text {
+            font-size: 16px;
+            color: var(--text-color);
+        }
+
+        @media (max-width: 768px) {
+            .cont {
+                flex-direction: column;
+            }
+
+            .column {
+                width: 100%;
+            }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <div class="page-header">
         <h3 class="page-title">
             <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -21,51 +175,69 @@
             </ul>
         </nav>
     </div>
-    <div class="row" style="margin: 2px;padding:2px;border-style:ridge; border-width:1px; border-color:rgb(209, 163, 252);">
-        <div class="col-md-4 stretch-card grid-margin" style="padding: 2px;">
-            <div class="card bg-gradient-danger card-img-holder text-white">
+
+    <div class="row">
+        <div class="col-md-4 stretch-card grid-margin">
+            <div class="card bg-gradient-danger">
                 <div class="card-body">
                     <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
                     <h4 class="font-weight-normal mb-3">Kob ou vann jodia <i
-                            class="mdi mdi-chart-line mdi-24px float-right"></i>
-                    </h4>
-                    <h2 class="mb-5">{{Session('devise')}} {{ $vente }}</h2>
-                    <!--<h6 class="card-text">Vandè ki vann plis jodia:  <span style="font-weight: bold;">Bank #12</span></h6>-->
+                            class="mdi mdi-chart-line mdi-24px float-right"></i></h4>
+                    <h2 class="mb-5">{{ Session('devise') }} {{ $vente }}</h2>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 stretch-card grid-margin" style="padding: 2px;">
-            <div class="card bg-gradient-info card-img-holder text-white">
+        <div class="col-md-4 stretch-card grid-margin">
+            <div class="card bg-gradient-info">
                 <div class="card-body">
                     <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
                     <h4 class="font-weight-normal mb-3">Kob ou peye jodia <i
-                            class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
-                    </h4>
-                    <h2 class="mb-5">{{Session('devise')}} {{ $perte }}</h2>
+                            class="mdi mdi-bookmark-outline mdi-24px float-right"></i></h4>
+                    <h2 class="mb-5">{{ Session('devise') }} {{ $perte }}</h2>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 stretch-card grid-margin" style="padding: 2px;">
-            <div class="card bg-gradient-success card-img-holder text-white">
+        <div class="col-md-4 stretch-card grid-margin">
+            <div class="card bg-gradient-success">
                 <div class="card-body">
                     <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-3">Balans <i class="mdi mdi-diamond mdi-24px float-right"></i>
-                    </h4>
-                    <h2 class="mb-5">{{Session('devise')}} {{round($vente - ($perte + $commission), 2) }}</h2>
-                    <h6 class="card-text"></h6>
+                    <h4 class="font-weight-normal mb-3">Balans <i class="mdi mdi-diamond mdi-24px float-right"></i></h4>
+                    <h2 class="mb-5">{{ Session('devise') }} {{ round($vente - ($perte + $commission), 2) }}</h2>
                 </div>
             </div>
         </div>
     </div>
-  
-    <div class="row" style="margin: 2px;padding: 2px;border-style:ridge; border-width:1px; border-color:rgb(209, 163, 252);">
-        <div class="col-12 grid-margin" style="padding:2px;">
+
+    <div class="cont">
+        <div class="column">
+            <a href="/raport2">
+                <i class="icon mdi mdi-account"></i>
+                <span class="text">Bank aktif: <span
+                        style="color: var(--success-color);">{{ $actif_user }}</span>/{{ $total_user }}</span>
+            </a>
+        </div>
+        <div class="column">
+            <a href="/lister-ticket">
+                <i class="icon mdi mdi-ticket"></i>
+                <span class="text">Fich genyen: <span
+                        style="color: var(--success-color);">{{ $ticket_win }}</span>/{{ $ticket_total }}</span>
+            </a>
+        </div>
+        <div class="column">
+            <i class="icon mdi mdi-delete" style="color: var(--danger-color);"></i>
+            <span class="text">Fich anile: <span
+                    style="color: var(--danger-color);">{{ $ticket_delete }}</span>/{{ $ticket_total + $ticket_delete }}</span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 grid-margin">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">3 Denye tiraj ki tire yo, lè sèvè se: @php echo date('Y-m-d H:i:s') . "\n";@endphp</h4>
+                    <h4 class="card-title">3 Denye tiraj ki tire yo, lè sèvè se: @php echo date('Y-m-d H:i:s'); @endphp</h4>
                     <a href="/lister-lo"> <label class="badge badge-gradient-info">Gade plis</label></a>
                     <div class="table-responsive">
-                        <table class="table  table-striped" style="margin: 1px;padding:1px;">
+                        <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>Tiraj Nom</th>
@@ -75,42 +247,14 @@
                             </thead>
                             <tbody>
                                 @foreach ($list as $lists)
-                                    <tr style="border: 1px solid black;font-weight: bold;">
                                     <tr>
-                                        @if ($lists['name'] == 'NewYork Soir')
-                                            <td style="color:blue;">
-                                                {{ $lists['name'] }}
-                                            </td>
-                                        @elseif($lists['name'] == 'NewYork Matin')
-                                            <td style="color: #06aafd">
-                                                {{ $lists['name'] }}
-                                            </td>
-                                        @elseif($lists['name'] == 'Florida Matin')
-                                            <td style="color: #53ca8c">
-                                                {{ $lists['name'] }}
-                                            </td>
-                                        @elseif($lists['name'] == 'Florida Soir')
-                                            <td style="color: #30be64">
-                                                {{ $lists['name'] }}
-                                            </td>
-                                        @elseif($lists['name'] == 'Georgia Matin')
-                                            <td style="color: #be3030">
-                                                {{ $lists['name'] }}
-                                            </td>
-                                        @elseif($lists['name'] == 'Georgia ApresMidi')
-                                            <td style="color: #fa8e8e">
-                                                {{ $lists['name'] }}
-                                            </td>
-                                        @else
-                                            <td>
-                                                {{ $lists['name'] }}
-                                            </td>
-                                        @endif
-                                        </td>
+                                        <td style="color: {{ getTirageColor($lists['name']) }}; font-weight: bold;">
+                                            {{ $lists['name'] }}</td>
                                         <td style="font-weight: bold;">
                                             {{ \Carbon\Carbon::parse($lists['boulGagnant']->created_)->format('d-m-Y') }}
                                         </td>
-                                        <td style="font-weight: bold;"><button type="button"
+                                        <td>
+                                            <button type="button"
                                                 class="btn btn-social-icon btn-youtube btn-rounded">{{ $lists['boulGagnant']->unchiffre }}</button>
                                             <button type="button"
                                                 class="btn btn-social-icon btn-facebook btn-rounded">{{ $lists['boulGagnant']->premierchiffre }}</button>
@@ -120,24 +264,16 @@
                                                 class="btn btn-social-icon btn-linkedin btn-rounded">{{ $lists['boulGagnant']->troisiemechiffre }}</button>
                                         </td>
                                     </tr>
-                                    <tr style="border: 1px solid black;">
-                                        <td style="font-weight: bold;">
-                                            Vann: <span>{{ $lists['vent'] ?? 0 }} {{Session('devise')}} </span>
-                                        </td>
-
-                                        <td style="font-weight: bold;">
-                                            Pedi: <span>{{ $lists['pert'] ?? 0 }} {{Session('devise')}} </span>
-
-                                        </td>
-                                        <td style="font-weight: bold;">
-                                            Balans: <span>{{ $lists['vent'] - ($lists['pert'] + $lists['commissio']) }}
-                                                {{Session('devise')}} </span>
-
-                                        </td>
-                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold;">Vann: <span>{{ $lists['vent'] ?? 0 }}
+                                                {{ Session('devise') }}</span></td>
+                                        <td style="font-weight: bold;">Pedi: <span>{{ $lists['pert'] ?? 0 }}
+                                                {{ Session('devise') }}</span></td>
+                                        <td style="font-weight: bold;">Balans:
+                                            <span>{{ $lists['vent'] - ($lists['pert'] + $lists['commissio']) }}
+                                                {{ Session('devise') }}</span></td>
                                     </tr>
                                 @endforeach
-
                             </tbody>
                         </table>
                     </div>
@@ -145,36 +281,20 @@
             </div>
         </div>
     </div>
-    <script>
-        // Fetch chart data from Laravel route
+    @php
+        function getTirageColor($tirage)
+        {
+            $colors = [
+                'NewYork Soir' => 'blue',
+                'NewYork Matin' => '#06aafd',
+                'Florida Matin' => '#53ca8c',
+                'Florida Soir' => '#30be64',
+                'Georgia Matin' => '#be3030',
+                'Georgia ApresMidi' => '#fa8e8e',
+            ];
+            return $colors[$tirage] ?? 'black';
+        }
+    @endphp
 
-        // Extract data for labels and values
-        const labels = ['Bolet: 30', 'Maryaj: 5092', 'Loto3: 436', 'Loto4: 5321', 'Loto5: 52390'];
-        const values = ['7000', '600', '50', '1000', '7092'];
-
-        // Create Chart.js chart
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Pri li jwe',
-                    data: values,
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
-            }
-        });
-    </script>
+    
 @endsection

@@ -49,6 +49,11 @@ class statistiqueController extends Controller
             // Récupérer les tickets vendus
             $fiches = TicketVendu::whereIn('ticket_code_id', $codes)
                 ->where('tirage_record_id', $tirage)
+                ->where([
+                    ['is_delete', '=', 0],
+                    ['is_cancel', '=', 0],
+                    ['pending', '=', 0],
+                    ]) 
                 ->get();
         }
 

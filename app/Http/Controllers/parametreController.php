@@ -15,7 +15,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
 use App\Models\tirage_record;
-
+use App\Models\limit_auto;
+use App\Models\seting;
 class parametreController extends Controller
 {
 
@@ -42,10 +43,37 @@ class parametreController extends Controller
         $listetirage = tirage_record::where('compagnie_id', session('loginId'))->get();
         $limitprixboul = limitprixboul::where('compagnie_id', session('loginId'))->orderBy('tirage_record') // Triez par tirage_record
             ->get();
+           
+         $list = [];
 
+
+            foreach ($limitprixboul as $single_boul) {
+                $amount = limit_auto::where([
+                    ['compagnie_id', '=', Session('loginId')],
+                    ['tirage', '=', $single_boul->type],
+                    ['boule', '=', $single_boul->boul],
+                    ['type', '=', lcfirst($single_boul->opsyon)],
+                ])->whereDate('created_at', '=', Carbon::today())
+                    ->sum('amount');
+              
+
+                $list[] = [
+                    'id' => $single_boul->id,
+                    'type' => $single_boul->type,
+                    'boul' => $single_boul->boul,
+
+                    'opsyon' => $single_boul->opsyon,
+                    'montant_limit' => $single_boul->montant,
+                    'montant_play' => $amount,
+                    'created_at' => $single_boul->created_at
+
+
+                ];
+            }
+            
 
         $listjwet = DB::table('listejwet')->get();
-        return view('parametre.limitPrixAchat', compact('limitprix', 'listetirage', 'limitprixboul', 'listjwet'));
+        return view('parametre.limitPrixAchat', compact('limitprix', 'listetirage', 'list', 'listjwet'));
     }
 
     public function ajoutlimitprixboulView()
@@ -367,6 +395,62 @@ class parametreController extends Controller
             return view('login');
         }
     }
+    public function config_fich()
+    {
+
+        if (Session('loginId')) {
+
+            $fich_config = DB::table('setings')->where([
+                ['compagnie_id', '=', Session('loginId')]
+            ])->first();
+            if (!$fich_config) {
+                //insert
+                $fich_config = DB::table('setings')->insert([
+                    'compagnie_id' => Session('loginId')
+                ]);
+                //get
+                $fich_config = DB::table('setings')->where([
+                    ['compagnie_id', '=', Session('loginId')]
+                ])->first();
+            }
+            return view('fich', ['fich' => $fich_config]);
+        } else {
+            return view('login');
+        }
+    }
+
+    public function config_fichUpdate(Request $request)
+    {
+
+      
+        try {
+            // Récupérer le modèle existant que vous souhaitez mettre à jour
+            $settingIsset = seting::where([
+                ['compagnie_id', session('loginId')],
+            ])->first();
+            if ($settingIsset) {
+
+                // Mettre à jour les champs nécessaires
+                $settingIsset->qt_bolet = $request->input('qt_bolet') ?: 100;
+                $settingIsset->qt_maryaj = $request->input('qt_maryaj') ?: 250;
+                $settingIsset->qt_loto3 = $request->input('qt_loto3') ?: 100;
+                $settingIsset->qt_loto4 = $request->input('qt_loto4') ?: 100;
+                $settingIsset->qt_loto5 = $request->input('qt_loto5') ?: 100;
+                
+                $settingIsset->save();
+
+                notify()->success('tout paramet yo byen mofifye');
+                return redirect()->back();
+            } else {
+                notify()->error('Gen yon pwoblem kontakte ekip teknik');
+                return redirect()->back();
+            }
+        } catch (\Exception $e) {
+            notify()->error('Gen yon pwoblem kontakte ekip teknik');
+            return redirect()->back();
+        }
+    }
+
     public function update_delai(Request $request)
     {
 

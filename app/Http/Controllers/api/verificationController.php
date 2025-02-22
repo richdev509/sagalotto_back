@@ -9,6 +9,7 @@ use App\Models\limitprixboul;
 use Illuminate\Http\Request;
 use App\Models\switchboul;
 use App\Models\tirage;
+use App\Models\seting;
 use App\Models\tirage_record;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -89,7 +90,7 @@ class verificationController extends Controller
                     ->sum('amount');
                 if ($limit->boletetat == '1' && ($montant['montant'] + $amount_bo) > $limit->bolet) {
 
-                    $limitePrixJouer[] = 'limit ' . $montant['boul1'] . ' nan ' . $tirage . ' se ' . $limit->bolet - $amount_bo . ' G';
+                    $limitePrixJouer[] = 'limit ' . $montant['boul1'] . ' nan ' . $tirage;
                 }
             }
         }
@@ -114,7 +115,7 @@ class verificationController extends Controller
 
                 if ($limit->maryajetat == '1' && ($montant['montant'] + $amount_ma) > $limit->maryaj) {
 
-                    $limitePrixJouer[] = 'limit ' . $montant['boul1'] . $montant['boul2'] . ' nan ' . $tirage . ' se ' . $limit->maryaj -  $amount_ma . ' G';
+                    $limitePrixJouer[] = 'limit ' . $montant['boul1'] . $montant['boul2'] . ' nan ' . $tirage;
                 }
             }
         }
@@ -130,7 +131,7 @@ class verificationController extends Controller
                     ->sum('amount');
                 if ($limit->loto3etat == '1' && ($montant['montant'] + $amount_l3) > $limit->loto3) {
 
-                    $limitePrixJouer[] = 'limit ' . $montant['boul1'] . ' nan ' . $tirage . ' se ' . $limit->loto3 - $amount_l3 . ' G';
+                    $limitePrixJouer[] = 'limit ' . $montant['boul1'] . ' nan ' . $tirage;
                 }
             }
         }
@@ -150,7 +151,7 @@ class verificationController extends Controller
                     if ($limit->loto4etat == '1' && ($option['option1'] + $amount_op1) > $limit->loto4) {
 
 
-                        $limitePrixJouer[]  = 'limit ' . $option['boul1'].'(1)'.' nan ' . $tirage . ' se ' . $limit->loto4 -  $amount_op1 . ' G ';
+                        $limitePrixJouer[]  = 'limit ' . $option['boul1'] . '(1)' . ' nan ' . $tirage;
                     }
                 }
                 if (!empty($option['option2'])) {
@@ -166,7 +167,7 @@ class verificationController extends Controller
                     if ($limit->loto4etat == '1' && ($option['option2'] + $amount_op2) > $limit->loto4) {
 
 
-                        $limitePrixJouer[]  = 'limit ' . $option['boul1'].'(2)'.' nan ' . $tirage . ' se ' . $limit->loto4 -  $amount_op2 . ' G ';
+                        $limitePrixJouer[]  = 'limit ' . $option['boul1'] . '(2)' . ' nan ' . $tirage;
                     }
                 }
                 if (!empty($option['option3'])) {
@@ -182,11 +183,9 @@ class verificationController extends Controller
                     if ($limit->loto4etat == '1' && ($option['option3'] + $amount_op3) > $limit->loto4) {
 
 
-                        $limitePrixJouer[]  = 'limit ' . $option['boul1'].'(3)'.' nan ' . $tirage . ' se ' . $limit->loto4 -  $amount_op3. ' G ';
+                        $limitePrixJouer[]  = 'limit ' . $option['boul1'] . '(3)' . ' nan ' . $tirage;
                     }
                 }
-
-
             }
         }
         if (!empty($request->input('loto5'))) {
@@ -195,55 +194,50 @@ class verificationController extends Controller
 
 
                 if (!empty($option['option1'])) {
-                    $amount_l51 =0;
+                    $amount_l51 = 0;
                     $amount_l51 = limit_auto::where([
                         ['compagnie_id', '=', auth()->user()->compagnie_id],
                         ['tirage', '=', $tirage],
                         ['boule', '=', $option['boul1']],
                         ['type', '=', 'loto5'],
-                        ['opsyon','=', 1]
+                        ['opsyon', '=', 1]
                     ])->whereDate('created_at', '=', Carbon::today())
                         ->sum('amount');
-                        if ($limit->loto5etat == '1' && ($option['option1'] + $amount_l51) > $limit->loto5) {
+                    if ($limit->loto5etat == '1' && ($option['option1'] + $amount_l51) > $limit->loto5) {
 
-                            $limitePrixJouer[] = 'limit ' . $option['boul1'].'(1)'. ' nan ' . $tirage . ' se ' . $limit->loto5 - $amount_l51 . ' G';
-                        }
+                        $limitePrixJouer[] = 'limit ' . $option['boul1'] . '(1)' . ' nan ' . $tirage;
+                    }
                 }
                 if (!empty($option['option2'])) {
-                    $amount_l52 =0;
+                    $amount_l52 = 0;
                     $amount_l52 = limit_auto::where([
                         ['compagnie_id', '=', auth()->user()->compagnie_id],
                         ['tirage', '=', $tirage],
                         ['boule', '=', $option['boul1']],
                         ['type', '=', 'loto5'],
-                        ['opsyon','=', 2]
+                        ['opsyon', '=', 2]
                     ])->whereDate('created_at', '=', Carbon::today())
                         ->sum('amount');
-                        if ($limit->loto5etat == '1' && ($option['option2'] + $amount_l52) > $limit->loto5) {
+                    if ($limit->loto5etat == '1' && ($option['option2'] + $amount_l52) > $limit->loto5) {
 
-                            $limitePrixJouer[] = 'limit ' . $option['boul1'].'(2)'. ' nan ' . $tirage . ' se ' . $limit->loto5 - $amount_l52 . ' G';
-                        }
-
+                        $limitePrixJouer[] = 'limit ' . $option['boul1'] . '(2)' . ' nan ' . $tirage;
+                    }
                 }
                 if (!empty($option['option3'])) {
-                    $amount_l53 =0;
+                    $amount_l53 = 0;
                     $amount_l53 = limit_auto::where([
                         ['compagnie_id', '=', auth()->user()->compagnie_id],
                         ['tirage', '=', $tirage],
                         ['boule', '=', $option['boul1']],
                         ['type', '=', 'loto5'],
-                        ['opsyon','=', 3]
+                        ['opsyon', '=', 3]
                     ])->whereDate('created_at', '=', Carbon::today())
                         ->sum('amount');
-                        if ($limit->loto5etat == '1' && ($option['option3'] + $amount_l53) > $limit->loto5) {
+                    if ($limit->loto5etat == '1' && ($option['option3'] + $amount_l53) > $limit->loto5) {
 
-                            $limitePrixJouer[] = 'limit ' . $option['boul1'].'(3)'. ' nan ' . $tirage . ' se ' . $limit->loto5 - $amount_l53 . ' G';
-                        }
-              
+                        $limitePrixJouer[] = 'limit ' . $option['boul1'] . '(3)' . ' nan ' . $tirage;
+                    }
                 }
-
-
-               
             }
         }
         if (!empty($limitePrixJouer)) {
@@ -317,9 +311,10 @@ class verificationController extends Controller
                             'boule' => $option['boul1'],
                             'amount' =>  $option['option1'],
                             'type' => 'loto4',
-                            'opsyon'=>1,
+                            'opsyon' => 1,
                             'created_at' => Carbon::now(),
-                        ]);                    }
+                        ]);
+                    }
                     if (!empty($option['option2'])) {
                         $query = DB::table('limit_autos')->insert([
                             'compagnie_id' => auth()->user()->compagnie_id,
@@ -327,9 +322,9 @@ class verificationController extends Controller
                             'boule' => $option['boul1'],
                             'amount' =>  $option['option2'],
                             'type' => 'loto4',
-                            'opsyon'=>2,
+                            'opsyon' => 2,
                             'created_at' => Carbon::now(),
-                        ]); 
+                        ]);
                     }
                     if (!empty($option['option3'])) {
                         $query = DB::table('limit_autos')->insert([
@@ -338,11 +333,10 @@ class verificationController extends Controller
                             'boule' => $option['boul1'],
                             'amount' =>  $option['option3'],
                             'type' => 'loto4',
-                            'opsyon'=>3,
+                            'opsyon' => 3,
                             'created_at' => Carbon::now(),
-                        ]); 
+                        ]);
                     }
-                   
                 }
             }
             if (!empty($request->input('loto5'))) {
@@ -356,7 +350,7 @@ class verificationController extends Controller
                             'boule' => $option['boul1'],
                             'amount' =>  $option['option1'],
                             'type' => 'loto5',
-                            'opsyon'=>1,
+                            'opsyon' => 1,
                             'created_at' => Carbon::now(),
                         ]);
                     }
@@ -367,7 +361,7 @@ class verificationController extends Controller
                             'boule' => $option['boul1'],
                             'amount' =>  $option['option2'],
                             'type' => 'loto5',
-                            'opsyon'=>2,
+                            'opsyon' => 2,
                             'created_at' => Carbon::now(),
                         ]);
                     }
@@ -378,18 +372,17 @@ class verificationController extends Controller
                             'boule' => $option['boul1'],
                             'amount' =>  $option['option3'],
                             'type' => 'loto5',
-                            'opsyon'=>3,
+                            'opsyon' => 3,
                             'created_at' => Carbon::now(),
                         ]);
                     }
-
                 }
             }
         }
     }
     public static function verifierLimitePrixBoule(Request $request, $tirage)
     {
-       
+
         if (!empty($request->input('bolete'))) {
 
 
@@ -403,22 +396,26 @@ class verificationController extends Controller
 
                 ])->first();
                 if ($limit_boul) {
+                    $amount_bo = 0;
+                    $amount_bo = limit_auto::where([
+                        ['compagnie_id', '=', auth()->user()->compagnie_id],
+                        ['tirage', '=', $tirage],
+                        ['boule', '=', $value['boul1']],
+                        ['type', '=', 'bolet']
+                    ])->whereDate('created_at', '=', Carbon::today())
+                        ->sum('amount');
 
-                    if ($limit_boul->montant < $value['montant']) {
+                    if ($amount_bo +  $value['montant'] > $limit_boul->montant) {
                         return response()->json([
                             'status' => 'false',
                             'message' => [
                                 'info' => 'pri a depase limit pou boul sa',
-                                'boule' => 'ou paka jwe ' . $value['boul1'] . ' pou plis ke ' . $limit_boul->montant,
+                                'boule' => 'ou paka jwe ' . $value['boul1'] . ' pou plis ke ' . $limit_boul->montant - $amount_bo,
 
                             ],
                             'code' => '404'
 
                         ], 404,);
-                    }
-                    if ($limit_boul->is_general == 1) {
-                        $limit_boul->montant = $limit_boul->montant - $value['montant'];
-                        $limit_boul->save();
                     }
                 }
             }
@@ -440,22 +437,30 @@ class verificationController extends Controller
 
                 ])->first();
                 if ($limit_boul) {
-
-                    if ($limit_boul->montant < $value['montant']) {
+                    $amount_ma = 0;
+                    $amount_ma = limit_auto::where([
+                        ['compagnie_id', '=', auth()->user()->compagnie_id],
+                        ['tirage', '=', $tirage],
+                        ['boule', '=', $value['boul1'] . $value['boul2']],
+                        ['type', '=', 'maryaj']
+                    ])->orwhere([
+                        ['compagnie_id', '=', auth()->user()->compagnie_id],
+                        ['tirage', '=', $tirage],
+                        ['boule', '=', $value['boul2'] . $value['boul1']],
+                        ['type', '=', 'maryaj']
+                    ])->whereDate('created_at', '=', Carbon::today())
+                        ->sum('amount');
+                    if ($amount_ma + $value['montant'] > $limit_boul->montant) {
                         return response()->json([
                             'status' => 'false',
                             'message' => [
                                 'info' => 'pri a depase limit pou boul sa',
-                                'boule' => 'ou paka jwe ' . $value['boul1'] . 'x' . $value['boul2'] . ' pou plis ke ' . $limit_boul->montant,
+                                'boule' => 'ou paka jwe ' . $value['boul1'] . 'x' . $value['boul2'] . ' pou plis ke ' . $limit_boul->montant - $amount_ma,
 
                             ],
                             'code' => '404'
 
                         ], 404,);
-                    }
-                    if ($limit_boul->is_general == 1) {
-                        $limit_boul->montant = $limit_boul->montant - $value['montant'];
-                        $limit_boul->save();
                     }
                 }
             }
@@ -471,22 +476,26 @@ class verificationController extends Controller
 
                 ])->first();
                 if ($limit_boul) {
+                    $amount_l3 = 0;
+                    $amount_l3 = limit_auto::where([
+                        ['compagnie_id', '=', auth()->user()->compagnie_id],
+                        ['tirage', '=', $tirage],
+                        ['boule', '=', $value['boul1']],
+                        ['type', '=', 'loto3']
+                    ])->whereDate('created_at', '=', Carbon::today())
+                        ->sum('amount');
 
-                    if ($limit_boul->montant < $value['montant']) {
+                    if ($amount_l3 + $value['montant'] > $limit_boul->montant) {
                         return response()->json([
                             'status' => 'false',
                             'message' => [
                                 'info' => 'pri a depase limit pou boul sa',
-                                'boule' => 'ou paka jwe ' . $value['boul1'] . ' pou plis ke ' . $limit_boul->montant,
+                                'boule' => 'ou paka jwe ' . $value['boul1'] . ' pou plis ke ' . $limit_boul->montant - $amount_l3,
 
                             ],
                             'code' => '404'
 
                         ], 404,);
-                    }
-                    if ($limit_boul->is_general == 1) {
-                        $limit_boul->montant = $limit_boul->montant - $value['montant'];
-                        $limit_boul->save();
                     }
                 }
             }
@@ -505,7 +514,6 @@ class verificationController extends Controller
                 if (!empty($value['option1'])) {
 
                     if ($limit_boul) {
-
                         if ($limit_boul->montant < $value['option1']) {
                             return response()->json([
                                 'status' => 'false',
@@ -711,6 +719,16 @@ class verificationController extends Controller
             // Get the first two characters of each word
             return substr($word, 0, 1);
         });
+      
+        $setting = seting::where([
+            ['compagnie_id', '=', auth()->user()->compagnie_id],
+        ])->first();
+        $ma_price ='Gagnant';
+        if ($setting) {
+           if($setting->show_mariage_price==1){
+              $ma_price = $data->prix.' G';
+           }
+        }
 
         // Return the result as a string
         $tirage_name = $result->implode(' ');
@@ -721,7 +739,7 @@ class verificationController extends Controller
                 $mariage[] = [
                     'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
                     'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
-                    'montant' => $tirage_name.' '.$data->prix.'G',
+                    'montant' => $tirage_name . ' ' .$ma_price,
                 ];
             }
             return $mariage;
@@ -731,7 +749,7 @@ class verificationController extends Controller
                 $mariage[] = [
                     'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
                     'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
-                    'montant' => $tirage_name.' '.$data->prix.'G',
+                    'montant' => $tirage_name . ' ' .$ma_price,
 
                 ];
             }
@@ -743,7 +761,7 @@ class verificationController extends Controller
                 $mariage[] = [
                     'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
                     'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
-                    'montant' => $tirage_name.' '.$data->prix.'G',
+                    'montant' => $tirage_name . ' ' .$ma_price,
 
                 ];
             }
@@ -755,7 +773,7 @@ class verificationController extends Controller
                 $mariage[] = [
                     'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
                     'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
-                    'montant' => $tirage_name.' '.$data->prix.'G',
+                    'montant' => $tirage_name . ' ' .$ma_price,
 
                 ];
             }
@@ -767,7 +785,7 @@ class verificationController extends Controller
                 $mariage[] = [
                     'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
                     'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
-                    'montant' => $tirage_name.' '.$data->prix.'G',
+                    'montant' => $tirage_name . ' ' .$ma_price,
 
                 ];
             }
@@ -779,7 +797,7 @@ class verificationController extends Controller
                 $mariage[] = [
                     'boul1' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
                     'boul2' => $randomNumber = str_pad(random_int(0, 99), 2, '0', STR_PAD_LEFT),
-                    'montant' => $tirage_name.' '.$data->prix.'G',
+                    'montant' => $tirage_name . ' ' .$ma_price,
 
                 ];
             }
@@ -803,5 +821,59 @@ class verificationController extends Controller
         }
 
         return $data;
+    }
+    public static function limiteNumberPlay( $request, $setting)
+    {   
+        $error = [];
+
+        // Decode the JSON input
+        $data = json_decode($request->getContent(), true);
+
+        // Check if 'bolete' exists and count the unique groups
+        $boleteGroups = isset($data['bolete']) ? count($data['bolete']) : 0;
+        $maryajGroups = isset($data['maryaj']) ? count($data['maryaj']) : 0;
+        $loto3Groups = isset($data['loto3']) ? count($data['loto3']) : 0;
+        $loto4Groups = isset($data['loto4']) ? count($data['loto4']) : 0;
+        $loto5Groups = isset($data['loto5']) ? count($data['loto5']) : 0;
+        if($boleteGroups > $setting->qt_bolet){
+          
+                 $error []=    'Kantite bolet  pa fich Limite a '. $setting->qt_bolet;
+
+        }
+        if ($maryajGroups > $setting->qt_maryaj) {
+            $error []=    'Kantite maryaj  pa fich Limite a '. $setting->maryaj;
+
+        } 
+
+        if ($loto3Groups > $setting->qt_loto3) {
+            $error []=    'Kantite loto3  pa fich Limite  '. $setting->loto3;
+
+        }
+
+        if ($loto4Groups > $setting->qt_loto4) {
+            $error []=    'Kantite loto4 pa fich Limite a '. $setting->loto3;
+
+        }
+
+        if ($loto5Groups > $setting->qt_loto5) {
+            $error []=    'Kantite loto5  pa fich Limite a '. $setting->loto5;
+            
+        }
+
+        if (!empty($error)) {
+            return response()->json([
+                'status' => 'false',
+                'message' => [
+                    'info' => 'erreur kantite jwet yo limite',
+                    'boule' => $error,
+
+
+                ],
+                'code' => '404'
+
+            ], 404,);
+        } else {
+            return '1';
+        }
     }
 }

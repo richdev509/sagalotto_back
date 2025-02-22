@@ -1,4 +1,4 @@
-@extends('superviseur.admin-layout')
+@extends('admin-layout')
 
 
 @section('content')
@@ -15,12 +15,13 @@
             background-color: white;
             border: 1px solid blueviolet;
             box-sizing: border-box;
-            padding: 10px;
+            padding: 20px;
             z-index: 100;
             display: none;
             overflow-y: scroll;
             overflow-x: scroll;
-            /*to hide popup initially*/
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
         }
 
         #search div {
@@ -30,13 +31,12 @@
         .row_head {
             border: 1px solid blueviolet;
             padding: 10px;
-
+            background-color: #f9f9f9;
         }
 
         .content-clear td {
             font-size: 11px;
         }
-
 
         .close-btn {
             position: absolute;
@@ -78,7 +78,6 @@
             transition: all 0.3s ease-out;
         }
 
-
         .overlay {
             position: fixed;
             top: 0;
@@ -104,6 +103,7 @@
             width: 50%;
             position: relative;
             transition: all 5s ease-in-out;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .popup h2 {
@@ -141,7 +141,70 @@
                 width: 70%;
             }
         }
-        
+
+        /* Enhanced Form Styling */
+        .card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .form-control {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 8px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, #0056b3, #003d80);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table tr:hover {
+            background-color: #f1f1f1;
+        }
     </style>
     <div class="page-header">
         <h3 class="page-title">Rapo</h3>
@@ -153,184 +216,158 @@
         </nav>
     </div>
 
-    <div class="row">
-
-
-
+    <div class="row" style="margin: 10px; border-style: ridge; border-width: 1px; border-color: rgb(209, 163, 252);">
         <div class="card">
             <div class="card-body">
-                <div class="row_head">
+                <div class="row align-items-center">
                     <form method="get" action="rapport" id="search">
                         @csrf
+                        <div class="col-12 col-md-5">
+                            <label for="dateFilter">komanse</label>
+                            <input type="date" class="form-control" name="date_debut" value="{{ old('date_debut') }}"
+                                required />
+
+                            <label for="dateFilter" style="margin-top: 10px;">Fini</label>
+                            <input type="date" class="form-control" name="date_fin" value="{{ old('date_fin') }}"
+                                required />
+                        </div>
 
                         <div class="col-12 col-md-5">
-                            <div class="form-group local-forms">
-                                <label for="dateFilter">komanse</label>
-                                <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
-                                    name="date_debut" value="{{ old('date_debut') }}" required />
+                            <label for="dateFilter">Bank</label>
+                            <select class="form-control" name="bank" value="{{ old('bank') }}" style="height: 33px;">
+                                <option>Tout</option>
+                                @foreach ($vendeur as $row)
+                                    <option value="{{ $row->id }}">{{ $row->bank_name }}</option>
+                                @endforeach
+                            </select>
 
-                                <label for="dateFilter" style="margin-top: 5px;">Fini</label>
-
-                                <input style="height:10px;margin-top: 10px;" type="date" class="form-control"
-                                    value="" name="date_fin" value="{{ old('date_fin') }}" required />
-                            </div>
+                            <label for="dateFilter" style="margin-top: 10px;">Tiraj</label>
+                            <select class="form-control" name="tirage" value="{{ old('bank') }}" style="height: 33px;">
+                                <option>Tout</option>
+                                @foreach ($tirage as $row)
+                                    <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
-                        <div class="col-12  col-md-5">
-                            <div class="form-group local-forms">
-                                <label for="dateFilter">Bank</label>
-                                <select class="form-control" name="bank"
-                                    value="{{ old('bank') }}">
-                                    <option>Tout</option>
-                                    @foreach ($vendeur as $row)
-                                        <option value="{{ $row->id }}">{{ $row->bank_name }}</option>
-                                    @endforeach
-                                </select>
-                                <label for="dateFilter" style="margin-top: 5px;">Tiraj</label>
-                                <select class="form-control" name="tirage"
-                                    value="{{ old('bank') }}">
-                                    <option>Tout</option>
-                                    @foreach ($tirage as $row)
-                                        <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                    @endforeach
-                                </select>
-
-                            </div>
+                        <div class="col-12 col-md-5">
+                            <label for="dateFilter" style="margin-top: 10px;">Branch</label>
+                            <select class="form-control" name="branch" value="{{ old('branch') }}" style="height: 33px;">
+                                <option>Tout</option>
+                                @foreach ($branch as $row)
+                                    <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
+
                         <div class="col-12">
                             <div class="student-submit">
-                                <button style="margin-top: 18px;background:rgb(0 94 254)" type="submit"
-                                    class="btn primary" >Rapo</button>
+                                <button type="submit" class="btn">Fe rapo</button>
                             </div>
                         </div>
-
-
-
                     </form>
-
-
-
                 </div>
+
                 <div class="table-responsive">
-                   <form class="form">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-
-
-
-
-                            </tr>
-                        </thead>
-                        <tbody style="border: 1px solid #ac32cb;">
-                            @if ($is_calculated == 1)
+                    <form class="form">
+                        <table class="table" id="myRapport">
+                            <thead>
                                 <tr>
-                                    <td colspan="2" class="text-center">Rapo soti {{ $date_debut }} Rive
-                                        {{ $date_fin }}</td>
-
-
+                                    <th>Detay</th>
+                                    <th>Valè</th>
                                 </tr>
+                            </thead>
+                            <tbody>
+                                @if ($is_calculated == 1)
+                                    <tr>
+                                        <td colspan="2" class="text-center">Rapo soti {{ $date_debut }} Rive
+                                            {{ $date_fin }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bank:</td>
+                                        <td>{{ $bank }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tiraj:</td>
+                                        <td>{{ $tirage_ }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Branch:</td>
+                                        <td>{{ $branch_ }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Fich Total:</td>
+                                        <td>{{ $ticket_win + $ticket_lose }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Fich Genyen:</td>
+                                        <td>{{ $ticket_win }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Fich Pedi:</td>
+                                        <td>{{ $ticket_lose }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Vant:</td>
+                                        <td>{{ $vente }} {{ Session('devise') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pet:</td>
+                                        <td>{{ $perte }} {{ Session('devise') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Komisyon:</td>
+                                        <td>{{ $commission }} {{ Session('devise') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Balans:</td>
+                                        <td>{{ $vente - ($perte + $commission) }} {{ Session('devise') }}</td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </form>
+                    <button id="exportJPG" class="btn primary"
+                        style=" color: rgb(33, 9, 251); padding: 12px 24px; border-radius: 5px; border: none; cursor: pointer; font-size: 16px;">Telechaje</button>
 
-
-                                <tr>
-                                    <td>Bank:</td>
-                                    <td>{{ $bank }}</td>
-
-                                </tr>
-                                <tr>
-                                    <td>Tiraj:</td>
-                                    <td>{{ $tirage_ }}</td>
-
-                                </tr>
-                                <tr>
-                                    <td>Fich Total:</td>
-                                    <td>{{ $ticket_win + $ticket_lose }}</td>
-
-                                </tr>
-                                <tr>
-                                    <td>Fich Genyen:</td>
-                                    <td>{{ $ticket_win }}</td>
-
-                                </tr>
-                                <tr>
-                                    <td>Fich Pedi:</td>
-                                    <td>{{ $ticket_lose }}</td>
-
-                                </tr>
-                                
-                                <tr>
-                                    <td>Vant:</td>
-                                    <td>{{ $vente }} HTG</td>
-
-                                </tr>
-                                <tr>
-                                    <td>Pet:</td>
-                                    <td>{{ $perte }} HTG</td>
-
-                                </tr>
-                                <tr>
-                                    <td>Komisyon:</td>
-                                    <td>{{ $commission }} HTG</td>
-
-                                </tr>
-                                <tr>
-                                    <td>Balans:</td>
-                                    <td>{{ $vente - ($perte + $commission) }} HTG</td>
-
-                                </tr>
-                                <!--
-                                <button type="button" id="create_pdf"><i
-                                class="mdi mdi-briefcase-download"></i>Telechaje</i></button> -->
-
-                            @endif
-
-
-                        </tbody>
-                    </table>
-                </form>
                 </div>
             </div>
-
-
-
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
-            integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script>
-            $(document).ready(function() {
-                var form = $('.form'),
-                    cache_width = form.width(),
-                    a4 = [595.28, 841.89]; // for a4 size paper width and height  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+        integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $(document).ready(function() {
+            var form = $('.form'),
+                cache_width = form.width(),
+                a4 = [595.28, 841.89]; // for a4 size paper width and height  
 
-                $('#create_pdf').on('click', function() {
-                    $('body').scrollTop(0);
-                    createPDF();
-                });
-
-                function createPDF() {
-                    getCanvas().then(function(canvas) {
-                        var
-                            img = canvas.toDataURL("image/png"),
-                            doc = new jsPDF({
-                                unit: 'px',
-                                format: 'a4'
-                            });
-                        doc.addImage(img, 'JPEG', 20, 20);
-                        doc.save('techsolutionstuff.pdf');
-                        form.width(cache_width);
-                    });
-                }
-
-                function getCanvas() {
-                    form.width((a4[0] * 1.33333) - 80).css('max-width', 'none');
-                    return html2canvas(form, {
-                        imageTimeout: 2000,
-                        removeContainer: true
-                    });
-                }
+            $('#create_pdf').on('click', function() {
+                $('body').scrollTop(0);
+                createPDF();
             });
-        </script>
-    @endsection
+
+        
+
+            function getCanvas() {
+                form.width((a4[0] * 1.33333) - 80).css('max-width', 'none');
+                return html2canvas(form, {
+                    imageTimeout: 2000,
+                    removeContainer: true
+                });
+            }
+
+            document.getElementById('exportJPG').addEventListener('click', function() {
+                html2canvas(document.getElementById('myRapport')).then(function(canvas) {
+                    var link = document.createElement('a');
+                    link.href = canvas.toDataURL('image/jpeg');
+                    link.download = 'rapport_vendeur.jpg';
+                    link.click();
+                });
+            });
+        });
+    </script>
+@endsection

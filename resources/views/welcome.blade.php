@@ -74,6 +74,7 @@
                             <small class="mb-50 title_small">Sagaloto - POS App</small>
                             <h1 class="mb-30">Aplikasyon <span> POS Bolet</span>  </h1>
                             <p class="text">Vann pi rapid , e gen kontwol tout tranzaksyon yo. A pati de 30 POS ou mande pesonalize saw vle gratis</p>
+                           
                             <div class="d-flex align-items-center mt-50">
                                 <a href="https://www.apple.com/app-store/" class="btn rounded-pill bg-blue4 fw-bold text-white me-4" target="_blank">
                                     <small> <i class="fab fa-android me-2 pe-2 border-end"></i>Telechaje Aplikasyon an </small>
