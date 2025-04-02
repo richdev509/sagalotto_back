@@ -800,7 +800,8 @@ class ticketController extends Controller
                 $ticket_vendu = DB::table('ticket_vendu')->where([
                     ['ticket_code_id', '=', $request->input('id')]
                 ])->update([
-                    'is_cancel' => 1
+                    'is_cancel' => 1,
+                    'delete_at'=> Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
                 return response()->json([
                     'status' => 'true',

@@ -94,43 +94,92 @@ class parametreController extends Controller
         } else {
             //insert boul for each tirage
             foreach ($request->input('tirage') as $tirage_input) {
-                $nametirage = tirage_record::where('compagnie_id', session('loginId'))->where('id', $tirage_input)->value('name');
-                $nameAssociatedWithType = DB::table('listejwet')->where('id', $request->type)->value('name');
-                $count = DB::table('limit_prix_boul')->where('opsyon', $nameAssociatedWithType)->where('compagnie_id', session('loginId'))->count();
-                if ($count >= 500) {
-                    notify()->error('Ou rive nan limit 500 boul la deja pou option sa');
-                    return redirect()->back();
-                }
-                //verifier si boul sa existe deja pou 
-                $boule = limitprixboul::where('opsyon', $nameAssociatedWithType)->where('compagnie_id', session('loginId'))->where('tirage_record', $tirage_input)->where('boul', $request->chiffre)->first();
+                if($request->input('type') =='paire'){
+                    $paire = array();
+                    $paire= ['00', '11','22','33','44','55', '66', '77','88','99'];
+                    foreach($paire as $p){
+                        $nametirage = tirage_record::where('compagnie_id', session('loginId'))->where('id', $tirage_input)->value('name');
+                        $boule = limitprixboul::where('opsyon', 'Bolet')->where('compagnie_id', session('loginId'))->where('tirage_record', $tirage_input)->where('boul', $p)->first();
+    
+                        if ($boule) {
+                            $boule->delete();
+                        }
+                        $reponse = limitprixboul::create([
+                            'tirage_record' => $tirage_input,
+                            'compagnie_id' => session('loginId'),
+                            'type' => $nametirage,
+                            'opsyon' => 'Bolet',
+                            'boul' => $p,
+                            'montant' => $request->montant,
+                            'montant1' => $request->montant,
+    
+                        ]);
+                         
+                    }
+                }else if($request->input('type') =='grap'){
+                    $grap = array();
+                    $grap= ['000', '111','222','333','444','555', '666', '777','888','999'];
+                    foreach($grap as $p){
+                        $nametirage = tirage_record::where('compagnie_id', session('loginId'))->where('id', $tirage_input)->value('name');
+                        $boule = limitprixboul::where('opsyon', 'Loto3')->where('compagnie_id', session('loginId'))->where('tirage_record', $tirage_input)->where('boul', $p)->first();
+    
+                        if ($boule) {
+                            $boule->delete();
+                        }
+                        $reponse = limitprixboul::create([
+                            'tirage_record' => $tirage_input,
+                            'compagnie_id' => session('loginId'),
+                            'type' => $nametirage,
+                            'opsyon' => 'Loto3',
+                            'boul' => $p,
+                            'montant' => $request->montant,
+                            'montant1' => $request->montant,
+    
+                        ]);
+                         
+                    }
 
-                if ($boule) {
-                    $boule->delete();
+                }else{
+                    $nametirage = tirage_record::where('compagnie_id', session('loginId'))->where('id', $tirage_input)->value('name');
+                    $nameAssociatedWithType = DB::table('listejwet')->where('id', $request->type)->value('name');
+                    $count = DB::table('limit_prix_boul')->where('opsyon', $nameAssociatedWithType)->where('compagnie_id', session('loginId'))->count();
+                    if ($count >= 500) {
+                        notify()->error('Ou rive nan limit 500 boul la deja pou option sa');
+                        return redirect()->back();
+                    }
+                    //verifier si boul sa existe deja pou 
+                    $boule = limitprixboul::where('opsyon', $nameAssociatedWithType)->where('compagnie_id', session('loginId'))->where('tirage_record', $tirage_input)->where('boul', $request->chiffre)->first();
+    
+                    if ($boule) {
+                        $boule->delete();
+                    }
+    
+                    //$this->vericationMaryajDouble($request,$request->type,$nameAssociatedWithType);
+                    if (isset($request->isgeneral) && $request->isgeneral == 45) {
+                        $reponse = limitprixboul::create([
+                            'tirage_record' => $tirage_input,
+                            'compagnie_id' => session('loginId'),
+                            'type' => $nametirage,
+                            'opsyon' => $nameAssociatedWithType,
+                            'boul' => $request->chiffre,
+                            'montant' => 0,
+                            'is_general' => 1,
+                        ]);
+                    } else {
+                        $reponse = limitprixboul::create([
+                            'tirage_record' => $tirage_input,
+                            'compagnie_id' => session('loginId'),
+                            'type' => $nametirage,
+                            'opsyon' => $nameAssociatedWithType,
+                            'boul' => $request->chiffre,
+                            'montant' => $request->montant,
+                            'montant1' => $request->montant,
+    
+                        ]);
+                    }
+
                 }
 
-                //$this->vericationMaryajDouble($request,$request->type,$nameAssociatedWithType);
-                if (isset($request->isgeneral) && $request->isgeneral == 45) {
-                    $reponse = limitprixboul::create([
-                        'tirage_record' => $tirage_input,
-                        'compagnie_id' => session('loginId'),
-                        'type' => $nametirage,
-                        'opsyon' => $nameAssociatedWithType,
-                        'boul' => $request->chiffre,
-                        'montant' => 0,
-                        'is_general' => 1,
-                    ]);
-                } else {
-                    $reponse = limitprixboul::create([
-                        'tirage_record' => $tirage_input,
-                        'compagnie_id' => session('loginId'),
-                        'type' => $nametirage,
-                        'opsyon' => $nameAssociatedWithType,
-                        'boul' => $request->chiffre,
-                        'montant' => $request->montant,
-                        'montant1' => $request->montant,
-
-                    ]);
-                }
             }
             //verifier si limit 10 boul lan rive 
 
@@ -178,9 +227,22 @@ class parametreController extends Controller
     {
         $type = request()->input('type');
         $value = $request->chiffre;
-        $nameAssociatedWithType = DB::table('listejwet')->where('id', $type)->value('name');
+        if($type == 'paire'){
+            $nameAssociatedWithType = 'paire';
+        }else if($type == 'grap'){
+            $nameAssociatedWithType = 'grap';
+        }else{
+            $nameAssociatedWithType = DB::table('listejwet')->where('id', $type)->value('name');
+
+        }
 
         switch ($nameAssociatedWithType) {
+            case 'paire':
+              
+                    return true;
+             
+            case 'grap':
+                 return true;
             case 'Bolet':
                 $mg = strlen($value);
 
@@ -577,8 +639,28 @@ class parametreController extends Controller
                 ['branch_id', $request->branch],
 
             ])->first();
+
+            $prixGabel1 = $request->input('prix_gabel1');
+            if (!isset($prixGabel1)) {
+                $request->merge([
+                    'prix_gabel1' => 20,
+                    'prix_gabel2' => 10,
+                    'gabel_status' => 0,
+                ]);
+            }            
             $responce->update([
-                'prix' => $request->input('montant'),
+                'prix' => $request->input('prix_first'),
+                'prix_second' => $request->input('prix_second'),
+                'prix_third' => $request->input('prix_third'),
+                'prix_maryaj' => $request->input('prix_maryaj'),
+                'prix_loto3' => $request->input('prix_loto3'),
+                'prix_loto4' => $request->input('prix_loto4'),
+                'prix_loto5' => $request->input('prix_loto5'),
+                'prix_gabel1' => $request->input('prix_gabel1'),
+                'prix_gabel2' => $request->input('prix_gabel2'),
+                'gabel_statut' => 1,
+
+
             ]);
 
             //store service auto tirage

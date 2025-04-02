@@ -21,7 +21,8 @@
                   <th> Tiraj non </th>
                   <th> Date </th>
                   <th> Lo Yo </th>
-                  <th> Etat </th>
+                  <th> Date Ajou</th>
+                  <th> Piblikasyon</th>
                   <th> Action </th>
                 </tr>
               </thead>
@@ -36,7 +37,12 @@
                         <button type="button" class="btn btn-social-icon btn-dribbble btn-rounded">{{$lists->secondchiffre}}</button>
                         <button type="button" class="btn btn-social-icon btn-linkedin btn-rounded">{{$lists->troisiemechiffre}}</button>
                     </td>
-                    <td>Tiraj 100%</td>
+                    <td>{{$lists->created_at}}</td>
+                    <td>
+                      <a href="{{ route('publication', ['first' => $lists->unchiffre.$lists->premierchiffre, 'second' => $lists->secondchiffre, 'third' => $lists->troisiemechiffre, 'tirage' => $lists->tirage->name]) }}">
+                          Piblikasyon
+                      </a>
+                  </td>
                     <td class="text-end">
                       <form action="/wp-admin/ajouter_lo">
                         @csrf

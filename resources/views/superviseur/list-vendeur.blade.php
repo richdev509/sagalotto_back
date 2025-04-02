@@ -172,9 +172,9 @@
                                             @endif
                                         </td>
                                         <td class="text-end">
-                                            <form action="">
+                                            <form action="sup_edit-vendeur">
                                                 <input type="hidden" name="id" value="{{ $row->id }}" />
-                                                <button type="submit" class="btn-edit disabled">
+                                                <button type="submit" class="btn-edit">
                                                     <i class="mdi mdi-table-edit"></i>
                                                 </button>
                                             </form>

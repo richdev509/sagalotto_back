@@ -93,10 +93,10 @@
 
                     <tr>
 
+                        <td valign='top' style='font-size:12px;'>Taux: 1$ = 133 HTG</td>
                         <td valign='top' style='font-size:12px;'>&nbsp;</td>
                         <td valign='top' style='font-size:12px;'>&nbsp;</td>
-                        <td valign='top' style='font-size:12px;'>&nbsp;</td>
-                        <td valign='top' style='font-size:12px;'>&nbsp;</td>
+                        <td valign='top' style='font-size:12px;'>{{ $vendeur * $plan * 133 }} G</td>
 
                     </tr>
                     <tr>
@@ -142,13 +142,13 @@
                 <table width='100%' cellspacing='0' cellpadding='2' border='0'>
                     <tr>
                         <td align='right' style='font-size:12px;'>Total</td>
-                        <td align='right' style='font-size:12px;'>{{ $vendeur * $plan }} $
+                        <td align='right' style='font-size:12px;'>{{ $vendeur * $plan }} $ ou {{$vendeur * $plan * 133}} HTG
                         <td>
                     </tr>
                     <tr>
 
                         <td align='right' style='font-size:12px;'><b>Total</b></td>
-                        <td align='right' style='font-size:12px;'><b>{{ $vendeur * $plan }} $</b></td>
+                        <td align='right' style='font-size:12px;'><b>{{ $vendeur * $plan }} $ ou {{$vendeur * $plan * 133}} HTG</b></td>
                     </tr>
                 </table>
             </td>

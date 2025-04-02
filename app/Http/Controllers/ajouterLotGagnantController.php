@@ -135,8 +135,6 @@ class ajouterLotGagnantController extends Controller
     }
 
     function validerEntrees($tirageId, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre)
-
-
     {
 
 

@@ -224,11 +224,11 @@
                         @csrf
                         <div class="col-12 col-md-5">
                             <label for="dateFilter">komanse</label>
-                            <input type="date" class="form-control" name="date_debut" value="{{ old('date_debut') }}"
-                                required />
+                            <input type="date" class="form-control dateInput" <?php if (isset($_GET['date_debut'])) {?>
+                                value="{{$_GET["date_debut"]}}" <?php } ?> requiered name="date_debut" required />
 
                             <label for="dateFilter" style="margin-top: 10px;">Fini</label>
-                            <input type="date" class="form-control" name="date_fin" value="{{ old('date_fin') }}"
+                            <input type="date" class="form-control dateInput" name="date_fin" <?php if (isset($_GET['date_fin'])) {?> value="{{$_GET["date_fin"]}}" <?php } ?> requiered
                                 required />
                         </div>
 
@@ -281,7 +281,8 @@
                                 @if ($is_calculated == 1)
                                     <tr>
                                         <td colspan="2" class="text-center">Rapo soti {{ $date_debut }} Rive
-                                            {{ $date_fin }}</td>
+                                            {{ $date_fin }}
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>Bank:</td>
@@ -340,17 +341,17 @@
         integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             var form = $('.form'),
                 cache_width = form.width(),
                 a4 = [595.28, 841.89]; // for a4 size paper width and height  
 
-            $('#create_pdf').on('click', function() {
+            $('#create_pdf').on('click', function () {
                 $('body').scrollTop(0);
                 createPDF();
             });
 
-        
+
 
             function getCanvas() {
                 form.width((a4[0] * 1.33333) - 80).css('max-width', 'none');
@@ -360,14 +361,23 @@
                 });
             }
 
-            document.getElementById('exportJPG').addEventListener('click', function() {
-                html2canvas(document.getElementById('myRapport')).then(function(canvas) {
+            document.getElementById('exportJPG').addEventListener('click', function () {
+                html2canvas(document.getElementById('myRapport')).then(function (canvas) {
                     var link = document.createElement('a');
                     link.href = canvas.toDataURL('image/jpeg');
                     link.download = 'rapport_vendeur.jpg';
                     link.click();
                 });
             });
+        });
+        const today = new Date().toISOString().split('T')[0];
+
+        // Select all date inputs with the class 'max-today'
+        const dateInputs = document.querySelectorAll('.dateInput');
+
+        // Loop through each input and set the max attribute
+        dateInputs.forEach(input => {
+            input.setAttribute('max', today);
         });
     </script>
 @endsection

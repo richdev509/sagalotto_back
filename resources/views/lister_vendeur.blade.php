@@ -140,7 +140,8 @@
                             <h6 class="header-title">Chache</h6>
                         </div>
                         <div class="col-12 col-md-6">
-                            <input type="text" class="form-control search-input" id="search" placeholder="Antre nom yon bank la...">
+                            <input type="text" class="form-control search-input" id="search"
+                                placeholder="Antre nom yon bank la...">
                         </div>
                         <div class="col-12 col-md-6">
                             <select class="form-select select-box live-search" id="branchFilter">
@@ -160,6 +161,7 @@
                                     <th>Bank</th>
                                     <th>Branch</th>
                                     <th>Itilizatè</th>
+                                    <th>Komisyon</th>
                                     <th>Bloke</th>
                                     <th class="text-end">Aksyon</th>
                                 </tr>
@@ -167,36 +169,39 @@
                             <tbody id="tableBody">
                                 @php $i = 1; @endphp
                                 @foreach ($vendeur as $row)
-                                    <tr>
-                                        <td>{{ $i }}</td>
-                                        <td>{{ $row->code }}</td>
-                                        <td>{{ $row->bank_name }}</td>
-                                        <td>
-                                            <?php
-                                            $value = DB::table('branches')
-                                                ->where('id', $row['branch_id'])
-                                                ->value('name');
-                                            ?>
-                                            {{ $value }}
-                                        </td>
-                                        <td>{{ $row->username }}</td>
-                                        <td>
-                                            @if ($row->is_block == 1)
-                                                <span class="badge bg-danger">Wi</span>
-                                            @else
-                                                <span class="badge bg-success">Non</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-end">
-                                            <form action="editer-vendeur">
-                                                <input type="hidden" name="id" value="{{ $row->id }}" />
-                                                <button type="submit" class="btn-edit">
-                                                    <i class="mdi mdi-table-edit"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    @php $i = $i + 1; @endphp
+                                                            <tr>
+                                                                <td>{{ $i }}</td>
+                                                                <td>{{ $row->code }}</td>
+                                                                <td>{{ $row->bank_name }}</td>
+                                                                <td>
+                                                                    <?php
+                                    $value = DB::table('branches')
+                                        ->where('id', $row['branch_id'])
+                                        ->value('name');
+                                                                                                            ?>
+                                                                    {{ $value }}
+                                                                </td>
+                                                                <td>{{ $row->username }}</td>
+
+                                                                <td>{{ $row->percent }} %</td>
+
+                                                                <td>
+                                                                    @if ($row->is_block == 1)
+                                                                        <span class="badge bg-danger">Wi</span>
+                                                                    @else
+                                                                        <span class="badge bg-success">Non</span>
+                                                                    @endif
+                                                                </td>
+                                                                <td class="text-end">
+                                                                    <form action="editer-vendeur">
+                                                                        <input type="hidden" name="id" value="{{ $row->id }}" />
+                                                                        <button type="submit" class="btn-edit">
+                                                                            <i class="mdi mdi-table-edit"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                            @php $i = $i + 1; @endphp
                                 @endforeach
                             </tbody>
                         </table>
@@ -207,7 +212,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const searchInput = document.getElementById('search');
             const branchFilter = document.getElementById('branchFilter');
             const tableBody = document.getElementById('tableBody');

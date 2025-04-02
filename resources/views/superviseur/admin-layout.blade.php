@@ -65,8 +65,7 @@
     <div class="container-scroller">
         <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
             <div class="containerr scroll-right" style="background:orange;color:black;">
-                <marquee behavior="" direction="left">Rale raport rapid pou nenpot enteval dat, ni kote vendeur ni
-                    kote admin panel</marquee>
+                <marquee behavior="" direction="left">Bloke yon vandè lew ale nan vandè epi lis vandè, chwazi saw vle bloke a nan paj ki paret la kroche bloke epi fe modifye. Imedyatman vande a bloke.                    Ou fe rapo kounya pou yon grenn vande nan yon grenn tiraj</marquee>
             </div>
 
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">

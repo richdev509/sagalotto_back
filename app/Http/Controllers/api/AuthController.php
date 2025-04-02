@@ -69,19 +69,18 @@ class AuthController extends Controller
                             ['username', '=', $request->input('username')],
                             ['android_id', '=', $request->input('id')],
                         ])->first();
-                    }else{
+                    } else {
                         return response()->json([
                             'status' => false,
                             "message" => "utilisateur ou android id inccorrect",
                         ], 404,);
                     }
-                }else{
+                } else {
                     return response()->json([
                         'status' => false,
                         "message" => "utilisateur ou android id inccorrect",
                     ], 404,);
                 }
-               
             }
             if (!Hash::check($request->input('password'), $user->password)) {
 
@@ -109,7 +108,7 @@ class AuthController extends Controller
                 if (!empty($branche->address) && $branche->address !== '0' && $branche->address !== 'inconnu') {
                     $compagnie->address = $branche->address;
                 }
-            
+
                 if (!empty($branche->phone) && $branche->phone !== '0' && $branche->phone !== 'inconnu') {
                     $compagnie->phone = $branche->phone;
                 }
@@ -137,6 +136,18 @@ class AuthController extends Controller
 
 
         ], 200,);
+    }
+    protected function invalidateTokens(User $user)
+    {
+        // If using JWT, you can implement a token blacklist or store the token version in the database
+        // Example: Increment the token version to invalidate all previous tokens
+        $user->token_version = $user->token_version + 1;
+        $user->save();
+
+        // Alternatively, you can store invalidated tokens in a cache (e.g., Redis)
+        // $blacklist = Cache::get('jwt_blacklist', []);
+        // $blacklist[] = $currentToken; // Add the current token to the blacklist
+        // Cache::put('jwt_blacklist', $blacklist);
     }
     public function logout()
     {

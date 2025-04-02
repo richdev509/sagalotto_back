@@ -27,7 +27,7 @@ class autoActiveTirage implements ShouldQueue
      */
     public function handle(): void
     {
-        if (Carbon::now()->isSunday()) {
+        if (Carbon::today()->isSunday()) {
             DB::table('tirage_record')
                 ->where('is_active', '=', '1')
                 ->where([
@@ -36,29 +36,27 @@ class autoActiveTirage implements ShouldQueue
 
                 ])
                 ->update([
-                    ['is_active' => '0'],
-                    ['autoActive','=','1']
+                    'is_active' => '0',
+                    'autoActive' =>'1'
 
                 ]);
         }
-        if(Carbon::now()->isMonday()) {
+        if(Carbon::today()->isMonday()) {
             DB::table('tirage_record')
             ->where([
                 ['is_active', '=', '0'],
-                ['autoActive', '=', '1']
+                ['autoActive', '=', '1'],
+                ['tirage_id','>=', 7],
+                ['tirage_id','<=', 12]
 
-            ])
-            ->where([
-                ['tirage_id','>=','7'],
-                ['tirage_id','<=','12']
-
-            ])
-            ->update([
-                ['is_active' => '1'],
-                ['autoActive','=','0']
+            ])->update([
+                'is_active' => '1',
+                'autoActive'=> '0'
 
             ]);
 
         }
     }
+  
+    
 }

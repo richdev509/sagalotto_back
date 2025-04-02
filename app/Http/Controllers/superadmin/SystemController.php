@@ -265,7 +265,7 @@ class SystemController extends Controller
                         'name' => 'NewYork Soir',
                         'hour' => '22:25:00',
                         'hour_open' => '14:40:00',
-                        'hour_tirer' => '22:30:30',
+                        'hour_tirer' => '22:30:00',
                         'created_at' => Carbon::now()
                     ],
                     [
@@ -315,7 +315,7 @@ class SystemController extends Controller
                     ],
                     [
                         'compagnie_id' => $reponse,
-                        'tirage_id' => 8,
+                        'tirage_id' => 9,
                         'name' => 'Texas Soir',
                         'hour' => '18:55:00',
                         'hour_open' => '11:10:00',
@@ -703,6 +703,7 @@ class SystemController extends Controller
             $request->session()->put('loginId', $user->id);
             $request->session()->put('name', $user->name);
             $request->session()->put('logo', $user->logo);
+            $request->session()->put('dateex', $user->dateexpiration);
             $request->session()->put('devise', $user->devise);
 
             notify()->success('Bienvenue  ' . $user->name);
@@ -711,6 +712,20 @@ class SystemController extends Controller
             notify()->error('non itilizate a inkorek');
 
             return redirect('/login')->with('error', 'Utilisateur non trouve');
+        }
+    }
+
+    public function publication(Request $request)
+    {
+
+
+        if (session('role') == "admin" || session('role') == "addeur") {
+
+
+            return view('superadmin.publication', compact('request'));
+        } else {
+            notify()->error('Vous n\'avez pas access a niveau');
+            return redirect()->route('listecompagnie');
         }
     }
 }

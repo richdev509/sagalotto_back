@@ -50,7 +50,7 @@
             background: #fff;
             margin-top: 0px;
             margin-bottom: -20px;
-            width: 100%;
+            width: 110%;
         }
 
 
@@ -58,15 +58,142 @@
         .scroll-left span {
             clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
         }
+
+        /* Ensure the scrolling text takes full width */
+        .scroll-text-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            background: rgb(247, 229, 201);
+            color: black;
+            padding: 4px 0;
+            /* Further reduced padding */
+        }
+
+        .scroll-text {
+            font-size: 12px;
+            /* Smaller font size */
+            font-weight: bold;
+            animation: scroll-left 30s linear infinite;
+            /* Slower animation */
+        }
+
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* Reduce navbar height */
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 0.25rem 0.5rem;
+            /* Further reduced padding */
+        }
+
+        .navbar-brand img {
+            height: 25px;
+            /* Smaller logo */
+        }
+
+        .navbar-nav {
+            align-items: center;
+        }
+
+        .nav-item {
+            margin: 0 6px;
+            /* Further reduced margin */
+        }
+
+        .nav-link {
+            color: #333;
+            font-weight: 500;
+            font-size: 13px;
+            /* Smaller font size */
+            padding: 0.25rem 0.5rem;
+            /* Further reduced padding */
+        }
+
+        .nav-link:hover {
+            color: #007bff;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            min-width: 160px;
+            /* Smaller dropdown width */
+        }
+
+        .dropdown-item {
+            padding: 5px 10px;
+            /* Further reduced padding */
+            color: #333;
+            font-size: 13px;
+            /* Smaller font size */
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #007bff;
+        }
+
+        /* Fullscreen button styling */
+        .full-screen-link .nav-link {
+            font-size: 16px;
+            /* Smaller icon */
+            color: #333;
+        }
+
+        .full-screen-link .nav-link:hover {
+            color: #007bff;
+        }
+
+        /* Logout button styling */
+        .nav-logout .nav-link {
+            font-size: 16px;
+            /* Smaller icon */
+            color: #333;
+        }
+
+        .nav-logout .nav-link:hover {
+            color: #dc3545;
+        }
+
+        /* Adjust profile image size */
+        .nav-profile-img img {
+            height: 25px;
+            /* Smaller profile image */
+            width: 25px;
+            /* Smaller profile image */
+        }
+
+        /* Adjust profile text size */
+        .nav-profile-text p {
+            font-size: 13px;
+            /* Smaller text */
+            margin-bottom: 0;
+            /* Remove extra margin */
+        }
     </style>
 </head>
 
 <body>
-
+   
     <div class="container-scroller">
         <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-            <div class="containerr scroll-right" style="background:rgb(247, 229, 201);color:black; width: 100%;">
-                <marquee behavior="" direction="left">Bonjou/Bonswa, nou rankontre yon problem ak numero support a, nap envitew desormais ekri nou sou<span style="font-weight: bold; color: red;"> +50931071890</span>. mesi!</marquee>
+            <div class="containerr scroll-right" style="background:rgb(248, 249, 249);color:black; width: 100%;">
+                <?php if(Carbon\Carbon::now()->format('Y-m-d') >= Session('dateex') && !empty(Session('dateex'))){ ?>
+                <marquee behavior="" direction="left" style="color:#dc3545;"><i class="fas fa-exclamation-circle icon" style="font-size: 18px; color: #dc3545;"></i>Alert!!! kontra ou ak systèm nan fini <b>{{Session('dateex')}} </b>, ou dwè peye pouw kontinye jwenn bon sevis sinon ou ka bloke a nenpòt moman. mèsi!!</marquee>
+            
+                <?php }else{?>
+                <marquee behavior="" direction="left">Gade fich ki siprime yo lè ou ale sou fich answit poubèl, wap
+                    wè dat fich la te fèt la wap wè lè li siprime a ect.</marquee>
+                <?php }?>
             </div>
 
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
@@ -205,7 +332,7 @@
                             <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
                         </a>
                     </li>
-            
+
                     <!-- Home Link -->
                     <li class="nav-item">
                         <a class="nav-link" href="admin">
@@ -213,10 +340,11 @@
                             <i class="mdi mdi-home menu-icon"></i>
                         </a>
                     </li>
-            
+
                     <!-- Vendors Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#vendeur" aria-expanded="false" aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#vendeur" aria-expanded="false"
+                            aria-controls="ui-basic">
                             <span class="menu-title">Vandè</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-account menu-icon"></i>
@@ -232,10 +360,11 @@
                             </ul>
                         </div>
                     </li>
-            
+
                     <!-- Draws Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#tirage" aria-expanded="false" aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#tirage" aria-expanded="false"
+                            aria-controls="ui-basic">
                             <span class="menu-title">Tiraj</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-timetable menu-icon"></i>
@@ -251,10 +380,11 @@
                             </ul>
                         </div>
                     </li>
-            
+
                     <!-- Results Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#lo" aria-expanded="false" aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#lo" aria-expanded="false"
+                            aria-controls="ui-basic">
                             <span class="menu-title">Lo ki soti</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-alarm menu-icon"></i>
@@ -270,10 +400,11 @@
                             </ul>
                         </div>
                     </li>
-            
+
                     <!-- Blocking and Price Limits Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#autorisation" aria-expanded="false" aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#autorisation" aria-expanded="false"
+                            aria-controls="ui-basic">
                             <span class="menu-title">Bloke - limite pri</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-earth menu-icon"></i>
@@ -284,15 +415,17 @@
                                     <a class="nav-link loa" href="/block">Bloke/Debloke</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link loa" href="{{ route('limitprix') }}">Ajiste Limit Prix Achat</a>
+                                    <a class="nav-link loa" href="{{ route('limitprix') }}">Ajiste Limit Prix
+                                        Achat</a>
                                 </li>
                             </ul>
                         </div>
                     </li>
-            
+
                     <!-- Reports Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#rapo" aria-expanded="false" aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#rapo" aria-expanded="false"
+                            aria-controls="ui-basic">
                             <span class="menu-title">Rapo</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-chart-line menu-icon"></i>
@@ -308,10 +441,11 @@
                             </ul>
                         </div>
                     </li>
-            
+
                     <!-- Statistics Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#statistique" aria-expanded="false" aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#statistique" aria-expanded="false"
+                            aria-controls="ui-basic">
                             <span class="menu-title">Statistik</span>
                             <i class="mdi mdi-bell-plus" style="color:orange;margin-left:10px;"></i>
                             <i class="menu-arrow"></i>
@@ -328,10 +462,11 @@
                             </ul>
                         </div>
                     </li>
-            
+
                     <!-- Tickets Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#fich" aria-expanded="false" aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#fich" aria-expanded="false"
+                            aria-controls="ui-basic">
                             <span class="menu-title">Fich</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-ticket menu-icon"></i>
@@ -342,12 +477,18 @@
                                     <a class="nav-link loa" href="lister-ticket">Chache</a>
                                 </li>
                             </ul>
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="lister-ticket-delete">Poubèl</a>
+                                </li>
+                            </ul>
                         </div>
                     </li>
-            
+
                     <!-- Branches Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#branch" aria-expanded="false" aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#branch" aria-expanded="false"
+                            aria-controls="ui-basic">
                             <span class="menu-title">Branch</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-source-branch menu-icon"></i>
@@ -363,10 +504,11 @@
                             </ul>
                         </div>
                     </li>
-            
+
                     <!-- Settings Section -->
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#paramet" aria-expanded="false" aria-controls="ui-basic">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#paramet" aria-expanded="false"
+                            aria-controls="ui-basic">
                             <span class="menu-title">Paramet</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-settings-box menu-icon"></i>
@@ -377,7 +519,7 @@
                                     <a class="nav-link loa" href="{{ route('maryajGratis') }}">Maryaj Gratis</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link loa" href="{{ route('ajisteprilo') }}">Ajiste pri premye lo</a>
+                                    <a class="nav-link loa" href="{{ route('ajisteprilo') }}">Ajiste pri lo gayan</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link loa" href="{{ route('fich') }}">Fich</a>

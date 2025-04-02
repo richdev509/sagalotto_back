@@ -131,6 +131,7 @@ class CompanyController extends Controller
                         $request->session()->put('loginId', $user->id);
                         $request->session()->put('name', $user->name);
                         $request->session()->put('logo', $user->logo);
+                        $request->session()->put('dateex', $user->dateexpiration);
                         $request->session()->put('devise', $user->devise);
 
                         notify()->success('Bienvenue  ' . $user->name);
@@ -155,11 +156,11 @@ class CompanyController extends Controller
     {
         if (Session('loginId')) {
 
-            $today = Carbon::now();
+            $today = Carbon::now()->format('Y:m:d');
 
             $ticketData = DB::table('ticket_code')
             ->where('compagnie_id', '=', Session('loginId'))
-            ->whereDate('created_at', '=', $today)
+            ->whereBetween('created_at', [ $today.' 00:00:00', $today.' 00:00:00'])
             ->select('code', 'user_id')
             ->groupBy('code', 'user_id')
             ->get();
@@ -214,7 +215,7 @@ class CompanyController extends Controller
 
             $list = [];
 
-
+          
             foreach ($lista as $boulGagnant) {
                 $codes = ticket_code::where('compagnie_id', session('loginId'))
                     ->whereDate('created_at', $boulGagnant->created_)
@@ -229,11 +230,11 @@ class CompanyController extends Controller
                     ->sum('amount');
                     dd($vente,);*/
                 $pert = TicketVendu::whereIn('ticket_code_id', $codes)
-                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)->where('is_cancel', 0)
+                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)->where('pending', 0)
                     ->sum('winning');
 
                 $commissio = TicketVendu::whereIn('ticket_code_id', $codes)
-                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)->where('is_cancel', 0)
+                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)->where('pending', 0)
                     ->sum('commission');
                 $tirageName = $boulGagnant->tirage_record->name;
                 $list[] = [

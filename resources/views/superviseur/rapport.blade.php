@@ -1,4 +1,4 @@
-@extends('admin-layout')
+@extends('superviseur.admin-layout')
 
 
 @section('content')
@@ -220,21 +220,24 @@
         <div class="card">
             <div class="card-body">
                 <div class="row align-items-center">
-                    <form method="get" action="rapport" id="search">
+                    <form method="get" action="sup_rapport" id="search">
                         @csrf
                         <div class="col-12 col-md-5">
                             <label for="dateFilter">komanse</label>
-                            <input type="date" class="form-control" name="date_debut" value="{{ old('date_debut') }}"
+                            <input type="date" class="form-control" name="date_debut" <?php if (isset($_GET['date_debut'])) {?>
+                                value="{{$_GET["date_debut"]}}" <?php } ?>
                                 required />
 
                             <label for="dateFilter" style="margin-top: 10px;">Fini</label>
-                            <input type="date" class="form-control" name="date_fin" value="{{ old('date_fin') }}"
+                            <input type="date" class="form-control" name="date_fin" <?php if (isset($_GET['date_fin'])) {?>
+                                value="{{$_GET["date_fin"]}}" <?php } ?>
                                 required />
                         </div>
 
                         <div class="col-12 col-md-5">
                             <label for="dateFilter">Bank</label>
-                            <select class="form-control" name="bank" value="{{ old('bank') }}" style="height: 33px;">
+                            <select class="form-control" name="bank" <?php if (isset($_GET['bank'])) {?>
+                                value="{{$_GET["bank"]}}" <?php } ?> style="height: 33px;">
                                 <option>Tout</option>
                                 @foreach ($vendeur as $row)
                                     <option value="{{ $row->id }}">{{ $row->bank_name }}</option>
@@ -253,7 +256,6 @@
                         <div class="col-12 col-md-5">
                             <label for="dateFilter" style="margin-top: 10px;">Branch</label>
                             <select class="form-control" name="branch" value="{{ old('branch') }}" style="height: 33px;">
-                                <option>Tout</option>
                                 @foreach ($branch as $row)
                                     <option value="{{ $row->id }}">{{ $row->name }}</option>
                                 @endforeach
@@ -309,19 +311,19 @@
                                     </tr>
                                     <tr>
                                         <td>Vant:</td>
-                                        <td>{{ $vente }} {{ Session('devise') }}</td>
+                                        <td>{{ $vente ?? 0}} {{ Session('devise') }}</td>
                                     </tr>
                                     <tr>
                                         <td>Pet:</td>
-                                        <td>{{ $perte }} {{ Session('devise') }}</td>
+                                        <td>{{ $perte ?? 0 }}  {{ Session('devise') }}</td>
                                     </tr>
                                     <tr>
                                         <td>Komisyon:</td>
-                                        <td>{{ $commission }} {{ Session('devise') }}</td>
+                                        <td>{{ $commission ?? 0 }} {{ Session('devise') }}</td>
                                     </tr>
                                     <tr>
                                         <td>Balans:</td>
-                                        <td>{{ $vente - ($perte + $commission) }} {{ Session('devise') }}</td>
+                                        <td>{{ $vente - ($perte + $commission) ?? 0 }} {{ Session('devise') }}</td>
                                     </tr>
                                 @endif
                             </tbody>

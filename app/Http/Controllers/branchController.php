@@ -108,7 +108,7 @@ class branchController extends Controller
                 ['name', '=', $request->name]
             ])->first();
             if ($branch) {
-                notify()->error('ou gen yon bank ak non sa deja');
+                notify()->error('ou gen yon branch ak non sa deja');
                 return back();
             }
 

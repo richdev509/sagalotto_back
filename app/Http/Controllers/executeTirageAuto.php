@@ -128,10 +128,10 @@ class executeTirageAuto extends Controller
 
         if ($var == 0) {
             notify()->success('Ajoute Lo effectuer avec succes :Aucun erreur' . $var);
-            return redirect()->route('monitoring');
+            return redirect()->route('listlo');
         } else {
             notify()->info('Action echouer:,  Erreur trouver' . $var);
-            return redirect()->route('monitoring');
+            return redirect()->route('listlo');
         }
        
     }
@@ -205,8 +205,6 @@ class executeTirageAuto extends Controller
     }
 
     function validerEntrees($tirageId, $unchiffre, $premierchiffre, $secondchiffre, $troisiemechiffre)
-
-
     {
 
 
@@ -313,7 +311,7 @@ class executeTirageAuto extends Controller
         try{
         // Récupérer les codes fiches 
         $numero = ticket_code::where('compagnie_id', $compagnie)
-            ->whereDate('created_at', $date)
+            ->whereBetween('created_at', [$date.' 00:00:00', $date.' 23:59:59'])
             ->pluck('code')
             ->toArray();
 

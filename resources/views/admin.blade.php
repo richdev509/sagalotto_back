@@ -183,7 +183,7 @@
                     <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
                     <h4 class="font-weight-normal mb-3">Kob ou vann jodia <i
                             class="mdi mdi-chart-line mdi-24px float-right"></i></h4>
-                    <h2 class="mb-5">{{ Session('devise') }} {{ $vente }}</h2>
+                    <h2 class="mb-5">{{ Session('devise') }} {{ number_format($vente, 2,'.', ' ') }}</h2>
                 </div>
             </div>
         </div>
@@ -193,7 +193,7 @@
                     <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
                     <h4 class="font-weight-normal mb-3">Kob ou peye jodia <i
                             class="mdi mdi-bookmark-outline mdi-24px float-right"></i></h4>
-                    <h2 class="mb-5">{{ Session('devise') }} {{ $perte }}</h2>
+                    <h2 class="mb-5">{{ Session('devise') }} {{ number_format($perte, 2,'.', ' ') }}</h2>
                 </div>
             </div>
         </div>
@@ -202,7 +202,7 @@
                 <div class="card-body">
                     <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
                     <h4 class="font-weight-normal mb-3">Balans <i class="mdi mdi-diamond mdi-24px float-right"></i></h4>
-                    <h2 class="mb-5">{{ Session('devise') }} {{ round($vente - ($perte + $commission), 2) }}</h2>
+                    <h2 class="mb-5">{{ Session('devise') }} {{ number_format($vente - ($perte + $commission), 2, '.', ' ') }}</h2>
                 </div>
             </div>
         </div>
@@ -224,9 +224,12 @@
             </a>
         </div>
         <div class="column">
-            <i class="icon mdi mdi-delete" style="color: var(--danger-color);"></i>
-            <span class="text">Fich anile: <span
-                    style="color: var(--danger-color);">{{ $ticket_delete }}</span>/{{ $ticket_total + $ticket_delete }}</span>
+            <a href="/lister-ticket-delete">
+
+                <i class="icon mdi mdi-delete" style="color: var(--danger-color);"></i>
+                <span class="text">Fich anile: <span
+                        style="color: var(--danger-color);">{{ $ticket_delete }}</span>/{{ $ticket_total + $ticket_delete }}</span>
+            </a>
         </div>
     </div>
 
@@ -248,7 +251,7 @@
                             <tbody>
                                 @foreach ($list as $lists)
                                     <tr>
-                                        <td style="color: {{ getTirageColor($lists['name']) }}; font-weight: bold;">
+                                        <td style="color: {{ getTirageColo($lists['name']) }}; font-weight: bold;">
                                             {{ $lists['name'] }}</td>
                                         <td style="font-weight: bold;">
                                             {{ \Carbon\Carbon::parse($lists['boulGagnant']->created_)->format('d-m-Y') }}
@@ -271,7 +274,8 @@
                                                 {{ Session('devise') }}</span></td>
                                         <td style="font-weight: bold;">Balans:
                                             <span>{{ $lists['vent'] - ($lists['pert'] + $lists['commissio']) }}
-                                                {{ Session('devise') }}</span></td>
+                                                {{ Session('devise') }}</span>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -282,7 +286,7 @@
         </div>
     </div>
     @php
-        function getTirageColor($tirage)
+        function getTirageColo($tirage)
         {
             $colors = [
                 'NewYork Soir' => 'blue',
@@ -295,6 +299,4 @@
             return $colors[$tirage] ?? 'black';
         }
     @endphp
-
-    
 @endsection

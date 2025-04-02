@@ -133,10 +133,12 @@ Route::middleware(['web', 'verify.session'])->group(function () {
 
     //ticket
     Route::get('lister-ticket', [ticketController::class, 'index']);
+    Route::get('lister-ticket-delete', [ticketController::class, 'index_delete']);
+
     Route::get('delete-ticket', [ticketController::class, 'destroy']);
 
     //end ticket
-    //boule
+    //boules
     Route::get('boule-show', [ticketController::class, 'show_boule']);
 
 
@@ -196,6 +198,8 @@ Route::middleware(['web', 'verify.session'])->group(function () {
 Route::middleware(['web', 'CheckSuperviseur'])->group(function () {
 
     Route::get('/sup_list-vendeur', [adminController::class, 'index_vendeur']);
+    Route::get('/sup_edit-vendeur', [adminController::class, 'edit_vendeur']);
+    Route::post('/sup_update-vendeur', [adminController::class, 'update_vendeur']);
     Route::get('/superviseur', [adminController::class, 'admin']);
     Route::get('/sup_rapport2', [adminController::class, 'create_rapport2']);
     Route::get('/sup_rapport', [adminController::class, 'create_rapport']);
@@ -223,6 +227,9 @@ Route::middleware(['web', 'chekadmin'])->group(function () {
     Route::post('/wp-admin/C-edite', [SystemController::class, 'editCompagnie'])->name('edit_compagnie');
     Route::post('/wp-admin/C-compagnie', [SystemController::class, 'viewCompagnieUnique'])->name('listecompagnieU');
     Route::get('/wp-admin/C-login', [SystemController::class, 'login_as_company'])->name('login_as_company');
+
+    Route::get('/wp-admin/publication', [SystemController::class, 'publication'])->name('publication');
+
 
     Route::get('/wp-admin/C-compagnie-2', [SystemController::class, 'viewCompagnie'])->name('listecompagnie');
     Route::post('/wp-admin/update', [SystemController::class, 'updateCompagnie'])->name('update_compagnie');

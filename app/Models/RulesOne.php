@@ -14,5 +14,16 @@ class RulesOne extends Model
           'compagnie_id',
           'branch_id',
           'prix',
+          'prix_second',
+          'prix_third',
+          'prix_maryaj',
+          'prix_loto3',
+          'prix_loto4',
+          'prix_loto5',
+          'prix_gabel1',
+          'prix_gabel2',
+          'gabel_status',
+          
+
     ];
 }

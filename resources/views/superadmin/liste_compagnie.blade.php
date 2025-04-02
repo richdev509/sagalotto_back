@@ -133,7 +133,7 @@
                                                         value="{{ $donnee->id }}" /><button><i
                                                             class="mdi mdi-calendar-check mdi-24px"></i></button></form>
                                         @endif
-                                    </tr>
+                                    
                                     </tr>
                                 @endforeach
                             </tbody>

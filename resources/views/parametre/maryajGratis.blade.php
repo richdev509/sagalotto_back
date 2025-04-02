@@ -180,7 +180,7 @@
             <form class="forms-sample" action="{{ route('updatemontantmg') }}" method="POST">
                 @csrf
                 <label>Chwazi Branch</label>
-                <select name="branch" id="branch" class="form-control" required style="height: 40px;">
+                <select name="branch" id="branchr" class="form-control" required style="height: 40px;">
                     <option value="" disabled selected>Chwazi branch wap parametre a</option>
                     @foreach ($branch as $row)
                         <option value="{{ $row->id }}">{{ $row->name }}</option>
@@ -259,8 +259,8 @@
                             <option>10</option>
                             <option>11</option>
                         </select>
-                        <input type="number" name="min_inter_4" id="min_inter_4" class="form-control"
-                            placeholder="Min kob" required min="0">
+                        <input type="number" name="min_inter_4" id="min_inter_4" class="form-control" placeholder="Min kob"
+                            required min="0">
                         <input type="number" name="max_inter_4" id="max_inter_4" class="form-control"
                             placeholder="Max kob" required min="0">
                     </div>
@@ -339,10 +339,10 @@
                     var inner = this.nextElementSibling.querySelector('.flipswitch-inner');
                     var switchElem = this.nextElementSibling.querySelector('.flipswitch-switch');
                     var status = this.checked ? 1 : 0;
-                    var branch = document.getElementById('branch');
+                    var branch = document.getElementById('branchr');
 
                     $.ajax({
-                        url: 'updatestatutmg',
+                        url: 'updatestatutmg', // Use the correct route
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -373,42 +373,64 @@
                 });
             });
 
-            document.getElementById('branch').addEventListener('change', function() {
+            document.getElementById('branchr').addEventListener('change', function() {
                 let current_id = this.value;
                 $.ajax({
-                    url: 'maryajByBranch',
+                    url: 'maryajByBranch', // Use the correct route
                     method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     data: {
-                        _token: '{{ csrf_token() }}',
                         id: current_id
                     },
                     success: function(response) {
+                        console.log(response); // Debugging statement
                         if (response.status == 'true') {
-                            document.getElementById('q_inter_1').innerText = response.data.q_inter_1;
-                            document.getElementById('min_inter_1').value = response.data.min_inter_1;
-                            document.getElementById('max_inter_1').value = response.data.max_inter_1;
+                            document.getElementById('q_inter_1').innerText = response.data
+                                .q_inter_1;
+                            document.getElementById('min_inter_1').value = response.data
+                                .min_inter_1;
+                            document.getElementById('max_inter_1').value = response.data
+                                .max_inter_1;
 
-                            document.getElementById('q_inter_2').innerText = response.data.q_inter_2;
-                            document.getElementById('min_inter_2').value = response.data.min_inter_2;
-                            document.getElementById('max_inter_2').value = response.data.max_inter_2;
+                            document.getElementById('q_inter_2').innerText = response.data
+                                .q_inter_2;
+                            document.getElementById('min_inter_2').value = response.data
+                                .min_inter_2;
+                            document.getElementById('max_inter_2').value = response.data
+                                .max_inter_2;
 
-                            document.getElementById('q_inter_3').innerText = response.data.q_inter_3;
-                            document.getElementById('min_inter_3').value = response.data.min_inter_3;
-                            document.getElementById('max_inter_3').value = response.data.max_inter_3;
+                            document.getElementById('q_inter_3').innerText = response.data
+                                .q_inter_3;
+                            document.getElementById('min_inter_3').value = response.data
+                                .min_inter_3;
+                            document.getElementById('max_inter_3').value = response.data
+                                .max_inter_3;
 
-                            document.getElementById('q_inter_4').innerText = response.data.q_inter_4;
-                            document.getElementById('min_inter_4').value = response.data.min_inter_4;
-                            document.getElementById('max_inter_4').value = response.data.max_inter_4;
+                            document.getElementById('q_inter_4').innerText = response.data
+                                .q_inter_4;
+                            document.getElementById('min_inter_4').value = response.data
+                                .min_inter_4;
+                            document.getElementById('max_inter_4').value = response.data
+                                .max_inter_4;
 
-                            document.getElementById('q_inter_5').innerText = response.data.q_inter_5;
-                            document.getElementById('min_inter_5').value = response.data.min_inter_5;
-                            document.getElementById('max_inter_5').value = response.data.max_inter_5;
+                            document.getElementById('q_inter_5').innerText = response.data
+                                .q_inter_5;
+                            document.getElementById('min_inter_5').value = response.data
+                                .min_inter_5;
+                            document.getElementById('max_inter_5').value = response.data
+                                .max_inter_5;
 
-                            document.getElementById('q_inter_6').innerText = response.data.q_inter_6;
-                            document.getElementById('min_inter_6').value = response.data.min_inter_6;
-                            document.getElementById('max_inter_6').value = response.data.max_inter_6;
+                            document.getElementById('q_inter_6').innerText = response.data
+                                .q_inter_6;
+                            document.getElementById('min_inter_6').value = response.data
+                                .min_inter_6;
+                            document.getElementById('max_inter_6').value = response.data
+                                .max_inter_6;
 
-                            document.getElementById('labelPrice').innerText = response.data.prix;
+                            document.getElementById('labelPrice').innerText = response.data
+                            .prix;
                             document.getElementById('price').value = response.data.prix;
 
                             var etat = document.getElementById('fs');
@@ -418,6 +440,9 @@
                                 etat.checked = false;
                             }
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error); // Debugging statement
                     }
                 });
             });

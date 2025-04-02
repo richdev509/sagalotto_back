@@ -38,26 +38,41 @@ class abonnementController extends Controller
     public function genererFacture(Request $request)
     {
         if (session('role') == "admin" || session('role') == "comptable" || session('role') == "admin2") {
+            // Validate the request
             $validator = $request->validate([
-               
                 'company' => 'required',
                 'date' => 'required',
             ]);
+    
+            // Parse the input date using Carbon
             $date = Carbon::create($request->date);
-            $datee = $date;
-            $date =$date->format('Y-m-d');
+            $datee = $date->copy(); // Use a copy to avoid mutating the original object
+            $date = $date->format('Y-m-d');
+    
+            // Fetch all companies
             $data = company::all();
-            $compagnie =company::where('id', $request->company)->first();
             $facture = 1;
+            // Fetch the selected company
+            $compagnie = company::where('id', $request->company)->first();
+    
+            // Get the plan (if needed)
+            $plan = $compagnie->plan;
+    
+            // Define the date range for the query
+            $startDate = $datee->copy()->subDays(6)->startOfDay(); // Start of the day, 6 days before
+            $endDate = $datee->copy()->subDays(1)->endOfDay(); // End of the day, 1 day before
+    
+            // Fetch distinct user IDs for tickets created within the date range
             $vendeur = ticket_code::where([
-                ['created_at', '>=', $datee->subDays(5)],
+                ['created_at', '>=', $startDate],
+                ['created_at', '<=', $endDate],
                 ['compagnie_id', '=', $compagnie->id]
-    
             ])->distinct()
-                ->pluck('user_id')
-                ->count();
+              ->pluck('user_id')
+              ->count();
     
-            return  view('superadmin.facturePay', compact('data', 'facture','compagnie','vendeur','date'));
+            // Pass data to the view
+            return view('superadmin.facturePay', compact('data', 'plan', 'facture', 'compagnie', 'vendeur', 'date'));
         }
     }
     public function addabonement(Request $request)
