@@ -51,7 +51,7 @@ class executeTirageAuto extends Controller
 
 
         //recuperation compagnie qui a service =1 et autotirage =1
-        $compagnies = company::where('autoTirage', 1)->where('service', 1)->get();
+        $compagnies = company::where('autoTirage', 1)->where('service', 1)->where('is_delete', 0)->get();
         if ($compagnies->isEmpty()) {
             notify()->info('Aucune compagnie trouvée');
             return redirect()->back();
@@ -128,10 +128,10 @@ class executeTirageAuto extends Controller
 
         if ($var == 0) {
             notify()->success('Ajoute Lo effectuer avec succes :Aucun erreur' . $var);
-            return redirect()->route('listlo');
+            return redirect()->route('wp-listelo');
         } else {
             notify()->info('Action echouer:,  Erreur trouver' . $var);
-            return redirect()->route('listlo');
+            return redirect()->route('wp-listelo');
         }
        
     }

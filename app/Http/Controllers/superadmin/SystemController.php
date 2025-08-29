@@ -155,6 +155,7 @@ class SystemController extends Controller
     {
         if (session('role') == "admin" || session('role') == "comptable") {
             $data = DB::table('companies')
+                ->where("is_delete", "=", "0")
                 ->get();
 
             if ($data) {
@@ -168,7 +169,10 @@ class SystemController extends Controller
 
 
         if (session('role') == "admin2") {
-            $data = DB::table('companies')->where('actionUser', session('id'))->get();
+            $data = DB::table('companies')->where('actionUser', session('id'))
+                ->where("is_delete", "=", "0")
+                ->get();
+
             if ($data) {
                 return view('superadmin.liste_compagnie', compact('data',));
             } else {
@@ -214,7 +218,7 @@ class SystemController extends Controller
                 notify()->error('Compagnie existe');
                 return back();
             }
-            $logoPath="";
+            $logoPath = "";
             if ($request->hasFile('logo')) {
                 // Get the file from the request
                 $file = $request->file('logo');
@@ -235,6 +239,7 @@ class SystemController extends Controller
                 'phone' => $request->phone,
                 'email' => $request->email,
                 'plan' => $request->plan,
+                'dateexpiration'=>$request->date_plan,
                 'info' => $request->info,
                 'logo' => $logoPath,
                 'id_reference' => $request->reference,
@@ -341,7 +346,7 @@ class SystemController extends Controller
             }
         } catch (Exception $e) {
             dd('Erreur lors de l\'ajout de la compagnie : ' . $e->getMessage());
-           // return back();
+            // return back();
         }
     }
 
@@ -367,21 +372,21 @@ class SystemController extends Controller
                 'compagnie' => 'required|string|max:255',
                 'adresse' => 'nullable|string|max:255',
                 'city' => 'nullable|string|max:255',
-                'phone' => 'nullable|string|max:20',
+                'phone' => 'nullable|string|max:40',
                 'email' => 'nullable|email|max:255',
                 'plan' => 'required|string|max:255',
                 'info' => 'nullable|string',
-                'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validate logo file
+                'logo' => 'nullable|image|max:4096', // Validate logo file
             ]);
-    
+
             // Find the company by ID
             $company = Company::find($request->id);
-    
+
             // Check if the company exists
             if (!$company) {
                 return redirect()->route('listecompagnie')->withErrors(['error' => 'Compagnie non trouvée.']);
             }
-    
+
             // Handle logo upload
             $logoPath = $company->logo; // Default to the existing logo path
             if ($request->hasFile('logo')) {
@@ -389,16 +394,16 @@ class SystemController extends Controller
                 $fileName = time() . '_' . $file->getClientOriginalName(); // Generate a unique file name
                 $file->move(public_path('assets/images/logo/'), $fileName); // Move the file to the public directory
                 $logoPath = 'assets/images/logo/' . $fileName; // Save the new logo path
-    
+
                 // Delete the old logo file if it exists
                 if ($company->logo && file_exists(public_path($company->logo))) {
                     unlink(public_path($company->logo)); // Delete the old logo file
                 }
             }
-    
+
             // Update the company data
             $company->update([
-                'logo'=>$logoPath,
+                'logo' => $logoPath,
                 'name' => $request->compagnie,
                 'address' => $request->adresse,
                 'city' => $request->city,
@@ -407,14 +412,14 @@ class SystemController extends Controller
                 'plan' => $request->plan,
                 'info' => $request->info,
             ]);
-    
+
             // Success notification and redirection
             notify()->success('Modification effectuée avec succès');
             return redirect()->route('listecompagnie');
         } catch (Exception $e) {
-            // Log the error and return an error message
-           // Log::error('Erreur lors de la modification de la compagnie : ' . $e->getMessage());
-            return redirect()->route('listecompagnie')->withErrors(['error' => 'Une erreur s\'est produite lors de la modification.']);
+           notify()->error('Une erreur s\'est produite lors de la modification : ' . $e->getMessage());
+           return redirect()->route('listecompagnie');
+
         }
     }
 

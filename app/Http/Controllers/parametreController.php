@@ -16,7 +16,9 @@ use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
 use App\Models\tirage_record;
 use App\Models\limit_auto;
+use App\Models\rules_vendeur;
 use App\Models\seting;
+
 class parametreController extends Controller
 {
 
@@ -43,34 +45,34 @@ class parametreController extends Controller
         $listetirage = tirage_record::where('compagnie_id', session('loginId'))->get();
         $limitprixboul = limitprixboul::where('compagnie_id', session('loginId'))->orderBy('tirage_record') // Triez par tirage_record
             ->get();
-           
-         $list = [];
+
+        $list = [];
 
 
-            foreach ($limitprixboul as $single_boul) {
-                $amount = limit_auto::where([
-                    ['compagnie_id', '=', Session('loginId')],
-                    ['tirage', '=', $single_boul->type],
-                    ['boule', '=', $single_boul->boul],
-                    ['type', '=', lcfirst($single_boul->opsyon)],
-                ])->whereDate('created_at', '=', Carbon::today())
-                    ->sum('amount');
-              
-
-                $list[] = [
-                    'id' => $single_boul->id,
-                    'type' => $single_boul->type,
-                    'boul' => $single_boul->boul,
-
-                    'opsyon' => $single_boul->opsyon,
-                    'montant_limit' => $single_boul->montant,
-                    'montant_play' => $amount,
-                    'created_at' => $single_boul->created_at
+        foreach ($limitprixboul as $single_boul) {
+            $amount = limit_auto::where([
+                ['compagnie_id', '=', Session('loginId')],
+                ['tirage', '=', $single_boul->type],
+                ['boule', '=', $single_boul->boul],
+                ['type', '=', lcfirst($single_boul->opsyon)],
+            ])->whereDate('created_at', '=', Carbon::today())
+                ->sum('amount');
 
 
-                ];
-            }
-            
+            $list[] = [
+                'id' => $single_boul->id,
+                'type' => $single_boul->type,
+                'boul' => $single_boul->boul,
+
+                'opsyon' => $single_boul->opsyon,
+                'montant_limit' => $single_boul->montant,
+                'montant_play' => $amount,
+                'created_at' => $single_boul->created_at
+
+
+            ];
+        }
+
 
         $listjwet = DB::table('listejwet')->get();
         return view('parametre.limitPrixAchat', compact('limitprix', 'listetirage', 'list', 'listjwet'));
@@ -94,13 +96,13 @@ class parametreController extends Controller
         } else {
             //insert boul for each tirage
             foreach ($request->input('tirage') as $tirage_input) {
-                if($request->input('type') =='paire'){
+                if ($request->input('type') == 'paire') {
                     $paire = array();
-                    $paire= ['00', '11','22','33','44','55', '66', '77','88','99'];
-                    foreach($paire as $p){
+                    $paire = ['00', '11', '22', '33', '44', '55', '66', '77', '88', '99'];
+                    foreach ($paire as $p) {
                         $nametirage = tirage_record::where('compagnie_id', session('loginId'))->where('id', $tirage_input)->value('name');
                         $boule = limitprixboul::where('opsyon', 'Bolet')->where('compagnie_id', session('loginId'))->where('tirage_record', $tirage_input)->where('boul', $p)->first();
-    
+
                         if ($boule) {
                             $boule->delete();
                         }
@@ -112,17 +114,16 @@ class parametreController extends Controller
                             'boul' => $p,
                             'montant' => $request->montant,
                             'montant1' => $request->montant,
-    
+
                         ]);
-                         
                     }
-                }else if($request->input('type') =='grap'){
+                } else if ($request->input('type') == 'grap') {
                     $grap = array();
-                    $grap= ['000', '111','222','333','444','555', '666', '777','888','999'];
-                    foreach($grap as $p){
+                    $grap = ['000', '111', '222', '333', '444', '555', '666', '777', '888', '999'];
+                    foreach ($grap as $p) {
                         $nametirage = tirage_record::where('compagnie_id', session('loginId'))->where('id', $tirage_input)->value('name');
                         $boule = limitprixboul::where('opsyon', 'Loto3')->where('compagnie_id', session('loginId'))->where('tirage_record', $tirage_input)->where('boul', $p)->first();
-    
+
                         if ($boule) {
                             $boule->delete();
                         }
@@ -134,12 +135,10 @@ class parametreController extends Controller
                             'boul' => $p,
                             'montant' => $request->montant,
                             'montant1' => $request->montant,
-    
-                        ]);
-                         
-                    }
 
-                }else{
+                        ]);
+                    }
+                } else {
                     $nametirage = tirage_record::where('compagnie_id', session('loginId'))->where('id', $tirage_input)->value('name');
                     $nameAssociatedWithType = DB::table('listejwet')->where('id', $request->type)->value('name');
                     $count = DB::table('limit_prix_boul')->where('opsyon', $nameAssociatedWithType)->where('compagnie_id', session('loginId'))->count();
@@ -149,11 +148,11 @@ class parametreController extends Controller
                     }
                     //verifier si boul sa existe deja pou 
                     $boule = limitprixboul::where('opsyon', $nameAssociatedWithType)->where('compagnie_id', session('loginId'))->where('tirage_record', $tirage_input)->where('boul', $request->chiffre)->first();
-    
+
                     if ($boule) {
                         $boule->delete();
                     }
-    
+
                     //$this->vericationMaryajDouble($request,$request->type,$nameAssociatedWithType);
                     if (isset($request->isgeneral) && $request->isgeneral == 45) {
                         $reponse = limitprixboul::create([
@@ -174,12 +173,10 @@ class parametreController extends Controller
                             'boul' => $request->chiffre,
                             'montant' => $request->montant,
                             'montant1' => $request->montant,
-    
+
                         ]);
                     }
-
                 }
-
             }
             //verifier si limit 10 boul lan rive 
 
@@ -227,22 +224,21 @@ class parametreController extends Controller
     {
         $type = request()->input('type');
         $value = $request->chiffre;
-        if($type == 'paire'){
+        if ($type == 'paire') {
             $nameAssociatedWithType = 'paire';
-        }else if($type == 'grap'){
+        } else if ($type == 'grap') {
             $nameAssociatedWithType = 'grap';
-        }else{
+        } else {
             $nameAssociatedWithType = DB::table('listejwet')->where('id', $type)->value('name');
-
         }
 
         switch ($nameAssociatedWithType) {
             case 'paire':
-              
-                    return true;
-             
+
+                return true;
+
             case 'grap':
-                 return true;
+                return true;
             case 'Bolet':
                 $mg = strlen($value);
 
@@ -484,7 +480,7 @@ class parametreController extends Controller
     public function config_fichUpdate(Request $request)
     {
 
-      
+
         try {
             // Récupérer le modèle existant que vous souhaitez mettre à jour
             $settingIsset = seting::where([
@@ -498,7 +494,13 @@ class parametreController extends Controller
                 $settingIsset->qt_loto3 = $request->input('qt_loto3') ?: 100;
                 $settingIsset->qt_loto4 = $request->input('qt_loto4') ?: 100;
                 $settingIsset->qt_loto5 = $request->input('qt_loto5') ?: 100;
-                
+                $settingIsset->show_logo = $request->input('show_logo') ?: 0;
+                $settingIsset->show_mariage_price = $request->input('show_mariage_price') ?: 0;
+                $settingIsset->show_name = $request->input('show_name') ?: 0;
+                $settingIsset->show_phone = $request->input('show_phone') ?: 0;
+                $settingIsset->show_address = $request->input('show_address') ?: 0;
+                $settingIsset->show_footer = $request->input('show_footer') ?: 0;
+
                 $settingIsset->save();
 
                 notify()->success('tout paramet yo byen mofifye');
@@ -645,9 +647,9 @@ class parametreController extends Controller
                 $request->merge([
                     'prix_gabel1' => 20,
                     'prix_gabel2' => 10,
-                    'gabel_status' => 0,
+                    'gabel_statut' => 0,
                 ]);
-            }            
+            }
             $responce->update([
                 'prix' => $request->input('prix_first'),
                 'prix_second' => $request->input('prix_second'),
@@ -685,7 +687,86 @@ class parametreController extends Controller
             return redirect()->back();
         }
     }
+    public function update_prilo_vendeur(Request $request)
+    {
 
+        try {
+
+            if(isset($request->id)){
+                $rules_vendeur = rules_vendeur::where([
+                    ['compagnie_id', session('loginId')],
+                    ['id', $request->id],
+                ])->first();
+                if($rules_vendeur){
+                    $rules_vendeur->update([
+                        'prix' => $request->input('prix'),
+                        'prix_second' => $request->input('prix_second'),
+                        'prix_third' => $request->input('prix_third'),
+                        'prix_maryaj' => $request->input('prix_maryaj'),
+                        'prix_maryaj_gratis' => $request->input('prix_maryaj_gratis'),
+                        'prix_loto3' => $request->input('prix_loto3'),
+                        'prix_loto4' => $request->input('prix_loto4'),
+                        'prix_loto5' => $request->input('prix_loto5'),
+                        'prix_gabel1' => 20,
+                        'prix_gabel2' => 10,
+                        'gabel_statut' => 0,
+                    ]);
+                    notify()->success('Modifikasyon fet ak sikse');
+                    return redirect()->back();
+
+
+                }else{
+                    notify()->error('Aucun enregistreman trouve');
+                    return redirect()->back();
+                }
+
+            }else{
+                $rules_vendeur = new rules_vendeur();
+                $rules_vendeur->compagnie_id = session('loginId');
+                $rules_vendeur->user_id = $request->input('user_id');
+                $rules_vendeur->prix = $request->input('prix');
+                $rules_vendeur->prix_second = $request->input('prix_second');
+                $rules_vendeur->prix_third = $request->input('prix_third');
+                $rules_vendeur->prix_maryaj = $request->input('prix_maryaj');
+                $rules_vendeur->prix_maryaj_gratis = $request->input('prix_maryaj_gratis');
+                $rules_vendeur->prix_loto3 = $request->input('prix_loto3');
+                $rules_vendeur->prix_loto4 = $request->input('prix_loto4');
+                $rules_vendeur->prix_loto5 = $request->input('prix_loto5');
+                $rules_vendeur->prix_gabel1 = 20;
+                $rules_vendeur->prix_gabel2 = 10;
+                $rules_vendeur->gabel_statut = 0;
+                $rules_vendeur->save();
+                notify()->success('Enregistrement fet ak sikse');
+                return redirect()->back();
+
+
+            }
+        } catch (\Exception $e) {
+            notify()->error('Gen yon pwoblem kontakte ekip teknik', $e);
+            return redirect()->back();
+        }
+    }
+    public function deleteprilo_vendeur(Request $request)
+    {
+        try {
+            $rules_vendeur = rules_vendeur::where([
+                ['compagnie_id', session('loginId')],
+                ['id', $request->id],
+            ])->first();
+            if ($rules_vendeur) {
+                $rules_vendeur->delete();
+                notify()->success('Enregistrement supprime avec succes');
+                return redirect()->back();
+            } else {
+                notify()->error('Aucun enregistrement trouve');
+                return redirect()->back();
+            }
+        } catch (\Exception $e) {
+            notify()->error('Gen yon pwoblem kontakte ekip teknik', $e);
+            return redirect()->back();
+        }
+
+    }
 
     //gestion plan
     public function viewinfo(Request $request)
@@ -748,9 +829,22 @@ class parametreController extends Controller
     public function updateBranch()
     {
         // Récupérer tous les IDs des compagnies
-      
+
 
         dd('sikse');
     }
+    public function deleteMultiple(Request $request)
+    {
+        $selectedIds = $request->input('selected_ids', []);
 
+        if (empty($selectedIds)) {
+            return back()->with('error', 'Pa gen okenn limit chwazi pou siprime.');
+        }
+
+        // Delete the selected records
+        // Adjust this according to your model and database structure
+        limitprixboul::whereIn('id', $selectedIds)->delete();
+
+        return back()->with('success', 'Limit yo te siprime avèk siksè.');
+    }
 }

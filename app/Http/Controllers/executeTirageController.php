@@ -17,6 +17,7 @@ use App\Models\maryajgratis;
 use App\Jobs\ExecutionTirage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
+use App\Models\rules_vendeur;
 
 class executeTirageController extends Controller
 {
@@ -90,7 +91,7 @@ class executeTirageController extends Controller
 
         // Récupérer les codes fiches 
         $numero = ticket_code::where('compagnie_id', $compagnieId)
-            ->whereBetween('created_at', [$date. ' 00:00:00', $date. ' 23:59:59'])
+            ->whereBetween('created_at', [$date . ' 00:00:00', $date . ' 23:59:59'])
             ->pluck('code')
             ->toArray();
 
@@ -125,10 +126,10 @@ class executeTirageController extends Controller
         $totalGains = 0;
         $compagnieId = session('loginId');
 
-        $borletePrice = RulesOne::where('compagnie_id', $compagnieId)->first();
+        // $borletePrice = RulesOne::where('compagnie_id', $compagnieId)->first();
         //$lotoNames = ['maryaj', 'loto3', 'loto4', 'loto5'];
         // $lotoPrices = RulesTwo::whereIn('loto_name', $lotoNames)->pluck('prix', 'loto_name');
-        $maryajgratis = maryajgratis::where('compagnie_id', $compagnieId)->where('etat', 1)->value('prix');
+        //$maryajgratis = maryajgratis::where('compagnie_id', $compagnieId)->where('etat', 1)->value('prix');
         $tirageName = $tirage;
 
         // Récupération des numéros gagnants pour le tirage spécifique
@@ -156,7 +157,7 @@ class executeTirageController extends Controller
         // Récupérer les tickets vendus en une seule requête
         $fiches = TicketVendu::whereHas('ticketCode', function ($query) use ($compagnieId, $formattedDate) {
             $query->where('compagnie_id', $compagnieId)
-                ->whereBetween('created_at', [$formattedDate.' 00:00:00', $formattedDate.' 23:59:59']);
+                ->whereBetween('created_at', [$formattedDate . ' 00:00:00', $formattedDate . ' 23:59:59']);
         })
             ->where('tirage_record_id', $tirageName)
             ->get();
@@ -176,32 +177,48 @@ class executeTirageController extends Controller
 
             foreach ($fiches as $fiche) {
                 $numerobranch = $fiche->ticketcode->branch_id;
-                //$borletePrice = 50;
-                // Trouver la règle correspondant au branch_id
-                $rule = $rules->firstWhere('branch_id', $numerobranch);
-                $rule2 = $rules2->firstWhere('branch_id', $numerobranch);
-                // Vérifier si la règle a été trouvée
-                if ($rule) {
-                    // Obtenir le prix à partir de la règle
-                    $borletePrice = $rule;
-                }else{
-                    $borletePrice = (object) [
-                        'prix' => 50,
-                        'prix_second' => 20,
-                        'prix_third'=> 10,
-                        'prix_maryaj'=> 1000,
-                        'prix_loto3'=> 500,
-                        'prix_loto4'=> 5000,
-                        'prix_loto5'=> 25000,
-                        'prix_gabel1'=>20,
-                        'prix_gabel2'=>10,
-                        'gabel_statut'=>0
-                       
-                    ];
+                //get id vendeur
+                $vendeur_id = $fiche->ticketcode->user_id;
+                //check if the user record in rules_vendeur
+                $rules_vendeur = rules_vendeur::where([
+                    ['compagnie_id', '=', $compagnieId],
+                    ['user_id', '=', $vendeur_id],
+                ])->first();
+                if ($rules_vendeur) {
+                    $borletePrice = $rules_vendeur;
+                    $maryajgratis = $rules_vendeur->prix_maryaj_gratis;
+                } else {
+                    //$borletePrice = 50;
+                    // Trouver la règle correspondant au branch_id
+                    $rule = $rules->firstWhere('branch_id', $numerobranch);
+                    $rule2 = $rules2->firstWhere('branch_id', $numerobranch);
+                    // Vérifier si la règle a été trouvée
+                    if ($rule) {
+                        // Obtenir le prix à partir de la règle
+                        $borletePrice = $rule;
+                    } else {
+                        $borletePrice = (object) [
+                            'prix' => 50,
+                            'prix_second' => 20,
+                            'prix_third' => 10,
+                            'prix_maryaj' => 1000,
+                            'prix_loto3' => 500,
+                            'prix_loto4' => 5000,
+                            'prix_loto5' => 25000,
+                            'prix_gabel1' => 20,
+                            'prix_gabel2' => 10,
+                            'gabel_statut' => 0
+
+                        ];
+                    }
+                    if ($rule2) {
+                        $maryajgratis = $rule2->prix;
+                    } else {
+                        $maryajgratis = 0;
+                    }
                 }
-                if ($rule2) {
-                    $maryajgratis = $rule2->prix;
-                }
+
+
 
                 //dd($numerobranch);
 
@@ -222,7 +239,7 @@ class executeTirageController extends Controller
                 $this->loto5($gagnants, $ficheData, $borletePrice->prix_loto5);
 
                 $this->mariagegratis($gagnants, $ficheData, $maryajgratis);
-                if($borletePrice->gabel_statut == 1){
+                if ($borletePrice->gabel_statut == 1) {
                     $this->gabel($gagnants, $ficheData, $borletePrice->prix_gabel1, $borletePrice->prix_gabel2);
                 }
 
@@ -287,18 +304,18 @@ class executeTirageController extends Controller
                         $bo = $boulGagnante;
 
                         if ($boulGagnante == $gagnants->premierchiffre) {
-                            $montantGagne = $boul['montant'] * $borlete_first;
+                            $montantGagne = intval($boul['montant']) * intval($borlete_first);
                             $this->totalGains = $this->totalGains + $montantGagne;
                             $is_one = 1;
                         }
 
                         if ($boulGagnante == $gagnants->secondchiffre) {
-                            $montantGagne = $boul['montant'] * $borlete_second;
+                            $montantGagne = intval($boul['montant']) * intval($borlete_second);
                             $this->totalGains = $this->totalGains + $montantGagne;
                             $is_two = 1;
                         }
                         if ($boulGagnante == $gagnants->troisiemechiffre) {
-                            $montantGagne = $boul['montant'] * $borlete_third;
+                            $montantGagne = intval($boul['montant']) * intval($borlete_third);
                             $this->totalGains = $this->totalGains + $montantGagne;
                             $is_tree = 1;
                         }
@@ -340,7 +357,7 @@ class executeTirageController extends Controller
                     ($boul1 == $gagnants->troisiemechiffre && $boul2 == $gagnants->secondchiffre)
                 ) {
 
-                    $montantGagne = $fiche['montant'] * $maryajPrice;
+                    $montantGagne = intval($fiche['montant']) * intval($maryajPrice);
                     $this->totalGains = $this->totalGains + $montantGagne;
                     $this->havegainmaryaj = 1;
                 } else {
@@ -363,7 +380,7 @@ class executeTirageController extends Controller
 
                 if ($boul1 == $combinaisonGagnante) {
                     // Le boul1 correspond à la combinaison gagnante, multiplier le montant par le prix de "loto3"
-                    $montantGagne = $fiche['montant'] * $loto3Price;
+                    $montantGagne = intval($fiche['montant']) * intval($loto3Price);
                     $this->totalGains = $this->totalGains + $montantGagne;
 
                     $this->havegainloto3 = 1;
@@ -389,7 +406,7 @@ class executeTirageController extends Controller
                 if (isset($fiche['option1'])) {
                     $combinaisonGagnante = $gagnants->secondchiffre . $gagnants->troisiemechiffre;
                     if ($boul1 == $combinaisonGagnante) {
-                        $montantGagne = $fiche['option1'] * $loto4Price;
+                        $montantGagne = intval($fiche['option1']) * intval($loto4Price);
                         $this->totalGains = $this->totalGains + $montantGagne;
                         $firsttest = 1;
                         $this->havegainloto4 = 1;
@@ -402,7 +419,7 @@ class executeTirageController extends Controller
                 if (isset($fiche['option2'])) {
                     $combinaisonGagnante2 = $gagnants->secondchiffre . $gagnants->premierchiffre;
                     if ($boul1 == $combinaisonGagnante2) {
-                        $montantGagne = $fiche['option2'] * $loto4Price;
+                        $montantGagne = intval($fiche['option2']) * intval($loto4Price);
                         $this->totalGains = $this->totalGains + $montantGagne;
                         $firsttest = 1;
                         $this->havegainloto4 = 1;
@@ -411,7 +428,7 @@ class executeTirageController extends Controller
                 if (isset($fiche['option3'])) {
                     $combinaisonGagnante3 = $gagnants->premierchiffre . $gagnants->troisiemechiffre;
                     if ($boul1 == $combinaisonGagnante3) {
-                        $montantGagne = $fiche['option3'] * $loto4Price;
+                        $montantGagne = intval($fiche['option3']) * intval($loto4Price);
                         $this->totalGains = $this->totalGains + $montantGagne;
                         $firsttest = 1;
                         $this->havegainloto4 = 1;
@@ -447,7 +464,7 @@ class executeTirageController extends Controller
 
                     if ($boul1 == $combinaisonGagnante) {
                         // La concaténation de 3 chiffres dans boul1 et boul2 correspond à la combinaison gagnante, multiplier le montant par le prix de "loto5"
-                        $montantGagne = $fiche['option1'] * $loto5Price;
+                        $montantGagne = intval($fiche['option1']) * intval($loto5Price);
                         $this->totalGains = $this->totalGains + $montantGagne;
                         $firsttest = 1;
                         $this->havegainloto5 = 1;
@@ -456,7 +473,7 @@ class executeTirageController extends Controller
 
                 if (isset($fiche['option2']) && $boul1 == $gagnants->unchiffre . $gagnants->premierchiffre . $gagnants->troisiemechiffre) {
                     // L'option2 est présente et correspond à la combinaison gagnante, multiplier le montant par le prix de l'option2
-                    $montantGagne = $fiche['option2'] * $loto5Price;
+                    $montantGagne = intval($fiche['option2']) * intval($loto5Price);
                     $this->totalGains = $this->totalGains + $montantGagne;
                     /*$options[] = [
          'option2' => $fiche['option2']
@@ -465,7 +482,7 @@ class executeTirageController extends Controller
                 }
                 if (isset($fiche['option3']) && $boul1  == substr($gagnants->premierchiffre, -1) . $gagnants->secondchiffre . $gagnants->troisiemechiffre) {
                     // L'option3 est présente et correspond à la combinaison gagnante, multiplier le montant par le prix de l'option3
-                    $montantGagne = $fiche['option3'] * $loto5Price;
+                    $montantGagne = intval($fiche['option3']) * intval($loto5Price);
                     $this->totalGains = $this->totalGains + $montantGagne;
                     /*$options[] = [
          'option3' => $fiche['option3']
@@ -513,27 +530,25 @@ class executeTirageController extends Controller
                 $boul1 = $fiche['boul1'];
 
                 // Vérification si le boul1 correspond à la combinaison de unchiffre et premierchiffre
-                $combinaisonGagnante1 = $gagnants->unchiffre .substr($gagnants->premierchiffre, 0,1);
+                $combinaisonGagnante1 = $gagnants->unchiffre . substr($gagnants->premierchiffre, 0, 1);
                 $combinaisonGagnante2 = $gagnants->premierchiffre;
 
                 if (substr($boul1, 0, 2) == $combinaisonGagnante1) {
                     // Le boul1 correspond à la combinaison gagnante, multiplier le montant par le prix de "loto3"
-                    $montantGagne = $fiche['montant'] * $gabelPrice1;
+                    $montantGagne = intval($fiche['montant']) * intval($gabelPrice1);
                     $this->totalGains = $this->totalGains + $montantGagne;
 
                     $this->havegainloto3 = 1;
-                } elseif(substr($boul1, 1, 2) == $combinaisonGagnante2) {
-                    $montantGagne = $fiche['montant'] * $gabelPrice2;
+                } elseif (substr($boul1, 1, 2) == $combinaisonGagnante2) {
+                    $montantGagne = intval($fiche['montant']) * intval($gabelPrice2);
                     $this->totalGains = $this->totalGains + $montantGagne;
 
                     $this->havegainloto3 = 1;
-                }else{
-
+                } else {
                 }
             }
         } else {
             $this->havegainloto3 = 0;
         }
     }
-
 }

@@ -233,6 +233,7 @@ class ticketController extends Controller
                     ->whereBetween('ticket_code.created_at', [$formattedDate, $formattedDate1])
                     ->where('ticket_code.compagnie_id', Session('loginId'))
                     ->where('ticket_vendu.is_delete', 0)
+                    ->where('ticket_vendu.pending', 0)
                     ->where('ticket_vendu.is_cancel', 0)
                     ->select('ticket_vendu.*', 'ticket_code.code as ticket_id', 'ticket_code.created_at as date', 'tirage_record.name as tirage', 'ticket_vendu.amount as montant', 'ticket_vendu.winning as gain', 'users.bank_name as bank')
                     ->orderByDesc('ticket_vendu.id')

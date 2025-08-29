@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\tirage_record;
+use Exception;
 use App\Models\branch;
 use Illuminate\Contracts\Session\Session;
 use Carbon\Carbon;
@@ -546,40 +547,34 @@ class rapportController extends Controller
             if (!empty($dateDebut) && !empty($dateFin)) {
 
                 if ($request->input('branch') != 'tout') {
-                    $userIds = DB::table('ticket_code')
-                        ->where('compagnie_id', '=', $loginId)
+                    $data = DB::table('ticket_vendu')
+                        ->join('ticket_code', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                        ->where('ticket_code.compagnie_id', $loginId)
+                        ->where('ticket_code.branch_id', $branch)
                         ->whereDate('ticket_code.created_at', '>=', $dateDebut)
                         ->whereDate('ticket_code.created_at', '<=', $dateFin)
-                        ->where('ticket_code.branch_id', '=', $branch)
-                        ->distinct()
-                        ->orderBy('user_id', 'asc')
-
-                        ->pluck('user_id');
-                    $data = collect();
-                    foreach ($userIds as $user) {
-                        $fichcode = DB::table('ticket_code')
-                            ->where('compagnie_id', '=', $loginId)
-                            ->where('user_id', '=', $user)
-                            ->whereDate('ticket_code.created_at', '>=', $dateDebut)
-                            ->whereDate('ticket_code.created_at', '<=', $dateFin)
-                            ->where('ticket_code.branch_id', '=', $branch)
-                            ->pluck('code');
-
-                        $result = DB::table('ticket_vendu')
-                            ->whereIn('ticket_code_id', $fichcode)
-                            ->where([
-                                ['is_cancel', '=', 0],
-                                ['is_delete', '=', 0],
-                                ['pending', '=', 0]
-                            ])
-                            ->select(
-                                DB::raw('SUM(ticket_vendu.amount) as vente'),
-                                DB::raw('SUM(ticket_vendu.winning) as perte'),
-                                DB::raw('SUM(ticket_vendu.commission) as commission'),
-                            )
-                            ->first();
-                        $data->push(['bank_name' => $user, 'vente' => $result->vente, 'perte' => $result->perte, 'commission' => $result->commission]);
-                    }
+                        ->where([
+                            ['ticket_vendu.is_cancel', '=', 0],
+                            ['ticket_vendu.is_delete', '=', 0],
+                            ['ticket_vendu.pending', '=', 0]
+                        ])
+                        ->select(
+                            'ticket_code.user_id as bank_name',
+                            DB::raw('COALESCE(SUM(ticket_vendu.amount), 0) as vente'),
+                            DB::raw('COALESCE(SUM(ticket_vendu.winning), 0) as perte'),
+                            DB::raw('COALESCE(SUM(ticket_vendu.commission), 0) as commission')
+                        )
+                        ->groupBy('ticket_code.user_id')
+                        ->orderBy('ticket_code.user_id', 'asc')
+                        ->get()
+                        ->map(function ($item) {
+                            return [
+                                'bank_name' => $item->bank_name,
+                                'vente' => $item->vente,
+                                'perte' => $item->perte,
+                                'commission' => $item->commission
+                            ];
+                        });
                     // dd($vendeur);
                     $bank = User::where([
                         ['compagnie_id', '=', Session('loginId')],
@@ -602,38 +597,35 @@ class rapportController extends Controller
                     return view('raportsecond', ['bank' => $bank, 'control' => $control, 'vendeur' => $data, 'date_debut' => $dateDebut, 'date_fin' => $dateFin, 'branch' => $branch]);
                 } else {
 
-                    $userIds = DB::table('ticket_code')
-                        ->where('compagnie_id', '=', $loginId)
+                    // Single query to get all required data at once
+                    $results = DB::table('ticket_vendu')
+                        ->join('ticket_code', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                        ->where('ticket_code.compagnie_id', $loginId)
                         ->whereDate('ticket_code.created_at', '>=', $dateDebut)
                         ->whereDate('ticket_code.created_at', '<=', $dateFin)
-                        ->distinct()
-                        ->orderBy('user_id', 'asc')
-                        ->pluck('user_id');
-                    $data = collect();
-                    foreach ($userIds as $user) {
-                        $fichcode = DB::table('ticket_code')
-                            ->where('compagnie_id', '=', $loginId)
-                            ->where('user_id', '=', $user)
-                            ->whereDate('ticket_code.created_at', '>=', $dateDebut)
-                            ->whereDate('ticket_code.created_at', '<=', $dateFin)
-                            ->pluck('code');
+                        ->where([
+                            ['ticket_vendu.is_cancel', '=', 0],
+                            ['ticket_vendu.is_delete', '=', 0],
+                            ['ticket_vendu.pending', '=', 0]
+                        ])
+                        ->select(
+                            'ticket_code.user_id as bank_name',
+                            DB::raw('SUM(ticket_vendu.amount) as vente'),
+                            DB::raw('SUM(ticket_vendu.winning) as perte'),
+                            DB::raw('SUM(ticket_vendu.commission) as commission')
+                        )
+                        ->groupBy('ticket_code.user_id')
+                        ->orderBy('ticket_code.user_id', 'asc')
+                        ->get();
 
-                        $result = DB::table('ticket_vendu')
-                            ->whereIn('ticket_code_id', $fichcode)
-                            ->where([
-                                ['is_cancel', '=', 0],
-                                ['is_delete', '=', 0],
-                                ['pending', '=', 0]
-                            ])
-                            ->select(
-                                DB::raw('SUM(ticket_vendu.amount) as vente'),
-                                DB::raw('SUM(ticket_vendu.winning) as perte'),
-                                DB::raw('SUM(ticket_vendu.commission) as commission'),
-                            )
-                            ->first();
-                        $data->push(['bank_name' => $user, 'vente' => $result->vente, 'perte' => $result->perte, 'commission' => $result->commission]);
-                    }
-
+                    $data = $results->map(function ($item) {
+                        return [
+                            'bank_name' => $item->bank_name,
+                            'vente' => $item->vente,
+                            'perte' => $item->perte,
+                            'commission' => $item->commission
+                        ];
+                    });
                     // dd($vendeur);
                     $bank = User::where([
                         ['compagnie_id', '=', Session('loginId')],
@@ -713,116 +705,263 @@ class rapportController extends Controller
             return view('login');
         }
     }
+    public function create_control(Request $request)
+    {
+        if (Session('loginId')) {
+            $loginId = Session('loginId');
+            $dateDebut = $request->input('date_debut');
+            $dateFin = $request->input('date_fin');
+            $branch = $request->input('branch');
+
+            // dd($vendeur);
+            $bank = User::where([
+                ['compagnie_id', '=', Session('loginId')],
+                ['is_delete', '=', 0],
+            ])->get();
+            $branch = Branch::where([
+                ['compagnie_id', '=', Session('loginId')],
+                ['is_delete', '=', 0],
+            ])->get();
+
+            //control historique
+            $control = DB::table('tbl_control')->where([
+                ['tbl_control.compagnie_id', '=', Session('loginId')],
+            ])->join('users', 'users.id', '=', 'tbl_control.id_user')
+                ->select('tbl_control.*', 'users.bank_name')
+                ->orderByDesc('date_rapport')
+                ->limit('100')
+                ->get();
+            return view('control', ['bank' => $bank, 'control' => $control, 'date_debut' => Carbon::now()->format('Y-m-d'), 'date_fin' => Carbon::now()->format('Y-m-d'), 'period' => 'Tout', 'branch' => $branch]);
+        } else {
+            return view('login');
+        }
+    }
     public function get_control(Request $request)
     {
         $user_id = $request->input('user');
-        $date = $request->input('date');
+        $date_debut = $request->input('date1');
+        $date_fin = $request->input('date2');
+        try {
+            $user = User::where([
+                ['id', '=', $user_id]
+            ])->first();
+            // $control = DB::table('tbl_control')->where([
+            //     ['id_user', '=', $user_id],
+            //     ['compagnie_id', '=', Session('loginId')]
+            // ])->whereDate('date_rapport', '=', $date)->first();
+            // //get the control if it exist
+            // if ($control) {
+            //     return response()->json([
+            //         'control' => 1,
+            //         'status' => 'true',
+            //         'bank_code' => $user->code,
+            //         'bank' => $user->bank_name,
+            //         'montant' => $control->montant,
+            //         'balance' => $control->balance,
+            //         'date' => $date
 
-        $user = User::where([
-            ['id', '=', $user_id]
-        ])->first();
-        $control = DB::table('tbl_control')->where([
+            //     ]);
+            // }
+            $result = DB::table('ticket_code')
+                ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                ->where('ticket_code.compagnie_id', Session('loginId'))
+                ->where('ticket_code.user_id', $user_id)
+                ->where('ticket_vendu.is_cancel', 0)
+                ->where('ticket_vendu.is_delete', 0)
+                ->where('ticket_vendu.pending', 0)
+                ->whereBetween('ticket_code.created_at', [$date_debut.' 00:00:00', $date_fin.' 23:59:59'])
+                ->selectRaw('SUM(ticket_vendu.commission) as commission, SUM(ticket_vendu.amount) as amount , SUM(ticket_vendu.winning) as perte')
+                ->groupBy('ticket_code.user_id')
+                ->first();
+            if ($result) {
+                $montant = $result->amount - ($result->perte + $result->commission);
+            } else {
+                $montant = 0;
+                $result = (object) [
+                    'amount' => 0,
+                    'perte' => 0,
+                    'commission' => 0
+                ];
+            }
+
+            $montant = $result->amount - ($result->perte + $result->commission);
+
+            return response()->json([
+                'status' => 'true',
+                'control' => 0,
+                'bank_code' => $user->id,
+                'bank' => $user->bank_name,
+                'montant' => round($montant, 0),
+                'devise' => $user->devise ?? 'HTG',
+                'date' => $date_debut,
+                'date1' => $date_fin
+
+
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'false',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function get_control_date(Request $request)
+    {
+        $user_id = $request->input('user');
+        $control_date = DB::table('tbl_control')->where([
             ['id_user', '=', $user_id],
             ['compagnie_id', '=', Session('loginId')]
-        ])->whereDate('date_rapport', '=', $date)->first();
+        ])->orderByDesc('id')
+            ->first();
         //get the control if it exist
-        if ($control) {
+        if ($control_date) {
             return response()->json([
-                'control' => 1,
                 'status' => 'true',
-                'bank_code' => $user->code,
-                'bank' => $user->bank_name,
-                'montant' => $control->montant,
-                'balance' => $control->balance,
-                'date' => $date
+                'date' => \Carbon\Carbon::parse($control_date->date_fin)->addDays(1)->format('Y-m-d')
 
             ]);
         }
-        $vente = DB::table('ticket_code')->where([
+        $control_date = DB::table('ticket_code')->where([
             ['ticket_code.compagnie_id', '=', Session('loginId')],
             ['ticket_code.user_id', '=', $user_id],
             ['ticket_vendu.is_cancel', '=', 0],
             ['ticket_vendu.is_delete', '=', 0],
 
-        ])->whereDate('ticket_code.created_at', '=', $date)
-            ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-            ->sum('amount');
+        ])->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+            ->orderBy('ticket_vendu.id')
+            ->first();
+        if ($control_date) {
+            return response()->json([
+                'status' => 'true',
+                'date' =>  \Carbon\Carbon::parse($control_date->created_at)->format('Y-m-d')
 
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'false',
+                'date' => null
 
-
-        $perte = DB::table('ticket_code')->where([
-            ['ticket_code.compagnie_id', '=', Session('loginId')],
-            ['ticket_code.user_id', '=', $user_id],
-
-            ['ticket_vendu.is_cancel', '=', 0],
-            ['ticket_vendu.is_delete', '=', 0],
-
-        ])->whereDate('ticket_code.created_at', '=', $date)
-            ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-            ->sum('winning');
-
-        $commission = DB::table('ticket_code')->where([
-            ['ticket_code.compagnie_id', '=', Session('loginId')],
-            ['ticket_code.user_id', '=', $user_id],
-
-            ['ticket_vendu.is_cancel', '=', 0],
-            ['ticket_vendu.is_delete', '=', 0],
-
-        ])->whereDate('ticket_code.created_at', '=', $date)
-            ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-            ->sum('commission');
-        $montant = $vente - ($perte + $commission);
-
-        return response()->json([
-            'status' => 'true',
-            'control' => 0,
-            'bank_code' => $user->code,
-            'bank' => $user->bank_name,
-            'montant' => $montant,
-            'date' => $date
-
-        ]);
+            ]);
+        }
     }
     public function save_control(Request $request)
     {
         $validator = $request->validate([
             "vendeur" => "required",
             'ddate' => 'required',
+            'edate' => 'required',
             'amount' => 'required',
             'amount_' => 'required',
         ]);
-        //get user id
-        if ($request->input('amount_') > $request->input('amount')) {
+        try {
+            if ($request->input('amount') > 0) {
+
+                if ($request->input('amount_') > $request->input('amount')) {
+                    return response()->json([
+                        'save' => 0,
+                        'status' => 'false',
+                        'message' => 'montan pa dwe depase montan rapo a'
+                    ]);
+                }
+            }
+            if ($request->input('amount') < 0) {
+                $am = $request->input('amount') * -1;
+
+                if ($request->input('amount_') > $am) {
+                    return response()->json([
+                        'save' => 0,
+                        'status' => 'false',
+                        'message' => 'montan pa dwe depase montan rapo a'
+                    ]);
+                }
+            }
+
+
+            //get user id
+
+            $control = DB::table('tbl_control')->where([
+                ['compagnie_id', '=', Session('loginId')],
+                ['date_rapport', '=', $request->input('ddate')],
+                ['date_fin', '=', $request->input('edate')],
+                ['id_user', '=', $request->input('vendeur')]
+            ])->first();
+
+            if ($control) {
+                $requestedAmount = $request->input('amount_');
+
+                // Validate the requested amount
+                if ($requestedAmount <= 0) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Montan an dwe yon valè pozitif.'
+                    ], 422); // 422 Unprocessable Entity
+                }
+
+                // Check if balance is sufficient
+                if ($control->balance < $requestedAmount) {
+                    return response()->json([
+                        'save' => 1,
+                        'status' => 'false',
+                        'message' => 'Montan an pa dwe depase balans lan.'
+                    ], 400); // 400 Bad Request
+                }
+
+                // Update the balance
+                $contr = DB::table('tbl_control')
+                    ->where('id', $control->id)
+                    ->update([
+                        'balance' => $control->balance - $requestedAmount,
+                        'updated_at' => Carbon::now()
+                    ]);
+
+                if ($contr) {
+                    return response()->json([
+                        'save' => 1,
+                        'status' => 'true',
+                        'message' => 'Balans lan modifye ak siksè',
+                    ]);
+                } else {
+                    return response()->json([
+                        'save' => 1,
+                        'status' => 'false',
+                        'message' => 'Echèk nan modifye balans lan'
+                    ], 500); // 500 Internal Server Error
+                }
+            } else {
+                if ($request->input('amount') > 0) {
+                    $query = DB::table('tbl_control')->insertGetId([
+                        'compagnie_id' => Session('loginId'),
+                        'date_rapport' => $request->input('ddate'),
+                        'date_fin' => $request->input('edate'),
+                        'id_user' => $request->input('vendeur'),
+                        'montant' => $request->input('amount'),
+                        'balance' => $request->input('amount') - $request->input('amount_'),
+                        'created_at' => Carbon::now()
+                    ]);
+                } else {
+                    $query = DB::table('tbl_control')->insertGetId([
+                        'compagnie_id' => Session('loginId'),
+                        'date_rapport' => $request->input('ddate'),
+                        'date_fin' => $request->input('edate'),
+                        'id_user' => $request->input('vendeur'),
+                        'montant' => $request->input('amount'),
+                        'balance' => $request->input('amount') * -1 - ($request->input('amount_')),
+                        'created_at' => Carbon::now()
+                    ]);
+                }
+
+
+                return response()->json([
+                    'save' => 1,
+                    'status' => 'true',
+                    'message' => 'anregistrement fet ak sikse'
+                ]);
+            }
+        } catch (Exception $e) {
             return response()->json([
                 'save' => 0,
                 'status' => 'false',
-                'message' => 'montan pa dwe depase montan rapo a'
-            ]);
-        }
-        $control = DB::table('tbl_control')->where([
-            ['compagnie_id', '=', Session('loginId')],
-            ['date_rapport', '=', $request->input('ddate')],
-            ['id_user', '=', $request->input('vendeur')]
-        ])->first();
-        if ($control) {
-            return response()->json([
-                'save' => 0,
-                'status' => 'false',
-                'message' => 'rapo sa anregistre deja'
-            ]);
-        } else {
-            $query = DB::table('tbl_control')->insertGetId([
-                'compagnie_id' => Session('loginId'),
-                'date_rapport' => $request->input('ddate'),
-                'id_user' => $request->input('vendeur'),
-                'montant' => $request->input('amount_'),
-                'balance' => $request->input('amount') - $request->input('amount_'),
-                'created_at' => Carbon::now()
-            ]);
-            return response()->json([
-                'save' => 1,
-                'status' => 'true',
-                'message' => 'anregistrement fet ak sikse'
+                'message' => 'problem' . $e->getMessage()
             ]);
         }
     }

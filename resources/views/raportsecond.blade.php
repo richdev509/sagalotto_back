@@ -333,7 +333,7 @@
 
 
 
-<div class="card" style='display: none;'>
+<div class="card" style="display: none;">
     <div class="border-bottom-0 p-0 card-header">
         <div class="nav-lb-tab nav card-header-undefined" role="tablist">
 
@@ -403,7 +403,7 @@
     </div>
 </div>
 
-<div class="card" style="margin-top: 15px;display:none;">
+<div class="card" style="margin-top: 15px;dispalay: none;">
     <div class="border-bottom-0 p-0 card-header">
         <h5>Historik peyman rapo yo</h5>
 

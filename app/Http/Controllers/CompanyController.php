@@ -10,10 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Session;
 use App\Models\BoulGagnant;
+use App\Models\rules_vendeur;
 use App\Models\branch;
 use App\Models\TicketVendu;
 use App\Models\ticket_code;
+// use App\Models\TicketCode; // Remove this if the correct class is ticket_code
 
 //use Carbon\Carbon;
 class CompanyController extends Controller
@@ -56,12 +59,16 @@ class CompanyController extends Controller
                 notify()->error('Gen yon ere ki pase');
                 return back();
             }
-            return view('editer_vendeur', ['vendeur' => $vendeur, 'branch' => $branch]);
+            //tcheck if exist in rules_vendeur
+            $rules_vendeur = rules_vendeur::where([
+                ['compagnie_id', '=', Session('loginId')],
+                ['user_id', '=', $vendeur->id],
+            ])->first();
+            return view('editer_vendeur', ['vendeur' => $vendeur, 'branch' => $branch, 'rules_vendeur' => $rules_vendeur]);
         } else {
             return view('login');
         }
     }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -154,105 +161,123 @@ class CompanyController extends Controller
     }
     public function admin()
     {
-        if (Session('loginId')) {
+        // Check if user is logged in
+        if (!Session::has('loginId')) {
+            return view('login');
+        }
 
-            $today = Carbon::now()->format('Y:m:d');
+        $today = Carbon::now()->format('Y-m-d');
+        $compagnieId = Session::get('loginId');
 
-            $ticketData = DB::table('ticket_code')
-            ->where('compagnie_id', '=', Session('loginId'))
-            ->whereBetween('created_at', [ $today.' 00:00:00', $today.' 00:00:00'])
+        // Get ticket codes for today (fixed date range)
+        $ticketData = DB::table('ticket_code')
+            ->where('compagnie_id', $compagnieId)
+            ->whereDate('created_at', $today)
             ->select('code', 'user_id')
             ->groupBy('code', 'user_id')
             ->get();
-        
-        $user_actif = $ticketData->pluck('user_id')->unique()->count();
-        $ticketCodes = $ticketData->pluck('code');
 
+        // Initialize default values
+        $data = (object)[
+            'total_amount' => 0,
+            'total_winning' => 0,
+            'total_commission' => 0,
+            'winning_count' => 0,
+            'ticket_total' => 0
+        ];
+
+        $user_actif = 0;
+        $ticket_delete = 0;
+
+        if ($ticketData->isNotEmpty()) {
+            $user_actif = $ticketData->pluck('user_id')->unique()->count();
+            $ticketCodes = $ticketData->pluck('code');
+
+            // Get ticket sales data
             $data = DB::table('ticket_vendu')
                 ->whereIn('ticket_code_id', $ticketCodes)
                 ->where([
-                    ['is_delete', '=', 0],
-                    ['is_cancel', '=', 0],
-                    ['pending', '=', 0],
-
+                    ['is_delete', 0],
+                    ['is_cancel', 0],
+                    ['pending', 0],
                 ])
-                ->selectRaw(
-                    'SUM(ticket_vendu.amount) as total_amount, 
-                             SUM(ticket_vendu.winning) as total_winning, 
-                             SUM(ticket_vendu.commission) as total_commission,
-                             COUNT(CASE WHEN is_win > 0 THEN 1 ELSE NULL END) as winning_count,
-                             COUNT(CASE WHEN is_win >= 0 THEN 1 ELSE NULL END) as ticket_total'
+                ->selectRaw('
+                SUM(amount) as total_amount, 
+                SUM(winning) as total_winning, 
+                SUM(commission) as total_commission,
+                COUNT(CASE WHEN is_win > 0 THEN 1 END) as winning_count,
+                COUNT(*) as ticket_total
+            ')->first() ?? $data;
 
-                )->first();
-                //get delete ticket
-                $ticket_delete = DB::table('ticket_vendu')
+            // Get deleted tickets count
+            $ticket_delete = DB::table('ticket_vendu')
                 ->whereIn('ticket_code_id', $ticketCodes)
                 ->where(function ($query) {
-                    $query->where('is_delete', '=', 1)
-                          ->orWhere('is_cancel', '=', 1);
+                    $query->where('is_delete', 1)
+                        ->orWhere('is_cancel', 1);
                 })
-                ->select('id')
                 ->count();
-            //get count user
-            $vendeur = user::where([
-                ['compagnie_id', '=', Session('loginId')],
-                ['is_delete', '=', 0]
-            ])->select('id')
-            ->get();
-            $user_total = $vendeur->count();
-            $vente = $data->total_amount;
-            $perte = $data->total_winning;
-            $commission = $data->total_commission;
-            //fich value
-            $ticket_win = $data->winning_count;
-            $ticket_total = $data->ticket_total;
-
-
-            $lista = BoulGagnant::where('compagnie_id', session('loginId'))
-                ->latest('created_at')
-                ->take(3)
-                ->get();
-
-            $list = [];
-
-          
-            foreach ($lista as $boulGagnant) {
-                $codes = ticket_code::where('compagnie_id', session('loginId'))
-                    ->whereDate('created_at', $boulGagnant->created_)
-                    ->pluck('code')
-                    ->toArray();
-
-                $vent = TicketVendu::whereIn('ticket_code_id', $codes)
-                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)->where('pending', 0)
-                    ->sum('amount');
-                /* $vente =TicketVendu::where('tirage_record_id',$boulGagnant->tirage_id)
-                    ->whereDate('created_at', $boulGagnant->created_)
-                    ->sum('amount');
-                    dd($vente,);*/
-                $pert = TicketVendu::whereIn('ticket_code_id', $codes)
-                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)->where('pending', 0)
-                    ->sum('winning');
-
-                $commissio = TicketVendu::whereIn('ticket_code_id', $codes)
-                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)->where('pending', 0)
-                    ->sum('commission');
-                $tirageName = $boulGagnant->tirage_record->name;
-                $list[] = [
-                    'boulGagnant' => $boulGagnant,
-                    'vent' => $vent,
-                    'pert' => $pert,
-                    'commissio' => $commissio,
-                    'name' => $tirageName
-
-
-                ];
-            }
-
-
-            return view('admin', ['vente' => $vente, 'perte' => $perte, 'list' => $list, 'commission' => $commission,'total_user'=>$user_total,'actif_user'=>$user_actif,'ticket_win'=>$ticket_win,'ticket_total'=>$ticket_total,'ticket_delete'=>$ticket_delete]);
-        } else {
-            return view('login');
         }
+
+        // Get total users count
+        $user_total = User::where([
+            ['compagnie_id', $compagnieId],
+            ['is_delete', 0]
+        ])->count();
+
+        // Get recent winning draws
+        $lista = BoulGagnant::where('compagnie_id', $compagnieId)
+            ->latest('created_at')
+            ->take(3)
+            ->get();
+
+        $list = [];
+        foreach ($lista as $boulGagnant) {
+            $codes = ticket_code::where('compagnie_id', $compagnieId)
+                ->whereDate('created_at', $boulGagnant->created_)
+                ->pluck('code');
+
+            $vent = TicketVendu::whereIn('ticket_code_id', $codes)
+                ->where('tirage_record_id', $boulGagnant->tirage_id)
+                ->where('is_delete', 0)
+                ->where('is_cancel', 0)
+                ->where('pending', 0)
+                ->sum('amount');
+
+            $pert = TicketVendu::whereIn('ticket_code_id', $codes)
+                ->where('tirage_record_id', $boulGagnant->tirage_id)
+                ->where('is_delete', 0)
+                ->where('is_cancel', 0)
+                ->where('pending', 0)
+                ->sum('winning');
+
+            $commissio = TicketVendu::whereIn('ticket_code_id', $codes)
+                ->where('tirage_record_id', $boulGagnant->tirage_id)
+                ->where('is_delete', 0)
+                ->where('is_cancel', 0)
+                ->where('pending', 0)
+                ->sum('commission');
+
+            $list[] = [
+                'boulGagnant' => $boulGagnant,
+                'vent' => $vent ?? 0,
+                'pert' => $pert ?? 0,
+                'commissio' => $commissio ?? 0,
+                'name' => $boulGagnant->tirage_record->name ?? 'Unknown'
+            ];
+        }
+
+        return view('admin', [
+            'vente' => $data->total_amount ?? 0,
+            'perte' => $data->total_winning ?? 0,
+            'list' => $list,
+            'commission' => $data->total_commission ?? 0,
+            'total_user' => $user_total,
+            'actif_user' => $user_actif,
+            'ticket_win' => $data->winning_count ?? 0,
+            'ticket_total' => $data->ticket_total ?? 0,
+            'ticket_delete' => $ticket_delete
+        ]);
     }
     public function logout()
     {

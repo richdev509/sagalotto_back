@@ -2,7 +2,6 @@
 
 @section('content')
     <style>
-        /* Modern color palette */
         :root {
             --primary-color: #6c5ce7;
             --secondary-color: #a29bfe;
@@ -84,11 +83,16 @@
             opacity: 0.9;
         }
 
+        #loading-indicator {
+            display: none;
+            margin: 10px 0;
+            color: var(--primary-color);
+        }
+
         @media (max-width: 768px) {
             .col-sm-9 {
                 padding-left: 0;
             }
-
             .col-sm-3 {
                 padding-right: 0;
             }
@@ -122,9 +126,10 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Tiraj</label>
                                     <div class="col-sm-9">
-                                        <select class="form-control" name="tirage" style="height: 40px;">
+                                        <select class="form-control" name="tirage" style="height: 40px;" id="tiragee">
+                                            <option value="">Chwazi tiraj</option>
                                             @foreach ($tirage as $row)
-                                                <option>{{ $row->name }}</option>
+                                                <option value='{{$row->id}}'>{{ $row->name }}</option>
                                             @endforeach
                                         </select>
                                         <span class="error">@error('tirage') {{ $message }} @enderror</span>
@@ -135,7 +140,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Lè wap ouvril lan</label>
                                     <div class="col-sm-9">
-                                        <input type="time" class="form-control" value="00:00:00" name="time_open" />
+                                        <input type="time" class="form-control" value="00:00:00" name="time_open" step="1" />
                                         <span class="error">@error('time_open') {{ $message }} @enderror</span>
                                     </div>
                                 </div>
@@ -147,7 +152,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Lè wap fèmenl lan</label>
                                     <div class="col-sm-9">
-                                        <input type="time" class="form-control" value="{{ old('time') }}" name="time" />
+                                        <input type="time" class="form-control" value="{{ old('time') }}" name="time" step="1" />
                                         <span class="error">@error('time') {{ $message }} @enderror</span>
                                     </div>
                                 </div>
@@ -156,12 +161,17 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Lè li tire a</label>
                                     <div class="col-sm-9">
-                                        <input type="time" class="form-control" value="{{ old('time_tirer') }}" name="time_tirer" />
+                                        <input type="time" class="form-control" name="time_tirer" id="hour_tirer" step="1"  readonly/>
                                         <span class="error">@error('time_tirer') {{ $message }} @enderror</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <div id="loading-indicator">
+                            <i class="mdi mdi-loading mdi-spin"></i> Chajman...
+                        </div>
+                        <div id="error-message" class="error" style="display: none;"></div>
 
                         <div class="row">
                             <div class="col-md-12 text-right">
@@ -175,4 +185,71 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tirageSelect = document.getElementById('tiragee');
+            const hourTirerInput = document.getElementById('hour_tirer');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const errorMessage = document.getElementById('error-message');
+            
+            if (!tirageSelect) {
+                console.error('Tirage select element not found');
+                return;
+            }
+
+            tirageSelect.addEventListener('change', function() {
+                const selectedValue = this.value;
+                
+                if (!selectedValue) {
+                    hourTirerInput.value = '';
+                    return;
+                }
+
+                // Show loading indicator
+                loadingIndicator.style.display = 'block';
+                errorMessage.style.display = 'none';
+
+                fetch('/getTirageDetails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        id: selectedValue
+                    })
+                })
+                .then(response => {
+                    if (!response) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response:', data);
+                    
+                    // Format time properly for the input field
+                    if (data.hour_tirer) {
+                        // Convert to HH:MM:SS format if needed
+                        let timeValue = data.hour_tirer;
+                        if (timeValue.match(/^\d{1,2}:\d{2}$/)) {
+                            timeValue += ':00'; // Add seconds if missing
+                        }
+                        hourTirerInput.value = timeValue;
+                    } else {
+                        hourTirerInput.value = '';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    errorMessage.textContent = 'Echèk chajman detay tiraj. Tanpri eseye ankò.';
+                    errorMessage.style.display = 'block';
+                })
+                .finally(() => {
+                    loadingIndicator.style.display = 'none';
+                });
+            });
+        });
+    </script>
 @endsection

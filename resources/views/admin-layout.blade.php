@@ -191,7 +191,7 @@
                 <marquee behavior="" direction="left" style="color:#dc3545;"><i class="fas fa-exclamation-circle icon" style="font-size: 18px; color: #dc3545;"></i>Alert!!! kontra ou ak systèm nan fini <b>{{Session('dateex')}} </b>, ou dwè peye pouw kontinye jwenn bon sevis sinon ou ka bloke a nenpòt moman. mèsi!!</marquee>
             
                 <?php }else{?>
-                <marquee behavior="" direction="left">Gade fich ki siprime yo lè ou ale sou fich answit poubèl, wap
+                <marquee style="display: none;" behavior="" direction="left">Gade fich ki siprime yo lè ou ale sou fich answit poubèl, wap
                     wè dat fich la te fèt la wap wè lè li siprime a ect.</marquee>
                 <?php }?>
             </div>
@@ -436,8 +436,10 @@
                                     <a class="nav-link loa" href="/rapport">Rapo general</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link loa" href="/raport2">Rapo/vande</a>
+                                    <a class="nav-link loa" href="/raport2">Rapò/vande</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link loa" href="/control">Rapò jesyon</a>
                             </ul>
                         </div>
                     </li>

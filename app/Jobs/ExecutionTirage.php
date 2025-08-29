@@ -22,6 +22,7 @@ use Illuminate\Support\Carbon;
 use App\Models\maryajgratis;
 use App\Models\monitor;
 use App\Models\tirage;
+use App\Models\rules_vendeur;
 use Exception;
 
 
@@ -46,19 +47,18 @@ class ExecutionTirage implements ShouldQueue
     public $idmonitoring = "";
     public $itraiter = 0;
     public $totalfiche = "";
-    public $tirageid="";
-    public $compagnieId="";
-    public $sesyon="";
+    public $tirageid = "";
+    public $compagnieId = "";
+    public $sesyon = "";
     /**
      * Create a new job instance.
      */
-    public function __construct($tirage, $compagnies, $date,$sesyon)
+    public function __construct($tirage, $compagnies, $date, $sesyon)
     {
         $this->tiragename = $tirage;
         $this->date_ = $date;
         $this->compagnie = $compagnies;
-        $this->sesyon=$sesyon;
-        
+        $this->sesyon = $sesyon;
     }
 
     /**
@@ -76,9 +76,9 @@ class ExecutionTirage implements ShouldQueue
     }
 
 
-    
 
-   
+
+
 
 
     public function execute($tirage, $compagnies, $date)
@@ -87,10 +87,7 @@ class ExecutionTirage implements ShouldQueue
         $totalGains = 0;
         $compagnieId = $id;
 
-        $borletePrice = RulesOne::where('compagnie_id', $compagnieId)->first();
-        // $lotoNames = ['maryaj', 'loto3', 'loto4', 'loto5'];
-        // $lotoPrices = RulesTwo::whereIn('loto_name', $lotoNames)->pluck('prix', 'loto_name');
-        $maryajgratis = maryajgratis::where('compagnie_id', $compagnieId)->where('etat', 1)->value('prix');
+
         $tirageName = $tirage;
 
         // Récupération des numéros gagnants pour le tirage spécifique
@@ -99,73 +96,89 @@ class ExecutionTirage implements ShouldQueue
             ->where('tirage_id', $tirageName)
             ->whereDate('created_', $formattedDate)
             ->first();
+        // First get the codes
+        // $codes = Ticket_code::where('compagnie_id', $compagnieId)
+        //     ->whereBetween('created_at', [$formattedDate . ' 00:00:00', $formattedDate . ' 23:59:59'])
+        //     ->pluck('code');
 
-        //Recupere liste des codes vendu pour le jour en question.
-        $codes = ticket_code::where('compagnie_id', $compagnieId)
-            ->whereBetween('created_at', [$formattedDate.' 00:00:00', $formattedDate.' 23:59:59'])
-            ->pluck('code')
-            ->toArray();
+        // Récupérer les tickets vendus en une seule requête
+        $fiches = TicketVendu::whereHas('ticketCode', function ($query) use ($compagnieId, $formattedDate) {
+            $query->where('compagnie_id', $compagnieId)
+                ->whereBetween('created_at', [$formattedDate . ' 00:00:00', $formattedDate . ' 23:59:59']);
+        })
+            ->where('tirage_record_id', $tirageName)
+            ->get();
 
-        $fiches = "";
-        if ($codes) {
-            // Récupérer les tickets vendus
-            $fiches = TicketVendu::whereIn('ticket_code_id', $codes)
-                ->where('tirage_record_id', $tirageName)
-                ->get();
-        }
         // Parcours des fiches
         $ficheDatas = "";
         $i = 1;
         if ($fiches != "") {
-            $rules =RulesOne::where('compagnie_id', $compagnieId)->get();
-            $rules2 =maryajgratis::where('compagnie_id', $compagnieId)->get();
+             $rules = RulesOne::where('compagnie_id', $compagnieId)->get();
+             $rules2 = maryajgratis::where('compagnie_id', $compagnieId)->get();
 
-            $this->compagnieId=$compagnieId;
-            $this->totalfiche=$fiches->count();
-            $kl=0;
+            $this->compagnieId = $compagnieId;
+            $this->totalfiche = $fiches->count();
+            $kl = 0;
 
-            $query=monitor::create([
-                'userid'=>$this->sesyon,
-                'compagnieid'=>$compagnieId,
-                'totalfiche'=>$this->totalfiche,
-                'tirage_id'=>$tirage,
+            $query = monitor::create([
+                'userid' => $this->sesyon,
+                'compagnieid' => $compagnieId,
+                'totalfiche' => $this->totalfiche,
+                'tirage_id' => $tirage,
             ]);
 
-            $codemonitor=$query->id;
+            $codemonitor = $query->id;
             foreach ($fiches as $fiche) {
-                $numerobranch = $fiche->ticketcode->branch_id;
-                // Trouver la règle correspondant au branch_id
-                $rule = $rules->firstWhere('branch_id', $numerobranch);
-                $rule2=$rules2->firstWhere('branch_id',$numerobranch);
-                // Vérifier si la règle a été trouvée
-                if ($rule) {
-                    // Obtenir le prix à partir de la règle
-                    $borletePrice = $rule;
+                  $numerobranch = $fiche->ticketcode->branch_id;
+                //get id vendeur
+                $vendeur_id = $fiche->ticketcode->user_id;
+                //check if the user record in rules_vendeur
+                $rules_vendeur = rules_vendeur::where([
+                    ['compagnie_id', '=', $compagnieId],
+                    ['user_id', '=', $vendeur_id],
+                ])->first();
+                if ($rules_vendeur) {
+                    $borletePrice = $rules_vendeur;
+                    $maryajgratis = $rules_vendeur->prix_maryaj_gratis;
                 }else{
-                    $borletePrice = (object) [
-                        'prix' => 50,
-                        'prix_second' => 20,
-                        'prix_third'=> 10,
-                        'prix_maryaj'=> 1000,
-                        'prix_loto3'=> 500,
-                        'prix_loto4'=> 5000,
-                        'prix_loto5'=> 25000,
-                        'prix_gabel1'=>20,
-                        'prix_gabel2'=>10,
-                        'gabel_statut'=>0
-                       
-                    ];
-                }
-                if ($rule2) {
-                    $maryajgratis = $rule2->prix;
+                    //$borletePrice = 50;
+                    // Trouver la règle correspondant au branch_id
+                    $rule = $rules->firstWhere('branch_id', $numerobranch);
+                    $rule2 = $rules2->firstWhere('branch_id', $numerobranch);
+                    // Vérifier si la règle a été trouvée
+                    if ($rule) {
+                        // Obtenir le prix à partir de la règle
+                        $borletePrice = $rule;
+                    } else {
+                        $borletePrice = (object) [
+                            'prix' => 50,
+                            'prix_second' => 20,
+                            'prix_third' => 10,
+                            'prix_maryaj' => 1000,
+                            'prix_loto3' => 500,
+                            'prix_loto4' => 5000,
+                            'prix_loto5' => 25000,
+                            'prix_gabel1' => 20,
+                            'prix_gabel2' => 10,
+                            'gabel_statut' => 0
+
+                        ];
+                    }
+                    if ($rule2) {
+                        $maryajgratis = $rule2->prix;
+                    } else {
+                        $maryajgratis = 0;
+                    }
                 }
 
+
+
                 $ficheData = json_decode($fiche->boule, true);
-                
+
                 $ficheDatas = $ficheData;
                 //recuperation de l'id du fiche
                 $codeSpecifique = $fiche->ticket_code_id;
-                
+
                 //apel des function.
                 try {
                     $reponse = $this->bolete($gagnants, $ficheData, $borletePrice->prix, $borletePrice->prix_second, $borletePrice->prix_third);
@@ -179,12 +192,11 @@ class ExecutionTirage implements ShouldQueue
                     $this->loto5($gagnants, $ficheData, $borletePrice->prix_loto5);
 
                     $this->mariagegratis($gagnants, $ficheData, $maryajgratis);
-                    if($borletePrice->gabel_statut == 1){
+                    if ($borletePrice->gabel_statut == 1) {
                         $this->gabel($gagnants, $ficheData, $borletePrice->prix_gabel1, $borletePrice->prix_gabel2);
                     }
                 } catch (Exception $e) {
                     error_log($e->getMessage());
-                   
                 }
 
 
@@ -202,11 +214,11 @@ class ExecutionTirage implements ShouldQueue
                             'is_calculated' => 1,
                         ]);
 
-                        $kl=$kl+1;
-                        $reponse=monitor::where('id',$codemonitor)->update([
-                            'totalexecuter'=>$kl,
-                        ]);
-                        
+                    $kl = $kl + 1;
+                    $reponse = monitor::where('id', $codemonitor)->update([
+                        'totalexecuter' => $kl,
+                    ]);
+
                     $this->totalGains = 0;
                     $this->havegain = 0;
                     $this->havegainmaryaj = 0;
@@ -214,18 +226,16 @@ class ExecutionTirage implements ShouldQueue
                     $this->havegainloto4 = 0;
                     $this->havegainloto5 = 0;
                     $this->havegainmaryajGratis = 0;
-
-
                 } else {
                     $reponseRequette = TicketVendu::where('ticket_code_id', $codeSpecifique)->where('tirage_record_id', $tirage)
                         ->update([
                             'is_calculated' => 1,
 
                         ]);
-                        $kl=$kl+1;
-                        $reponse=monitor::where('id',$codemonitor)->update([
-                            'totalexecuter'=>$kl,
-                        ]);
+                    $kl = $kl + 1;
+                    $reponse = monitor::where('id', $codemonitor)->update([
+                        'totalexecuter' => $kl,
+                    ]);
                 }
                 $i = $i + 1;
             }
@@ -251,18 +261,18 @@ class ExecutionTirage implements ShouldQueue
                         $bo = $boulGagnante;
 
                         if ($boulGagnante == $gagnants->premierchiffre) {
-                            $montantGagne = $boul['montant'] * $borlete_first;
+                            $montantGagne = intval($boul['montant']) * intval($borlete_first);
                             $this->totalGains = $this->totalGains + $montantGagne;
                             $is_one = 1;
                         }
                         // Vérification si la boul est gagnante
                         if ($boulGagnante == $gagnants->secondchiffre) {
-                            $montantGagne = $boul['montant'] * $borlete_second;
+                            $montantGagne = intval($boul['montant']) * intval($borlete_second);
                             $this->totalGains = $this->totalGains + $montantGagne;
                             $is_two = 1;
                         }
                         if ($boulGagnante == $gagnants->troisiemechiffre) {
-                            $montantGagne = $boul['montant'] * $borlete_third;
+                            $montantGagne = intval($boul['montant']) * intval($borlete_third);
                             $this->totalGains = $this->totalGains + $montantGagne;
                             $is_tree = 1;
                         }
@@ -271,7 +281,6 @@ class ExecutionTirage implements ShouldQueue
                             $this->havegain = 1;
                             $i = $i + 1;
                         } else {
-                          
                         }
                     }
                 }
@@ -301,11 +310,10 @@ class ExecutionTirage implements ShouldQueue
                     ($boul1 == $gagnants->troisiemechiffre && $boul2 == $gagnants->premierchiffre) ||
                     ($boul1 == $gagnants->troisiemechiffre && $boul2 == $gagnants->secondchiffre)
                 ) {
-                    $montantGagne = $fiche['montant'] * $maryajPrice;
+                    $montantGagne = intval($fiche['montant']) * intval($maryajPrice);
                     $this->totalGains = $this->totalGains + $montantGagne;
                     $this->havegainmaryaj = 1;
                 } else {
-                  
                 }
             }
         } else {
@@ -322,11 +330,10 @@ class ExecutionTirage implements ShouldQueue
                 $combinaisonGagnante = $gagnants->unchiffre . $gagnants->premierchiffre;
 
                 if ($boul1 == $combinaisonGagnante) {
-                    $montantGagne = $fiche['montant'] * $loto3Price;
+                    $montantGagne = intval($fiche['montant']) * intval($loto3Price);
                     $this->totalGains = $this->totalGains + $montantGagne;
                     $this->havegainloto3 = 1;
                 } else {
-                 
                 }
             }
         } else {
@@ -346,18 +353,17 @@ class ExecutionTirage implements ShouldQueue
                 if (isset($fiche['option1'])) {
                     $combinaisonGagnante = $gagnants->secondchiffre . $gagnants->troisiemechiffre;
                     if ($boul1 == $combinaisonGagnante) {
-                        $montantGagne = $fiche['option1'] * $loto4Price;
+                        $montantGagne = intval($fiche['option1']) * intval($loto4Price);
                         $this->totalGains = $this->totalGains + $montantGagne;
                         $firsttest = 1;
                         $this->havegainloto4 = 1;
                     } else {
-                        
                     }
                 }
                 if (isset($fiche['option2'])) {
                     $combinaisonGagnante2 = $gagnants->secondchiffre . $gagnants->premierchiffre;
                     if ($boul1 == $combinaisonGagnante2) {
-                        $montantGagne = $fiche['option2'] * $loto4Price;
+                        $montantGagne = intval($fiche['option2']) * intval($loto4Price);
                         $this->totalGains = $this->totalGains + $montantGagne;
                         $firsttest = 1;
                         $this->havegainloto4 = 1;
@@ -366,7 +372,7 @@ class ExecutionTirage implements ShouldQueue
                 if (isset($fiche['option3'])) {
                     $combinaisonGagnante3 = $gagnants->premierchiffre . $gagnants->troisiemechiffre;
                     if ($boul1 == $combinaisonGagnante3) {
-                        $montantGagne = $fiche['option3'] * $loto4Price;
+                        $montantGagne = intval($fiche['option3']) * intval($loto4Price);
                         $this->totalGains = $this->totalGains + $montantGagne;
                         $firsttest = 1;
                         $this->havegainloto4 = 1;
@@ -401,7 +407,7 @@ class ExecutionTirage implements ShouldQueue
 
                     if ($boul1 == $combinaisonGagnante) {
                         // La concaténation de 3 chiffres dans boul1 et boul2 correspond à la combinaison gagnante, multiplier le montant par le prix de "loto5"
-                        $montantGagne = $fiche['option1'] * $loto5Price;
+                        $montantGagne = intval($fiche['option1']) * intval($loto5Price);
                         $this->totalGains = $this->totalGains + $montantGagne;
                         $firsttest = 1;
                         $this->havegainloto5 = 1;
@@ -410,15 +416,15 @@ class ExecutionTirage implements ShouldQueue
 
                 if (isset($fiche['option2']) && $boul1 == $gagnants->unchiffre . $gagnants->premierchiffre . $gagnants->troisiemechiffre) {
                     // L'option2 est présente et correspond à la combinaison gagnante, multiplier le montant par le prix de l'option2
-                    $montantGagne = $fiche['option2'] * $loto5Price;
+                    $montantGagne = intval($fiche['option2']) * intval($loto5Price);
                     $this->totalGains = $this->totalGains + $montantGagne;
-                         $this->havegainloto5 = 1;
+                    $this->havegainloto5 = 1;
                 }
                 if (isset($fiche['option3']) && $boul1  == substr($gagnants->premierchiffre, -1) . $gagnants->secondchiffre . $gagnants->troisiemechiffre) {
                     // L'option3 est présente et correspond à la combinaison gagnante, multiplier le montant par le prix de l'option3
-                    $montantGagne = $fiche['option3'] * $loto5Price;
+                    $montantGagne = intval($fiche['option3']) * intval($loto5Price);
                     $this->totalGains = $this->totalGains + $montantGagne;
-                  
+
                     $this->havegainloto5 = 1;
                 }
             }
@@ -463,22 +469,21 @@ class ExecutionTirage implements ShouldQueue
                 $boul1 = $fiche['boul1'];
 
                 // Vérification si le boul1 correspond à la combinaison de unchiffre et premierchiffre
-                $combinaisonGagnante1 = $gagnants->unchiffre .substr($gagnants->premierchiffre, 0,1);
+                $combinaisonGagnante1 = $gagnants->unchiffre . substr($gagnants->premierchiffre, 0, 1);
                 $combinaisonGagnante2 = $gagnants->premierchiffre;
 
                 if (substr($boul1, 0, 2) == $combinaisonGagnante1) {
                     // Le boul1 correspond à la combinaison gagnante, multiplier le montant par le prix de "loto3"
-                    $montantGagne = $fiche['montant'] * $gabelPrice1;
+                    $montantGagne = intval($fiche['montant']) * intval($gabelPrice1);
                     $this->totalGains = $this->totalGains + $montantGagne;
 
                     $this->havegainloto3 = 1;
-                } elseif(substr($boul1, 1, 2) == $combinaisonGagnante2) {
-                    $montantGagne = $fiche['montant'] * $gabelPrice2;
+                } elseif (substr($boul1, 1, 2) == $combinaisonGagnante2) {
+                    $montantGagne = intval($fiche['montant']) * intval($gabelPrice2);
                     $this->totalGains = $this->totalGains + $montantGagne;
 
                     $this->havegainloto3 = 1;
-                }else{
-
+                } else {
                 }
             }
         } else {

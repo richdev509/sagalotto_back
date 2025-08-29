@@ -103,6 +103,9 @@ class AuthController extends Controller
                 ['id', '=', $user->compagnie_id],
             ])->select('name', 'city', 'address', 'phone', 'logo')
                 ->first();
+            $setting = DB::table('setings')->where([
+                ['compagnie_id', '=', $user->compagnie_id],
+            ])->first();
             $branche = DB::table('branches')->where('id', $user->branch_id)->first();
             if ($branche) {
                 if (!empty($branche->address) && $branche->address !== '0' && $branche->address !== 'inconnu') {
@@ -113,7 +116,37 @@ class AuthController extends Controller
                     $compagnie->phone = $branche->phone;
                 }
             }
-            return $this->createNewToken($token, $compagnie);
+
+            if ($setting) {
+                if ($setting->show_address == 0) {
+                    $compagnie->address = '';
+                }
+                if ($setting->show_phone == 0) {
+                    $compagnie->phone = '';
+                }
+                if ($setting->show_logo == 0) {
+                    $compagnie->logo = '0';
+                }
+                if ($setting->show_name == 0) {
+                    $compagnie->name = '';
+                }
+            } else {
+                $setting = new \stdClass();
+                $setting->show_address = 1;
+                $setting->show_phone = 1;
+                $setting->show_logo = 1;
+
+                $setting->show_name = 1;
+                $setting->show_footer = 1;
+                $setting->show_mariage_price = 1;
+                $setting->qt_bolet = 100;
+                $setting->qt_maryaj = 100;
+                $setting->qt_loto3 = 100;
+                $setting->qt_loto4 = 100;
+                $setting->qt_loto5 = 100;
+            }
+
+            return $this->createNewToken($token, $compagnie, $setting);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
@@ -122,7 +155,7 @@ class AuthController extends Controller
             ], 500,);
         }
     }
-    public function createNewToken($token, $compagnie)
+    public function createNewToken($token, $compagnie, $setting)
     {
 
         return response()->json([
@@ -130,7 +163,8 @@ class AuthController extends Controller
             "token_type" => "bearer",
 
             'user' => auth()->user(),
-            'compagnie' => $compagnie
+            'compagnie' => $compagnie,
+            'setting' => $setting,
 
 
 

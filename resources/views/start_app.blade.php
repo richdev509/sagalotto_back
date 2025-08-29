@@ -1,5 +1,15 @@
+<?php
+if (Session('loginId')) {
+    header("Location: /admin");
+    exit();
+}
+if (Session('branchId')) {
+    header("Location: /superviseur/admin");
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +26,7 @@
             margin: 0;
             background-color: #f4f4f4;
         }
+
         .container {
             text-align: center;
             background-color: #fff;
@@ -23,11 +34,13 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             font-size: 24px;
             margin-bottom: 20px;
             color: #333;
         }
+
         .btn {
             display: inline-block;
             padding: 15px 30px;
@@ -41,19 +54,23 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
+
         .btn:hover {
             background-color: #0056b3;
         }
+
         .btn i {
-            margin-right: 10px; /* Space between icon and text */
+            margin-right: 10px;
+            /* Space between icon and text */
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Welcome Title -->
         <h1>Welcome</h1>
-        
+
         <!-- Superviseur Button with User Icon -->
         <a href="superviseur/login" class="btn">
             <i class="fas fa-user-tie"></i> Superviseur
@@ -64,4 +81,5 @@
         </a>
     </div>
 </body>
+
 </html>

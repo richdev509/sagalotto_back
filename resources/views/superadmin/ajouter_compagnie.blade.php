@@ -106,6 +106,15 @@
                             </div>
                         </div>
                     </div>
+                     <div class="form-group row">
+                        <label for="InputFich" class="col-sm-3 col-form-label">Date plan</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                                <input type="date" class="form-control" name="date_plan" id="InputInfo" >
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group row">
                         <label for="username" class="col-sm-3 col-form-label">Nom d'utilisateur</label>
                         <div class="col-sm-9">

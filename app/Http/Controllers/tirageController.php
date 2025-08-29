@@ -36,7 +36,7 @@ class tirageController extends Controller
 
             ]);
             $tirage = DB::table('tirage')->where([
-                ['name','=', $request->input('tirage')]
+                ['id','=', $request->input('tirage')]
             ])->first();
             if(!$tirage){
                 notify()->error('pa gen yon tirage ki rel konsa');
@@ -44,19 +44,23 @@ class tirageController extends Controller
             }
             $tirage_record = DB::table('tirage_record')->where([
                 ['compagnie_id','=', Session('loginId')],
-                ['name','=', $request->input('tirage')]
+                ['name','=', $tirage->name]
             ])->first();
             if($tirage_record){
                 notify()->error('ou gentan ajouter tiraj sa');
                 return back();
             }
+            if($request->input('time') > $tirage->hour_tirer){
+                notify()->error('le bolet la femen an paka plis ke le li tire a');
+                return back();
+            }
             $query = DB::table('tirage_record')->insertGetId([
                 'compagnie_id' => Session('loginId'),
                 'tirage_id' => $tirage->id,
-                'name' => $request->input('tirage'),
+                'name' => $tirage->name,
                 'hour' => $request->input('time'), 
                 'hour_open' => $request->input('time_open'), 
-                'hour_tirer' => $request->input('time_tirer'),       
+                'hour_tirer' => $tirage->hour_tirer,       
       
       
                 'created_at' => Carbon::now()
@@ -95,7 +99,7 @@ class tirageController extends Controller
                 return back();
             }
             $tirage_record = tirage_record::where('id',$request->input('id'))->update([
-                'hour_tirer'=> $request->input('time_tirer'),
+                //'hour_tirer'=> $request->input('time_tirer'),
                 'hour' => $request->input('time'), 
                 'hour_open' => $request->input('time_open'), 
 
@@ -125,5 +129,15 @@ class tirageController extends Controller
 
 
 
+    }
+    public function getTirage(Request $request){
+        if (Session('loginId')) {
+            $tirage = DB::table('tirage')->where([
+                ['id','=', $request->input('id')]
+            ])->first();
+            return response()->json($tirage);
+        } else {
+            return view('login');
+        }
     }
 }

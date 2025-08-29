@@ -153,7 +153,7 @@
                                             <input type="time" class="form-control" value="{{ $row->hour }}" name="time" />
                                         </td>
                                         <td>
-                                            <input type="time" class="form-control" value="{{ $row->hour_tirer }}" name="time_tirer" />
+                                            <input type="time" class="form-control" value="{{ $row->hour_tirer }}" name="time_tirer" readonly />
                                         </td>
                                         <td>
                                             <label>

@@ -116,6 +116,7 @@ Route::middleware(['web', 'verify.session'])->group(function () {
     //tirage
     Route::post('ajouterTirage', [tirageController::class, 'store']);
     Route::get('ajouter-tirage', [tirageController::class, 'create']);
+    Route::post('getTirageDetails', [tirageController::class, 'getTirage']);
 
     Route::post('editertirage', [tirageController::class, 'update']);
     Route::get('lister-tirage', [tirageController::class, 'index']);
@@ -123,8 +124,11 @@ Route::middleware(['web', 'verify.session'])->group(function () {
 
     //raport
     Route::get('rapport', [rapportController::class, 'create_rapport']);
+    Route::get('control', [rapportController::class, 'create_control']);
+
     Route::get('/raport2', [rapportController::class, 'create_rapport2']);
     Route::post('/raport2_get_amount', [rapportController::class, 'get_control']);
+    Route::post('/get_control_date', [rapportController::class, 'get_control_date']);
     Route::post('/save_reglement', [rapportController::class, 'save_control']);
 
 
@@ -152,12 +156,15 @@ Route::middleware(['web', 'verify.session'])->group(function () {
     Route::get('ajistelo', [parametreController::class, 'ajistelo'])->name('ajisteprilo');
     Route::post('getByBranch', [parametreController::class, 'getPrixLo']);
     Route::post('maryajByBranch', [parametreController::class, 'getPrixMaryaj']);
+    Route::post('delete-multiple-limits', [parametreController::class, 'deleteMultiple'])->name('deleteMultipleLimits');
     Route::get('script', [parametreController::class, 'updateBranch']);
 
   
 
 
     Route::post('ajistelo', [parametreController::class, 'storelopri'])->name('updateprilo');
+    Route::post('update_prilo_vendeur', [parametreController::class, 'update_prilo_vendeur'])->name('updateprilovendeur');
+    Route::get('deleteprilo_vendeur/{id}', [parametreController::class, 'deleteprilo_vendeur'])->name('deleteprilovendeur');
     Route::get('lotconfig', [parametreController::class, 'create_config'])->name('lotconfig');
     Route::get('fich', [parametreController::class, 'config_fich'])->name('fich');
     Route::post('fich_update', [parametreController::class, 'config_fichUpdate'])->name('fichUpdate');

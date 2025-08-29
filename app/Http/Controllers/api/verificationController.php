@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\limit_auto;
 use App\Models\limitprixachat;
 use App\Models\limitprixboul;
+use App\Models\rules_vendeur;
 use Illuminate\Http\Request;
 use App\Models\switchboul;
 use App\Models\tirage;
@@ -725,9 +726,15 @@ class verificationController extends Controller
         ])->first();
         $ma_price ='Gagnant';
         if ($setting) {
-           if($setting->show_mariage_price==1){
-              $ma_price = $data->prix.' G';
-           }
+           if($setting->show_mariage_price=='1'){
+
+            $vendeur = rules_vendeur::where('user_id', auth()->user()->id)->first();
+               if ($vendeur) {
+                   $ma_price = $vendeur->prix_maryaj_gratis.' G';
+               }else{
+                   $ma_price = $data->prix.' G';
+               }
+            }
         }
 
         // Return the result as a string

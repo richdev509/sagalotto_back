@@ -291,6 +291,18 @@
                 padding: 10px;
             }
         }
+
+        .custom-confirm-btn {
+            background: green !important;
+            border: none !important;
+            padding: 10px 20px !important;
+        }
+
+        .custom-cancel-btn {
+            background: red !important;
+            border: none !important;
+            padding: 10px 20px !important;
+        }
     </style>
     <div class="page-header">
         <h3 class="page-title">Lis Fich</h3>
@@ -343,8 +355,7 @@
                                 <select class="form-control form-control-lg" name="tirage">
                                     <option value='Tout'>Tout</option>
                                     @foreach ($tirage as $row)
-                                        <option value="{{ $row->id }}"
-                                            {{ old('tirage') == $row->id ? 'selected' : '' }}>
+                                        <option value="{{ $row->id }}" {{ old('tirage') == $row->id ? 'selected' : '' }}>
                                             {{ $row->name }}
                                         </option>
                                     @endforeach
@@ -416,8 +427,7 @@
                                 </td>
                                 <td>{{ $row->date }}</td>
                                 <td class="text-center">
-                                    <form action="delete-ticket?id={{ $row->id }}" method="get"
-                                        class="deleting_form">
+                                    <form action="delete-ticket?id={{ $row->id }}" method="get" class="deleting_form">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $row->id }}">
                                         <button type="submit" class="btn btn-icon btn-danger">
@@ -519,30 +529,30 @@
 
 
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Function to show and hide the popup 
             function togglePopup() {
                 $(".content").show();
 
             }
-            $('.btn_boule').on('click', function() {
+            $('.btn_boule').on('click', function () {
                 $(".content").show();
 
             });
-            $('.close-btn').on('click', function() {
+            $('.close-btn').on('click', function () {
                 $(".content").hide();
                 $('.content-clear').remove();
 
             })
 
-            $('.form').on('submit', function(event) {
+            $('.form').on('submit', function (event) {
                 event.preventDefault();
 
                 $.ajax({
                     url: "{{ url('boule-show') }}",
                     data: $(this).serialize(),
                     type: 'get',
-                    success: function(response) {
+                    success: function (response) {
                         if (response.status == 'true') {
                             const jsonData = response.boule['boule'];
 
@@ -550,13 +560,13 @@
                             const jsonObject = JSON.parse(jsonData);
 
                             // Iterate over the properties of the object
-                            jsonObject.forEach(function(key) {
+                            jsonObject.forEach(function (key) {
                                 //bolete
                                 if (Array.isArray(key.bolete) && key.bolete.length >
                                     0) {
 
 
-                                    key.bolete.forEach(function(item) {
+                                    key.bolete.forEach(function (item) {
                                         const table = document.getElementById(
                                             "mytable");
 
@@ -586,7 +596,7 @@
                                 //mariaj
                                 if (Array.isArray(key.maryaj) && key.maryaj.length >
                                     0) {
-                                    key.maryaj.forEach(function(item) {
+                                    key.maryaj.forEach(function (item) {
                                         const table = document.getElementById(
                                             "mytable1");
 
@@ -616,7 +626,7 @@
 
                                 //loto3
                                 if (Array.isArray(key.loto3) && key.loto3.length > 0) {
-                                    key.loto3.forEach(function(item) {
+                                    key.loto3.forEach(function (item) {
                                         const table = document.getElementById(
                                             "mytable2");
                                         const row = document.createElement(
@@ -641,7 +651,7 @@
                                 //loto4
                                 if (Array.isArray(key.loto4) && key.loto4.length > 0) {
 
-                                    key.loto4.forEach(function(item) {
+                                    key.loto4.forEach(function (item) {
                                         var op = ' ';
                                         const table = document.getElementById(
                                             "mytable3");
@@ -680,7 +690,7 @@
                                 }
                                 //loto 5
                                 if (Array.isArray(key.loto5) && key.loto5.length > 0) {
-                                    key.loto5.forEach(function(item) {
+                                    key.loto5.forEach(function (item) {
                                         var op = "";
                                         const table = document.getElementById(
                                             "mytable4");
@@ -720,7 +730,7 @@
                                 //mariage gratuit
                                 if (Array.isArray(key.mariage_gratis) && key
                                     .mariage_gratis.length > 0) {
-                                    key.mariage_gratis.forEach(function(item) {
+                                    key.mariage_gratis.forEach(function (item) {
                                         const table = document.getElementById(
                                             "mytable5");
 
@@ -758,7 +768,7 @@
 
 
                     },
-                    error: function(jqXHR, textStatus, errorThrown) {
+                    error: function (jqXHR, textStatus, errorThrown) {
 
 
                     }
@@ -772,35 +782,51 @@
 
 
 
-            jQuery(".deleting_form").on('submit', function(e) {
+            jQuery(".deleting_form").on('submit', function (e) {
                 e.preventDefault();
                 const formAction = this.getAttribute('action');
-                jQuery.getScript('https://cdn.jsdelivr.net/npm/sweetalert2@11', function() {
+
+                // Use the latest version (11.19.1) instead of just @11
+                jQuery.getScript('https://cdn.jsdelivr.net/npm/sweetalert2@11.19.1/dist/sweetalert2.all.min.js', function () {
                     Swal.fire({
-                        title: 'Vous voulez vraiment continuer ?',
-                        text: "Vous voulez supprimer",
-                        icon: 'success',
+                        title: 'Ou vle siprime fich la tout bon ?',
+                        text: "Ou vle siprimel vre",
+                        icon: 'warning', // Changed from 'success' to 'warning' for delete confirmation
                         showCancelButton: true,
                         confirmButtonColor: 'green',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Oui',
-                        cancelButtonText: 'Annulez'
+                        cancelButtonColor: 'red',
+                        confirmButtonText: 'Wi',
+                        cancelButtonText: 'Anile',
+                        buttonsStyling: true, // Ensures default SweetAlert styles apply
+                        customClass: {
+                            confirmButton: 'custom-confirm-btn', // Optional extra class
+                            cancelButton: 'custom-cancel-btn'   // Optional extra class
+                        },
+                        allowOutsideClick: false, // Prevent closing by clicking outside
+                        backdrop: true, // Show backdrop
+                        reverseButtons: true, // Show cancel button first (better UX)
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown' // Optional animation
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp' // Optional animation
+                        }
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            // Log the form action
                             window.location.href = formAction;
-
-
                         } else {
-                            console.log('clicked cancel');
+                            console.log('Action anile');
+                            // Optional: Show cancellation message
+                            Swal.fire({
+                                title: 'Action anile',
+                                icon: 'info',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
                         }
-                    })
-
-                })
-
-                // rest of the code
+                    });
+                });
             });
-
 
         });
     </script>

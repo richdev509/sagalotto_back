@@ -104,6 +104,12 @@ class ticketController extends Controller
             ['compagnie_id', '=', auth()->user()->compagnie_id],
         ])->first();
         if ($setting) {
+            if ($setting->show_name == '0') {
+                $comp->name = '';
+            }
+            if ($setting->show_footer == '0') {
+                $comp->info = '';
+            }
             $sett = verify::limiteNumberPlay($request, $setting);
             if ($sett != '1') {
                 return $sett;
@@ -196,7 +202,7 @@ class ticketController extends Controller
 
             if ($i == '0') {
                 $created_at = Carbon::now();
-                $ticketId = time() . '-' . rand(1000, 9999);
+                $ticketId = time() . '-' .auth()->user()->id;
                 $query = DB::table('ticket_code')->insertGetId([
                     'code' => $ticketId,
                     'user_id' => auth()->user()->id,
@@ -262,7 +268,7 @@ class ticketController extends Controller
                 'compagnie' => $comp->name,
                 'bank' => $vendeur->bank_name,
                 '#ticket' => $ticketId,
-                'date' => $created_at->format('d-m-y, H:i:s'),
+                'date' => $created_at->format('d-m-Y, h:i:s A'),
                 'tirage' => $tirage
             ],
             'body' => $boule,
@@ -356,6 +362,12 @@ class ticketController extends Controller
             ['compagnie_id', '=', auth()->user()->compagnie_id],
         ])->first();
         if ($setting) {
+            if ($setting->show_name == '0') {
+                $comp->name = '';
+            }
+            if ($setting->show_footer == '0') {
+                $comp->info = '';
+            }
             $sett = verify::limiteNumberPlay($request, $setting);
             if ($sett != '1') {
                 return $sett;
@@ -446,7 +458,7 @@ class ticketController extends Controller
 
             if ($i == '0') {
                 $created_at = Carbon::now();
-                $ticketId = time() . '-' . rand(1000, 9999);
+                $ticketId = time() . '-' .auth()->user()->id;
                 $query = DB::table('ticket_code')->insertGetId([
                     'code' => $ticketId,
                     'user_id' => auth()->user()->id,
@@ -512,7 +524,7 @@ class ticketController extends Controller
                 'compagnie' => $comp->name,
                 'bank' => $vendeur->bank_name,
                 '#ticket' => $ticketId,
-                'date' => $created_at->format('d-m-y, H:i:s'),
+                'date' => $created_at->format('d-m-Y, h:i:s A'),
                 'tirage' => $tirage
             ],
             'body' => $boule,
@@ -575,13 +587,13 @@ class ticketController extends Controller
                 ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
                 ->select(
                     'ticket_code.code as ticket_id',
-                    'ticket_code.created_at as date',
+                    DB::raw("DATE_FORMAT(ticket_code.created_at, '%d-%m-%Y %h:%i:%s %p') as date"),
                     DB::raw('(SELECT name FROM tirage_record WHERE tirage_record.id = ticket_vendu.tirage_record_id LIMIT 1) as tirage'),
                     'ticket_vendu.amount as montant',
                     'ticket_vendu.winning as gain',
                     'ticket_vendu.is_payed as payer'
                 )
-                ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code') // join is still used for ticket_vendu
+                ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                 ->orderBy('ticket_code.id', 'desc')
                 ->get();
 
@@ -801,7 +813,7 @@ class ticketController extends Controller
                     ['ticket_code_id', '=', $request->input('id')]
                 ])->update([
                     'is_cancel' => 1,
-                    'delete_at'=> Carbon::now()->format('Y-m-d H:i:s'),
+                    'delete_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
                 return response()->json([
                     'status' => 'true',
@@ -887,7 +899,7 @@ class ticketController extends Controller
                 return response()->json([
                     'status' => 'true',
                     "code" => '200',
-                    "date" => Carbon::now()->format('y-m-d h:i:s'),
+                    "date" => Carbon::now()->format('d-m-Y, h:i:s A'),
                     'tirage' => $request->input('tirage') ?? 'Tout',
                     "rapport" => $request->input('date_debut') . " au " . $request->input('date_fin'),
                     "ticket_gain" => $ticket_win,
@@ -961,7 +973,7 @@ class ticketController extends Controller
                 return response()->json([
                     'status' => 'true',
                     "code" => '200',
-                    "date" => Carbon::now()->format('y-m-d h:i:s'),
+                    "date" => Carbon::now()->format('d-m-Y, h:i:s A'),
                     'tirage' => $request->input('tirage'),
                     "rapport" => $request->input('date_debut') . " au " . $request->input('date_fin'),
                     "ticket_gain" => $ticket_win,
