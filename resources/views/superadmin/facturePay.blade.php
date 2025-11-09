@@ -124,6 +124,9 @@
         10 => 'Octobre', 11 => 'Novembre', 12 => 'Décembre'
     ];
 
+    // Always initialize $plan to the company's base plan to avoid undefined variable
+    $plan = $compagnie->plan;
+
     if ($compagnie->plan == 10) {
         if ($vendeur >= 1 && $vendeur <10) {
             $plan = 10;
@@ -136,8 +139,6 @@
         } elseif ($vendeur >= 50 && $vendeur < 10000) {
             $plan = 6;
         }
-    } else {
-        $plan = $compagnie->plan;
     }
     
     // Calculate dates with month names
@@ -186,7 +187,7 @@
                 </div>
 
                 <div class="invoice-number">
-                    Facture № {{ rand(1000, 99999) }}
+                    Facture #{{ $monthNames[$currentMonth] }}
                 </div>
 
                 <table width='100%' cellspacing='0' cellpadding='2' border='1' bordercolor='#e0e0e0'>

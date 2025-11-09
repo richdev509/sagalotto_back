@@ -583,8 +583,8 @@ class ticketController extends Controller
                     ['ticket_vendu.is_delete', '=', 0],
                     ['ticket_vendu.pending', '=', 0]
                 ])
-                ->whereDate('ticket_code.created_at', '>=', $request->date_debut)
-                ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
+                ->whereBetween('ticket_code.created_at', [ $request->date_debut. ' 00:00:00', $request->date_fin.' 23:59:59'  ])
+                //->whereDate('ticket_code.created_at', '<=', $request->date_fin)
                 ->select(
                     'ticket_code.code as ticket_id',
                     DB::raw("DATE_FORMAT(ticket_code.created_at, '%d-%m-%Y %h:%i:%s %p') as date"),

@@ -27,8 +27,10 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <!-- Styles Livewire -->
+    @livewireStyles
     <style>
         * {
             margin: 0;
@@ -179,28 +181,19 @@
             margin-bottom: 0;
             /* Remove extra margin */
         }
+        /* Adjust profile dropdown menu */
     </style>
 </head>
 
 <body>
-   
+
     <div class="container-scroller">
         <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-            <div class="containerr scroll-right" style="background:rgb(248, 249, 249);color:black; width: 100%;">
-                <?php if(Carbon\Carbon::now()->format('Y-m-d') >= Session('dateex') && !empty(Session('dateex'))){ ?>
-                <marquee behavior="" direction="left" style="color:#dc3545;"><i class="fas fa-exclamation-circle icon" style="font-size: 18px; color: #dc3545;"></i>Alert!!! kontra ou ak systèm nan fini <b>{{Session('dateex')}} </b>, ou dwè peye pouw kontinye jwenn bon sevis sinon ou ka bloke a nenpòt moman. mèsi!!</marquee>
-            
-                <?php }else{?>
-                <marquee style="display: none;" behavior="" direction="left">Gade fich ki siprime yo lè ou ale sou fich answit poubèl, wap
-                    wè dat fich la te fèt la wap wè lè li siprime a ect.</marquee>
-                <?php }?>
-            </div>
-
+          
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
 
 
-                <a class="navbar-brand brand-logo" href="admin"><img src="assets/images/logo1.png"
-                        alt="logo" /></a>
+                <a class="navbar-brand brand-logo" href="admin"><img src="assets/images/logo1.png" alt="logo" /></a>
                 <a class="navbar-brand brand-logo-mini" href="admin"><img src="assets/images/logo-mini.png"
                         alt="logo" /></a>
 
@@ -213,8 +206,8 @@
 
                 <ul class="navbar-nav navbar-nav-right">
                     <li class="nav-item nav-profile dropdown">
-                        <a class="nav-link dropdown-toggle" id="profileDropdown" href="#"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-bs-toggle="dropdown"
+                            aria-expanded="false">
                             <div class="nav-profile-img">
                                 <img src="{{ session('logo') }}" alt="image">
                                 <span class="availability-status online"></span>
@@ -589,16 +582,16 @@
     <script src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js') }}"></script>
     <script
         src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js') }}">
-    </script>
+        </script>
     <!-- End custom js for this page -->
     <x-notify::notify />
     @notifyJs
     <script>
-        $(document).ready(function() {
-            $('.navbar-toggler').on('click', function() {
+        $(document).ready(function () {
+            $('.navbar-toggler').on('click', function () {
                 $('.scroll-right').hide();
             });
-            $('.loa').on('click', function() {
+            $('.loa').on('click', function () {
                 showLoader();
             });
 
@@ -620,6 +613,39 @@
         // };
         //  function 
     </script>
+    <script>
+        document.addEventListener('livewire:load', function () {
+            // Animation pour le chargement initial
+            function animateCards() {
+                const cards = document.querySelectorAll('.animated-card');
+                cards.forEach((card, index) => {
+                    card.style.animationDelay = (index * 0.1) + 's';
+                });
+            }
+
+            // Exécuter après le chargement
+            setTimeout(animateCards, 100);
+
+            // Confetti effect on data refresh (optionnel)
+            Livewire.on('dataRefreshed', () => {
+                // Effet visuel de confirmation
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3 z-3';
+                alert.style.transition = 'all 0.5s ease';
+                alert.innerHTML = '<i class="mdi mdi-check-circle me-2"></i> Données actualisées avec succès!';
+                document.body.appendChild(alert);
+
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 500);
+                }, 2000);
+            });
+        });
+    </script>
+    <!-- Chargement manuel si Vite ne fonctionne pas -->
+    <script src="{{ asset('js/app.js') }}"></script>
+    <!-- Scripts Livewire -->
+    @livewireScripts
 </body>
 
 </html>

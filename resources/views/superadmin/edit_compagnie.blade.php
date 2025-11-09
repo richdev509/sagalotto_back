@@ -15,6 +15,12 @@
                         <input type="text" class="form-control" value="{{ $data->name }}" name="compagnie" id="InputNomcompagnie" placeholder="Nom compagnie" minlength="4" required>
                     </div>
 
+                    <!-- Propriétaire -->
+                    <div class="form-group">
+                        <label for="InputProprietaire"><i class="mdi mdi-account-badge"></i> Propriétaire</label>
+                        <input type="text" class="form-control" value="{{ $data->proprietaire ?? '' }}" name="proprietaire" id="InputProprietaire" placeholder="Nom du propriétaire">
+                    </div>
+
                     <!-- Adresse -->
                     <div class="form-group">
                         <label for="Inputadresse"><i class="mdi mdi-map-marker"></i> Adresse</label>
@@ -37,6 +43,12 @@
                     <div class="form-group">
                         <label for="InputPhone"><i class="mdi mdi-phone"></i> Téléphone Compagnie</label>
                         <input type="text" class="form-control" value="{{ $data->phone }}" name="phone" id="InputPhone" placeholder="Téléphone">
+                    </div>
+
+                    <!-- WhatsApp -->
+                    <div class="form-group">
+                        <label for="InputWhatsapp"><i class="mdi mdi-whatsapp"></i> WhatsApp</label>
+                        <input type="text" class="form-control" value="{{ $data->whatsapp ?? '' }}" name="whatsapp" id="InputWhatsapp" placeholder="+50940404040">
                     </div>
 
                     <!-- Plan -->
@@ -70,7 +82,18 @@
                         <input type="date" class="form-control" value="{{ $data->dateplan }}" name="datePlan" id="InputNomcompagnie">
                     </div>
                     <!--password-->
-                  
+                    <div class="form-group">
+                        <label for="InputPassword1"><i class="mdi mdi-lock"></i>Reset Mot de passe</label>
+                        <input type="password" class="form-control" name="password" id="InputPassword1" placeholder="Mot de passe" minlength="6">
+                    </div>
+                    <!-- blocked compagnie -->
+                    <div class="form-group"></div>
+                        <label for="InputBlocked"><i class="mdi mdi-block"></i> Bloquer Compagnie</label>
+                        <select name="is_block" class="form-control">
+                            <option value="0" {{ $data->is_block == 0 ? 'selected' : '' }}>Non</option>
+                            <option value="1" {{ $data->is_block == 1 ? 'selected' : '' }}>Oui</option>
+                        </select>
+                    </div>
 
                     <!-- Buttons -->
                     <div class="mt-4">

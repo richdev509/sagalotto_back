@@ -2,12 +2,15 @@
 
 namespace App\Console;
 
+use App\Jobs\genereFacture;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Jobs\updateLimitPrix;
 use App\Jobs\updateDatePlan;
 use App\Jobs\truncateLimit;
 use App\Jobs\autoActiveTirage;
+use App\Jobs\blockCompagnie;
+use App\Jobs\generateFacture;
 class Kernel extends ConsoleKernel
 {
     /**
@@ -20,6 +23,14 @@ class Kernel extends ConsoleKernel
         $schedule->job(new truncateLimit())->dailyAt('00:01');
         $schedule->job(new autoActiveTirage())->dailyAt('00:01');
         $schedule->job(new updateDatePlan)->dailyAt('23:40');
+        $schedule->job(new blockCompagnie())->dailyAt('10:00');
+        $schedule->job(new blockCompagnie())->dailyAt('14:00');
+        $schedule->job(new blockCompagnie())->dailyAt('18:00');
+        $schedule->job(new genereFacture())->dailyAt('01:00');
+
+
+
+
 
 
 

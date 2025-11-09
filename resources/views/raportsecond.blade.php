@@ -14,13 +14,16 @@
         margin: auto;
     }
 
-    input[type="text"] {
-        width: calc(100% - -9px);
-        padding: 8px;
-        padding-left: 35px;
+    input[type="text"], input[type="date"], select.form-control {
+        width: 100%;
+        padding: 6px 12px;
+        font-size: 15px;
         outline: none;
-        border: 2px solid #ccc;
-        border-radius: 50px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: none;
+        height: 32px;
+        margin-bottom: 6px;
     }
 
     input[type="text"]:focus {
@@ -81,11 +84,11 @@
 
     }
 
-    .btn_finpeye {
-        width: auto;
-        font-size: 15px;
-        padding: 5px;
-
+    .btn_finpeye, .btn.primary, .btn {
+        font-size: 14px !important;
+        padding: 7px 16px !important;
+        border-radius: 6px !important;
+        min-width: 90px;
     }
 
 
@@ -160,10 +163,13 @@
 
     .head_rapport th {
         font-weight: bold;
+        font-size: 15px;
+        padding: 8px 6px;
     }
 
     .body_rapport {
         border: 1px solid #403c41;
+        font-size: 14px;
     }
 
     .balance div {}
@@ -174,22 +180,16 @@
 
     button.primary {
         display: inline-block;
-        font-size: 0.8rem;
+        font-size: 14px !important;
         color: #fff !important;
         background: rgb(var(--vs-primary) / 100%);
-        padding: 13px 25px;
-        border-radius: 17px;
-        transition: background-color 0.1s ease;
-        box-sizing: border-box;
-        transition: all 0.25s ease;
+        padding: 7px 16px !important;
+        border-radius: 6px !important;
         border: 0;
         cursor: pointer;
         box-shadow: 0 10px 20px -10px rgb(var(--vs-primary) / 50%);
-
-        &:hover {
-            box-shadow: 0 20px 20px -10px rgb(var(--vs-primary) / 50%);
-            transform: translateY(-5px);
-        }
+        min-width: 90px;
+        transition: all 0.25s ease;
     }
 
     @keyframes fadeIn {
@@ -209,40 +209,32 @@
         <div class="card-body" style="padding: 22px 3px;">
             <div class="row align-items-center">
                 <h4 class="card-title"
-                    style="color: #0d2a95; font-weight: bold; text-align: center; margin-bottom: 20px;">Rapo general pou
-                    chak bank</h4>
+                    style="color: #0d2a95; font-weight: bold; text-align: center; margin-bottom: 12px; font-size: 20px;">Rapo general pou chak bank</h4>
                 <div class="row_head">
                     <form method="get" action="raport2" id="search">
                         @csrf
                         <div class="row col-12">
                             <div class="col-12 col-md-4">
-                                <label style="font-weight: bold;">Komanse</label>
+                                <label style="font-weight: bold; font-size: 14px;">Komanse</label>
                                 <input type="date" class="form-control dateInput" name="date_debut" value="{{ $date_debut }}"
-                                    required style="height: 40px; border-radius: 5px; border: 1px solid #ccc;" />
+                                    required />
                             </div>
                             <div class="col-12 col-md-4">
-                                <label style="font-weight: bold;">Fini</label>
-                                <input type="date" class="form-control dateInput" name="date_fin" value="{{ $date_fin }}" required
-                                    style="height: 40px; border-radius: 5px; border: 1px solid #ccc;" />
+                                <label style="font-weight: bold; font-size: 14px;">Fini</label>
+                                <input type="date" class="form-control dateInput" name="date_fin" value="{{ $date_fin }}" required />
                             </div>
                             <div class="col-12 col-md-4">
-                                <label style="font-weight: bold;">Branch</label>
-                                <select class="form-control" name="branch" value="{{ old('period') }}"
-                                    style="height: 40px; border-radius: 5px; border: 1px solid #ccc;">
+                                <label style="font-weight: bold; font-size: 14px;">Branch</label>
+                                <select class="form-control" name="branch" value="{{ old('period') }}">
                                     <option value="tout">Tout</option>
                                     @foreach ($branch as $row)
                                         <option value="{{$row->id }}">{{$row->name}}</option>
                                     @endforeach
-
                                 </select>
                             </div>
-
-
                         </div>
-                        <div class="student-submit" style="text-align: center; margin-top: 10px;">
-                            <button type="submit" class="btn primary me-2 loa"
-                                style="color: white; padding: 12px 15px; border-radius: 5px; border: none; cursor: pointer; font-size: 16px;">Fe
-                                rapo</button>
+                        <div class="student-submit" style="text-align: center; margin-top: 8px;">
+                            <button type="submit" class="btn primary me-2 loa">Fe rapo</button>
                         </div>
                     </form>
                 </div>
@@ -262,6 +254,9 @@
                         <tbody class="body_rapport">
                             @php
                                 $total = 0;
+                                $sum_vente = 0;
+                                $sum_commission = 0;
+                                $sum_perte = 0;
                             @endphp
                             @foreach ($vendeur as $row)
                                                         <tr>
@@ -289,6 +284,9 @@
                                                             <td>{{ round($row['commission'], 2) }} {{ Session('devise') }}</td>
                                                             @php
                                                                 $total = $total + ($row['vente'] - ($row['commission'] + $row['perte']));
+                                                                $sum_vente += $row['vente'];
+                                                                $sum_commission += $row['commission'];
+                                                                $sum_perte += $row['perte'];
                                                             @endphp
                                                             @if ($row['vente'] < $row['commission'] + $row['perte'])
                                                                 <td style="color: red;">
@@ -311,9 +309,13 @@
                         </tbody>
                         <tfoot style="background: #0d2a95; color: white; height: 50px; padding: 0px;">
                             <tr style="height: 50px;">
-
-                                <td class="text-right" colspan="7">
-                                    Total <i class="mdi mdi-wallet mdi-16px"></i>:
+                                <td class="text-right" style="font-weight:bold;">Total</td>
+                                <td></td>
+                                <td></td>
+                                <td>{{ round($sum_vente, 2) }} {{ Session('devise') }}</td>
+                                <td>{{ round($sum_perte, 2) }} {{ Session('devise') }}</td>
+                                <td>{{ round($sum_commission, 2) }} {{ Session('devise') }}</td>
+                                <td>
                                     @if ($total > 0)
                                         <span style="color: green;">{{ round($total, 2) }} {{ Session('devise') }}</span>
                                     @else
@@ -323,8 +325,7 @@
                             </tr>
                         </tfoot>
                     </table>
-                    <button id="exportJPG" class="btn primary"
-                        style=" color: white; padding: 12px 24px; border-radius: 5px; border: none; cursor: pointer; font-size: 16px;">Telechaje</button>
+                    <button id="exportJPG" class="btn primary">Telechaje</button>
                 </div>
             </div>
         </div>
@@ -333,7 +334,7 @@
 
 
 
-<div class="card" style="display: none;">
+{{-- <div class="card" style="display: none;">
     <div class="border-bottom-0 p-0 card-header">
         <div class="nav-lb-tab nav card-header-undefined" role="tablist">
 
@@ -371,7 +372,7 @@
 
         </div>
     </div>
-    <div class="p-0 card-body">
+    <div class="p-0 card-body" style='display: none;'>
         <div class="tab-content">
             <div role="tabpanel" id="react-aria-292-tabpane-design" aria-labelledby="react-aria-292-tab-design"
                 class="fade pb-4 p-4 tab-pane active show">
@@ -551,7 +552,7 @@
         </div>
     </form>
     <button onclick="window.dialog.close();" aria-label="close" class="x">❌</button>
-</dialog>
+</dialog> --}}
 
 
 

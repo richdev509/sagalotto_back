@@ -184,6 +184,7 @@ Route::middleware(['web', 'verify.session'])->group(function () {
 
 
     Route::get('/plan', [parametreController::class, 'viewinfo']);
+    Route::post('/plan', [parametreController::class, 'viewinfo']);
     Route::post('/up-g', [parametreController::class, 'update_general'])->name('up-g');
 
 
@@ -274,8 +275,13 @@ Route::middleware(['web', 'chekadmin'])->group(function () {
     Route::get('/wp-admin/historiqueabonnement', [abonnementController::class, 'viewhistorique'])->name('historiquesaabonnement');
     Route::get('/wp-admin/facture', [abonnementController::class, 'viewFacture'])->name('facture');
     Route::post('/wp-admin/genererfacture', [abonnementController::class, 'genererFacture'])->name('genererfacture');
+    Route::post('/wp-admin/payerfacture', [abonnementController::class, 'payerfacture'])->name('payerfacture');
+    Route::post('/wp-admin/regenerate-facture-image', [abonnementController::class, 'regenerateFactureImage'])->name('regenerate_facture_image');
+    Route::get('/wp-admin/facture/{id}/regenerate-show', [abonnementController::class, 'regenerateAndShowFacture'])->name('regenerate_facture_show');
 
 
     Route::get('/wp-admin/historiquetransaction', [historiquetransaction::class, 'viewtransaction'])->name('historiquestransaction');
     Route::post('/wp-admin/paiementdwe', [abonnementController::class, 'paiementdwe'])->name('paiementsdwe');
+
+    Route::match(['get', 'post'], '/wp-admin/bloquer', [SystemController::class, 'bloquer'])->name('bloquer');
 });

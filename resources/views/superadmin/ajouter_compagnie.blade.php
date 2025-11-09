@@ -19,6 +19,16 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="InputProprietaire" class="col-sm-3 col-form-label">Propriétaire</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="mdi mdi-account-badge"></i></span>
+                                <input type="text" class="form-control" name="proprietaire" id="InputProprietaire"
+                                    placeholder="Nom du propriétaire">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="Inputadresse" class="col-sm-3 col-form-label">Adresse</label>
                         <div class="col-sm-9">
                             <div class="input-group">
@@ -44,7 +54,7 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="mdi mdi-email"></i></span>
                                 <input type="email" class="form-control" name="email" id="InputEmail1"
-                                    placeholder="Email compagnie" required>
+                                    placeholder="Email compagnie">
                             </div>
                         </div>
                     </div>
@@ -55,6 +65,16 @@
                                 <span class="input-group-text"><i class="mdi mdi-phone"></i></span>
                                 <input type="text" class="form-control" name="phone" id="InputPhone"
                                     placeholder="Téléphone">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="InputWhatsapp" class="col-sm-3 col-form-label">WhatsApp</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="mdi mdi-whatsapp"></i></span>
+                                <input type="text" class="form-control" name="whatsapp" id="InputWhatsapp"
+                                    placeholder="+50940404040">
                             </div>
                         </div>
                     </div>

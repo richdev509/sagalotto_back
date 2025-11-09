@@ -15,8 +15,10 @@ class rapportController extends Controller
 {
     public function create_rapport(Request $request)
     {
+        
         if (Session('loginId')) {
             if (!empty($request->input('date_debut') && !empty($request->input('date_fin')))) {
+                
                 if ($request->input('branch') == 'Tout') {
                     if ($request->input('bank') == 'Tout' && $request->input('tirage') == 'Tout') {
 
@@ -39,7 +41,7 @@ class rapportController extends Controller
                         ];
 
                         // Process in chunks of 1000 records at a time
-                        $ticketCodes->chunk(50000, function ($codes) use (&$totals) {
+                        $ticketCodes->chunk(25000, function ($codes) use (&$totals) {
                             $result = DB::table('ticket_vendu')
                                 ->whereIn('ticket_code_id', $codes->pluck('code'))
                                 ->where('is_cancel', 0)
@@ -536,8 +538,7 @@ class rapportController extends Controller
         }
     }
     public function create_rapport2(Request $request)
-    {
-
+    { 
         if (Session('loginId')) {
             $loginId = Session('loginId');
             $dateDebut = $request->input('date_debut');
@@ -547,34 +548,47 @@ class rapportController extends Controller
             if (!empty($dateDebut) && !empty($dateFin)) {
 
                 if ($request->input('branch') != 'tout') {
-                    $data = DB::table('ticket_vendu')
-                        ->join('ticket_code', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-                        ->where('ticket_code.compagnie_id', $loginId)
-                        ->where('ticket_code.branch_id', $branch)
-                        ->whereDate('ticket_code.created_at', '>=', $dateDebut)
-                        ->whereDate('ticket_code.created_at', '<=', $dateFin)
-                        ->where([
-                            ['ticket_vendu.is_cancel', '=', 0],
-                            ['ticket_vendu.is_delete', '=', 0],
-                            ['ticket_vendu.pending', '=', 0]
-                        ])
-                        ->select(
-                            'ticket_code.user_id as bank_name',
-                            DB::raw('COALESCE(SUM(ticket_vendu.amount), 0) as vente'),
-                            DB::raw('COALESCE(SUM(ticket_vendu.winning), 0) as perte'),
-                            DB::raw('COALESCE(SUM(ticket_vendu.commission), 0) as commission')
-                        )
-                        ->groupBy('ticket_code.user_id')
-                        ->orderBy('ticket_code.user_id', 'asc')
-                        ->get()
-                        ->map(function ($item) {
-                            return [
-                                'bank_name' => $item->bank_name,
-                                'vente' => $item->vente,
-                                'perte' => $item->perte,
-                                'commission' => $item->commission
-                            ];
-                        });
+                    // Pluck-based per-user totals (same pattern as create_rapport)
+                    $userIds = DB::table('ticket_code')
+                        ->where('compagnie_id', $loginId)
+                        ->where('branch_id', $branch)
+                        ->whereDate('created_at', '>=', $dateDebut)
+                        ->whereDate('created_at', '<=', $dateFin)
+                        ->distinct()
+                        ->orderBy('user_id', 'asc')
+                        ->pluck('user_id');
+
+                    $data = collect();
+                    foreach ($userIds as $user) {
+                        $codes = DB::table('ticket_code')
+                            ->where('compagnie_id', $loginId)
+                            ->where('branch_id', $branch)
+                            ->where('user_id', $user)
+                            ->whereDate('created_at', '>=', $dateDebut)
+                            ->whereDate('created_at', '<=', $dateFin)
+                            ->pluck('code');
+
+                        $result = DB::table('ticket_vendu')
+                            ->whereIn('ticket_code_id', $codes)
+                            ->where([
+                                ['is_cancel', '=', 0],
+                                ['is_delete', '=', 0],
+                                ['pending', '=', 0]
+                            ])
+                            ->select(
+                                DB::raw('COALESCE(SUM(amount), 0) as vente'),
+                                DB::raw('COALESCE(SUM(winning), 0) as perte'),
+                                DB::raw('COALESCE(SUM(commission), 0) as commission')
+                            )
+                            ->first();
+
+                        $data->push([
+                            'bank_name' => $user,
+                            'vente' => $result->vente ?? 0,
+                            'perte' => $result->perte ?? 0,
+                            'commission' => $result->commission ?? 0
+                        ]);
+                    }
                     // dd($vendeur);
                     $bank = User::where([
                         ['compagnie_id', '=', Session('loginId')],
@@ -597,36 +611,46 @@ class rapportController extends Controller
                     return view('raportsecond', ['bank' => $bank, 'control' => $control, 'vendeur' => $data, 'date_debut' => $dateDebut, 'date_fin' => $dateFin, 'branch' => $branch]);
                 } else {
 
-                    // Single query to get all required data at once
-                    $results = DB::table('ticket_vendu')
-                        ->join('ticket_code', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
-                        ->where('ticket_code.compagnie_id', $loginId)
-                        ->whereDate('ticket_code.created_at', '>=', $dateDebut)
-                        ->whereDate('ticket_code.created_at', '<=', $dateFin)
-                        ->where([
-                            ['ticket_vendu.is_cancel', '=', 0],
-                            ['ticket_vendu.is_delete', '=', 0],
-                            ['ticket_vendu.pending', '=', 0]
-                        ])
-                        ->select(
-                            'ticket_code.user_id as bank_name',
-                            DB::raw('SUM(ticket_vendu.amount) as vente'),
-                            DB::raw('SUM(ticket_vendu.winning) as perte'),
-                            DB::raw('SUM(ticket_vendu.commission) as commission')
-                        )
-                        ->groupBy('ticket_code.user_id')
-                        ->orderBy('ticket_code.user_id', 'asc')
-                        ->get();
+                    // Pluck-based per-user totals for all branches
+                    $userIds = DB::table('ticket_code')
+                        ->where('compagnie_id', $loginId)
+                        ->whereDate('created_at', '>=', $dateDebut)
+                        ->whereDate('created_at', '<=', $dateFin)
+                        ->distinct()
+                        ->orderBy('user_id', 'asc')
+                        ->pluck('user_id');
 
-                    $data = $results->map(function ($item) {
-                        return [
-                            'bank_name' => $item->bank_name,
-                            'vente' => $item->vente,
-                            'perte' => $item->perte,
-                            'commission' => $item->commission
-                        ];
-                    });
-                    // dd($vendeur);
+                    $data = collect();
+                    foreach ($userIds as $user) {
+                        $codes = DB::table('ticket_code')
+                            ->where('compagnie_id', $loginId)
+                            ->where('user_id', $user)
+                            ->whereDate('created_at', '>=', $dateDebut)
+                            ->whereDate('created_at', '<=', $dateFin)
+                            ->pluck('code');
+
+                        $result = DB::table('ticket_vendu')
+                            ->whereIn('ticket_code_id', $codes)
+                            ->where([
+                                ['is_cancel', '=', 0],
+                                ['is_delete', '=', 0],
+                                ['pending', '=', 0]
+                            ])
+                            ->select(
+                                DB::raw('COALESCE(SUM(amount), 0) as vente'),
+                                DB::raw('COALESCE(SUM(winning), 0) as perte'),
+                                DB::raw('COALESCE(SUM(commission), 0) as commission')
+                            )
+                            ->first();
+
+                        $data->push([
+                            'bank_name' => $user,
+                            'vente' => $result->vente ?? 0,
+                            'perte' => $result->perte ?? 0,
+                            'commission' => $result->commission ?? 0
+                        ]);
+                    }
+                    //dd($data);
                     $bank = User::where([
                         ['compagnie_id', '=', Session('loginId')],
                         ['is_delete', '=', 0],

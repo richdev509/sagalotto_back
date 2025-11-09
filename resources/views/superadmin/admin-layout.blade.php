@@ -199,6 +199,8 @@
                                         </li>
                                         <li class="nav-item"> <a class="nav-link"
                                             href="/wp-admin/facture">Facture</a></li>
+                                        <li class="nav-item"> <a class="nav-link"
+                                            href="/wp-admin/bloquer">Bloquer</a></li>
                                     @endif
 
                                     @if (session('role') == 'comptable' || session('role') == 'admin')

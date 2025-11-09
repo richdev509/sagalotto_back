@@ -43,5 +43,32 @@ class updateDatePlan implements ShouldQueue
                 $company->save();
             }
         }
+        $compagnies2 = Company::all();
+        foreach ($compagnies2 as $compagnie2) {
+            // Robust check: count any tickets created in the last 10 days (inclusive)
+            $start = Carbon::today()->subDays(9)->startOfDay();
+            $end = Carbon::today()->endOfDay();
+            $ticketCount2 = Ticket_Code::where('compagnie_id', $compagnie2->id)
+                ->whereBetween('created_at', [$start, $end])
+                ->count();
+
+            if ($ticketCount2 === 0) {
+                // mark as deleted/disabled only if currently not already marked
+                if ($compagnie2->is_delete != 1) {
+                    $compagnie2->is_delete = 1;
+                    $compagnie2->is_active = 0;
+                    $compagnie2->save();
+                }
+            } else {
+                // restore if previously marked deleted but activity resumed
+                if ($compagnie2->is_delete == 1) {
+                    $compagnie2->is_delete = 0;
+                    $compagnie2->is_active = 1;
+                    $compagnie2->save();
+                }
+            }
+
+        }
+
     }
 }

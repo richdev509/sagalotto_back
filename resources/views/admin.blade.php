@@ -1,7 +1,12 @@
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+?>
 @extends('admin-layout')
 
 @section('content')
-    <style>
+   <style>
         /* Modern color palette */
         :root {
             --primary-color: #6c5ce7;
@@ -159,144 +164,110 @@
                 width: 100%;
             }
         }
+
+        /* loader Design */
+        /* ===== ANIMATIONS AND EFFECTS ===== */
+.fade-in {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 40px, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.6s ease-out;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translate3d(-100px, 0, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.6s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translate3d(100px, 0, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+/* Stagger delays for sequential animation */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+
+/* Hover effects */
+.hover-lift {
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Success animation */
+.success-pulse {
+    animation: successPulse 2s ease-in-out;
+}
+
+@keyframes successPulse {
+    0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); }
+    70% { box-shadow: 0 0 0 20px rgba(40, 167, 69, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+}
+
+/* Loading animation */
+.loading-wave {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.wave {
+    width: 8px;
+    height: 40px;
+    background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+    border-radius: 10px;
+    animation: wave 1.2s infinite ease-in-out;
+}
+
+.wave:nth-child(2) { animation-delay: 0.1s; }
+.wave:nth-child(3) { animation-delay: 0.2s; }
+.wave:nth-child(4) { animation-delay: 0.3s; }
+
+@keyframes wave {
+    0%, 100% { transform: scaleY(0.6); }
+    50% { transform: scaleY(1.2); }
+}
     </style>
 
-    <div class="page-header">
-        <h3 class="page-title">
-            <span class="page-title-icon bg-gradient-primary text-white me-2">
-                <i class="mdi mdi-home"></i>
-            </span> Dashboard
-        </h3>
-        <nav aria-label="breadcrumb">
-            <ul class="breadcrumb">
-                <li class="breadcrumb-item active" aria-current="page">
-                    <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
-                </li>
-            </ul>
-        </nav>
-    </div>
 
-    <div class="row">
-        <div class="col-md-4 stretch-card grid-margin">
-            <div class="card bg-gradient-danger">
-                <div class="card-body">
-                    <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-3">Kob ou vann jodia <i
-                            class="mdi mdi-chart-line mdi-24px float-right"></i></h4>
-                    <h2 class="mb-5">{{ Session('devise') }} {{ number_format($vente, 2,'.', ' ') }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 stretch-card grid-margin">
-            <div class="card bg-gradient-info">
-                <div class="card-body">
-                    <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-3">Kob ou peye jodia <i
-                            class="mdi mdi-bookmark-outline mdi-24px float-right"></i></h4>
-                    <h2 class="mb-5">{{ Session('devise') }} {{ number_format($perte, 2,'.', ' ') }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 stretch-card grid-margin">
-            <div class="card bg-gradient-success">
-                <div class="card-body">
-                    <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-3">Balans <i class="mdi mdi-diamond mdi-24px float-right"></i></h4>
-                    <h2 class="mb-5">{{ Session('devise') }} {{ number_format($vente - ($perte + $commission), 2, '.', ' ') }}</h2>
-                </div>
-            </div>
-        </div>
-    </div>
+    <livewire:dashstat />
 
-    <div class="cont">
-        <div class="column">
-            <a href="/raport2">
-                <i class="icon mdi mdi-account"></i>
-                <span class="text">Bank aktif: <span
-                        style="color: var(--success-color);">{{ $actif_user }}</span>/{{ $total_user }}</span>
-            </a>
-        </div>
-        <div class="column">
-            <a href="/lister-ticket">
-                <i class="icon mdi mdi-ticket"></i>
-                <span class="text">Fich genyen: <span
-                        style="color: var(--success-color);">{{ $ticket_win }}</span>/{{ $ticket_total }}</span>
-            </a>
-        </div>
-        <div class="column">
-            <a href="/lister-ticket-delete">
-
-                <i class="icon mdi mdi-delete" style="color: var(--danger-color);"></i>
-                <span class="text">Fich anile: <span
-                        style="color: var(--danger-color);">{{ $ticket_delete }}</span>/{{ $ticket_total + $ticket_delete }}</span>
-            </a>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-12 grid-margin">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">3 Denye tiraj ki tire yo, lè sèvè se: @php echo date('Y-m-d H:i:s'); @endphp</h4>
-                    <a href="/lister-lo"> <label class="badge badge-gradient-info">Gade plis</label></a>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Tiraj Nom</th>
-                                    <th>Date tirage</th>
-                                    <th>Lo yo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($list as $lists)
-                                    <tr>
-                                        <td style="color: {{ getTirageColo($lists['name']) }}; font-weight: bold;">
-                                            {{ $lists['name'] }}</td>
-                                        <td style="font-weight: bold;">
-                                            {{ \Carbon\Carbon::parse($lists['boulGagnant']->created_)->format('d-m-Y') }}
-                                        </td>
-                                        <td>
-                                            <button type="button"
-                                                class="btn btn-social-icon btn-youtube btn-rounded">{{ $lists['boulGagnant']->unchiffre }}</button>
-                                            <button type="button"
-                                                class="btn btn-social-icon btn-facebook btn-rounded">{{ $lists['boulGagnant']->premierchiffre }}</button>
-                                            <button type="button"
-                                                class="btn btn-social-icon btn-dribbble btn-rounded">{{ $lists['boulGagnant']->secondchiffre }}</button>
-                                            <button type="button"
-                                                class="btn btn-social-icon btn-linkedin btn-rounded">{{ $lists['boulGagnant']->troisiemechiffre }}</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-weight: bold;">Vann: <span>{{ $lists['vent'] ?? 0 }}
-                                                {{ Session('devise') }}</span></td>
-                                        <td style="font-weight: bold;">Pedi: <span>{{ $lists['pert'] ?? 0 }}
-                                                {{ Session('devise') }}</span></td>
-                                        <td style="font-weight: bold;">Balans:
-                                            <span>{{ $lists['vent'] - ($lists['pert'] + $lists['commissio']) }}
-                                                {{ Session('devise') }}</span>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @php
-        function getTirageColo($tirage)
-        {
-            $colors = [
-                'NewYork Soir' => 'blue',
-                'NewYork Matin' => '#06aafd',
-                'Florida Matin' => '#53ca8c',
-                'Florida Soir' => '#30be64',
-                'Georgia Matin' => '#be3030',
-                'Georgia ApresMidi' => '#fa8e8e',
-            ];
-            return $colors[$tirage] ?? 'black';
-        }
-    @endphp
 @endsection

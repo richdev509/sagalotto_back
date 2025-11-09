@@ -771,11 +771,20 @@ class parametreController extends Controller
     //gestion plan
     public function viewinfo(Request $request)
     {
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $data = company::find(session('loginId'));
+            $data->address = $request->input('address');
+            $data->phone = $request->input('phone');
+            $data->save();
+            notify()->success('Modification effectuée avec succès');
+            return back();
+
+        }else{
         $data = DB::table('companies')->where('id', session('loginId'))->first();
-        $nombre = $this->getDaysRemaining($data->dateplan, $data->dateexpiration);
+        $nombre = $this->getDaysRemaining(Carbon::now()->toDateString(), $data->dateexpiration);
         //active user that create ticket last 30 days
         $vendeur = ticket_code::where([
-            ['created_at', '>=', Carbon::now()->subDays(30)],
+            ['created_at', '>=', Carbon::now()->subDays(5)],
             ['compagnie_id', '=', Session('loginId')]
 
         ])->distinct()
@@ -783,6 +792,7 @@ class parametreController extends Controller
             ->count();
 
         return view('plan', compact('data', 'nombre', 'vendeur'));
+        }
     }
 
     function getDaysRemaining($dateplan, $datefin)

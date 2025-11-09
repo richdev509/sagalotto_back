@@ -12,9 +12,10 @@ use App\Models\abonnementhistoriqueuser;
 use App\Models\historiquesboulgagnant;
 use App\Models\ticket_code;
 use App\Http\Controllers\superadmin\abonnementController;
-
+use App\Models\blockCompagnie;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Exception;
 
 class SystemController extends Controller
@@ -22,6 +23,9 @@ class SystemController extends Controller
 
     public function viewadmin()
     {
+        
+       
+       
         if (session('role') == "admin" || session('role') == "comptable") {
             $Compagnie = DB::table('companies')->where('type', 'production')->get();
             $nombreCompagnie = $Compagnie->count();
@@ -29,7 +33,7 @@ class SystemController extends Controller
                 ->toArray();
             $nombrePos = User::whereIn('compagnie_id', $id)->count();
             //count active for the last 30 days
-            $actifPos = ticket_code::where('created_at', '>=', Carbon::now()->subDays(30))
+            $actifPos = ticket_code::where('created_at', '>=', Carbon::now()->subDays(5))
                 ->distinct()
                 ->pluck('user_id')
                 ->count();
@@ -42,7 +46,7 @@ class SystemController extends Controller
                 ->toArray();
             $nombrePos = User::whereIn('compagnie_id', $id)->count();
             //count active for the last 30 days
-            $actifPos = ticket_code::where('created_at', '>=', Carbon::now()->subDays(30))
+            $actifPos = ticket_code::where('created_at', '>=', Carbon::now()->subDays(5))
                 ->distinct()
                 ->pluck('user_id')
                 ->count();
@@ -201,6 +205,8 @@ class SystemController extends Controller
         try {
             $request->validate([
                 'logo' => 'image|mimes:jpeg,png,jpg|max:2048',
+                'proprietaire' => 'nullable|string|max:255',
+                'whatsapp' => 'nullable|string|max:30',
             ]);
             if (!$request) {
                 notify()->error('Invalid logo');
@@ -232,14 +238,14 @@ class SystemController extends Controller
                 // Save the file path to the database (if needed)
                 $logoPath = 'assets/images/logo/' . $fileName;
             }
-            $reponse = DB::table('companies')->insertGetId([
+            $insertData = [
                 'name' => $request->compagnie,
                 'address' => $request->adress,
                 'city' => $request->city,
                 'phone' => $request->phone,
                 'email' => $request->email,
                 'plan' => $request->plan,
-                'dateexpiration'=>$request->date_plan,
+                'dateexpiration' => $request->date_plan,
                 'info' => $request->info,
                 'logo' => $logoPath,
                 'id_reference' => $request->reference,
@@ -247,7 +253,20 @@ class SystemController extends Controller
                 'actionUser' => session('id'),
                 'is_active' => '0',
                 'password' => Hash::make($request->input('password')),
-            ]);
+            ];
+
+            // Optional columns if they exist: fullname, whatsapp, proprietaire
+            if (Schema::hasColumn('companies', 'fullname')) {
+                $insertData['fullname'] = $request->compagnie;
+            }
+            if (Schema::hasColumn('companies', 'whatsapp')) {
+                $insertData['whatsapp'] = $request->whatsapp;
+            }
+            if (Schema::hasColumn('companies', 'proprietaire')) {
+                $insertData['proprietaire'] = $request->proprietaire;
+            }
+
+            $reponse = DB::table('companies')->insertGetId($insertData);
             $company = company::find($reponse);
             $company->code = "CO-00" . $reponse;
             $company->save();
@@ -256,6 +275,7 @@ class SystemController extends Controller
                     [
                         'compagnie_id' => $reponse,
                         'tirage_id' => 1,
+                        'is_active'=>1,
                         'name' => 'NewYork Matin',
                         'hour' => '14:25:00',
                         'hour_open' => '00:00:00',
@@ -267,6 +287,7 @@ class SystemController extends Controller
                     [
                         'compagnie_id' => $reponse,
                         'tirage_id' => 2,
+                        'is_active'=>1,
                         'name' => 'NewYork Soir',
                         'hour' => '22:25:00',
                         'hour_open' => '14:40:00',
@@ -276,6 +297,7 @@ class SystemController extends Controller
                     [
                         'compagnie_id' => $reponse,
                         'tirage_id' => 3,
+                        'is_active'=>1,
                         'name' => 'Florida Matin',
                         'hour' => '13:25:00',
                         'hour_open' => '00:00:00',
@@ -285,6 +307,7 @@ class SystemController extends Controller
                     [
                         'compagnie_id' => $reponse,
                         'tirage_id' => 4,
+                        'is_active'=>1,
                         'name' => 'Florida Soir',
                         'hour' => '21:40:00',
                         'hour_open' => '13:40:00',
@@ -294,6 +317,7 @@ class SystemController extends Controller
                     [
                         'compagnie_id' => $reponse,
                         'tirage_id' => 5,
+                        'is_active'=>1,
                         'name' => 'Georgia Matin',
                         'hour' => '12:25:00',
                         'hour_open' => '00:00:00',
@@ -303,6 +327,7 @@ class SystemController extends Controller
                     [
                         'compagnie_id' => $reponse,
                         'tirage_id' => 6,
+                        'is_active'=>1,
                         'name' => 'Georgia ApresMidi',
                         'hour' => '18:55:00',
                         'hour_open' => '12:40:00',
@@ -312,6 +337,7 @@ class SystemController extends Controller
                     [
                         'compagnie_id' => $reponse,
                         'tirage_id' => 7,
+                        'is_active'=>1,
                         'name' => 'Texas Matin',
                         'hour' => '10:55:00',
                         'hour_open' => '00:00:00',
@@ -321,6 +347,7 @@ class SystemController extends Controller
                     [
                         'compagnie_id' => $reponse,
                         'tirage_id' => 9,
+                        'is_active'=>1,
                         'name' => 'Texas Soir',
                         'hour' => '18:55:00',
                         'hour_open' => '11:10:00',
@@ -338,6 +365,17 @@ class SystemController extends Controller
                     'created_at' => Carbon::now()
                 ];
                 DB::table('branches')->insert($data1);
+
+                $settingData = [
+                    'compagnie_id' => $reponse,
+                    'created_at' => Carbon::now()
+                ];
+                DB::table('setings')->insert($settingData);
+                $limit_prix_achat = [
+                    'compagnie_id' => $reponse,
+                    'created_at' => Carbon::now()
+                ];
+                DB::table('limit_prix_achat')->insert($limit_prix_achat);
             }
 
             if ($reponse) {
@@ -376,6 +414,8 @@ class SystemController extends Controller
                 'email' => 'nullable|email|max:255',
                 'plan' => 'required|string|max:255',
                 'info' => 'nullable|string',
+                'is_block' => 'nullable|in:0,1',
+                'password' => 'nullable|string|min:6', // Validate password field and confirm it
                 'logo' => 'nullable|image|max:4096', // Validate logo file
             ]);
 
@@ -402,7 +442,7 @@ class SystemController extends Controller
             }
 
             // Update the company data
-            $company->update([
+            $updateData = [
                 'logo' => $logoPath,
                 'name' => $request->compagnie,
                 'address' => $request->adresse,
@@ -411,15 +451,29 @@ class SystemController extends Controller
                 'email' => $request->email,
                 'plan' => $request->plan,
                 'info' => $request->info,
-            ]);
+                'password' => $request->password? Hash::make($request->password) : $company->password, // Update password if provided
+                'is_block' => $request->is_block,
+            ];
+
+            // Update optional columns if they exist
+            if (Schema::hasColumn('companies', 'fullname')) {
+                $updateData['fullname'] = $request->compagnie; // keep single source of truth from form
+            }
+            if (Schema::hasColumn('companies', 'whatsapp')) {
+                $updateData['whatsapp'] = $request->whatsapp;
+            }
+            if (Schema::hasColumn('companies', 'proprietaire')) {
+                $updateData['proprietaire'] = $request->proprietaire;
+            }
+
+            $company->update($updateData);
 
             // Success notification and redirection
             notify()->success('Modification effectuée avec succès');
             return redirect()->route('listecompagnie');
         } catch (Exception $e) {
-           notify()->error('Une erreur s\'est produite lors de la modification : ' . $e->getMessage());
-           return redirect()->route('listecompagnie');
-
+            notify()->error('Une erreur s\'est produite lors de la modification : ' . $e->getMessage());
+            return redirect()->route('listecompagnie');
         }
     }
 
@@ -691,7 +745,9 @@ class SystemController extends Controller
     //zone boulgagnant.
     public function viewlistelo()
     {
-        $list = historiquesboulgagnant::orderBy('created_at', 'desc')->get();
+        $list = historiquesboulgagnant::orderBy('created_at', 'desc')
+            ->limit(100)
+            ->get();
         return view('superadmin.list-lo', compact('list'));
     }
     //login as a company access their panel
@@ -731,6 +787,46 @@ class SystemController extends Controller
         } else {
             notify()->error('Vous n\'avez pas access a niveau');
             return redirect()->route('listecompagnie');
+        }
+    }
+
+    //bloquer center
+    public function bloquer(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            if ($request->action == 'add') {
+                $request->validate([
+                    'compagnie_id' => 'required|exists:companies,id',
+                    'message' => 'required|string',
+                    'blocked_at' => 'required|date',
+                ]);
+                blockCompagnie::create([
+                    'compagnie_id' => $request->compagnie_id,
+                    'message' => $request->message,
+                    'blocked_at' => $request->blocked_at,
+                    'action' => 'bloquer',
+                    'created_at' => Carbon::now(),
+                ]);
+                notify()->success('Blocage enregistré avec succès');
+                return redirect()->back();
+            }
+            if($request->action == 'delete'){
+                $id = $request->id;
+                $block = blockCompagnie::find($id);
+                if($block){
+                $compap = company::find($block->compagnie_id);
+                $compap->is_block = 0;
+                $compap->save();
+                $block->delete();
+                }
+                notify()->success('Blocage supprimé avec succès');
+                return redirect()->back();
+            }
+
+        } else {
+            $compagnie = company::all();
+            $block_list = blockCompagnie::all();
+            return view('superadmin.bloquer', compact('compagnie', 'block_list'));
         }
     }
 }
