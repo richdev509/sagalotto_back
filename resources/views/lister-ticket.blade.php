@@ -2,6 +2,7 @@
 
 
 @section('content')
+
     <style type="text/css">
         /* General Styling */
         body {
@@ -303,6 +304,45 @@
             border: none !important;
             padding: 10px 20px !important;
         }
+
+
+        .custom-select-visible {
+    background-color: #ffffff !important;
+    border: 2px solid #0066cc !important;
+    border-radius: 10px !important;
+    padding: 12px 45px 12px 15px !important;
+    font-size: 18px !important;
+    font-weight: 500;
+    color: #222;
+    appearance: none;            /* enlève la flèche native */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    box-shadow: 0 3px 10px rgba(0, 102, 204, 0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.custom-select-visible:hover,
+.custom-select-visible:focus {
+    border-color: #ff6b35 !important;
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.25);
+    outline: none;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.custom-arrow {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #0066cc;
+    font-size: 16px;
+    pointer-events: none; /* empêche la flèche d'intercepter le clic */
+}
+
     </style>
     <div class="page-header">
         <h3 class="page-title">Lis Fich</h3>
@@ -324,24 +364,36 @@
                     @csrf
                     <div class="row">
                         <!-- Date Filters -->
-                        <div class="col-12 col-md-3">
-                            <div class="form-group">
-                                <label for="date_debut" class="form-label">Komanse</label>
-                                <input type="date" class="form-control form-control-lg" name="date_debut"
-                                    value="{{ old('date_debut') }}" />
-                            </div>
-                            <div class="form-group">
-                                <label for="date_fin" class="form-label">Fini</label>
-                                <input type="date" class="form-control form-control-lg" name="date_fin"
-                                    value="{{ old('date_fin') }}" />
-                            </div>
-                        </div>
+                   <div class="container-fluid">
+    <div class="border p-0 rounded bg-light">
+  <div class="d-flex align-items-end justify-content-between gap-2 flex-nowrap w-100 overflow-hidden">
 
-                        <!-- Bank and Tirage Filters -->
-                        <div class="col-12 col-md-3">
-                            <div class="form-group">
+    <div class="form-group flex-fill position-relative" style="margin-bottom: 8px;">
+      <label for="date_debut" class="form-label">Komanse</label>
+      <input type="date" class="form-control form-control-lg pe-5" name="date_debut">
+      <i class="mdi mdi-calendar position-absolute text-primary"
+         style="right:12px; top:58%; transform:translateY(-50%); pointer-events:none; font-size:22px;"></i>
+    </div>
+
+    <div class="form-group flex-fill position-relative" style="margin-bottom: 8px;">
+      <label for="date_fin" class="form-label">Fini</label>
+      <input type="date" class="form-control form-control-lg pe-5" name="date_fin">
+      <i class="mdi mdi-calendar position-absolute text-primary"
+         style="right:12px; top:58%; transform:translateY(-50%); pointer-events:none; font-size:22px;"></i>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<div class="container-fluid">
+    <div class="border p-0 rounded bg-light">
+        <div class="d-flex align-items-end justify-content-between gap-2 flex-nowrap w-100 overflow-hidden">
+
+<div class="form-group flex-fill" style="margin-bottom: 8px;">
                                 <label for="bank" class="form-label">Bank</label>
-                                <select class="form-control form-control-lg" name="bank">
+                                <select class="form-select form-select-lg custom-select-visible" name="bank">
                                     <option value="Tout">Tout</option>
                                     @foreach ($vendeur as $row)
                                         <option value="{{ $row->id }}" {{ old('bank') == $row->id ? 'selected' : '' }}>
@@ -349,10 +401,11 @@
                                         </option>
                                     @endforeach
                                 </select>
+                              
                             </div>
-                            <div class="form-group">
+                            <div class="form-group flex-fill" style="margin-bottom: 8px;">
                                 <label for="tirage" class="form-label">Tirage</label>
-                                <select class="form-control form-control-lg" name="tirage">
+                                <select class="form-select form-select-lg custom-select-visible" name="tirage">
                                     <option value='Tout'>Tout</option>
                                     @foreach ($tirage as $row)
                                         <option value="{{ $row->id }}" {{ old('tirage') == $row->id ? 'selected' : '' }}>
@@ -361,11 +414,15 @@
                                     @endforeach
                                 </select>
                             </div>
-                        </div>
+        </div>
+    </div>
+</div>
+
+                      
 
                         <!-- Ticket Number Filter -->
                         <div class="col-12 col-md-4">
-                            <div class="form-group">
+                            <div class="form-group" style="margin-bottom: 0px;">
                                 <label for="ticket" class="form-label">#Fich</label>
                                 <input type="text" class="form-control form-control-lg" name="ticket"
                                     placeholder="Antre yon #fich" value="{{ old('ticket') }}" />
@@ -527,8 +584,79 @@
         </div>
     </div>
 
+    <!-- Overlay noir -->
+<div  id="filter-bloc" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);  /* ✅ au lieu d’opacity */
+    z-index: 1000;                 /* s’affiche au-dessus du contenu */
+    display: none;
+    align-items: center;
+    justify-content: center;
+">
+    <!-- Bloc visible au-dessus -->
+    <div class="container-fluid" style="z-index: 1001; max-width: 600px;">
+        <div class="border p-3 rounded bg-light shadow-lg">
+            <div class="d-flex align-items-end justify-content-between gap-2 flex-nowrap w-100 overflow-hidden">
+                <div class="form-group flex-fill mb-2">
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded shadow-sm">
+    <label for="bank" class="form-label mb-0 fw-semibold text-primary">Filtè fich genyen ou pèdi</label>
 
-    <script type="text/javascript">
+    <button onclick="showFiltere()" 
+            class="btn btn-danger rounded-circle d-flex align-items-center justify-content-center" 
+            style="width: 40px; height: 40px; border: none;">
+        <i class="mdi mdi-close fs-5 text-white"></i>
+    </button>
+</div>
+
+                   <div class="position-relative w-100">
+    <select class="form-select form-select-lg custom-select-visible" name="bank">
+        <option value="Tout">Tout</option>
+        <option value="gagnant">Fich ki genyen</option>
+        <option value="perdu">Fich ki pèdi</option>
+    </select>
+    <span class="custom-arrow">
+        ▼
+    </span>
+</div>
+
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div  style="position: fixed;
+    bottom: 0px;
+    /* display: flex; */
+    right: 30px;
+    margin-bottom: 30px;
+   
+    width: 15%;
+    height: 30px;">
+    <button onclick="showFiltere()" class="btn btn-gradient-primary">filter</button>
+</div>
+
+<script>
+     
+    function showFiltere() {
+    const bloc = document.getElementById('filter-bloc');
+    if (bloc.style.display === "none" || bloc.style.display === "") {
+        bloc.style.display = "flex";
+    } else {
+        bloc.style.display = "none";
+    }
+}
+    </script>
+
+    <script
+   
+    
+    type="text/javascript">
         $(document).ready(function () {
             // Function to show and hide the popup 
             function togglePopup() {

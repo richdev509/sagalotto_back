@@ -91,7 +91,7 @@ error_reporting(E_ALL);
 
         .table tbody tr {
             background-color: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            /*box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);*/
             border-radius: 10px;
             transition: transform 0.2s, box-shadow 0.2s;
         }

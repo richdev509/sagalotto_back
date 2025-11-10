@@ -1,9 +1,10 @@
 <div>
     <!-- Skeleton Loading pendant le chargement -->
-    <div class="page-header">
+    <div class="page-header" style="background-color: white;
+    border-radius: 9px;">
         <div class="d-flex flex-wrap align-items-center justify-content-between" style="gap: 8px;">
             <div class="d-flex align-items-center" style="gap:8px;">
-                <span class="page-title-icon bg-gradient-primary text-white me-2">
+                <span class="page-title-icon bg-gradient-primary text-white me-2" style="border-radiu: 100%; margin-left: 5px;">
                     <i class="mdi mdi-home"></i>
                 </span>
                 <h3 class="page-title mb-0">Dashboard</h3>
@@ -55,10 +56,11 @@
         </script>
     @endif
         <div class="col-md-4 stretch-card grid-margin">
-            <div class="card bg-gradient-danger">
+            <div class="card" style="background-color:#f06292;
+    color: white;">
                 <div class="card-body">
                     <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-3">Kob ou vann jodia <i class="mdi mdi-chart-line mdi-24px float-right"></i></h4>
+                    <h4 class="font-weight-normal mb-3">Kob ou vann jodia <i class="mdi mdi-chart-line mdi-24px float-right" style="color:aliceblue;"></i></h4>
                     @if($loading)
                         <div class="d-flex justify-content-center align-items-center" style="height: 50px;">
                             <div class="spinner-border text-light" role="status">
@@ -72,10 +74,11 @@
             </div>
         </div>
         <div class="col-md-4 stretch-card grid-margin">
-            <div class="card bg-gradient-info">
+            <div class="card" style="background-color: #42A5F5;
+    color: white;">
                 <div class="card-body">
                     <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-3">Kob ou peye jodia <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i></h4>
+                    <h4 class="font-weight-normal mb-3">Kob ou peye jodia <i class="mdi mdi-bookmark-outline mdi-24px float-right" style="color: #ffa704;"></i></h4>
                     @if($loading)
                         <div class="d-flex justify-content-center align-items-center" style="height: 50px;">
                             <div class="spinner-border text-light" role="status">
@@ -89,10 +92,13 @@
             </div>
         </div>
         <div class="col-md-4 stretch-card grid-margin">
-            <div class="card bg-gradient-success">
+            <div class="card" style="background-color
+: #26A69A;
+    color: white;">
                 <div class="card-body">
                     <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-3">Balans <i class="mdi mdi-diamond mdi-24px float-right"></i></h4>
+                    <h4 class="font-weight-normal mb-3">Balans <i class="mdi mdi-diamond mdi-24px float-right" style="
+    color: #f9ff04;"></i></h4>
                     @if($loading)
                         <div class="d-flex justify-content-center align-items-center" style="height: 50px;">
                             <div class="spinner-border text-light" role="status">
@@ -108,24 +114,32 @@
     </div>
 
     <div class="cont">
+        <a href="/raport2" style="z-index:1;">
         <div class="column">
-            <a href="/raport2">
+            
                 <i class="icon mdi mdi-account"></i>
                 <span class="text">Bank aktif: <span style="color: var(--success-color);">{{ $actif_user }}</span>/{{ $total_user }}</span>
-            </a>
+           
         </div>
+         </a>
+
+           <a href="/lister-ticket" style="z-index:1;">
         <div class="column">
-            <a href="/lister-ticket">
+          
                 <i class="icon mdi mdi-ticket"></i>
                 <span class="text">Fich genyen: <span style="color: var(--success-color);">{{ $ticket_win }}</span>/{{ $ticket_total }}</span>
-            </a>
+            
         </div>
+        </a>
+
+         <a href="/lister-ticket-delete" style="z-index:1;">
         <div class="column">
-            <a href="/lister-ticket-delete">
+           
                 <i class="icon mdi mdi-delete" style="color: var(--danger-color);"></i>
                 <span class="text">Fich anile: <span style="color: var(--danger-color);">{{ $ticket_delete }}</span>/{{ $ticket_total + $ticket_delete }}</span>
-            </a>
+          
         </div>
+          </a>
     </div>
 
     <div class="row">
