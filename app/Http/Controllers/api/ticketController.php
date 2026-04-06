@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\company;
 use App\Models\User;
 use App\Http\Controllers\api\verificationController as verify;
+use App\Models\branch;
 use App\Models\maryajgratis;
 use App\Models\seting;
 use Carbon\Carbon;
@@ -91,6 +92,21 @@ class ticketController extends Controller
                 ],
                 'code' => '404'
 
+            ], 404,);
+        }
+        //verifier si branch bloquer
+        $br = branch::where([
+            ['id', '=', $vendeur->branch_id],
+            ['is_block', '=', 1],
+        ])->first();
+        if ($br) {
+            return response()->json([
+                'status' => 'false',
+                'message' => [
+                    'info' => 'Gen yon problem',
+                    'boule' => 'Branch ou an bloke',
+                ],
+                'code' => '404'
             ], 404,);
         }
         //check if mariage gratuit is active
@@ -202,7 +218,7 @@ class ticketController extends Controller
 
             if ($i == '0') {
                 $created_at = Carbon::now();
-                $ticketId = time() . '-' .auth()->user()->id;
+                $ticketId = time() . '-' . auth()->user()->id;
                 $query = DB::table('ticket_code')->insertGetId([
                     'code' => $ticketId,
                     'user_id' => auth()->user()->id,
@@ -351,6 +367,21 @@ class ticketController extends Controller
 
             ], 404,);
         }
+                //verifier si branch bloquer
+        $br = branch::where([
+            ['id', '=', $vendeur->branch_id],
+            ['is_block', '=', 1],
+        ])->first();
+        if ($br) {
+            return response()->json([
+                'status' => 'false',
+                'message' => [
+                    'info' => 'Gen yon problem',
+                    'boule' => 'Branch ou an bloke',
+                ],
+                'code' => '404'
+            ], 404,);
+        }
         //check if mariage gratuit is active
         $mg = maryajgratis::where([
             ['compagnie_id', '=', auth()->user()->compagnie_id],
@@ -458,7 +489,7 @@ class ticketController extends Controller
 
             if ($i == '0') {
                 $created_at = Carbon::now();
-                $ticketId = time() . '-' .auth()->user()->id;
+                $ticketId = time() . '-' . auth()->user()->id;
                 $query = DB::table('ticket_code')->insertGetId([
                     'code' => $ticketId,
                     'user_id' => auth()->user()->id,
@@ -475,22 +506,45 @@ class ticketController extends Controller
             }
             //call mariage gratuit if is active
             if ($mg) {
-                $mg_res = verify::generer_gratuit($mg, $montant, $name['name']);
+                $rules_vend = DB::table('rules_vendeurs')
+                    ->where('compagnie_id', auth()->user()->compagnie_id)
+                    ->where('user_id', auth()->user()->id)
+                    ->first();
+                if ($rules_vend) {
+                    if ($rules_vend->maryaj_statut == 1) {
+                        $mg_res = verify::generer_gratuit($mg, $montant, $name['name']);
+                        if ($mg_res != false) {
+                            $maryaj_all[] =  array_merge($mg_res);
+                            $mergedResults = [];
 
-                if ($mg_res != false) {
-                    $maryaj_all[] =  array_merge($mg_res);
-                    $mergedResults = [];
+                            foreach ($maryaj_all as $drawResults) {
+                                // Add each draw's results to the merged list
+                                $mergedResults = array_merge($mergedResults, $drawResults);
+                            }
+                            if (array_key_exists(5, $boule)) {
+                                array_splice($boule, 5, 1);
+                            }
+                            $boule[] = ['mariage_gratis' => $mg_res];
+                        }
+                        unset($mg_res);
+                    }
+                } else {
+                    $mg_res = verify::generer_gratuit($mg, $montant, $name['name']);
+                    if ($mg_res != false) {
+                        $maryaj_all[] =  array_merge($mg_res);
+                        $mergedResults = [];
 
-                    foreach ($maryaj_all as $drawResults) {
-                        // Add each draw's results to the merged list
-                        $mergedResults = array_merge($mergedResults, $drawResults);
+                        foreach ($maryaj_all as $drawResults) {
+                            // Add each draw's results to the merged list
+                            $mergedResults = array_merge($mergedResults, $drawResults);
+                        }
+                        if (array_key_exists(5, $boule)) {
+                            array_splice($boule, 5, 1);
+                        }
+                        $boule[] = ['mariage_gratis' => $mg_res];
                     }
-                    if (array_key_exists(5, $boule)) {
-                        array_splice($boule, 5, 1);
-                    }
-                    $boule[] = ['mariage_gratis' => $mg_res];
+                    unset($mg_res);
                 }
-                unset($mg_res);
             }
             $query = DB::table('ticket_vendu')->insertGetId([
                 'ticket_code_id' => $ticketId,
@@ -583,7 +637,7 @@ class ticketController extends Controller
                     ['ticket_vendu.is_delete', '=', 0],
                     ['ticket_vendu.pending', '=', 0]
                 ])
-                ->whereBetween('ticket_code.created_at', [ $request->date_debut. ' 00:00:00', $request->date_fin.' 23:59:59'  ])
+                ->whereBetween('ticket_code.created_at', [$request->date_debut . ' 00:00:00', $request->date_fin . ' 23:59:59'])
                 //->whereDate('ticket_code.created_at', '<=', $request->date_fin)
                 ->select(
                     'ticket_code.code as ticket_id',

@@ -261,51 +261,51 @@
                                     <th>Vant</th>
                                     <th>Pedi</th>
                                     <th>Komisyon</th>
+                                    <th>Komisyon Sipèvizè</th>
                                     <th>Balans</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @php
-                                    $total = 0;
                                     $vent = 0;
+                                    $totalSuperviseur = 0;
+                                    $totalBalans = 0;
                                 @endphp
                                 @forelse ($vendeur as $row)
                                     <tr>
-                                        <td>{{ DB::table('users')->where('id', $row['bank_name'])->value('bank_name') }}</td>
+                                        <td>{{ $row['bank_name'] }}</td>
                                         <td>{{ $date_debut }} => {{ $date_fin }}</td>
                                         <td>{{ $period }}</td>
                                         <td>{{ $row['vente'] }} HTG</td>
                                         <td>{{ $row['perte'] }} HTG</td>
                                         <td>{{ $row['commission'] }} HTG</td>
+                                        <td>{{ $row['superviseur_commission'] }} HTG</td>
                                         @php
-                                            $total += $row['vente'] - ($row['commission'] + $row['perte']);
+                                            $balans = $row['vente'] - ($row['perte'] + $row['commission'] + $row['superviseur_commission']);
                                             $vent += $row['vente'];
+                                            $totalSuperviseur += $row['superviseur_commission'];
+                                            $totalBalans += $balans;
                                         @endphp
-                                        <td style="color: {{ $row['vente'] < $row['commission'] + $row['perte'] ? 'red' : 'green' }};">
-                                            {{ $row['vente'] - ($row['commission'] + $row['perte']) }} HTG
+                                        <td style="color: {{ $balans < 0 ? 'red' : 'green' }};">
+                                            {{ number_format($balans, 2) }} HTG
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" style="text-align: center">Aucune donnée disponible</td>
+                                        <td colspan="8" style="text-align: center">Aucune donnée disponible</td>
                                     </tr>
                                 @endforelse
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <td><button id="exportJPG" class="btn btn-primary">Telechaje</button></td>
-                                    <td class="text-right" colspan="6">Total: 
-                                        <span style="color: {{ $total > 0 ? 'green' : 'red' }};">{{ $total }} HTG</span>
+                                    <td class="text-right" colspan="7">Total Komisyon Sipèvizè: 
+                                        <span style="color: green;">{{ number_format($totalSuperviseur, 2) }} HTG</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="text-right" colspan="6">% Superviseur: 
-                                        <span style="color: green;">{{ $vent * (session('percent')) / 100 }} HTG</span>
-                                    </td>
-                                    <td class="text-right" colspan="6">Balans: 
-                                        <span style="color: {{ $total - $vent * (session('percent') / 100) > 0 ? 'green' : 'red' }};">
-                                            {{ $total - $vent * (session('percent') / 100) }} HTG
-                                        </span>
+                                    <td class="text-right" colspan="8">Total Balans: 
+                                        <span style="color: {{ $totalBalans < 0 ? 'red' : 'green' }};">{{ number_format($totalBalans, 2) }} HTG</span>
                                     </td>
                                 </tr>
                             </tfoot>

@@ -318,12 +318,18 @@
                                         <td>{{ $perte ?? 0 }}  {{ Session('devise') }}</td>
                                     </tr>
                                     <tr>
-                                        <td>Komisyon:</td>
+                                        <td>Komisyon Vandè:</td>
                                         <td>{{ $commission ?? 0 }} {{ Session('devise') }}</td>
                                     </tr>
+                                    @if(isset($branch_commission) && $branch_ != 'Tout')
+                                    <tr>
+                                        <td>Komisyon Sipèvizè:</td>
+                                        <td>{{ $branch_commission }} {{ Session('devise') }}</td>
+                                    </tr>
+                                    @endif
                                     <tr>
                                         <td>Balans:</td>
-                                        <td>{{ $vente - ($perte + $commission) ?? 0 }} {{ Session('devise') }}</td>
+                                        <td>{{ isset($net_balance) ? $net_balance : ($vente - ($perte + $commission)) ?? 0 }} {{ Session('devise') }}</td>
                                     </tr>
                                 @endif
                             </tbody>

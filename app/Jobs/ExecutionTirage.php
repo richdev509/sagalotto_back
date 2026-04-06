@@ -113,8 +113,8 @@ class ExecutionTirage implements ShouldQueue
         $ficheDatas = "";
         $i = 1;
         if ($fiches != "") {
-             $rules = RulesOne::where('compagnie_id', $compagnieId)->get();
-             $rules2 = maryajgratis::where('compagnie_id', $compagnieId)->get();
+            $rules = RulesOne::where('compagnie_id', $compagnieId)->get();
+            $rules2 = maryajgratis::where('compagnie_id', $compagnieId)->get();
 
             $this->compagnieId = $compagnieId;
             $this->totalfiche = $fiches->count();
@@ -129,18 +129,18 @@ class ExecutionTirage implements ShouldQueue
 
             $codemonitor = $query->id;
             foreach ($fiches as $fiche) {
-                  $numerobranch = $fiche->ticketcode->branch_id;
+                $numerobranch = $fiche->ticketcode->branch_id;
                 //get id vendeur
                 $vendeur_id = $fiche->ticketcode->user_id;
                 //check if the user record in rules_vendeur
-                $rules_vendeur = rules_vendeur::where([
-                    ['compagnie_id', '=', $compagnieId],
-                    ['user_id', '=', $vendeur_id],
-                ])->first();
+                // This syntax doesn't require the array format and is less error-prone
+                $rules_vendeur = rules_vendeur::where('compagnie_id', $compagnieId)
+                    ->where('user_id', $vendeur_id)
+                    ->first();
                 if ($rules_vendeur) {
                     $borletePrice = $rules_vendeur;
                     $maryajgratis = $rules_vendeur->prix_maryaj_gratis;
-                }else{
+                } else {
                     //$borletePrice = 50;
                     // Trouver la règle correspondant au branch_id
                     $rule = $rules->firstWhere('branch_id', $numerobranch);
@@ -361,7 +361,7 @@ class ExecutionTirage implements ShouldQueue
                     }
                 }
                 if (isset($fiche['option2'])) {
-                    $combinaisonGagnante2 = $gagnants->secondchiffre . $gagnants->premierchiffre;
+                    $combinaisonGagnante2 = $gagnants->premierchiffre . $gagnants->secondchiffre;
                     if ($boul1 == $combinaisonGagnante2) {
                         $montantGagne = intval($fiche['option2']) * intval($loto4Price);
                         $this->totalGains = $this->totalGains + $montantGagne;

@@ -60,35 +60,32 @@ class branchController extends Controller
                 notify()->error('branch sa pa trouve');
                 return back();
             }
-            if (!empty($request->input('agent_password'))) {
-                $user = branch::where('id', $request->input('id'))->update([
-                    'name' => $request->input('name'),
-                    'address' => $request->input('address'),
-                    'phone' => $request->input('phone'),
-                    'description'=>$request->input('description'),
-                    'agent_fullname' => $request->input('agent_name'),
-                    'agent_password' => Hash::make($request->input('agent_password')),
-                    'agent_username' => $request->input('agent_username'),
-                    'updated_at' => Carbon::now()
-                ]);
-
-                notify()->success('modifikasyon an fet avek siksè');
-                return back();
-            } else {
-                $user = branch::where('id', $request->input('id'))->update([
-                    'name' => $request->input('name'),
-                    'address' => $request->input('address'),
-                    'phone' => $request->input('phone'),
-                    'description'=>$request->input('description'),
-                    'agent_fullname' => $request->input('agent_name'),
-                    'agent_username' => $request->input('agent_username'),
-                  
-                    'updated_at' => Carbon::now()
-                ]);
-
-                notify()->success('modifikasyon an fet avek siksè');
-                return back();
+            // Check percentage type and set percent_agent_only and percent
+            $percentAgentOnly = 0;
+            $percent = $request->input('percent_value', 0);
+            
+            if ($request->input('percentage_type') === 'agent_only') {
+                $percentAgentOnly = 1;
             }
+
+            $updateData = [
+                'name' => $request->input('name'),
+                'address' => $request->input('address'),
+                'phone' => $request->input('phone'),
+                'description' => $request->input('description'),
+                'agent_fullname' => $request->input('agent_fullname'),
+                'agent_username' => $request->input('agent_username'),
+                'percent_agent_only' => $percentAgentOnly,
+                'percent' => $percent,
+                'updated_at' => Carbon::now(),
+                'is_block' => $request->input('is_block', 0),
+            ];
+            if (!empty($request->input('agent_password'))) {
+                $updateData['agent_password'] = Hash::make($request->input('agent_password'));
+            }
+            branch::where('id', $request->input('id'))->update($updateData);
+            notify()->success('modifikasyon an fet avek siksè');
+            return back();
         } else {
             return view('login');
         }
@@ -112,6 +109,14 @@ class branchController extends Controller
                 return back();
             }
 
+            // Check percentage type and set percent_agent_only and percent
+            $percentAgentOnly = 0;
+            $percent = $request->input('percent_agent_only', 0);
+            
+            if ($request->input('percentage_type') === 'agent_only') {
+                $percentAgentOnly = 1;
+            }
+
             $query = DB::table('branches')->insertGetId([
                 'compagnie_id' => Session('loginId'),
                 'name' => $request->input('name'),
@@ -119,7 +124,9 @@ class branchController extends Controller
                 'phone' => $request->input('phone'),
                 'agent_username' => $request->input('agent_username'), 
                 'agent_fullname' => $request->input('agent_name'),              
-                'agent_password' => Hash::make($request->input('agent_password')),  
+                'agent_password' => Hash::make($request->input('agent_password')),
+                'percent_agent_only' => $percentAgentOnly,
+                'percent' => $percent,
                 'created_at' => Carbon::now()
             ]);
             $branch = branch::find($query);

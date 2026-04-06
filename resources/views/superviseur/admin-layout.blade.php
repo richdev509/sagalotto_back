@@ -64,7 +64,7 @@
 
     <div class="container-scroller">
         <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-            <div class="containerr scroll-right" style="background:orange;color:black;">
+            <div  class="containerr scroll-right" style="background:orange;color:black;display: none;">
                 <marquee behavior="" direction="left">Bloke yon vandè lew ale nan vandè epi lis vandè, chwazi saw vle bloke a nan paj ki paret la kroche bloke epi fe modifye. Imedyatman vande a bloke.                    Ou fe rapo kounya pou yon grenn vande nan yon grenn tiraj</marquee>
             </div>
 

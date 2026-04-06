@@ -71,6 +71,14 @@
             padding: 4px 0;
             /* Further reduced padding */
         }
+        /* Make announcement bar fixed above navbar */
+        .announcement-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1100;
+        }
 
         .scroll-text {
             font-size: 12px;
@@ -96,6 +104,8 @@
             padding: 0.25rem 0.5rem;
             /* Further reduced padding */
         }
+    /* If navbar is fixed this rule pushed it below announcement; navbar is not fixed by default */
+    /* .fixed-top { top: 28px !important; } */
 
         .navbar-brand img {
             height: 25px;
@@ -186,9 +196,15 @@
 </head>
 
 <body>
+    <!-- Fixed top scrolling maintenance message above the navbar -->
+    <div class="scroll-text-container announcement-fixed" style="display: none;">
+        <div class="scroll-text">
+            Bonswa! nan sousi poun bay yon service de pi bon kalite, nap anonsew ke aswe a pati de 11h45 pou rive 2h nan maten nap fe misajou sou systeme nan. merci!
+        </div>
+    </div>
 
     <div class="container-scroller">
-        <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+    <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 d-flex flex-row">
           
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
 
@@ -308,6 +324,7 @@
 
         <!-- partial -->
         <div class="container-fluid page-body-wrapper">
+          
             <!-- partial:partials/_sidebar.html -->
             <nav class="sidebar sidebar-offcanvas" id="sidebar">
                 <ul class="nav">

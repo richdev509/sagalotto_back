@@ -1,0 +1,1331 @@
+@extends('superviseur.admin-layout')
+
+@section('content')
+    <style>
+        .page-header {
+            margin-bottom: 25px;
+        }
+        
+        .page-header h3 {
+            color: #333;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        
+        .modern-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            border: none;
+            overflow: hidden;
+        }
+        
+        .card-header-custom {
+            background: linear-gradient(135deg, #4B49AC 0%, #6f6bb8 100%);
+            padding: 12px 20px;
+            border: none;
+        }
+        
+        .card-title-custom {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .vendor-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .search-box {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+        }
+        
+        .search-box label {
+            font-weight: 500;
+            color: #495057;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #4B49AC;
+            box-shadow: 0 0 0 0.2rem rgba(75, 73, 172, 0.15);
+        }
+        
+        .table-modern {
+            margin-bottom: 0;
+        }
+        
+        .table-modern thead th {
+            background: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            font-size: 14px;
+            border-bottom: 2px solid #dee2e6;
+            padding: 15px 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .table-modern tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .table-modern tbody tr:hover {
+            background: #f8f9ff;
+            transform: scale(1.01);
+            box-shadow: 0 2px 8px rgba(75, 73, 172, 0.1);
+        }
+        
+        .table-modern tbody td {
+            padding: 18px 20px;
+            vertical-align: middle;
+            color: #495057;
+            font-size: 14px;
+        }
+        
+        .badge-code {
+            background: linear-gradient(135deg, #4B49AC 0%, #6f6bb8 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            display: inline-block;
+        }
+        
+        .bank-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+        
+        .username-text {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .username-text i {
+            color: #4B49AC;
+            margin-right: 5px;
+        }
+        
+        .badge-percent {
+            background: linear-gradient(135deg, #00b894 0%, #00d9a3 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            display: inline-block;
+        }
+        
+        .badge-blocked {
+            background: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge-active {
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .btn-edit {
+            background: #4B49AC;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-edit:hover {
+            background: #3d3a8c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(75, 73, 172, 0.3);
+        }
+        
+        .btn-edit i {
+            font-size: 16px;
+        }
+
+        /* Additional action buttons */
+        .btn-prize {
+            background: linear-gradient(135deg, #00b894 0%, #00d9a3 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-prize:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 184, 148, 0.4);
+        }
+
+        .btn-prize i {
+            font-size: 16px;
+        }
+
+        .btn-limit {
+            background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-limit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 118, 117, 0.4);
+        }
+
+        .btn-limit i {
+            font-size: 16px;
+        }
+
+        .action-buttons-group {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        /* Row color indicators */
+        .row-has-limit {
+            background: linear-gradient(to right, rgba(255, 0, 0, 0.08) 0%, rgba(255, 0, 0, 0.02) 100%) !important;
+            border-left: 4px solid #d63031 !important;
+        }
+
+        .row-no-pay-branch {
+            background: linear-gradient(to right, rgba(253, 203, 110, 0.12) 0%, rgba(253, 203, 110, 0.03) 100%) !important;
+            border-left: 4px solid #fdcb6e !important;
+        }
+
+        /* Modal Styles */
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .custom-modal-content {
+            background-color: white;
+            margin: 3% auto;
+            width: 85%;
+            max-width: 900px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .custom-modal-header {
+            padding: 20px 30px;
+            background: linear-gradient(135deg, #4361ee 0%, #6f6bb8 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .custom-modal-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .custom-close-btn {
+            font-size: 28px;
+            cursor: pointer;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .custom-close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .custom-modal-body {
+            padding: 30px;
+        }
+
+        .modal-description {
+            color: #6c757d;
+            margin-bottom: 24px;
+            font-size: 15px;
+        }
+
+        .vendor-name-display {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .vendor-name-display i {
+            font-size: 24px;
+            color: #4361ee;
+        }
+
+        .vendor-name-display strong {
+            font-size: 18px;
+            color: #2d3436;
+        }
+
+        /* Form Styles */
+        .price-form, .limit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .price-section {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .price-section:hover {
+            border-color: #4361ee;
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.1);
+        }
+
+        .section-header {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .section-header:hover {
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+        }
+
+        .section-header h4 {
+            margin: 0;
+            color: #2d3436;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toggle-icon {
+            font-size: 14px;
+            transition: transform 0.2s;
+            color: #6c757d;
+        }
+
+        .section-content {
+            padding: 20px;
+            background-color: white;
+        }
+
+        .price-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .limit-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .price-group, .limit-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-group label, .limit-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .input-group:focus-within {
+            border-color: #4361ee;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .input-label {
+            padding: 10px 15px;
+            background-color: #f8f9fa;
+            border-right: 1px solid #ced4da;
+            font-size: 13px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .price-select, .limit-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            outline: none;
+            background-color: white;
+            font-size: 14px;
+        }
+
+        .price-select {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: relative;
+            cursor: pointer;
+            width: 50px;
+            height: 24px;
+            background-color: #ced4da;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #4361ee;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-label {
+            font-size: 13px;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .cancel-btn {
+            padding: 12px 24px;
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            color: #495057;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .cancel-btn:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .submit-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #4361ee 0%, #6f6bb8 100%);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
+        }
+        
+        .row-number {
+            font-weight: 600;
+            color: #4B49AC;
+            font-size: 14px;
+        }
+        
+        .table-responsive {
+            border-radius: 0 0 10px 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .action-buttons-group {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 5px;
+            }
+            
+            .custom-modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+
+            .price-row, .limit-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <div class="page-header">
+        <h3 class="page-title">
+            <i class="mdi mdi-account-multiple" style="color: #4B49AC; margin-right: 10px;"></i>
+            Lis Vandè Yo
+        </h3>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="admin">Akèy</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Vandè</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card modern-card">
+                <div class="card-header-custom">
+                    <h4 class="card-title-custom">
+                        <span>
+                            <i class="mdi mdi-store"></i>
+                            Tout Vandè Yo
+                        </span>
+                        <span class="vendor-count">
+                            <i class="mdi mdi-counter"></i>
+                            {{ $vendeur->count() }} Vandè
+                        </span>
+                    </h4>
+                </div>
+                
+                <div class="card-body">
+                    <div class="search-box">
+                        <label>
+                            <i class="mdi mdi-magnify"></i>
+                            Chache pa non bank
+                        </label>
+                        <input type="text" class="form-control" id="search" placeholder="Antre non yon bank la...">
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-modern">
+                            <thead>
+                                <tr>
+                                    <th style="width: 80px;">#</th>
+                                    <th style="width: 150px;">Kòd Vandè</th>
+                                    <th>Non Bank</th>
+                                    <th>Itilizatè</th>
+                                    <th style="width: 100px;">Pousantaj</th>
+                                    <th style="width: 100px;">Estati</th>
+                                    <th style="width: 120px;" class="text-end">Aksyon</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                @php $i = 1; @endphp
+                                @foreach ($vendeur as $row)
+                                    @php
+                                        $hasLimit = isset($limitsVendeur[$row->id]);
+                                        $hasNoPayBranch = isset($rulesVendeur[$row->id]);
+                                        $rowClass = '';
+                                        if ($hasLimit) {
+                                            $rowClass = 'row-has-limit';
+                                        } elseif ($hasNoPayBranch) {
+                                            $rowClass = 'row-no-pay-branch';
+                                        }
+                                    @endphp
+                                    <tr class="{{ $rowClass }}">
+                                        <td>
+                                            <span class="row-number">{{ $i }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge-code">
+                                                <i class="mdi mdi-barcode"></i>
+                                                {{ $row->code }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="bank-name">{{ $row->bank_name }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="username-text">
+                                                <i class="mdi mdi-account-key"></i>
+                                                {{ $row->username }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge-percent">
+                                                <i class="mdi mdi-percent"></i>
+                                                {{ $row->percent ?? 0 }}%
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if ($row->is_block == 1)
+                                                <span class="badge-blocked">
+                                                    <i class="mdi mdi-lock"></i> Bloke
+                                                </span>
+                                            @else
+                                                <span class="badge-active">
+                                                    <i class="mdi mdi-check-circle"></i> Aktif
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="action-buttons-group">
+                                                <form action="sup_edit-vendeur" style="display: inline;">
+                                                    <input type="hidden" name="id" value="{{ $row->id }}" />
+                                                    <button type="submit" class="btn-edit">
+                                                        <i class="mdi mdi-pencil"></i>
+                                                        <span>Modifye</span>
+                                                    </button>
+                                                </form>
+                                                
+                                                <button type="button" class="btn-prize" 
+                                                        onclick="openPriLoModal({{ $row->id }}, '{{ $row->bank_name }}', {{ json_encode($rulesVendeur[$row->id] ?? null) }})"
+                                                        title="Pri lo gagnan">
+                                                    <i class="mdi mdi-trophy"></i>
+                                                    <span>Pri Lo</span>
+                                                </button>
+                                                
+                                                <button type="button" class="btn-limit" 
+                                                        onclick="openLimitModal({{ $row->id }}, '{{ $row->bank_name }}', {{ json_encode($limitsVendeur[$row->id] ?? null) }})"
+                                                        title="Limit pri acha">
+                                                    <i class="mdi mdi-cash-lock"></i>
+                                                    <span>Limit</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @php $i = $i + 1; @endphp
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pri Lo Gagnan Modal -->
+    <div id="priLoModal" class="custom-modal">
+        <div class="custom-modal-content">
+            <div class="custom-modal-header">
+                <h3>
+                    <i class="mdi mdi-trophy"></i>
+                    Pri Gagnan Lo
+                </h3>
+                <span class="custom-close-btn" onclick="closePriLoModal()">&times;</span>
+            </div>
+            <div class="custom-modal-body">
+                <div class="vendor-name-display">
+                    <i class="mdi mdi-store"></i>
+                    <strong id="priLoVendorName"></strong>
+                </div>
+                <p class="modal-description">Ajiste pri lo yo pou vandè sa a</p>
+
+                <form class="price-form" action="{{ route('updateprilovendeur') }}" method="POST" id="priLoForm">
+                    @csrf
+                    <input type="hidden" name="id" id="priLoRuleId" />
+                    <input type="hidden" name="user_id" id="priLoUserId" />
+
+                    <!-- Bolet Prices Section -->
+                    <div class="price-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <h4>
+                                <i class="mdi mdi-ticket-confirmation"></i>
+                                Pri Bolet
+                            </h4>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="price-row">
+                                <div class="price-group">
+                                    <label>Pri 1e lo</label>
+                                    <div class="input-group">
+                                        <span class="input-label">X fwa</span>
+                                        <select name="prix" class="price-select" id="prix1" required>
+                                            <option value="">null</option>
+                                            <option value="60">60</option>
+                                            <option value="50">50</option>
+                                            <option value="55">55</option>
+                                            <option value="65">65</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="price-group">
+                                    <label>Pri 2e lo</label>
+                                    <div class="input-group">
+                                        <span class="input-label">X fwa</span>
+                                        <select name="prix_second" class="price-select" id="prix2" required>
+                                            <option value="">null</option>
+                                            <option value="600">600</option>
+                                            <option value="500">500</option>
+                                            <option value="550">550</option>
+                                            <option value="650">650</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="price-group">
+                                    <label>Pri 3e lo</label>
+                                    <div class="input-group">
+                                        <span class="input-label">X fwa</span>
+                                        <select name="prix_third" class="price-select" id="prix3" required>
+                                            <option value="">null</option>
+                                            <option value="3500">3500</option>
+                                            <option value="3000">3000</option>
+                                            <option value="4000">4000</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Maryaj & Loto Section -->
+                    <div class="price-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <h4>
+                                <i class="mdi mdi-cards-heart"></i>
+                                Pri Maryaj ak Loto
+                            </h4>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="price-row">
+                                <div class="price-group">
+                                    <label>Pri maryaj</label>
+                                    <div class="input-group">
+                                        <span class="input-label">X fwa</span>
+                                        <select name="prix_maryaj" class="price-select" id="prixMaryaj" required>
+                                            <option value="">null</option>
+                                            <option value="1000">1000</option>
+                                            <option value="1250">1250</option>
+                                            <option value="1500">1500</option>
+                                            <option value="2000">2000</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="price-group">
+                                    <label>Pri loto3</label>
+                                    <div class="input-group">
+                                        <span class="input-label">X fwa</span>
+                                        <select name="prix_loto3" class="price-select" id="prixLoto3" required>
+                                            <option value="">null</option>
+                                            <option value="1000">1000</option>
+                                            <option value="1250">1250</option>
+                                            <option value="1500">1500</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="price-group">
+                                    <label>Pri loto4</label>
+                                    <div class="input-group">
+                                        <span class="input-label">X fwa</span>
+                                        <select name="prix_loto4" class="price-select" id="prixLoto4" required>
+                                            <option value="">null</option>
+                                            <option value="5000">5000</option>
+                                            <option value="6000">6000</option>
+                                            <option value="7500">7500</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="price-group">
+                                    <label>Pri loto5</label>
+                                    <div class="input-group">
+                                        <span class="input-label">X fwa</span>
+                                        <select name="prix_loto5" class="price-select" id="prixLoto5" required>
+                                            <option value="">null</option>
+                                            <option value="25000">25000</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Maryaj Gratis Section -->
+                    <div class="price-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <div class="section-title">
+                                <h4>
+                                    <i class="mdi mdi-gift"></i>
+                                    Pri Maryaj Gratis
+                                </h4>
+                                <input type="hidden" name="maryaj_statut" value="0">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggleMaryajGratis" name="maryaj_statut" value="1">
+                                    <span class="slider"></span>
+                                    <span class="toggle-label">Aktive</span>
+                                </label>
+                            </div>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="price-row">
+                                <div class="price-group">
+                                    <label>Pri maryaj gratis</label>
+                                    <div class="input-group">
+                                        <select name="prix_maryaj_gratis" class="price-select" id="prixMaryajGratis" required>
+                                            <option value="">null</option>
+                                            <option value="1000">1000</option>
+                                            <option value="1500">1500</option>
+                                            <option value="2000">2000</option>
+                                            <option value="2500">2500</option>
+                                            <option value="3000">3000</option>
+                                            <option value="3500">3500</option>
+                                            <option value="4000">4000</option>
+                                            <option value="4500">4500</option>
+                                            <option value="5000">5000</option>
+                                            <option value="5500">5500</option>
+                                            <option value="6000">6000</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gabel Section -->
+                    <div class="price-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <div class="section-title">
+                                <h4>
+                                    <i class="mdi mdi-alpha-g-circle"></i>
+                                    Pri Gabel
+                                </h4>
+                                <input type="hidden" name="gabel_statut" value="0">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggleGabel" name="gabel_statut" value="1">
+                                    <span class="slider"></span>
+                                    <span class="toggle-label">Aktive</span>
+                                </label>
+                            </div>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="price-row">
+                                <div class="price-group">
+                                    <label>Pri gabel 1e</label>
+                                    <div class="input-group">
+                                        <span class="input-label">X fwa</span>
+                                        <select name="prix_gabel1" class="price-select" id="prixGabel1">
+                                            <option>20</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="price-group">
+                                    <label>Pri gabel 2e</label>
+                                    <div class="input-group">
+                                        <span class="input-label">X fwa</span>
+                                        <select name="prix_gabel2" class="price-select" id="prixGabel2">
+                                            <option>10</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="closePriLoModal()">
+                            <i class="mdi mdi-close"></i>
+                            Fèmen
+                        </button>
+                        <button type="submit" class="submit-btn">
+                            <i class="mdi mdi-check"></i>
+                            Mete a jou
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Limit Pri Acha Modal -->
+    <div id="limitModal" class="custom-modal">
+        <div class="custom-modal-content">
+            <div class="custom-modal-header">
+                <h3>
+                    <i class="mdi mdi-cash-lock"></i>
+                    Limit Pri Acha
+                </h3>
+                <span class="custom-close-btn" onclick="closeLimitModal()">&times;</span>
+            </div>
+            <div class="custom-modal-body">
+                <div class="vendor-name-display">
+                    <i class="mdi mdi-store"></i>
+                    <strong id="limitVendorName"></strong>
+                </div>
+                <p class="modal-description">Defini limit pri acha pou vandè sa a</p>
+
+                <form class="limit-form" action="{{ route('sup_savelimitvendeur') }}" method="POST" id="limitForm">
+                    @csrf
+                    <input type="hidden" name="id" id="limitId" />
+                    <input type="hidden" name="user_id" id="limitUserId" />
+
+                    <!-- Bolet Limit -->
+                    <div class="price-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <div class="section-title">
+                                <h4>
+                                    <i class="mdi mdi-ticket-confirmation"></i>
+                                    Bolet
+                                </h4>
+                                <input type="hidden" name="boletetat" value="0">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="boletetat" value="1" id="boletActive">
+                                    <span class="slider"></span>
+                                    <span class="toggle-label">Aktive</span>
+                                </label>
+                            </div>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="limit-row">
+                                <div class="limit-group">
+                                    <label>Limit Pri (HTG)</label>
+                                    <div class="input-group">
+                                        <span class="input-label">
+                                            <i class="mdi mdi-currency-usd"></i>
+                                        </span>
+                                        <input type="number" name="bolet" class="limit-input" id="limitBolet" 
+                                               placeholder="0" min="0" step="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Maryaj Limit -->
+                    <div class="price-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <div class="section-title">
+                                <h4>
+                                    <i class="mdi mdi-cards-heart"></i>
+                                    Maryaj
+                                </h4>
+                                <input type="hidden" name="maryajetat" value="0">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="maryajetat" value="1" id="maryajActive">
+                                    <span class="slider"></span>
+                                    <span class="toggle-label">Aktive</span>
+                                </label>
+                            </div>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="limit-row">
+                                <div class="limit-group">
+                                    <label>Limit Pri (HTG)</label>
+                                    <div class="input-group">
+                                        <span class="input-label">
+                                            <i class="mdi mdi-currency-usd"></i>
+                                        </span>
+                                        <input type="number" name="maryaj" class="limit-input" id="limitMaryaj" 
+                                               placeholder="0" min="0" step="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loto3 Limit -->
+                    <div class="price-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <div class="section-title">
+                                <h4>
+                                    <i class="mdi mdi-dice-3"></i>
+                                    Loto 3
+                                </h4>
+                                <input type="hidden" name="loto3etat" value="0">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="loto3etat" value="1" id="loto3Active">
+                                    <span class="slider"></span>
+                                    <span class="toggle-label">Aktive</span>
+                                </label>
+                            </div>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="limit-row">
+                                <div class="limit-group">
+                                    <label>Limit Pri (HTG)</label>
+                                    <div class="input-group">
+                                        <span class="input-label">
+                                            <i class="mdi mdi-currency-usd"></i>
+                                        </span>
+                                        <input type="number" name="loto3" class="limit-input" id="limitLoto3" 
+                                               placeholder="0" min="0" step="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loto4 Limit -->
+                    <div class="price-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <div class="section-title">
+                                <h4>
+                                    <i class="mdi mdi-dice-4"></i>
+                                    Loto 4
+                                </h4>
+                                <input type="hidden" name="loto4etat" value="0">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="loto4etat" value="1" id="loto4Active">
+                                    <span class="slider"></span>
+                                    <span class="toggle-label">Aktive</span>
+                                </label>
+                            </div>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="limit-row">
+                                <div class="limit-group">
+                                    <label>Limit Pri (HTG)</label>
+                                    <div class="input-group">
+                                        <span class="input-label">
+                                            <i class="mdi mdi-currency-usd"></i>
+                                        </span>
+                                        <input type="number" name="loto4" class="limit-input" id="limitLoto4" 
+                                               placeholder="0" min="0" step="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loto5 Limit -->
+                    <div class="price-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <div class="section-title">
+                                <h4>
+                                    <i class="mdi mdi-dice-5"></i>
+                                    Loto 5
+                                </h4>
+                                <input type="hidden" name="loto5etat" value="0">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="loto5etat" value="1" id="loto5Active">
+                                    <span class="slider"></span>
+                                    <span class="toggle-label">Aktive</span>
+                                </label>
+                            </div>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="limit-row">
+                                <div class="limit-group">
+                                    <label>Limit Pri (HTG)</label>
+                                    <div class="input-group">
+                                        <span class="input-label">
+                                            <i class="mdi mdi-currency-usd"></i>
+                                        </span>
+                                        <input type="number" name="loto5" class="limit-input" id="limitLoto5" 
+                                               placeholder="0" min="0" step="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="closeLimitModal()">
+                            <i class="mdi mdi-close"></i>
+                            Fèmen
+                        </button>
+                        <button type="submit" class="submit-btn">
+                            <i class="mdi mdi-check"></i>
+                            Anrejistre
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search');
+            const tableBody = document.getElementById('tableBody');
+            const rows = tableBody.getElementsByTagName('tr');
+
+            // Filter function
+            function filterTable() {
+                const searchText = searchInput.value.toLowerCase();
+
+                for (let i = 0; i < rows.length; i++) {
+                    let bankName = rows[i].getElementsByTagName('td')[2].textContent.toLowerCase();
+
+                    // Check if both the bank name and branch match the filter
+                    if ((bankName.includes(searchText) || searchText === '')) {
+                        rows[i].style.display = ''; // Show row
+                    } else {
+                        rows[i].style.display = 'none'; // Hide row
+                    }
+                }
+            }
+
+            // Attach event listeners to the inputs
+            searchInput.addEventListener('input', filterTable);
+        });
+
+        // Pri Lo Modal Functions
+        function openPriLoModal(userId, vendorName, rulesData) {
+            const modal = document.getElementById('priLoModal');
+            const form = document.getElementById('priLoForm');
+            
+            // Set vendor name
+            document.getElementById('priLoVendorName').textContent = vendorName;
+            document.getElementById('priLoUserId').value = userId;
+            
+            // Reset form
+            form.reset();
+            
+            // If rules exist, populate form
+            if (rulesData && rulesData.id) {
+                document.getElementById('priLoRuleId').value = rulesData.id;
+                
+                // Set all price values
+                if (rulesData.prix) document.getElementById('prix1').value = rulesData.prix;
+                if (rulesData.prix_second) document.getElementById('prix2').value = rulesData.prix_second;
+                if (rulesData.prix_third) document.getElementById('prix3').value = rulesData.prix_third;
+                if (rulesData.prix_maryaj) document.getElementById('prixMaryaj').value = rulesData.prix_maryaj;
+                if (rulesData.prix_loto3) document.getElementById('prixLoto3').value = rulesData.prix_loto3;
+                if (rulesData.prix_loto4) document.getElementById('prixLoto4').value = rulesData.prix_loto4;
+                if (rulesData.prix_loto5) document.getElementById('prixLoto5').value = rulesData.prix_loto5;
+                if (rulesData.prix_maryaj_gratis) document.getElementById('prixMaryajGratis').value = rulesData.prix_maryaj_gratis;
+                
+                // Set toggle switches
+                document.getElementById('toggleMaryajGratis').checked = rulesData.maryaj_statut == 1;
+                document.getElementById('toggleGabel').checked = rulesData.gabel_statut == 1;
+            } else {
+                document.getElementById('priLoRuleId').value = '';
+            }
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePriLoModal() {
+            const modal = document.getElementById('priLoModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Limit Modal Functions
+        function openLimitModal(userId, vendorName, limitData) {
+            const modal = document.getElementById('limitModal');
+            const form = document.getElementById('limitForm');
+            
+            // Set vendor name
+            document.getElementById('limitVendorName').textContent = vendorName;
+            document.getElementById('limitUserId').value = userId;
+            
+            // Reset form
+            form.reset();
+            
+            // If limit exists, populate form
+            if (limitData && limitData.id) {
+                document.getElementById('limitId').value = limitData.id;
+                
+                // Set all limit values
+                if (limitData.bolet) document.getElementById('limitBolet').value = limitData.bolet;
+                if (limitData.maryaj) document.getElementById('limitMaryaj').value = limitData.maryaj;
+                if (limitData.loto3) document.getElementById('limitLoto3').value = limitData.loto3;
+                if (limitData.loto4) document.getElementById('limitLoto4').value = limitData.loto4;
+                if (limitData.loto5) document.getElementById('limitLoto5').value = limitData.loto5;
+                
+                // Set toggle switches
+                document.getElementById('boletActive').checked = limitData.boletetat == 1;
+                document.getElementById('maryajActive').checked = limitData.maryajetat == 1;
+                document.getElementById('loto3Active').checked = limitData.loto3etat == 1;
+                document.getElementById('loto4Active').checked = limitData.loto4etat == 1;
+                document.getElementById('loto5Active').checked = limitData.loto5etat == 1;
+            } else {
+                document.getElementById('limitId').value = '';
+            }
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLimitModal() {
+            const modal = document.getElementById('limitModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Toggle section content
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.textContent = '▼';
+            } else {
+                content.style.display = 'none';
+                icon.textContent = '▶';
+            }
+        }
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            const priLoModal = document.getElementById('priLoModal');
+            const limitModal = document.getElementById('limitModal');
+            
+            if (e.target === priLoModal) {
+                closePriLoModal();
+            }
+            if (e.target === limitModal) {
+                closeLimitModal();
+            }
+        });
+
+        // Prevent toggle switch clicks from triggering section collapse
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            });
+        });
+    </script>
+@endsection

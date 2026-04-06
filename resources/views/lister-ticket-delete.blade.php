@@ -308,6 +308,28 @@
     <div class="card">
         <div class="card-body">
 
+            <!-- Date Filter Section -->
+            <div class="card mb-3" style="border-left: 4px solid #ef5555;">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-4 mb-2 mb-md-0">
+                            <label for="filterDate" class="form-label">Filtre pa Dat:</label>
+                            <input type="date" id="filterDate" class="form-control">
+                        </div>
+                        <div class="col-md-4 mb-2 mb-md-0">
+                            <button class="btn btn-danger" onclick="filterByDate()">
+                                <i class="mdi mdi-filter"></i> Filtre
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetFilter()">
+                                <i class="mdi mdi-refresh"></i> Reset
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted">Dènye 30 jou gen ladan jodi a</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="table-responsive">
                 <table class="table table-striped table-hover">
@@ -323,9 +345,9 @@
                             <th>Pa</th>
                         </tr>
                     </thead>
-                    <tbody style="color: #ef5555">
+                    <tbody id="ticketTableBody" style="color: #ef5555">
                         @foreach ($ticket as $row)
-                            <tr>
+                            <tr data-date="{{ \Carbon\Carbon::parse($row->date)->format('Y-m-d') }}">
                                 <td>{{ $row->ticket_id }}</td>
                                 <td>{{ $row->bank }}</td>
                                 <td
@@ -731,6 +753,51 @@
             });
 
 
+        });
+    </script>
+
+    <script>
+        // Date filter functions
+        function filterByDate() {
+            const filterDate = document.getElementById('filterDate').value;
+            const tableBody = document.getElementById('ticketTableBody');
+            const rows = tableBody.getElementsByTagName('tr');
+            
+            if (!filterDate) {
+                alert('Silvouplè chwazi yon dat');
+                return;
+            }
+            
+            let visibleCount = 0;
+            for (let row of rows) {
+                const rowDate = row.getAttribute('data-date');
+                if (rowDate === filterDate) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+            
+            if (visibleCount === 0) {
+                alert('Pa gen tike pou dat sa a');
+            }
+        }
+
+        function resetFilter() {
+            const tableBody = document.getElementById('ticketTableBody');
+            const rows = tableBody.getElementsByTagName('tr');
+            for (let row of rows) {
+                row.style.display = '';
+            }
+            document.getElementById('filterDate').value = '';
+        }
+
+        // Allow Enter key to trigger filter
+        document.getElementById('filterDate').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                filterByDate();
+            }
         });
     </script>
 @endsection

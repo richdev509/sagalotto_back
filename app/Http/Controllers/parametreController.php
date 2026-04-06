@@ -33,46 +33,54 @@ class parametreController extends Controller
 
     public function limitprixview()
     {
+        // Optimized version: eliminate N+1 queries on limit_auto by pre-aggregating totals
+        // Previous implementation executed one SUM query per $limitprixboul row.
+        // We now:
+        // 1. Ensure limitprix row exists via firstOrCreate.
+        // 2. Load all limitprixboul rows for the company.
+        // 3. Run a single grouped query on limit_auto for today's date.
+        // 4. Build an associative lookup array for fast in-memory matching.
 
+        $loginId = session('loginId');
+        $today = Carbon::today()->toDateString();
 
-        $limitprix = limitprixachat::where('compagnie_id', session('loginId'))->first();
-        if (!$limitprix) {
-            $query = limitprixachat::insert([
-                'compagnie_id' => Session('loginId'),
-            ]);
-            $limitprix = limitprixachat::where('compagnie_id', session('loginId'))->first();
-        }
-        $listetirage = tirage_record::where('compagnie_id', session('loginId'))->get();
-        $limitprixboul = limitprixboul::where('compagnie_id', session('loginId'))->orderBy('tirage_record') // Triez par tirage_record
+        // Ensure base limit record exists
+        $limitprix = limitprixachat::firstOrCreate(['compagnie_id' => $loginId]);
+
+        // Fetch related collections
+        $listetirage = tirage_record::where('compagnie_id', $loginId)->get();
+        $limitprixboul = limitprixboul::where('compagnie_id', $loginId)
+            ->orderBy('tirage_record')
             ->get();
 
+        // Single aggregation query for all needed amount sums
+        $amountAggregates = limit_auto::selectRaw('tirage, boule, type, SUM(amount) as total_amount')
+            ->where('compagnie_id', $loginId)
+            ->whereDate('created_at', $today)
+            ->groupBy('tirage', 'boule', 'type')
+            ->get();
+
+        // Build lookup: key = "tirage|boule|type"
+        $amountLookup = [];
+        foreach ($amountAggregates as $row) {
+            $amountLookup[$row->tirage . '|' . $row->boule . '|' . $row->type] = $row->total_amount;
+        }
+
+        // Construct final list using lookup (O(n) without extra queries)
         $list = [];
-
-
         foreach ($limitprixboul as $single_boul) {
-            $amount = limit_auto::where([
-                ['compagnie_id', '=', Session('loginId')],
-                ['tirage', '=', $single_boul->type],
-                ['boule', '=', $single_boul->boul],
-                ['type', '=', lcfirst($single_boul->opsyon)],
-            ])->whereDate('created_at', '=', Carbon::today())
-                ->sum('amount');
-
-
+            $key = $single_boul->type . '|' . $single_boul->boul . '|' . lcfirst($single_boul->opsyon);
+            $amount = $amountLookup[$key] ?? 0;
             $list[] = [
                 'id' => $single_boul->id,
                 'type' => $single_boul->type,
                 'boul' => $single_boul->boul,
-
                 'opsyon' => $single_boul->opsyon,
                 'montant_limit' => $single_boul->montant,
                 'montant_play' => $amount,
-                'created_at' => $single_boul->created_at
-
-
+                'created_at' => $single_boul->created_at,
             ];
         }
-
 
         $listjwet = DB::table('listejwet')->get();
         return view('parametre.limitPrixAchat', compact('limitprix', 'listetirage', 'list', 'listjwet'));
@@ -704,12 +712,14 @@ class parametreController extends Controller
                         'prix_third' => $request->input('prix_third'),
                         'prix_maryaj' => $request->input('prix_maryaj'),
                         'prix_maryaj_gratis' => $request->input('prix_maryaj_gratis'),
+                        // Use input value (hidden field supplies 0 when unchecked, checkbox supplies 1 when checked)
+                        'maryaj_statut' => (int)$request->input('maryaj_statut', 0),
                         'prix_loto3' => $request->input('prix_loto3'),
                         'prix_loto4' => $request->input('prix_loto4'),
                         'prix_loto5' => $request->input('prix_loto5'),
                         'prix_gabel1' => 20,
                         'prix_gabel2' => 10,
-                        'gabel_statut' => 0,
+                        'gabel_statut' => (int)$request->input('gabel_statut', 0),
                     ]);
                     notify()->success('Modifikasyon fet ak sikse');
                     return redirect()->back();
@@ -732,9 +742,11 @@ class parametreController extends Controller
                 $rules_vendeur->prix_loto3 = $request->input('prix_loto3');
                 $rules_vendeur->prix_loto4 = $request->input('prix_loto4');
                 $rules_vendeur->prix_loto5 = $request->input('prix_loto5');
+                // Hidden + checkbox pattern: input('maryaj_statut') will be "0" or "1"
+                $rules_vendeur->maryaj_statut = (int)$request->input('maryaj_statut', 0);
                 $rules_vendeur->prix_gabel1 = 20;
                 $rules_vendeur->prix_gabel2 = 10;
-                $rules_vendeur->gabel_statut = 0;
+                $rules_vendeur->gabel_statut = (int)$request->input('gabel_statut', 0);
                 $rules_vendeur->save();
                 notify()->success('Enregistrement fet ak sikse');
                 return redirect()->back();

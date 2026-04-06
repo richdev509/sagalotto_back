@@ -28,12 +28,6 @@ class Kernel extends ConsoleKernel
         $schedule->job(new blockCompagnie())->dailyAt('18:00');
         $schedule->job(new genereFacture())->dailyAt('01:00');
 
-
-
-
-
-
-
     }
 
     /**

@@ -180,7 +180,7 @@
                             </td>
                             <td valign='top' width='40%' style='text-align: right;'>
                                 <strong>Date de facturation:</strong><br> <?php echo $formattedDate; ?><br />
-                                <strong>Période:</strong><br> <?php echo $formattedDate; ?> au <?php echo $dateexpiration; ?>
+                                {{-- <strong>Période:</strong><br> <?php echo $formattedDate; ?> au <?php echo $dateexpiration; ?><br /> --}}
                             </td>
                         </tr>
                     </table>

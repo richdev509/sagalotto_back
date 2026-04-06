@@ -9,14 +9,79 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 use App\Models\tirage_record;
 use Illuminate\Support\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ajouterLotGagnantController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $list = BoulGagnant::where('compagnie_id', session('loginId'))->orderBy('created_at', 'desc')->paginate(10);;
+        $query = BoulGagnant::where('compagnie_id', session('loginId'))
+            ->with('tirage_record');
+
+        // Filter by date range if provided
+        if ($request->has('date_debut') && $request->has('date_fin')) {
+            $dateDebut = $request->input('date_debut');
+            $dateFin = $request->input('date_fin');
+            
+            if ($dateDebut && $dateFin) {
+                $query->whereBetween('created_', [$dateDebut, $dateFin]);
+            }
+        }
+
+        $list = $query->orderBy('created_at', 'desc')->paginate(10);
+        
         return view('list-lo', compact('list'));
+    }
+
+    public function exportPdf(Request $request)
+    {
+        // Increase memory limit temporarily for PDF generation
+        ini_set('memory_limit', '256M');
+        
+        $query = BoulGagnant::where('compagnie_id', session('loginId'))
+            ->with(['tirage_record' => function($q) {
+                $q->select('id', 'name'); // Only load needed fields
+            }])
+            ->select('id', 'tirage_id', 'unchiffre', 'premierchiffre', 'secondchiffre', 'troisiemechiffre', 'etat', 'created_', 'created_at', 'compagnie_id');
+
+        // Filter by date range if provided
+        if ($request->has('date_debut') && $request->has('date_fin')) {
+            $dateDebut = $request->input('date_debut');
+            $dateFin = $request->input('date_fin');
+            
+            if ($dateDebut && $dateFin) {
+                $query->whereBetween('created_', [$dateDebut, $dateFin]);
+            }
+        }
+
+        // Limit results to prevent memory issues (max 500 records)
+        $list = $query->orderBy('created_at', 'desc')->limit(500)->get();
+        
+        $compagnie = \App\Models\company::select('id', 'name')->find(session('loginId'));
+        
+        $data = [
+            'list' => $list,
+            'dateDebut' => $request->input('date_debut'),
+            'dateFin' => $request->input('date_fin'),
+            'compagnie' => $compagnie,
+            'dateExport' => Carbon::now()->format('d/m/Y H:i:s')
+        ];
+        
+        $pdf = PDF::loadView('pdf.list-lo', $data);
+        $pdf->setPaper('A4', 'portrait');
+        
+        // Additional options to reduce memory usage
+        $pdf->setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => false,
+            'defaultFont' => 'sans-serif',
+            'isFontSubsettingEnabled' => true,
+        ]);
+        
+        $filename = 'list-lo-' . Carbon::now()->format('Y-m-d-His') . '.pdf';
+        
+        return $pdf->download($filename);
     }
     public function loadMore(Request $request)
 {

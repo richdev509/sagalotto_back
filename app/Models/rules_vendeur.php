@@ -15,6 +15,8 @@ class rules_vendeur extends Model
        'prix_second',
        'prix_third',
        'prix_maryaj',
+       'prix_maryaj_gratis',
+       'maryaj_statut',
        'prix_loto3',
        'prix_loto4',
        'prix_loto5',

@@ -2,139 +2,241 @@
 
 @section('content')
     <style>
-        /* Modern color palette */
-        :root {
-            --primary-color: #6c5ce7;
-            --secondary-color: #a29bfe;
-            --success-color: #00b894;
-            --danger-color: #d63031;
-            --background-color: #f8f9fa;
-            --text-color: #2d3436;
+        .page-header {
+            margin-bottom: 25px;
         }
-
-        body {
-            background-color: var(--background-color);
-            color: var(--text-color);
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-control {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px 15px;
-            font-size: 14px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 8px rgba(108, 92, 231, 0.2);
-        }
-
-        .form-label {
+        
+        .page-header h3 {
+            color: #333;
             font-weight: 600;
-            color: var(--text-color);
+            font-size: 1.5rem;
         }
-
-        .btn-gradient-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
+        
+        .card-description{
+            font-weight: bold;
+            color: #333;
             font-size: 16px;
-            font-weight: 600;
-            color: white;
-            transition: opacity 0.3s;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
         }
-
-        .btn-gradient-primary:hover {
-            opacity: 0.9;
+        
+        .form-card {
+            background: white;
+            border-radius: 10px;
+            padding: 0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
-        .form-check-label {
+        
+        .form-content {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+        }
+        
+        .form-group label {
             font-weight: 500;
-            color: var(--text-color);
+            color: #495057;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
-
-        .form-check-input {
-            margin-right: 10px;
+        
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            padding: 10px 15px;
+            transition: all 0.2s ease;
+            font-size: 14px;
         }
-
+        
+        .form-control:focus {
+            border-color: #4B49AC;
+            box-shadow: 0 0 0 0.2rem rgba(75, 73, 172, 0.15);
+        }
+        
+        .form-control:disabled {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .btn-submit {
+            background: #4B49AC;
+            border: none;
+            padding: 10px 30px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 5px;
+            color: white;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-submit:hover {
+            background: #3d3a8c;
+            box-shadow: 0 2px 8px rgba(75, 73, 172, 0.3);
+        }
+        
+        .icon-input {
+            position: relative;
+        }
+        
+        .icon-input i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4B49AC;
+            font-size: 16px;
+        }
+        
+        .icon-input .form-control {
+            padding-left: 45px;
+        }
+        
+        .section-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: #4B49AC;
+            border-radius: 5px;
+            margin-right: 8px;
+            color: white;
+            font-size: 14px;
+        }
+        
         .error {
-            color: var(--danger-color);
-            font-size: 12px;
+            color: #e74c3c;
+            font-size: 13px;
             margin-top: 5px;
+            display: block;
         }
-
-        @media (max-width: 768px) {
-            .col-sm-9 {
-                padding-left: 0;
-            }
-
-            .col-sm-3 {
-                padding-right: 0;
-            }
+        
+        .vendor-info-header {
+            background: linear-gradient(135deg, #4B49AC 0%, #6f6bb8 100%);
+            padding: 15px 25px;
+            margin: -30px -30px 25px -30px;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .vendor-code-display {
+            color: white;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .vendor-code-display i {
+            font-size: 24px;
+        }
+        
+        .vendor-code-display strong {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        .percent-info-box {
+            background: #e8f5e9;
+            border-left: 4px solid #28a745;
+            padding: 12px 15px;
+            border-radius: 5px;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #155724;
+        }
+        
+        .percent-info-box i {
+            margin-right: 8px;
+        }
+        
+        .percent-warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 15px;
+            border-radius: 5px;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #856404;
+        }
+        
+        .percent-warning-box i {
+            margin-right: 8px;
+        }
+        
+        .form-check {
+            padding-left: 0;
+        }
+        
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        .form-check-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #495057;
+            cursor: pointer;
         }
     </style>
 
     <div class="page-header">
-        <h3 class="page-title">
-            <span class="page-title-icon bg-gradient-primary text-white me-2">
-                <i class="mdi mdi-account-edit"></i>
-            </span> Fom modifye vandè
-        </h3>
+        <h3 class="page-title">Modifye Vandè</h3>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="admin">Akèy</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Vandè</li>
+                <li class="breadcrumb-item active" aria-current="page">Modifye Vandè</li>
             </ol>
         </nav>
     </div>
 
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-body">
+            <div class="card form-card">
+                <div class="card-body form-content">
+                    <div class="vendor-info-header">
+                        <div class="vendor-code-display">
+                            <i class="mdi mdi-barcode"></i>
+                            <span>Kòd Vandè:</span>
+                            <strong>{{ $vendeur->code }}</strong>
+                        </div>
+                    </div>
+                    
                     <form class="form-sample" method="post" action="sup_update-vendeur">
                         @csrf
-                        <p class="card-description">Info sou vandè a</p>
+                        <p class="card-description">
+                            <span class="section-icon">
+                                <i class="mdi mdi-information"></i>
+                            </span>
+                            Info Sou Vandè A
+                        </p>
 
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Tout non vandè a</label>
-                                    <div class="col-sm-9">
+                                    <label class="col-sm-3 col-form-label">Tout Non Vandè A</label>
+                                    <div class="col-sm-9 icon-input">
                                         <input type="hidden" name="id" value="{{ $vendeur->id }}" class="form-control" />
-                                        <input type="text" name="name" value="{{ $vendeur->name }}" class="form-control" placeholder="non konplè" />
+                                        <i class="mdi mdi-account"></i>
+                                        <input type="text" name="name" value="{{ $vendeur->name }}" class="form-control" placeholder="Non konplè" />
                                         <span class="error">@error('name') {{ $message }} @enderror</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Adrès vandè a</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" name="address" value="{{ $vendeur->address }}" class="form-control" placeholder="adrès vandè a" />
+                                    <label class="col-sm-3 col-form-label">Adrès Vandè A</label>
+                                    <div class="col-sm-9 icon-input">
+                                        <i class="mdi mdi-map-marker"></i>
+                                        <input type="text" name="address" value="{{ $vendeur->address }}" class="form-control" placeholder="Adrès vandè a" />
                                         <span class="error">@error('address') {{ $message }} @enderror</span>
                                     </div>
                                 </div>
@@ -144,8 +246,9 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Seks</label>
-                                    <div class="col-sm-9">
+                                    <label class="col-sm-3 col-form-label">Sèks</label>
+                                    <div class="col-sm-9 icon-input">
+                                        <i class="mdi mdi-gender-male-female"></i>
                                         <select class="form-control" name="gender">
                                             <option selected>{{ $vendeur->gender }}</option>
                                             @if ($vendeur->gender == 'Fi')
@@ -159,9 +262,10 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Telefon vandè a</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" value="{{ $vendeur->phone }}" placeholder="Telefon vandè a" name="phone" />
+                                    <label class="col-sm-3 col-form-label">Telefòn Vandè A</label>
+                                    <div class="col-sm-9 icon-input">
+                                        <i class="mdi mdi-phone"></i>
+                                        <input type="text" class="form-control" value="{{ $vendeur->phone }}" placeholder="Nimewo telefòn" name="phone" />
                                         <span class="error">@error('phone') {{ $message }} @enderror</span>
                                     </div>
                                 </div>
@@ -171,15 +275,47 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Pousantaj sou vant</label>
-                                    <div class="col-sm-9">
-                                        <input type="number"  class="form-control" value="{{ $vendeur->percent }}" placeholder="pousantaj" name="percent"  disabled/>
+                                    <label class="col-sm-3 col-form-label">Pousantaj Sou Vant</label>
+                                    <div class="col-sm-9 icon-input">
+                                        <i class="mdi mdi-percent"></i>
+                                        @if($branch && $branch->percent_agent_only == 0)
+                                            <input type="number" class="form-control" value="{{ $vendeur->percent }}" placeholder="Pousantaj" name="percent" min="0" max="{{ $branch->percent }}" step="0.01" id="percentInput"/>
+                                            <div class="percent-info-box">
+                                                <i class="mdi mdi-information"></i>
+                                                Ou ka ajiste pousantaj la jiska maksimòm {{ $branch->percent }}%
+                                            </div>
+                                        @else
+                                            <input type="number" class="form-control" value="{{ $vendeur->percent }}" placeholder="Pousantaj" name="percent" disabled/>
+                                            <div class="percent-warning-box">
+                                                <i class="mdi mdi-lock"></i>
+                                                Pousantaj la pa ka modifye (Branch konfigire pou sipèvizè sèlman)
+                                            </div>
+                                        @endif
                                         <span class="error">@error('percent') {{ $message }} @enderror</span>
                                     </div>
                                 </div>
                             </div>
                            
                         </div>
+                        
+                        @if($branch && $branch->percent_agent_only == 0)
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const percentInput = document.getElementById('percentInput');
+                                const maxPercent = {{ $branch->percent }};
+                                
+                                percentInput.addEventListener('input', function() {
+                                    if (parseFloat(this.value) > maxPercent) {
+                                        this.value = maxPercent;
+                                        alert('Pousantaj la pa ka depase ' + maxPercent + '%');
+                                    }
+                                    if (parseFloat(this.value) < 0) {
+                                        this.value = 0;
+                                    }
+                                });
+                            });
+                        </script>
+                        @endif
 
                         <div class="row">
                             <div class="col-md-6">
@@ -195,23 +331,30 @@
                             </div>
                         </div>
 
-                        <p class="card-description">Bank info</p>
+                        <p class="card-description">
+                            <span class="section-icon">
+                                <i class="mdi mdi-cellphone"></i>
+                            </span>
+                            Info Bank
+                        </p>
 
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Non bank lan</label>
-                                    <div class="col-sm-9">
-                                        <input type="text"  name="bank_name" value="{{ $vendeur->bank_name }}" class="form-control" placeholder="Egzanp: bank1" disabled />
+                                    <label class="col-sm-3 col-form-label">Non Bank Lan</label>
+                                    <div class="col-sm-9 icon-input">
+                                        <i class="mdi mdi-store"></i>
+                                        <input type="text" name="bank_name" value="{{ $vendeur->bank_name }}" class="form-control" placeholder="Egzanp: bank1" disabled />
                                         <span class="error">@error('bank_name') {{ $message }} @enderror</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">ID machi nan</label>
-                                    <div class="col-sm-9">
-                                        <input type="text"  name="bank_id" value="{{ $vendeur->android_id }}" class="form-control" disabled />
+                                    <label class="col-sm-3 col-form-label">ID Machi Nan</label>
+                                    <div class="col-sm-9 icon-input">
+                                        <i class="mdi mdi-cellphone-android"></i>
+                                        <input type="text" name="bank_id" value="{{ $vendeur->android_id }}" class="form-control" disabled />
                                         <span class="error">@error('bank_id') {{ $message }} @enderror</span>
                                     </div>
                                 </div>
@@ -222,17 +365,22 @@
                             <div class="col-md-6">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Itilizatè</label>
-                                    <div class="col-sm-9">
-                                        <input type="text"  name="username" value="{{ $vendeur->username }}" class="form-control" disabled />
+                                    <div class="col-sm-9 icon-input">
+                                        <i class="mdi mdi-account-key"></i>
+                                        <input type="text" name="username" value="{{ $vendeur->username }}" class="form-control" disabled />
+                                        <small style="color: #6c757d; font-size: 12px; display: block; margin-top: 5px;">
+                                            <i class="mdi mdi-information-outline"></i> Non itilizatè pa ka chanje
+                                        </small>
                                         <span class="error">@error('username') {{ $message }} @enderror</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Modepas</label>
-                                    <div class="col-sm-9">
-                                        <input type="password" name="password" class="form-control" />
+                                    <label class="col-sm-3 col-form-label">Modpas</label>
+                                    <div class="col-sm-9 icon-input">
+                                        <i class="mdi mdi-lock"></i>
+                                        <input type="password" name="password" class="form-control" placeholder="Kite vid si w pa vle chanje" />
                                         <span class="error">@error('password') {{ $message }} @enderror</span>
                                     </div>
                                 </div>
@@ -240,9 +388,10 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-12 text-right">
-                                <button type="submit" class="btn btn-gradient-primary">
-                                    <i class="mdi mdi-content-save"></i> Modifye
+                            <div class="col-12 text-center" style="margin-top: 30px;">
+                                <button type="submit" class="btn-submit">
+                                    <i class="mdi mdi-check-circle"></i>
+                                    Modifye Vandè A
                                 </button>
                             </div>
                         </div>

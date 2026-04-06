@@ -17,83 +17,241 @@ use App\Models\tirage_record;
 
 class adminController extends Controller
 {
+    /**
+     * List vendors for the current supervisor's branch.
+     */
+    public function index_vendeur()
+    {
+        if (!Session('branchId')) {
+            return view('superviseur.login');
+        }
+
+        $vendeur = User::where([
+            ['branch_id', '=', Session('branchId')],
+            ['is_delete', '=', 0],
+        ])->get();
+
+        // View path used previously for supervisor area
+        return view('superviseur.list-vendeur', ['vendeur' => $vendeur]);
+    }
+
+    /**
+     * Edit a vendor belonging to the current supervisor's branch.
+     */
+    public function edit_vendeur(Request $request)
+    {
+        if (!Session('branchId')) {
+            return view('superviseur.login');
+        }
+
+        $vendeur = User::where([
+            ['branch_id', '=', Session('branchId')],
+            ['id', '=', $request->input('id')],
+            ['is_delete', '=', 0],
+        ])->first();
+
+        if (!$vendeur) {
+            notify()->error('Gen yon ere ki pase');
+            return back();
+        }
+
+        // Fetch branch (single model) for percent / configuration checks in view
+        $branch = branch::find(Session('branchId'));
+
+        return view('superviseur.edit_vendeur', [
+            'vendeur' => $vendeur,
+            'branch' => $branch,
+        ]);
+    }
+
+    /**
+     * Update vendor information. Do not update percent when percent_agent_only=1.
+     * When percent_agent_only=0, clamp vendor percent to [0, branch.percent].
+     */
+    public function update_vendeur(Request $request)
+    {
+        if (!Session('branchId')) {
+            return view('superviseur.login');
+        }
+
+        // Basic validation
+        $validated = $request->validate([
+            'id' => 'required|integer',
+            'name' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'gender' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|max:30',
+            'percent' => 'nullable|numeric|min:0',
+            'password' => 'nullable|string|min:4',
+        ]);
+
+        $branch = branch::find(Session('branchId'));
+
+        // Find vendor in current supervisor branch
+        $vendeur = User::where([
+            ['id', '=', $validated['id']],
+            ['branch_id', '=', Session('branchId')],
+            ['is_delete', '=', 0],
+        ])->first();
+
+        if (!$vendeur) {
+            notify()->error('Gen yon ere ki pase');
+            return back();
+        }
+
+        // Prepare updates
+        $updateData = [
+            'name' => $validated['name'],
+            'address' => $validated['address'] ?? $vendeur->address,
+            'gender' => $validated['gender'] ?? $vendeur->gender,
+            'phone' => $validated['phone'] ?? $vendeur->phone,
+            'is_block' => $request->has('block') ? '1' : '0',
+        ];
+
+        // Update password only if provided
+        if (!empty($validated['password'] ?? null)) {
+            $updateData['password'] = Hash::make($validated['password']);
+        }
+
+        // Server-side enforcement for percent rules
+        if ($branch && (int)$branch->percent_agent_only === 0) {
+            // Allow updating percent but clamp to [0, branch.percent]
+            if ($request->filled('percent')) {
+                $newPercent = (float)$request->input('percent');
+                $newPercent = max(0, $newPercent);
+                if (isset($branch->percent)) {
+                    $newPercent = min((float)$branch->percent, $newPercent);
+                }
+                $updateData['percent'] = $newPercent;
+            }
+        } // else percent_agent_only=1 => ignore any incoming percent
+
+        foreach ($updateData as $key => $val) {
+            $vendeur->{$key} = $val;
+        }
+        $vendeur->save();
+
+        notify()->success('Vandè a modifye avèk siksè');
+        return back();
+    }
+
     public function admin()
     {
-        if (Session('branchId')) {
+        if (!Session('branchId')) {
+            return view('superviseur/login');
+        }
 
-            $date1 = Carbon::now()->format('Y-m-d') . ' 00:00:00';
-            $date2 = Carbon::now()->format('Y-m-d') . ' 23:59:59';
-            $ticketCodes = DB::table('ticket_code')
-                ->where('branch_id', '=', Session('branchId'))
-                ->whereBetween('created_at', [$date1, $date2])
-                //->whereDate('created_at', '=', $today)
-                ->pluck('code');
+        $branchId = Session('branchId');
 
-            $data = DB::table('ticket_vendu')
-                ->whereIn('ticket_code_id', $ticketCodes)
-                ->where([
-                    ['is_delete', '=', 0],
-                    ['is_cancel', '=', 0],
-                    ['pending', '=', 0],
+        $dateStart = Carbon::today()->startOfDay();
+        $dateEnd   = Carbon::today()->endOfDay();
 
-                ])
-                ->selectRaw('SUM(ticket_vendu.amount) as total_amount, 
-                             SUM(ticket_vendu.winning) as total_winning, 
-                             SUM(ticket_vendu.commission) as total_commission')
-                ->first();
+        /**
+         * =================================================
+         * 1️⃣ DAILY TOTALS (OPTIMIZED JOIN)
+         * =================================================
+         */
+        $data = DB::table('ticket_vendu as tv')
+            ->join('ticket_code as tc', 'tc.code', '=', 'tv.ticket_code_id')
+            ->where('tc.branch_id', $branchId)
+            ->whereBetween('tc.created_at', [$dateStart, $dateEnd])
+            ->where([
+                ['tv.is_delete', 0],
+                ['tv.is_cancel', 0],
+                ['tv.pending', 0],
+            ])
+            ->selectRaw('
+            COALESCE(SUM(tv.amount),0) as total_amount,
+            COALESCE(SUM(tv.winning),0) as total_winning,
+            COALESCE(SUM(tv.commission),0) as total_commission
+        ')
+            ->first();
 
-            $vente = $data->total_amount;
-            $perte = $data->total_winning;
-            $commission = $data->total_commission;
+        $vente      = $data->total_amount;
+        $perte      = $data->total_winning;
+        $commission = $data->total_commission;
 
+        /**
+         * =================================================
+         * 2️⃣ LAST 3 DRAWS WITH FINANCIALS (SINGLE OPTIMIZED QUERY)
+         * =================================================
+         */
+        $lista = BoulGagnant::with('tirage_record:id,name')
+            ->where('compagnie_id', session('compagnieId'))
+            ->latest('created_at')
+            ->limit(3)
+            ->get();
 
+        $list = [];
 
-            $lista = BoulGagnant::where('compagnie_id', session('compagnieId'))
-                ->latest('created_at')
-                ->take(3)
-                ->get();
+        if ($lista->isNotEmpty()) {
 
-            $list = [];
+            /**
+             * =================================================
+             * 3️⃣ BATCH FINANCIAL AGGREGATES (OPTIMIZED - NO DATE() FUNCTION)
+             * Index recommendation: CREATE INDEX idx_tc_branch_date ON ticket_code(branch_id, created_at);
+             * Index recommendation: CREATE INDEX idx_tv_tirage_status ON ticket_vendu(tirage_record_id, is_delete, is_cancel, pending);
+             * =================================================
+             */
+            $tirageIds = $lista->pluck('tirage_id')->unique()->toArray();
 
-
-            foreach ($lista as $boulGagnant) {
-                $codes = ticket_code::where('branch_id', session('branchId'))
-                    ->whereDate('created_at', $boulGagnant->created_)
-                    ->pluck('code')
-                    ->toArray();
-
-                $vent = TicketVendu::whereIn('ticket_code_id', $codes)
-                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)
-                    ->sum('amount');
-                /* $vente =TicketVendu::where('tirage_record_id',$boulGagnant->tirage_id)
-                    ->whereDate('created_at', $boulGagnant->created_)
-                    ->sum('amount');
-                    dd($vente,);*/
-                $pert = TicketVendu::whereIn('ticket_code_id', $codes)
-                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)
-                    ->sum('winning');
-
-                $commissio = TicketVendu::whereIn('ticket_code_id', $codes)
-                    ->where('tirage_record_id', $boulGagnant->tirage_id)->where('is_delete', 0)->where('is_cancel', 0)
-                    ->sum('commission');
-                $tirageName = $boulGagnant->tirage_record->name;
-                $list[] = [
-                    'boulGagnant' => $boulGagnant,
-                    'vent' => $vent,
-                    'pert' => $pert,
-                    'commissio' => $commissio,
-                    'name' => $tirageName
-
-
-                ];
+            // Build date-tirage pairs for IN clause (more efficient than range scan)
+            $dateRanges = [];
+            foreach ($lista as $item) {
+                $dateStart = $item->created_ . ' 00:00:00';
+                $dateEnd = $item->created_ . ' 23:59:59';
+                $dateRanges[$item->created_] = [$dateStart, $dateEnd];
             }
 
+            // Aggregate by building CASE statements for each date
+            $selectCases = [];
+            $groupKeys = [];
+            foreach ($lista as $item) {
+                $date = $item->created_;
+                $tirageId = $item->tirage_id;
+                $key = "{$date}|{$tirageId}";
+                $groupKeys[$key] = ['date' => $date, 'tirage' => $tirageId];
+            }
 
-            return view('superviseur.admin', ['vente' => $vente, 'perte' => $perte, 'list' => $list, 'commission' => $commission]);
-        } else {
-            return view('/superviseur/login');
+            // Single query with conditional aggregation (avoids DATE() function)
+            $financialData = [];
+            foreach ($lista as $boulGagnant) {
+                $dateStart = $boulGagnant->created_ . ' 00:00:00';
+                $dateEnd = $boulGagnant->created_ . ' 23:59:59';
+                
+                $result = DB::table('ticket_vendu as tv')
+                    ->join('ticket_code as tc', 'tc.code', '=', 'tv.ticket_code_id')
+                    ->where('tc.branch_id', $branchId)
+                    ->whereBetween('tc.created_at', [$dateStart, $dateEnd])
+                    ->where('tv.tirage_record_id', $boulGagnant->tirage_id)
+                    ->where('tv.is_delete', 0)
+                    ->where('tv.is_cancel', 0)
+                    ->where('tv.pending', 0)
+                    ->selectRaw('
+                        COALESCE(SUM(tv.amount), 0) as vent,
+                        COALESCE(SUM(tv.winning), 0) as pert,
+                        COALESCE(SUM(tv.commission), 0) as commissio
+                    ')
+                    ->first();
+
+                $list[] = [
+                    'boulGagnant' => $boulGagnant,
+                    'vent'       => $result->vent ?? 0,
+                    'pert'       => $result->pert ?? 0,
+                    'commissio'  => $result->commissio ?? 0,
+                    'name'       => $boulGagnant->tirage_record->name ?? '',
+                ];
+            }
         }
+
+        return view('superviseur.admin', [
+            'vente'      => $vente,
+            'perte'      => $perte,
+            'commission' => $commission,
+            'list'       => $list,
+        ]);
     }
+
     public function login(Request $request)
     {
         $username =  $request->input('username');
@@ -136,10 +294,35 @@ class adminController extends Controller
             } else {
                 notify()->error('non itilizate a inkorek');
 
-                return redirect('/superviseur/login')->with('error', 'Utilisateur non trouve');
+                return redirect('/superviseur/login');
             }
         }
     }
+
+    /**
+     * Calculate branch commission based on percent_agent_only mode
+     * @param object $branchData Branch model instance
+     * @param float $vente Total sales amount
+     * @param float $userPercent User commission percentage (default 0)
+     * @return float Branch commission amount
+     */
+    private function calculateBranchCommission($branchData, $vente, $userPercent = 0)
+    {
+        // Defensive: ensure we have a branch model instance
+        if (!$branchData || !is_object($branchData)) {
+            return 0.0;
+        }
+        if ($branchData->percent_agent_only == 0) {
+            // Differential mode: branch gets difference between branch% and user%
+            $diffPercent = max(0, $branchData->percent - $userPercent);
+            $branchCommission = ($vente * $diffPercent) / 100;
+        } else {
+            // Direct mode: branch gets full branch% from sales
+            $branchCommission = ($vente * $branchData->percent) / 100;
+        }
+        return round($branchCommission, 2);
+    }
+
     public function create_rapport(Request $request)
     {
         if (Session('branchId')) {
@@ -370,10 +553,14 @@ class adminController extends Controller
                         return view('rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'ticket_paid' => $ticket_peye, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => $name_bank->bank_name, 'tirage_' => $name_tirage->name, 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission, 'branch' => $branch, 'branch_' => 'Tout']);
                     }
                 } else {
+                    // Branch-specific reports with commission calculation
+                    $branchId = $request->input('branch');
+                    $branchData = branch::find($branchId);
+
                     if ($request->input('bank') == 'Tout' && $request->input('tirage') == 'Tout') {
 
                         $ticketCodes = DB::table('ticket_code')
-                            ->where('branch_id', '=', $request->input('branch'))
+                            ->where('branch_id', '=', $branchId)
                             ->whereBetween('created_at', [$date_debut1, $date_fin1])
                             ->pluck('code');
 
@@ -394,12 +581,35 @@ class adminController extends Controller
                                 DB::raw('COUNT(CASE WHEN is_payed = 1 THEN 1 END) as total_ticket_paye')
                             )->first();
 
-                        $vente = $result->total_vente;
-                        $perte = $result->total_perte;
-                        $commission = $result->total_commission;
-                        $ticket_win = $result->total_ticket_win;
-                        $ticket_lose = $result->total_ticket_lose;
-                        $ticket_peye = $result->total_ticket_paye;
+                        $vente = $result->total_vente ?? 0;
+                        $perte = $result->total_perte ?? 0;
+                        $commission = $result->total_commission ?? 0;
+                        $ticket_win = $result->total_ticket_win ?? 0;
+                        $ticket_lose = $result->total_ticket_lose ?? 0;
+                        $ticket_peye = $result->total_ticket_paye ?? 0;
+
+                        // Get per-user sales for branch commission calculation
+                        $userVentes = DB::table('ticket_code')
+                            ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                            ->join('users', 'users.id', '=', 'ticket_code.user_id')
+                            ->where('ticket_code.branch_id', $branchId)
+                            ->whereBetween('ticket_code.created_at', [$date_debut1, $date_fin1])
+                            ->where('ticket_vendu.is_cancel', 0)
+                            ->where('ticket_vendu.is_delete', 0)
+                            ->where('ticket_vendu.pending', 0)
+                            ->groupBy('ticket_code.user_id', 'users.percent')
+                            ->select('ticket_code.user_id', 'users.percent as user_percent', DB::raw('SUM(ticket_vendu.amount) as user_vente'))
+                            ->get();
+
+                        // Safely accumulate branch commission only if branchData is a valid model instance
+                        $branchCommission = 0;
+                        if ($branchData) {
+                            foreach ($userVentes as $uv) {
+                                $branchCommission += $this->calculateBranchCommission($branchData, $uv->user_vente, $uv->user_percent);
+                            }
+                        }
+
+                        $netBalance = $vente - $perte - $commission - $branchCommission;
 
 
                         //get vendeur
@@ -421,9 +631,28 @@ class adminController extends Controller
                             ['id', '=', Session('branchId')]
                         ])->get();
                         $name_branch = branch::where([
-                            ['id', '=', $request->input('branch')]
+                            ['id', '=', $branchId]
                         ])->select('name')->first();
-                        return view('superviseur.rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'ticket_paid' => $ticket_peye, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => 'Tout', 'tirage_' => 'Tout', 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission, 'branch' => $branch, 'branch_' => $name_branch->name]);
+
+                        return view('superviseur.rapport', [
+                            'vente' => $vente,
+                            'perte' => $perte,
+                            'ticket_win' => $ticket_win,
+                            'ticket_lose' => $ticket_lose,
+                            'ticket_paid' => $ticket_peye,
+                            'date_debut' => $request->input('date_debut'),
+                            'date_fin' => $request->input('date_fin'),
+                            'bank' => 'Tout',
+                            'tirage_' => 'Tout',
+                            'is_calculated' => 1,
+                            'vendeur' => $user,
+                            'tirage' => $tirage,
+                            'commission' => $commission,
+                            'branch' => $branch,
+                            'branch_' => $name_branch->name,
+                            'branch_commission' => round($branchCommission, 2),
+                            'net_balance' => round($netBalance, 2)
+                        ]);
                     } elseif ($request->input('bank') == 'Tout' && $request->input('tirage') != 'Tout') {
                         $ticketCodes = DB::table('ticket_code')
                             ->where('branch_id', '=', $request->input('branch'))
@@ -448,13 +677,36 @@ class adminController extends Controller
                                 DB::raw('COUNT(CASE WHEN is_payed = 1 THEN 1 END) as total_ticket_paye')
                             )->first();
 
-                        $vente = $result->total_vente;
-                        $perte = $result->total_perte;
-                        $commission = $result->total_commission;
-                        $ticket_win = $result->total_ticket_win;
-                        $ticket_lose = $result->total_ticket_lose;
-                        $ticket_peye = $result->total_ticket_paye;
+                        $vente = $result->total_vente ?? 0;
+                        $perte = $result->total_perte ?? 0;
+                        $commission = $result->total_commission ?? 0;
+                        $ticket_win = $result->total_ticket_win ?? 0;
+                        $ticket_lose = $result->total_ticket_lose ?? 0;
+                        $ticket_peye = $result->total_ticket_paye ?? 0;
 
+                        // Get per-user sales for branch commission calculation
+                        $userVentes = DB::table('ticket_code')
+                            ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+                            ->join('users', 'users.id', '=', 'ticket_code.user_id')
+                            ->where('ticket_code.branch_id', $branchId)
+                            ->where('ticket_vendu.tirage_record_id', $request->input('tirage'))
+                            ->whereBetween('ticket_code.created_at', [$date_debut1, $date_fin1])
+                            ->where('ticket_vendu.is_cancel', 0)
+                            ->where('ticket_vendu.is_delete', 0)
+                            ->where('ticket_vendu.pending', 0)
+                            ->groupBy('ticket_code.user_id', 'users.percent')
+                            ->select('ticket_code.user_id', 'users.percent as user_percent', DB::raw('SUM(ticket_vendu.amount) as user_vente'))
+                            ->get();
+
+                        // Safely accumulate branch commission only if branchData is a valid model instance
+                        $branchCommission = 0;
+                        if ($branchData) {
+                            foreach ($userVentes as $uv) {
+                                $branchCommission += $this->calculateBranchCommission($branchData, $uv->user_vente, $uv->user_percent);
+                            }
+                        }
+
+                        $netBalance = $vente - $perte - $commission - $branchCommission;
 
                         //get vendeur
                         $user = User::where([
@@ -467,7 +719,6 @@ class adminController extends Controller
                             ->first();
                         $tirage = tirage_record::where([
                             ['compagnie_id', '=', $company->compagnie_id]
-
                         ])->select('tirage_record.id', 'tirage_record.name')
                             ->get();
                         //get tirage name
@@ -479,9 +730,28 @@ class adminController extends Controller
                             ['id', '=', Session('branchId')]
                         ])->get();
                         $name_branch = branch::where([
-                            ['id', '=', $request->input('branch')]
+                            ['id', '=', $branchId]
                         ])->select('name')->first();
-                        return view('superviseur.rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'ticket_paid' => $ticket_peye, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => 'Tout', 'tirage_' => $name_tirage->name, 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission, 'branch' => $branch, 'branch_' => $name_branch->name]);
+
+                        return view('superviseur.rapport', [
+                            'vente' => $vente,
+                            'perte' => $perte,
+                            'ticket_win' => $ticket_win,
+                            'ticket_lose' => $ticket_lose,
+                            'ticket_paid' => $ticket_peye,
+                            'date_debut' => $request->input('date_debut'),
+                            'date_fin' => $request->input('date_fin'),
+                            'bank' => 'Tout',
+                            'tirage_' => $name_tirage->name,
+                            'is_calculated' => 1,
+                            'vendeur' => $user,
+                            'tirage' => $tirage,
+                            'commission' => $commission,
+                            'branch' => $branch,
+                            'branch_' => $name_branch->name,
+                            'branch_commission' => round($branchCommission, 2),
+                            'net_balance' => round($netBalance, 2)
+                        ]);
                     } elseif ($request->input('bank') != 'Tout' && $request->input('tirage') == 'Tout') {
 
                         $ticketCodes = DB::table('ticket_code')
@@ -507,13 +777,18 @@ class adminController extends Controller
                                 DB::raw('COUNT(CASE WHEN is_payed = 1 THEN 1 END) as total_ticket_paye')
                             )->first();
 
-                        $vente = $result->total_vente;
-                        $perte = $result->total_perte;
-                        $commission = $result->total_commission;
-                        $ticket_win = $result->total_ticket_win;
-                        $ticket_lose = $result->total_ticket_lose;
-                        $ticket_peye = $result->total_ticket_paye;
+                        $vente = $result->total_vente ?? 0;
+                        $perte = $result->total_perte ?? 0;
+                        $commission = $result->total_commission ?? 0;
+                        $ticket_win = $result->total_ticket_win ?? 0;
+                        $ticket_lose = $result->total_ticket_lose ?? 0;
+                        $ticket_peye = $result->total_ticket_paye ?? 0;
 
+                        // Get user percent for specific bank
+                        $selectedUser = User::find($request->input('bank'));
+                        $userPercent = $selectedUser ? $selectedUser->percent : 0;
+                        $branchCommission = $this->calculateBranchCommission($branchData, $vente, $userPercent);
+                        $netBalance = $vente - $perte - $commission - $branchCommission;
 
                         //get vendeur
                         $user = User::where([
@@ -528,7 +803,6 @@ class adminController extends Controller
                             ->first();
                         $tirage = tirage_record::where([
                             ['compagnie_id', '=', $company->compagnie_id]
-
                         ])->select('tirage_record.id', 'tirage_record.name')
                             ->get();
                         //get branch
@@ -536,9 +810,28 @@ class adminController extends Controller
                             ['id', '=', Session('branchId')]
                         ])->get();
                         $name_branch = branch::where([
-                            ['id', '=', $request->input('branch')]
+                            ['id', '=', $branchId]
                         ])->select('name')->first();
-                        return view('superviseur.rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'ticket_paid' => $ticket_peye, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => $name_bank->bank_name, 'tirage_' => 'Tout', 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission, 'branch' => $branch, 'branch_' => $name_branch->name]);
+
+                        return view('superviseur.rapport', [
+                            'vente' => $vente,
+                            'perte' => $perte,
+                            'ticket_win' => $ticket_win,
+                            'ticket_lose' => $ticket_lose,
+                            'ticket_paid' => $ticket_peye,
+                            'date_debut' => $request->input('date_debut'),
+                            'date_fin' => $request->input('date_fin'),
+                            'bank' => $name_bank->bank_name,
+                            'tirage_' => 'Tout',
+                            'is_calculated' => 1,
+                            'vendeur' => $user,
+                            'tirage' => $tirage,
+                            'commission' => $commission,
+                            'branch' => $branch,
+                            'branch_' => $name_branch->name,
+                            'branch_commission' => round($branchCommission, 2),
+                            'net_balance' => round($netBalance, 2)
+                        ]);
                     } elseif ($request->input('bank') != 'Tout' && $request->input('tirage') != 'Tout') {
                         $ticketCodes = DB::table('ticket_code')
                             ->where('branch_id', '=', $request->input('branch'))
@@ -564,13 +857,18 @@ class adminController extends Controller
                                 DB::raw('COUNT(CASE WHEN is_payed = 1 THEN 1 END) as total_ticket_paye')
                             )->first();
 
-                        $vente = $result->total_vente;
-                        $perte = $result->total_perte;
-                        $commission = $result->total_commission;
-                        $ticket_win = $result->total_ticket_win;
-                        $ticket_lose = $result->total_ticket_lose;
-                        $ticket_peye = $result->total_ticket_paye;
+                        $vente = $result->total_vente ?? 0;
+                        $perte = $result->total_perte ?? 0;
+                        $commission = $result->total_commission ?? 0;
+                        $ticket_win = $result->total_ticket_win ?? 0;
+                        $ticket_lose = $result->total_ticket_lose ?? 0;
+                        $ticket_peye = $result->total_ticket_paye ?? 0;
 
+                        // Get user percent for specific bank
+                        $selectedUser = User::find($request->input('bank'));
+                        $userPercent = $selectedUser ? $selectedUser->percent : 0;
+                        $branchCommission = $this->calculateBranchCommission($branchData, $vente, $userPercent);
+                        $netBalance = $vente - $perte - $commission - $branchCommission;
 
                         //get vendeur
                         $user = User::where([
@@ -588,7 +886,6 @@ class adminController extends Controller
                             ->first();
                         $tirage = tirage_record::where([
                             ['compagnie_id', '=', $company->compagnie_id]
-
                         ])->select('tirage_record.id', 'tirage_record.name')
                             ->get();
                         //get branch
@@ -596,9 +893,28 @@ class adminController extends Controller
                             ['id', '=', Session('branchId')]
                         ])->get();
                         $name_branch = branch::where([
-                            ['id', '=', $request->input('branch')]
+                            ['id', '=', $branchId]
                         ])->select('name')->first();
-                        return view('superviseur.rapport', ['vente' => $vente, 'perte' => $perte, 'ticket_win' => $ticket_win, 'ticket_lose' => $ticket_lose, 'ticket_paid' => $ticket_peye, 'date_debut' => $request->input('date_debut'), 'date_fin' => $request->input('date_fin'), 'bank' => $name_bank->bank_name, 'tirage_' => $tirage_name->name, 'is_calculated' => 1, 'vendeur' => $user, 'tirage' => $tirage, 'commission' => $commission, 'branch' => $branch, 'branch_' => $name_branch->name]);
+
+                        return view('superviseur.rapport', [
+                            'vente' => $vente,
+                            'perte' => $perte,
+                            'ticket_win' => $ticket_win,
+                            'ticket_lose' => $ticket_lose,
+                            'ticket_paid' => $ticket_peye,
+                            'date_debut' => $request->input('date_debut'),
+                            'date_fin' => $request->input('date_fin'),
+                            'bank' => $name_bank->bank_name,
+                            'tirage_' => $tirage_name->name,
+                            'is_calculated' => 1,
+                            'vendeur' => $user,
+                            'tirage' => $tirage,
+                            'commission' => $commission,
+                            'branch' => $branch,
+                            'branch_' => $name_branch->name,
+                            'branch_commission' => round($branchCommission, 2),
+                            'net_balance' => round($netBalance, 2)
+                        ]);
                     }
                 }
             } else {
@@ -629,302 +945,120 @@ class adminController extends Controller
     }
     public function create_rapport2(Request $request)
     {
+        // Ensure branch session exists
+        if (!Session('branchId')) {
+            return view('superviseur.login');
+        }
 
-        if (Session('branchId')) {
-            $loginId = Session('branchId');
-            $dateDebut = $request->input('date_debut');
-            $dateFin = $request->input('date_fin');
-            $dateDebut1 = $request->input('date_debut') . ' 00:00:00';
-            $dateFin1 = $request->input('date_fin') . ' 23:59:59';
+        $loginId = Session('branchId');
+        $dateDebut = $request->input('date_debut');
+        $dateFin = $request->input('date_fin');
 
-            if (!empty($dateDebut) && !empty($dateFin)) {
+        // If dates are not provided, default to today
+        if (empty($dateDebut) || empty($dateFin)) {
+            $dateDebut = Carbon::now()->format('Y-m-d');
+            $dateFin = $dateDebut;
+        }
 
-                if ($request->input('period') == 'matin') {
-                    $userIds = DB::table('ticket_code')
-                        ->where('branch_id', '=', $loginId)
-                        ->whereBetween('ticket_code.created_at', [$dateDebut1, $dateFin1])
-                        ->whereTime('ticket_code.created_at', '<=', '14:30:00')
-                        ->distinct()
-                        ->pluck('user_id');
-                    $data = collect();
-                    foreach ($userIds as $user) {
-                        $fichcode = DB::table('ticket_code')
-                            ->where('branch_id', '=', $loginId)
-                            ->where('user_id', '=', $user)
-                            ->where('ticket_code.created_at', '>=', $dateDebut)
-                            ->whereTime('ticket_code.created_at', '<=', '14:30:00')
-                            ->pluck('code');
+        $dateDebut1 = $dateDebut . ' 00:00:00';
+        $dateFin1 = $dateFin . ' 23:59:59';
 
-                        $result = DB::table('ticket_vendu')
-                            ->whereIn('ticket_code_id', $fichcode)
-                            ->where([
-                                ['is_cancel', '=', 0],
-                                ['is_delete', '=', 0],
-                                ['pending', '=', 0],
+        $period = $request->input('period'); // 'matin', 'soir' or other
+        $data = collect();
 
-                            ])
-                            ->select(
-                                DB::raw('SUM(ticket_vendu.amount) as vente'),
-                                DB::raw('SUM(ticket_vendu.winning) as perte'),
-                                DB::raw('SUM(ticket_vendu.commission) as commission'),
-                            )
-                            ->first();
-                        $data->push(['bank_name' => $user, 'vente' => $result->vente, 'perte' => $result->perte, 'commission' => $result->commission]);
-                    }
-                    // dd($vendeur);
-                    $bank = User::where([
-                        ['branch_id', '=', Session('branchId')],
-                        ['is_delete', '=', 0],
-                    ])->get();
+        // Get branch data for commission calculations
+        $branchData = \App\Models\branch::find($loginId);
 
-                    //control historique
-                    $control = DB::table('tbl_control')->where([
-                        ['tbl_control.compagnie_id', '=', Session('loginId')],
-                    ])->join('users', 'users.code', '=', 'tbl_control.id_user')
-                        ->select('tbl_control.*', 'users.bank_name')
-                        ->orderByDesc('date_rapport')
-                        ->limit('50')
-                        ->get();
-                    return view('superviseur.secondrapport', ['bank' => $bank, 'control' => $control, 'vendeur' => $data, 'date_debut' => $request->$dateDebut, 'date_fin' => $dateFin, 'period' => 'Maten']);
-                } elseif ($request->input('period') == 'soir') {
+        // Build base query for user IDs
+        $userIdsQuery = DB::table('ticket_code')
+            ->where('branch_id', '=', $loginId)
+            ->whereBetween('ticket_code.created_at', [$dateDebut1, $dateFin1]);
 
+        if ($period == 'matin') {
+            $userIdsQuery = $userIdsQuery->whereTime('ticket_code.created_at', '<=', '14:30:00');
+        } elseif ($period == 'soir') {
+            $userIdsQuery = $userIdsQuery->whereTime('ticket_code.created_at', '>', '14:30:00');
+        }
 
-                    $userIds = DB::table('ticket_code')
-                        ->where('compagnie_id', '=', $loginId)
-                        ->whereBetween('ticket_code.created_at', [$dateDebut1, $dateFin1])
-                        ->whereTime('ticket_code.created_at', '>', '14:30:00')
-                        ->distinct()
-                        ->pluck('user_id');
-                    $data = collect();
-                    foreach ($userIds as $user) {
-                        $fichcode = DB::table('ticket_code')
-                            ->where('compagnie_id', '=', $loginId)
-                            ->where('user_id', '=', $user)
-                            ->whereBetween('ticket_code.created_at', [$dateDebut1, $dateFin1])
-                            ->whereTime('ticket_code.created_at', '>', '14:30:00')
-                            ->pluck('code');
+        $userIds = $userIdsQuery->distinct()->orderBy('user_id')->pluck('user_id');
 
-                        $result = DB::table('ticket_vendu')
-                            ->whereIn('ticket_code_id', $fichcode)
-                            ->where([
-                                ['is_cancel', '=', 0],
-                                ['is_delete', '=', 0],
-                                ['pending', '=', 0],
+        foreach ($userIds as $userId) {
+            // Build ticket_code query for this user and period
+            $fichQuery = DB::table('ticket_code')
+                ->where('branch_id', '=', $loginId)
+                ->where('user_id', '=', $userId)
+                ->whereBetween('ticket_code.created_at', [$dateDebut1, $dateFin1]);
 
-                            ])
-                            ->select(
-                                DB::raw('SUM(ticket_vendu.amount) as vente'),
-                                DB::raw('SUM(ticket_vendu.winning) as perte'),
-                                DB::raw('SUM(ticket_vendu.commission) as commission'),
-                            )
-                            ->first();
-                        $data->push(['bank_name' => $user, 'vente' => $result->vente, 'perte' => $result->perte, 'commission' => $result->commission]);
-                    }
-                    // dd($vendeur);
-                    $bank = User::where([
-                        ['compagnie_id', '=', Session('loginId')],
-                        ['is_delete', '=', 0],
-                    ])->get();
+            if ($period == 'matin') {
+                $fichQuery = $fichQuery->whereTime('ticket_code.created_at', '<=', '14:30:00');
+            } elseif ($period == 'soir') {
+                $fichQuery = $fichQuery->whereTime('ticket_code.created_at', '>', '14:30:00');
+            }
 
-                    //control historique
-                    $control = DB::table('tbl_control')->where([
-                        ['tbl_control.compagnie_id', '=', Session('loginId')],
-                    ])->join('users', 'users.code', '=', 'tbl_control.id_user')
-                        ->select('tbl_control.*', 'users.bank_name')
-                        ->orderByDesc('date_rapport')
-                        ->limit('50')
-                        ->get();
-                    return view('superviseur.secondrapport', ['bank' => $bank, 'control' => $control, 'vendeur' => $data, 'date_debut' => $dateDebut, 'date_fin' => $dateFin, 'period' => 'Swa']);
-                } else {
+            $fichcode = $fichQuery->pluck('code');
 
-                    $userIds = DB::table('ticket_code')
-                        ->where('branch_id', '=', $loginId)
-                        ->whereBetween('ticket_code.created_at', [$dateDebut1, $dateFin1])
-                        ->distinct()
-                        ->pluck('user_id');
-                    $data = collect();
-                    foreach ($userIds as $user) {
-                        $fichcode = DB::table('ticket_code')
-                            ->where('branch_id', '=', $loginId)
-                            ->where('user_id', '=', $user)
-                            ->whereBetween('ticket_code.created_at', [$dateDebut1, $dateFin1])
-                            ->pluck('code');
-
-                        $result = DB::table('ticket_vendu')
-                            ->whereIn('ticket_code_id', $fichcode)
-                            ->where([
-                                ['is_cancel', '=', 0],
-                                ['is_delete', '=', 0],
-                                ['pending', '=', 0],
-
-                            ])
-                            ->select(
-                                DB::raw('SUM(ticket_vendu.amount) as vente'),
-                                DB::raw('SUM(ticket_vendu.winning) as perte'),
-                                DB::raw('SUM(ticket_vendu.commission) as commission'),
-                            )
-                            ->first();
-                        $data->push(['bank_name' => $user, 'vente' => $result->vente, 'perte' => $result->perte, 'commission' => $result->commission]);
-                    }
-
-                    // dd($vendeur);
-                    $bank = User::where([
-                        ['branch_id', '=', Session('branchId')],
-                        ['is_delete', '=', 0],
-                    ])->get();
-
-                    //control historique
-                    $control = DB::table('tbl_control')->where([
-                        ['tbl_control.compagnie_id', '=', Session('loginId')],
-                    ])->join('users', 'users.code', '=', 'tbl_control.id_user')
-                        ->select('tbl_control.*', 'users.bank_name')
-                        ->orderByDesc('date_rapport')
-                        ->limit('50')
-                        ->get();
-                    return view('superviseur.secondrapport', ['bank' => $bank, 'control' => $control, 'vendeur' => $data, 'date_debut' => $dateDebut, 'date_fin' => $dateFin, 'period' => 'Tout']);
-                }
-            } else {
-                $userIds = DB::table('ticket_code')
-                    ->where('branch_id', '=', $loginId)
-                    ->whereDate('ticket_code.created_at', '=', Carbon::now())
-                    ->whereBetween('ticket_code.created_at', [Carbon::now()->format('Y-m-d') . ' 00:00:00', Carbon::now()->format('Y-m-d') . ' 23:59:59'])
-                    ->distinct()
-                    ->pluck('user_id');
-                $data = collect();
-                foreach ($userIds as $user) {
-                    $fichcode = DB::table('ticket_code')
-                        ->where('branch_id', '=', $loginId)
-                        ->where('user_id', '=', $user)
-                        ->whereBetween('ticket_code.created_at', [Carbon::now()->format('Y-m-d') . ' 00:00:00', Carbon::now()->format('Y-m-d') . ' 23:59:59'])
-                        ->distinct()
-                        ->pluck('code');
-
-                    $result = DB::table('ticket_vendu')
-                        ->whereIn('ticket_code_id', $fichcode)
-                        ->where([
-                            ['is_cancel', '=', 0],
-                            ['is_delete', '=', 0],
-                            ['pending', '=', 0],
-
-                        ])
-                        ->select(
-                            DB::raw('SUM(ticket_vendu.amount) as vente'),
-                            DB::raw('SUM(ticket_vendu.winning) as perte'),
-                            DB::raw('SUM(ticket_vendu.commission) as commission'),
-                        )
-                        ->first();
-                    $data->push(['bank_name' => $user, 'vente' => $result->vente, 'perte' => $result->perte, 'commission' => $result->commission]);
-                }
-
-
-
-                // dd($vendeur);
-                $bank = User::where([
-                    ['branch_id', '=', Session('branchId')],
+            $result = DB::table('ticket_vendu')
+                ->whereIn('ticket_code_id', $fichcode)
+                ->where([
+                    ['is_cancel', '=', 0],
                     ['is_delete', '=', 0],
-                ])->get();
+                    ['pending', '=', 0],
+                ])
+                ->select(
+                    DB::raw('SUM(ticket_vendu.amount) as vente'),
+                    DB::raw('SUM(ticket_vendu.winning) as perte'),
+                    DB::raw('SUM(ticket_vendu.commission) as commission')
+                )
+                ->first();
 
-                //control historique
-                $control = DB::table('tbl_control')->where([
-                    ['tbl_control.compagnie_id', '=', Session('loginId')],
-                ])->join('users', 'users.code', '=', 'tbl_control.id_user')
-                    ->select('tbl_control.*', 'users.bank_name')
-                    ->orderByDesc('date_rapport')
-                    ->limit('50')
-                    ->get();
-                return view('superviseur.secondrapport', ['bank' => $bank, 'control' => $control, 'vendeur' => $data, 'date_debut' => Carbon::now()->format('Y-m-d'), 'date_fin' => Carbon::now()->format('Y-m-d'), 'period' => 'Tout']);
+            $vente = $result->vente ?? 0;
+            $perte = $result->perte ?? 0;
+            $commission = $result->commission ?? 0;
+
+            // Calculate superviseur commission for this user
+            $userModel = \App\Models\User::find($userId);
+            $userPercent = $userModel ? $userModel->percent : 0;
+            $superviseurCommission = 0;
+            if ($branchData) {
+                if ($branchData->percent_agent_only == 0) {
+                    $diffPercent = max(0, $branchData->percent - $userPercent);
+                    $superviseurCommission = ($vente * $diffPercent) / 100;
+                } else {
+                    $superviseurCommission = ($vente * $branchData->percent) / 100;
+                }
             }
-        } else {
-            return view('superviseur/login');
-        }
-    }
-    public function index_vendeur()
-    {
-        if (Session('branchId')) {
-            $branchId = Session('branchId');
-            $data = DB::table('users')
-                // ->where('compagnie_id', '=', $loginId)
-                ->where('branch_id', '=', $branchId)
-                ->where('is_delete', '=', 0)
-                ->get();
-            return view('superviseur.list-vendeur', ['vendeur' => $data]);
-        } else {
-            return view('superviseur/login');
-        }
-    }
-    public function edit_vendeur(Request $request)
-    {
-        if (Session('branchId')) {
-            $vendeur = user::where([
-                ['id', '=', $request->input('id')],
-                ['branch_id', '=', Session('branchId')],
-                ['is_delete', '=', 0]
-            ])->first();
-            if (!$vendeur) {
-                notify()->error('Gen yon ere ki pase, venedeur a pa trouve');
-                return back();
-            }
-            return view('superviseur/edit_vendeur', ['vendeur' => $vendeur]);
-        } else {
-            return view('superviseur/login');
-        }
-    }
 
-    public function update_vendeur(Request $request)
-    {
-
-        if (Session('branchId')) {
-
-            $validator = $request->validate([
-
-                'id' => 'required',
-                "name" => "required|max:50",
-                'phone' => 'required|numeric',
-                "address" => "required|max:100",
+            $data->push([
+                'bank_name' => $userModel ? $userModel->bank_name : $userId,
+                'vente' => $vente,
+                'perte' => $perte,
+                'commission' => $commission,
+                'superviseur_commission' => round($superviseurCommission, 2)
             ]);
-            $vendeur = user::where([
-                ['branch_id', '=', Session('branchId')],
-                ['id', '=', $request->input('id')]
-            ])->first();
-            if (!$vendeur) {
-                notify()->error('vande sa pa trouve');
-                return back();
-            }
-
-            if ($request->input('block') == '1') {
-                $status = 1;
-            } else {
-                $status = 0;
-            }
-            if (!empty($request->input('password'))) {
-                $user = user::where('id', $request->input('id'))->update([
-                    "gender" => $request->input('gender'),
-                    "name" => $request->input('name'),
-                    'phone' => $request->input('phone'),
-                    "address" => $request->input('address'),
-                    'password' => Hash::make($request->input('password')),
-                    'is_block' => $status,
-                    'updated_at' => Carbon::now()
-                ]);
-
-                notify()->success('modifikasyon an fet avek siksè');
-                return back();
-            } else {
-                $user = user::where('id', $request->input('id'))->update([
-                    "gender" => $request->input('gender'),
-                    "name" => $request->input('name'),
-                    'phone' => $request->input('phone'),
-                    "address" => $request->input('address'),
-                    // 'password' => Hash::make($request->input('password')),
-                    'is_block' => $status,
-                    'updated_at' => Carbon::now()
-                ]);
-
-                notify()->success('modifikasyon an fet avek siksè');
-                return back();
-            }
-        } else {
-            return view('superviseur/login');
         }
+
+        $bank = \App\Models\User::where([
+            ['branch_id', '=', $loginId],
+            ['is_delete', '=', 0],
+        ])->get();
+
+        $control = DB::table('tbl_control')->where([
+            ['tbl_control.compagnie_id', '=', Session('loginId')],
+        ])->join('users', 'users.code', '=', 'tbl_control.id_user')
+            ->select('tbl_control.*', 'users.bank_name')
+            ->orderByDesc('date_rapport')
+            ->limit(50)
+            ->get();
+
+        $periodLabel = $period == 'matin' ? 'Maten' : ($period == 'soir' ? 'Swa' : 'Tout');
+
+        return view('superviseur.secondrapport', [
+            'bank' => $bank,
+            'control' => $control,
+            'vendeur' => $data,
+            'date_debut' => $dateDebut,
+            'date_fin' => $dateFin,
+            'period' => $periodLabel
+        ]);
     }
 }

@@ -180,10 +180,10 @@ class executeTirageController extends Controller
                 //get id vendeur
                 $vendeur_id = $fiche->ticketcode->user_id;
                 //check if the user record in rules_vendeur
-                $rules_vendeur = rules_vendeur::where([
-                    ['compagnie_id', '=', $compagnieId],
-                    ['user_id', '=', $vendeur_id],
-                ])->first();
+                // This syntax doesn't require the array format and is less error-prone
+                $rules_vendeur = rules_vendeur::where('compagnie_id', $compagnieId)
+                    ->where('user_id', $vendeur_id)
+                    ->first();
                 if ($rules_vendeur) {
                     $borletePrice = $rules_vendeur;
                     $maryajgratis = $rules_vendeur->prix_maryaj_gratis;
@@ -417,7 +417,7 @@ class executeTirageController extends Controller
 
 
                 if (isset($fiche['option2'])) {
-                    $combinaisonGagnante2 = $gagnants->secondchiffre . $gagnants->premierchiffre;
+                    $combinaisonGagnante2 = $gagnants->premierchiffre . $gagnants->secondchiffre;
                     if ($boul1 == $combinaisonGagnante2) {
                         $montantGagne = intval($fiche['option2']) * intval($loto4Price);
                         $this->totalGains = $this->totalGains + $montantGagne;

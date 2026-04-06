@@ -40,7 +40,7 @@ class genereFacture implements ShouldQueue
     $companies = DB::table('companies')->whereDate('dateexpiration', $dateString)->get();
 
         foreach ($companies as $company) {
-            // Base plan
+            $plan = null;
             $plan = $company->plan;
           
             // Skip if a facture already exists this month/year for this company (ignore day)

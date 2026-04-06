@@ -16,6 +16,7 @@ use App\Models\rules_vendeur;
 use App\Models\branch;
 use App\Models\TicketVendu;
 use App\Models\ticket_code;
+use App\Models\limit_prix_achat_par_vendeur;
 // use App\Models\TicketCode; // Remove this if the correct class is ticket_code
 
 //use Carbon\Carbon;
@@ -36,7 +37,26 @@ class CompanyController extends Controller
                 ['compagnie_id', '=', Session('loginId')],
                 ['is_delete', '=', 0]
             ])->get();
-            return view('lister_vendeur', ['vendeur' => $vendeur, 'branch' => $branch]);
+            
+            // Fetch rules_vendeur for each vendor
+            $vendeurIds = $vendeur->pluck('id')->toArray();
+            $rulesVendeur = rules_vendeur::whereIn('user_id', $vendeurIds)
+                ->where('compagnie_id', Session('loginId'))
+                ->get()
+                ->keyBy('user_id');
+                
+            // Fetch limits for each vendor
+            $limitsVendeur = limit_prix_achat_par_vendeur::whereIn('user_id', $vendeurIds)
+                ->where('compagnie_id', Session('loginId'))
+                ->get()
+                ->keyBy('user_id');
+            
+            return view('lister_vendeur', [
+                'vendeur' => $vendeur, 
+                'branch' => $branch,
+                'rulesVendeur' => $rulesVendeur,
+                'limitsVendeur' => $limitsVendeur
+            ]);
         } else {
             return view('login');
         }
@@ -475,6 +495,87 @@ class CompanyController extends Controller
         } else {
 
             return view('login');
+        }
+    }
+
+    /**
+     * Save or update limit_prix_achat for a specific vendor
+     */
+    public function saveLimitVendeur(Request $request)
+    {
+        if (!Session('loginId')) {
+            return view('login');
+        }
+
+        try {
+            $data = [
+                'compagnie_id' => Session('loginId'),
+                'user_id' => $request->user_id,
+                'bolet' => $request->bolet ?? 0,
+                'maryaj' => $request->maryaj ?? 0,
+                'loto3' => $request->loto3 ?? 0,
+                'loto4' => $request->loto4 ?? 0,
+                'loto5' => $request->loto5 ?? 0,
+                'boletetat' => $request->boletetat ?? 0,
+                'maryajetat' => $request->maryajetat ?? 0,
+                'loto3etat' => $request->loto3etat ?? 0,
+                'loto4etat' => $request->loto4etat ?? 0,
+                'loto5etat' => $request->loto5etat ?? 0,
+                'included' => $request->included ?? 0,
+            ];
+
+            if ($request->id) {
+                // Update existing limit
+                $limit = limit_prix_achat_par_vendeur::where([
+                    ['id', '=', $request->id],
+                    ['compagnie_id', '=', Session('loginId')]
+                ])->first();
+
+                if ($limit) {
+                    $limit->update($data);
+                    notify()->success('Limit mete a jou ak sikse');
+                } else {
+                    notify()->error('Limit sa pa jwenn');
+                }
+            } else {
+                // Create new limit
+                limit_prix_achat_par_vendeur::create($data);
+                notify()->success('Limit anrejistre ak sikse');
+            }
+
+            return redirect()->back();
+        } catch (\Exception $e) {
+            notify()->error('Yon erè fèt: ' . $e->getMessage());
+            return redirect()->back();
+        }
+    }
+
+    /**
+     * Delete limit for a specific vendor
+     */
+    public function deleteLimitVendeur($id)
+    {
+        if (!Session('loginId')) {
+            return view('login');
+        }
+
+        try {
+            $limit = limit_prix_achat_par_vendeur::where([
+                ['id', '=', $id],
+                ['compagnie_id', '=', Session('loginId')]
+            ])->first();
+
+            if ($limit) {
+                $limit->delete();
+                notify()->success('Limit siprime ak sikse');
+            } else {
+                notify()->error('Limit sa pa jwenn');
+            }
+
+            return redirect()->back();
+        } catch (\Exception $e) {
+            notify()->error('Yon erè fèt: ' . $e->getMessage());
+            return redirect()->back();
         }
     }
 }

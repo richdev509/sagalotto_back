@@ -577,7 +577,17 @@
                                         <!-- Loto Prices Section -->
                     <div class="price-section">
                         <div class="section-header">
-                            <h4>Pri maryaj gratis</h4>
+                            <div class="section-title">
+                                <h4>Pri maryaj gratis</h4>
+                                <!-- Hidden default value when unchecked -->
+                                <input type="hidden" name="maryaj_statut" value="0">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggleMaryajGratis" name="maryaj_statut" value="1" 
+                                           @if(isset($rules_vendeur->maryaj_statut) && $rules_vendeur->maryaj_statut == 1) checked @endif>
+                                    <span class="slider"></span>
+                                    <span class="toggle-label">Active</span>
+                                </label>
+                            </div>
                             <span class="toggle-icon">▼</span>
                         </div>
                         <div class="section-content">
@@ -618,6 +628,8 @@
                         <div class="section-header">
                             <div class="section-title">
                                 <h4>Pri Gabel</h4>
+                                <!-- Hidden default value when unchecked -->
+                                <input type="hidden" name="gabel_statut" value="0">
                                 <label class="toggle-switch">
                                     <input type="checkbox" id="toggleGabel" name="gabel_statut" value="1">
                                     <span class="slider"></span>

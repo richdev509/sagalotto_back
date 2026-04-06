@@ -101,35 +101,173 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 80%;
-            max-width: 800px;
-            max-height: 80vh;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            z-index: 1000;
+            width: 90%;
+            max-width: 900px;
+            max-height: 85vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 60px 30px 30px 30px;
+            z-index: 1050;
             display: none;
             overflow-y: auto;
         }
 
+        .content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+        }
+
+        .content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
         .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background-color: #dc3545;
+            position: sticky;
+            top: 10px;
+            float: right;
+            margin-top: -45px;
+            margin-right: -15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 45px;
+            height: 45px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1051;
         }
 
         .close-btn:hover {
-            background-color: #c82333;
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+        }
+
+        .close-btn i {
+            font-size: 24px;
+        }
+
+        /* Popup Header */
+        .popup-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .popup-header h3 {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Section Headers */
+        .section-header {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+            color: #333;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 20px 0 10px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Table inside popup */
+        .content .table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .content .table thead tr {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .content .table thead th {
+            padding: 15px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: left;
+            border: none;
+        }
+
+        .content .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .content .table tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.01);
+        }
+
+        .content .table tbody td {
+            padding: 12px 15px;
+            font-size: 15px;
+            border-bottom: 1px solid #e9ecef;
+            text-align: left;
+        }
+
+        .content .table tbody td:first-child {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .content .table tbody td:last-child {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        /* Category specific colors */
+        .category-bolete { background: linear-gradient(90deg, #30be64, #2da558); }
+        .category-maryaj { background: linear-gradient(90deg, #06aafd, #0590d6); }
+        .category-loto3 { background: linear-gradient(90deg, #be307c, #a02868); }
+        .category-loto4 { background: linear-gradient(90deg, #f4d910, #d4b90e); }
+        .category-loto5 { background: linear-gradient(90deg, #f38b03, #d47803); }
+        .category-maryaj-gratis { background: linear-gradient(90deg, #be307c, #a02868); }
+
+        @media (max-width: 768px) {
+            .content {
+                width: 95%;
+                padding: 20px 15px;
+            }
+            
+            .popup-header h3 {
+                font-size: 22px;
+            }
+            
+            .section-header {
+                font-size: 16px;
+                padding: 10px 15px;
+            }
+            
+            .content .table thead th,
+            .content .table tbody td {
+                padding: 10px 8px;
+                font-size: 13px;
+            }
         }
 
         /* Responsive Design */
@@ -238,27 +376,29 @@
         /* Form Styling */
         .row_head {
             background-color: #ffffff;
-            padding: 20px;
+            padding: 10px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5rem;
         }
 
         .form-label {
             font-weight: 600;
             color: #495057;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.2rem;
+            font-size: 14px;
         }
 
         .form-control-lg {
-            height: 30px;
-            font-size: 16px;
-            border-radius: 8px;
+            height: 38px;
+            font-size: 14px;
+            border-radius: 6px;
             border: 1px solid #ced4da;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            padding: 6px 12px;
         }
 
         .form-control-lg:focus {
@@ -270,9 +410,9 @@
             background: linear-gradient(135deg, #6a11cb, #2575fc);
             color: white;
             border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            border-radius: 8px;
+            padding: 8px 20px;
+            font-size: 15px;
+            border-radius: 6px;
             transition: background 0.3s ease;
         }
 
@@ -283,13 +423,17 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .form-control-lg {
-                height: 30px;
-                font-size: 14px;
+                height: 36px;
+                font-size: 13px;
             }
 
             .btn-gradient-primary {
                 width: 100%;
-                padding: 10px;
+                padding: 8px;
+            }
+            
+            .row_head {
+                padding: 8px;
             }
         }
 
@@ -307,42 +451,43 @@
 
 
         .custom-select-visible {
-    background-color: #ffffff !important;
-    border: 2px solid #0066cc !important;
-    border-radius: 10px !important;
-    padding: 12px 45px 12px 15px !important;
-    font-size: 18px !important;
-    font-weight: 500;
-    color: #222;
-    appearance: none;            /* enlève la flèche native */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    box-shadow: 0 3px 10px rgba(0, 102, 204, 0.15);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
+            background-color: #ffffff !important;
+            border: 2px solid #0066cc !important;
+            border-radius: 6px !important;
+            padding: 8px 40px 8px 12px !important;
+            font-size: 14px !important;
+            font-weight: 500;
+            color: #222;
+            appearance: none;
+            /* enlève la flèche native */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            box-shadow: 0 2px 6px rgba(0, 102, 204, 0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-.custom-select-visible:hover,
-.custom-select-visible:focus {
-    border-color: #ff6b35 !important;
-    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.25);
-    outline: none;
-}
+        .custom-select-visible:hover,
+        .custom-select-visible:focus {
+            border-color: #ff6b35 !important;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.25);
+            outline: none;
+        }
 
-.position-relative {
-    position: relative;
-}
+        .position-relative {
+            position: relative;
+        }
 
-.custom-arrow {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #0066cc;
-    font-size: 16px;
-    pointer-events: none; /* empêche la flèche d'intercepter le clic */
-}
-
+        .custom-arrow {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #0066cc;
+            font-size: 16px;
+            pointer-events: none;
+            /* empêche la flèche d'intercepter le clic */
+        }
     </style>
     <div class="page-header">
         <h3 class="page-title">Lis Fich</h3>
@@ -364,65 +509,63 @@
                     @csrf
                     <div class="row">
                         <!-- Date Filters -->
-                   <div class="container-fluid">
-    <div class="border p-0 rounded bg-light">
-  <div class="d-flex align-items-end justify-content-between gap-2 flex-nowrap w-100 overflow-hidden">
+                        <div class="container-fluid px-0 mb-2">
+                            <div class="border p-2 rounded bg-light">
+                                <div class="d-flex align-items-end justify-content-between gap-2 flex-nowrap w-100 overflow-hidden">
 
-    <div class="form-group flex-fill position-relative" style="margin-bottom: 8px;">
-      <label for="date_debut" class="form-label">Komanse</label>
-      <input type="date" class="form-control form-control-lg pe-5" name="date_debut">
-      <i class="mdi mdi-calendar position-absolute text-primary"
-         style="right:12px; top:58%; transform:translateY(-50%); pointer-events:none; font-size:22px;"></i>
-    </div>
+                                    <div class="form-group flex-fill position-relative mb-0">
+                                        <label for="date_debut" class="form-label">Komanse</label>
+                                        <input type="date" class="form-control form-control-lg pe-5" name="date_debut">
+                                        <i class="mdi mdi-calendar position-absolute text-primary"
+                                            style="right:12px; top:58%; transform:translateY(-50%); pointer-events:none; font-size:18px;"></i>
+                                    </div>
 
-    <div class="form-group flex-fill position-relative" style="margin-bottom: 8px;">
-      <label for="date_fin" class="form-label">Fini</label>
-      <input type="date" class="form-control form-control-lg pe-5" name="date_fin">
-      <i class="mdi mdi-calendar position-absolute text-primary"
-         style="right:12px; top:58%; transform:translateY(-50%); pointer-events:none; font-size:22px;"></i>
-    </div>
+                                    <div class="form-group flex-fill position-relative mb-0">
+                                        <label for="date_fin" class="form-label">Fini</label>
+                                        <input type="date" class="form-control form-control-lg pe-5" name="date_fin">
+                                        <i class="mdi mdi-calendar position-absolute text-primary"
+                                            style="right:12px; top:58%; transform:translateY(-50%); pointer-events:none; font-size:18px;"></i>
+                                    </div>
 
-  </div>
-</div>
-
-</div>
-
-<div class="container-fluid">
-    <div class="border p-0 rounded bg-light">
-        <div class="d-flex align-items-end justify-content-between gap-2 flex-nowrap w-100 overflow-hidden">
-
-<div class="form-group flex-fill" style="margin-bottom: 8px;">
-                                <label for="bank" class="form-label">Bank</label>
-                                <select class="form-select form-select-lg custom-select-visible" name="bank">
-                                    <option value="Tout">Tout</option>
-                                    @foreach ($vendeur as $row)
-                                        <option value="{{ $row->id }}" {{ old('bank') == $row->id ? 'selected' : '' }}>
-                                            {{ $row->bank_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                              
+                                </div>
                             </div>
-                            <div class="form-group flex-fill" style="margin-bottom: 8px;">
-                                <label for="tirage" class="form-label">Tirage</label>
-                                <select class="form-select form-select-lg custom-select-visible" name="tirage">
-                                    <option value='Tout'>Tout</option>
-                                    @foreach ($tirage as $row)
-                                        <option value="{{ $row->id }}" {{ old('tirage') == $row->id ? 'selected' : '' }}>
-                                            {{ $row->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-        </div>
-    </div>
-</div>
 
-                      
+                        </div>
+
+                        <div class="container-fluid px-0 mb-2">
+                            <div class="border p-2 rounded bg-light">
+                                <div class="d-flex align-items-end justify-content-between gap-2 flex-nowrap w-100 overflow-hidden">
+
+                                    <div class="form-group flex-fill mb-0">
+                                        <label for="bank" class="form-label">Bank</label>
+                                        <select class="form-select form-select-lg custom-select-visible" name="bank">
+                                            <option value="Tout">Tout</option>
+                                            @foreach ($vendeur as $row)
+                                                <option value="{{ $row->id }}" {{ old('bank') == $row->id ? 'selected' : '' }}>
+                                                    {{ $row->bank_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+
+                                    </div>
+                                    <div class="form-group flex-fill mb-0">
+                                        <label for="tirage" class="form-label">Tirage</label>
+                                        <select class="form-select form-select-lg custom-select-visible" name="tirage">
+                                            <option value='Tout'>Tout</option>
+                                            @foreach ($tirage as $row)
+                                                <option value="{{ $row->id }}" {{ old('tirage') == $row->id ? 'selected' : '' }}>
+                                                    {{ $row->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Ticket Number Filter -->
-                        <div class="col-12 col-md-4">
-                            <div class="form-group" style="margin-bottom: 0px;">
+                        <div class="col-12 col-md-4 mb-2">
+                            <div class="form-group mb-0">
                                 <label for="ticket" class="form-label">#Fich</label>
                                 <input type="text" class="form-control form-control-lg" name="ticket"
                                     placeholder="Antre yon #fich" value="{{ old('ticket') }}" />
@@ -430,7 +573,7 @@
                         </div>
 
                         <!-- Submit Button -->
-                        <div class="col-12 text-center mt-4">
+                        <div class="col-12 text-center mt-2">
                             <button type="submit" class="btn btn-gradient-primary btn-lg">
                                 <i class="mdi mdi-magnify"></i> Chache
                             </button>
@@ -515,148 +658,222 @@
 
 
     <div class="content" id="tent">
-        <div class="close-btn" id="close" style="position: fixed;">
-            <i class="mdi mdi-close-octagon" style="color: red;"></i>
+        <div class="close-btn" id="close">
+            <i class="mdi mdi-close"></i>
         </div>
+        
+        <div class="popup-header">
+            <h3><i class="mdi mdi-ticket-account"></i> Detay Fich</h3>
+        </div>
+        
         <div class="table-responsive">
-
-
-
-            <table class="table table-striped" id="mytable">
-
+            <!-- Bolèt Section -->
+            <div class="section-header category-bolete" id="bor" style="color: white;">
+                Bolèt
+            </div>
+            <table class="table" id="mytable">
                 <thead>
-                    <tr style="background-color: #b66dff;">
-                        <th> Boul </th>
-
+                    <tr>
+                        <th>Boul</th>
                         <th>Prix</th>
-
-
-
                     </tr>
-
                 </thead>
                 <tbody>
-                    <tr id="bor" style="background-color: #30be64;">
-                        <td colspan="2" style="color: white; font-weight: bold">Bolèt</td>
+                    <!-- Bolete rows will be inserted here -->
+                </tbody>
+            </table>
+
+            <!-- Maryaj Section -->
+            <div class="section-header category-maryaj" id="mar" style="color: white;">
+                Maryaj
+            </div>
+            <table class="table" id="mytable1">
+                <thead>
+                    <tr>
+                        <th>Boul</th>
+                        <th>Prix</th>
                     </tr>
-                    <table class="table table-striped" id="mytable1">
+                </thead>
+                <tbody>
+                    <!-- Maryaj rows will be inserted here -->
+                </tbody>
+            </table>
 
-                        <tbody>
-                            <tr id="mar" style="background-color: #06aafd;">
-                                <td colspan="2">Maryaj</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-striped" id="mytable2">
+            <!-- Loto 3 Section -->
+            <div class="section-header category-loto3" id="l3" style="color: white;">
+                Loto 3
+            </div>
+            <table class="table" id="mytable2">
+                <thead>
+                    <tr>
+                        <th>Boul</th>
+                        <th>Prix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loto 3 rows will be inserted here -->
+                </tbody>
+            </table>
 
-                        <tbody>
-                            <tr id="l3" style="background-color: #be307c">
-                                <td colspan="2">Loto 3</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-striped" id="mytable3">
+            <!-- Loto 4 Section -->
+            <div class="section-header category-loto4" id="l4" style="color: #333;">
+                Loto 4
+            </div>
+            <table class="table" id="mytable3">
+                <thead>
+                    <tr>
+                        <th>Boul</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loto 4 rows will be inserted here -->
+                </tbody>
+            </table>
 
-                        <tbody>
-                            <tr id="l4" style="background-color: #f4d910;">
-                                <td colspan="2" style="color: white; font-weight: bold;">Loto 4</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-striped" id="mytable4">
+            <!-- Loto 5 Section -->
+            <div class="section-header category-loto5" id="l5" style="color: white;">
+                Loto 5
+            </div>
+            <table class="table" id="mytable4">
+                <thead>
+                    <tr>
+                        <th>Boul</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loto 5 rows will be inserted here -->
+                </tbody>
+            </table>
 
-                        <tbody>
-                            <tr id="l5" style="background-color: #f38b03;">
-                                <td colspan="2" style="color:white; font-weight: bold;">Loto 5</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-striped" id="mytable5">
-
-                        <tbody>
-                            <tr id="mar_g" style="background-color: #be307c;">
-                                <td colspan="2" style="color: white; font-weight: bold;">Maryaj gratis</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <!-- Maryaj Gratis Section -->
+            <div class="section-header category-maryaj-gratis" id="mar_g" style="color: white;">
+                Maryaj Gratis
+            </div>
+            <table class="table" id="mytable5">
+                <thead>
+                    <tr>
+                        <th>Boul</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Maryaj gratis rows will be inserted here -->
                 </tbody>
             </table>
         </div>
     </div>
 
     <!-- Overlay noir -->
-<div  id="filter-bloc" style="
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.8);  /* ✅ au lieu d’opacity */
-    z-index: 1000;                 /* s’affiche au-dessus du contenu */
-    display: none;
-    align-items: center;
-    justify-content: center;
-">
-    <!-- Bloc visible au-dessus -->
-    <div class="container-fluid" style="z-index: 1001; max-width: 600px;">
-        <div class="border p-3 rounded bg-light shadow-lg">
-            <div class="d-flex align-items-end justify-content-between gap-2 flex-nowrap w-100 overflow-hidden">
-                <div class="form-group flex-fill mb-2">
-                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded shadow-sm">
-    <label for="bank" class="form-label mb-0 fw-semibold text-primary">Filtè fich genyen ou pèdi</label>
+    <div id="filter-bloc" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);  /* ✅ au lieu d’opacity */
+        z-index: 1000;                 /* s’affiche au-dessus du contenu */
+        display: none;
+        align-items: center;
+        justify-content: center;
+    ">
+        <!-- Bloc visible au-dessus -->
+        <div class="container-fluid" style="z-index: 1001; max-width: 600px;">
+            <div class="border p-3 rounded bg-light shadow-lg">
+                <div class="d-flex align-items-end justify-content-between gap-2 flex-nowrap w-100 overflow-hidden">
+                    <div class="form-group flex-fill mb-2">
+                        <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded shadow-sm">
+                            <label for="bank" class="form-label mb-0 fw-semibold text-primary">Filtè fich genyen ou
+                                pèdi</label>
 
-    <button onclick="showFiltere()" 
-            class="btn btn-danger rounded-circle d-flex align-items-center justify-content-center" 
-            style="width: 40px; height: 40px; border: none;">
-        <i class="mdi mdi-close fs-5 text-white"></i>
-    </button>
-</div>
+                            <button onclick="showFiltere()"
+                                class="btn btn-danger rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 40px; height: 40px; border: none;">
+                                <i class="mdi mdi-close fs-5 text-white"></i>
+                            </button>
+                        </div>
 
-                   <div class="position-relative w-100">
-    <select class="form-select form-select-lg custom-select-visible" name="bank">
-        <option value="Tout">Tout</option>
-        <option value="gagnant">Fich ki genyen</option>
-        <option value="perdu">Fich ki pèdi</option>
-    </select>
-    <span class="custom-arrow">
-        ▼
-    </span>
-</div>
+                        <div class="position-relative w-100">
+                            <select class="form-select form-select-lg custom-select-visible" name="bank">
+                                <option value="Tout">Tout</option>
+                                <option value="gagnant">Fich ki genyen</option>
+                                <option value="perdu">Fich ki pèdi</option>
+                            </select>
+                            <span class="custom-arrow">
+                                ▼
+                            </span>
+                        </div>
 
-                    
+
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div  style="position: fixed;
-    bottom: 0px;
-    /* display: flex; */
-    right: 30px;
-    margin-bottom: 30px;
-   
-    width: 15%;
-    height: 30px;">
-    <button onclick="showFiltere()" class="btn btn-gradient-primary">filter</button>
-</div>
+    <div style="position: fixed;
+        bottom: 0px;
+        /* display: flex; */
+        right: 30px;
+        margin-bottom: 30px;
 
-<script>
-     
-    function showFiltere() {
-    const bloc = document.getElementById('filter-bloc');
-    if (bloc.style.display === "none" || bloc.style.display === "") {
-        bloc.style.display = "flex";
-    } else {
-        bloc.style.display = "none";
-    }
-}
+        width: 15%;
+        height: 30px;">
+        <button onclick="showFiltere()" class="btn btn-gradient-primary">filter</button>
+    </div>
+
+    <script>
+
+        function showFiltere() {
+            const bloc = document.getElementById('filter-bloc');
+            if (bloc.style.display === "none" || bloc.style.display === "") {
+                bloc.style.display = "flex";
+            } else {
+                bloc.style.display = "none";
+            }
+        }
+
+        $(document).ready(function () {
+            // Handle filter change
+            $('#filter-bloc select[name="bank"]').on('change', function () {
+                const filterValue = $(this).val();
+                const rows = $('table tbody tr');
+
+                rows.each(function () {
+                    const winningCell = $(this).find('td:eq(5)'); // Column "Genyen"
+
+                    if (winningCell.length === 0) return; // Skip if no cell found
+
+                    const winningText = winningCell.text().trim();
+                    const winningAmount = parseFloat(winningText.replace(/[^\d.-]/g, '')) || 0;
+
+                    if (filterValue === 'Tout') {
+                        $(this).show();
+                    } else if (filterValue === 'gagnant') {
+                        // Show only tickets with winning > 0
+                        if (winningAmount > 0) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    } else if (filterValue === 'perdu') {
+                        // Show only tickets with winning = 0
+                        if (winningAmount === 0) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    }
+                });
+
+                // Close the filter popup after selection
+                showFiltere();
+            });
+        });
     </script>
 
-    <script
-   
-    
-    type="text/javascript">
+    <script type="text/javascript">
         $(document).ready(function () {
             // Function to show and hide the popup 
             function togglePopup() {

@@ -37,8 +37,7 @@ class ticketController extends Controller
 
 
 
-                    ])->whereDate('ticket_code.created_at', '>=', $request->date_debut)
-                        ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
+                    ])->whereBetween('ticket_code.created_at', [$request->date_debut . ' 00:00:00', $request->date_fin . ' 23:59:59'])
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                         ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
                         ->join('users', 'ticket_code.user_id', 'users.id')
@@ -69,8 +68,7 @@ class ticketController extends Controller
                         ['ticket_code.user_id', '=', $request->input('bank')],
 
 
-                    ])->whereDate('ticket_code.created_at', '>=', $request->date_debut)
-                        ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
+                    ])->whereBetween('ticket_code.created_at', [$request->date_debut . ' 00:00:00', $request->date_fin . ' 23:59:59'])
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                         ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
                         ->join('users', 'ticket_code.user_id', 'users.id')
@@ -103,8 +101,7 @@ class ticketController extends Controller
 
 
 
-                    ])->whereDate('ticket_code.created_at', '>=', $request->date_debut)
-                        ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
+                    ])->whereBetween('ticket_code.created_at', [$request->date_debut . ' 00:00:00', $request->date_fin . ' 23:59:59'])
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
 
                         ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
@@ -137,8 +134,7 @@ class ticketController extends Controller
 
 
 
-                    ])->whereDate('ticket_code.created_at', '>=', $request->date_debut)
-                        ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
+                    ])->whereBetween('ticket_code.created_at', [$request->date_debut . ' 00:00:00', $request->date_fin . ' 23:59:59'])
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
 
                         ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
@@ -170,8 +166,7 @@ class ticketController extends Controller
                         ['ticket_code.user_id', '=', $request->input('bank')]
 
 
-                    ])->whereDate('ticket_code.created_at', '>=', $request->date_debut)
-                        ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
+                    ])->whereBetween('ticket_code.created_at', [$request->date_debut . ' 00:00:00', $request->date_fin . ' 23:59:59'])
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                         ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
                         ->join('users', 'ticket_code.user_id', 'users.id')
@@ -272,8 +267,7 @@ class ticketController extends Controller
 
 
 
-                    ])->whereDate('ticket_code.created_at', '>=', $request->date_debut)
-                        ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
+                    ])->whereBetween('ticket_code.created_at', [$request->date_debut . ' 00:00:00', $request->date_fin . ' 23:59:59'])
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                         ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
                         ->join('users', 'ticket_code.user_id', 'users.id')
@@ -304,8 +298,7 @@ class ticketController extends Controller
                         ['ticket_code.user_id', '=', $request->input('bank')],
 
 
-                    ])->whereDate('ticket_code.created_at', '>=', $request->date_debut)
-                        ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
+                    ])->whereBetween('ticket_code.created_at', [$request->date_debut . ' 00:00:00', $request->date_fin . ' 23:59:59'])
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                         ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
                         ->join('users', 'ticket_code.user_id', 'users.id')
@@ -338,8 +331,7 @@ class ticketController extends Controller
 
 
 
-                    ])->whereDate('ticket_code.created_at', '>=', $request->date_debut)
-                        ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
+                    ])->whereBetween('ticket_code.created_at', [$request->date_debut . ' 00:00:00', $request->date_fin . ' 23:59:59'])
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
 
                         ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
@@ -372,8 +364,7 @@ class ticketController extends Controller
 
 
 
-                    ])->whereDate('ticket_code.created_at', '>=', $request->date_debut)
-                        ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
+                    ])->whereBetween('ticket_code.created_at', [$request->date_debut . ' 00:00:00', $request->date_fin . ' 23:59:59'])
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
 
                         ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
@@ -405,8 +396,7 @@ class ticketController extends Controller
                         ['ticket_code.user_id', '=', $request->input('bank')]
 
 
-                    ])->whereDate('ticket_code.created_at', '>=', $request->date_debut)
-                        ->whereDate('ticket_code.created_at', '<=', $request->date_fin)
+                    ])->whereBetween('ticket_code.created_at', [$request->date_debut . ' 00:00:00', $request->date_fin . ' 23:59:59'])
                         ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                         ->join('tirage_record', 'tirage_record.id', '=', 'ticket_vendu.tirage_record_id')
                         ->join('users', 'ticket_code.user_id', 'users.id')
@@ -455,9 +445,9 @@ class ticketController extends Controller
 
                 ])->select('id', 'name')
                     ->get();
-                $formattedDate = now()->toDateString();
-                $formattedDate = now()->toDateString() . ' 00:00:00';
-                $formattedDate1 = now()->toDateString() . ' 23:59:00';
+                // Load last 30 days (including today)
+                $formattedDate = now()->subDays(30)->toDateString() . ' 00:00:00';
+                $formattedDate1 = now()->toDateString() . ' 23:59:59';
 
 
 
@@ -551,3 +541,7 @@ class ticketController extends Controller
 
     }
 }
+
+
+
+

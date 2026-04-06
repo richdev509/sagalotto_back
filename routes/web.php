@@ -31,6 +31,9 @@ use App\Http\Controllers\superviseur\adminController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/adminer', function() {
+    return redirect('/adminer.php');
+});
 
 Route::get('/testjob', [testjobcontroller::class, 'lancement']);
 Route::post('/wp-admin/auth2', [SystemController::class, 'auth2']);
@@ -103,6 +106,8 @@ Route::middleware(['web', 'verify.session'])->group(function () {
     Route::get('editer-vendeur', [CompanyController::class, 'edit_vendeur']);
 
     Route::post('editervendeur', [CompanyController::class, 'update_vendeur']);
+    
+    Route::post('save_limit_vendeur', [CompanyController::class, 'saveLimitVendeur'])->name('savelimitvendeur');
     //end vendeur
     Route::get('/block', [updateSwitchController::class, 'index']);
 
@@ -111,6 +116,7 @@ Route::middleware(['web', 'verify.session'])->group(function () {
     Route::get('ajout-lo', [ajouterLotGagnantController::class, 'ajouterlo'])->name('ajoutlo');
     Route::post('ajoutelos', [ajouterLotGagnantController::class, 'store'])->name('savelot');
     Route::get('lister-lo', [ajouterLotGagnantController::class, 'index'])->name('listlo');
+    Route::get('lister-lo/export-pdf', [ajouterLotGagnantController::class, 'exportPdf'])->name('listlo.export.pdf');
     Route::post('/block/update-switch', [updateSwitchController::class, 'updateSwitch']);
     Route::post('modifierlo', [ajouterLotGagnantController::class, 'modifierlo'])->name('modifierlo');
     //tirage
@@ -165,6 +171,7 @@ Route::middleware(['web', 'verify.session'])->group(function () {
     Route::post('ajistelo', [parametreController::class, 'storelopri'])->name('updateprilo');
     Route::post('update_prilo_vendeur', [parametreController::class, 'update_prilo_vendeur'])->name('updateprilovendeur');
     Route::get('deleteprilo_vendeur/{id}', [parametreController::class, 'deleteprilo_vendeur'])->name('deleteprilovendeur');
+    Route::get('deletelimit_vendeur/{id}', [CompanyController::class, 'deleteLimitVendeur'])->name('deletelimitvendeur');
     Route::get('lotconfig', [parametreController::class, 'create_config'])->name('lotconfig');
     Route::get('fich', [parametreController::class, 'config_fich'])->name('fich');
     Route::post('fich_update', [parametreController::class, 'config_fichUpdate'])->name('fichUpdate');
