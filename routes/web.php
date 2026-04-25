@@ -20,6 +20,7 @@ use App\Http\Controllers\historiquetransanction;
 use App\Http\Controllers\superadmin\testjobcontroller;
 use App\Http\Controllers\branchController;
 use App\Http\Controllers\superviseur\adminController;
+use App\Http\Controllers\ArticleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +81,12 @@ Route::get('/register', function () {
     return view('register.register');
 });
 
+// Article routes
+Route::get('/systeme-bolet-haiti', [ArticleController::class, 'systemeBoletHaiti']);
+Route::get('/kijan-jere-bolet', [ArticleController::class, 'kijanJereBolet']);
+Route::get('/logiciel-bolet', [ArticleController::class, 'logicielBolet']);
+Route::get('/avantaj-bolet-digital', [ArticleController::class, 'avantajBoletDigital']);
+
 Route::post('login', [CompanyController::class, 'login']);
 
 Route::get('logout', [CompanyController::class, 'logout']);
@@ -106,7 +113,7 @@ Route::middleware(['web', 'verify.session'])->group(function () {
     Route::get('editer-vendeur', [CompanyController::class, 'edit_vendeur']);
 
     Route::post('editervendeur', [CompanyController::class, 'update_vendeur']);
-    
+
     Route::post('save_limit_vendeur', [CompanyController::class, 'saveLimitVendeur'])->name('savelimitvendeur');
     //end vendeur
     Route::get('/block', [updateSwitchController::class, 'index']);
@@ -165,7 +172,7 @@ Route::middleware(['web', 'verify.session'])->group(function () {
     Route::post('delete-multiple-limits', [parametreController::class, 'deleteMultiple'])->name('deleteMultipleLimits');
     Route::get('script', [parametreController::class, 'updateBranch']);
 
-  
+
 
 
     Route::post('ajistelo', [parametreController::class, 'storelopri'])->name('updateprilo');
@@ -220,8 +227,8 @@ Route::middleware(['web', 'CheckSuperviseur'])->group(function () {
     Route::get('/sup_rapport', [adminController::class, 'create_rapport']);
 
 
-  
-    
+
+
 });
 
 
@@ -266,8 +273,8 @@ Route::middleware(['web', 'chekadmin'])->group(function () {
     Route::get('/wp-admin/HttpAjouter_lo', [SystemController::class, 'HttpViewAjoutelo'])->name('HttpAjouterlowp');
     Route::post('/wp-admin/HttpAddlo', [addTirageHttp::class, 'executeTirageAuto'])->name('HttpAddlo');
 
-    
-    
+
+
     Route::get('/wp-admin/monitoring', function () {
         return view('superadmin.monitoring');
     })->name('monitoring');
