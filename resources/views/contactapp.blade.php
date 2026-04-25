@@ -7,20 +7,20 @@
     <meta name="keywords" content="Sagacetech, SAGALOTO pos, POS haiti,">
     <meta name="description" content="SAGALOTO application POS bolot , yon pwodwi de Sagacetech">
     <meta name="author" content="Sagacetech">
-        
+
     <title>SAGALOTO</title>
 
         <link rel="shortcut icon" href="{{ asset('/assets/landing/img/saga.png')}}" title="Favicon" >
 
         <!-- ====== bootstrap icons cdn ====== -->
         <link rel="stylesheet" href="ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" integrity="sha512-ZnR2wlLbSbr8/c9AgLg3jQPAattCUImNsae6NHYnS9KrIwRdcY9DxFotXhNAKIKbAXlRnujIqUWoXXwqyFOeIQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    
+
         <!-- bootstrap 5 -->
         <link rel="stylesheet" href="{{ asset('/assets/landing/css/lib/bootstrap.min.css')}}">
-    
+
         <!-- ====== font family ====== -->
         <link href="css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+
         <link rel="stylesheet" href="{{ asset('/assets/landing/css/lib/all.min.css')}}">
         <link rel="stylesheet" href="{{ asset('/assets/landing/css/lib/animate.css')}}">
         <link rel="stylesheet" href="{{ asset('/assets/landing/css/lib/jquery.fancybox.css')}}">
@@ -30,7 +30,7 @@
         <link rel="stylesheet" href="{{ asset('/assets/landing/css/style.css')}}">
     </head>
     <body>
-       
+
     <!-- ====== start loading page ====== -->
     <!-- <div id="preloader">
     </div> -->
@@ -68,7 +68,7 @@
             <div class="container">
                 <div class="section-head text-center style-4 mb-40">
                     <small class="title_small">Kontakte nou</small>
-                    
+
                     <p>Nap kontaktew nan yon ti tan pa two lwen.</p>
                 </div>
                 <div class="content rounded-pill">
@@ -93,72 +93,15 @@
                             <img src="assets/img/icons/msg3d.png" alt="">
                         </div>
                         <div class="inf">
-                            <h5>(+509)46538901- 47974323 -55175521</h5>
+                            <h5>+509 31-07-1890</h5>
                         </div>
                     </div>
-                </div>
-            </div>
-        </section>
-        <section class="contact section-padding pt-0 style-6">
-            <div class="container">
-                <div class="content">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-8">
-                            <form action="contact.php" class="form" method="post">
-                                <p class="text-center text-danger fs-12px mb-30">Tou champ sa yo enpotan *</p>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="form-group mb-20">  
-                                            <input type="text" name="name" class="form-control" placeholder="Nom complet *" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group mb-20">
-                                            <input type="text" name="email" class="form-control" placeholder="Email Address">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group mb-20">
-                                            <input type="text" name="phone" class="form-control" placeholder="Nimewo telefon *" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group mb-20">
-                                            <input type="text" name="bizinis" class="form-control" placeholder="Nom biznis ou">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group mb-20">
-                                            <select name="option" class="form-select">
-                                                <option value="how can we help" selected="">Koman nou ka ede ou?</option>
-                                                <option value="option 1">Ouvri yon kont POS bolot</option>
-                                                <option value="option 2">Develope sistem gesyon bolot</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <textarea rows="10" class="form-control" placeholder="How can we help you?"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center">
-                                        
-                                    </div>
-                                    <div class="col-lg-12 text-center" style="margin-top: 15px;">
-                                        <input type="submit" value="Send Your Request" class="btn rounded-pill bg-blue4 fw-bold text-white text-light fs-12px">
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <img src="assets/img/icons/contact_a.png" alt="" class="contact_a">
-                    <img src="assets/img/icons/contact_message.png" alt="" class="contact_message">
                 </div>
             </div>
         </section>
         <!-- ====== end contact page ====== -->
 
-       
+
     </main>
    @include('footer')
     <!-- ====== end footer ====== -->
@@ -179,7 +122,7 @@
     <script src="{{ asset('/assets/landing/js/lib/swiper.min.js') }}"></script>
     <script src="{{ asset('/assets/landing/js/lib/jquery.waypoints.min.js') }} "></script>
     <script src="{{ asset('/assets/landing/js/lib/jquery.counterup.js') }}"></script>
-    <!--  <script src="{{ asset('/assets/landing/js/lib/pace.js') }}"></script> --> 
+    <!--  <script src="{{ asset('/assets/landing/js/lib/pace.js') }}"></script> -->
     <script src="{{ asset('/assets/landing/js/lib/scrollIt.min.js') }}"></script>
     <script src="{{ asset('/assets/landing/js/main.js') }}"></script>
     </body>

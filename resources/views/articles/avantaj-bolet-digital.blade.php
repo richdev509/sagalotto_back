@@ -41,7 +41,7 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="/">Akèy</a></li>
                     <li class="nav-item"><a class="nav-link" href="/contact">Kontakte nou</a></li>
-                    <li class="nav-item"><a class="nav-link btn btn-primary text-white px-4" href="/register">Eseye gratis</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary text-white px-4" href="/contact">📞 +509 31-07-1890</a></li>
                 </ul>
             </div>
         </div>
@@ -87,8 +87,12 @@
 
             <div class="cta-section">
                 <h3>Pase nan dijital jodi a</h3>
-                <p>Rejwenn santèn konpayi ki deja modernize ak Sagaloto</p>
-                <a href="/register" class="cta-btn">Kòmanse modernizasyon ou</a>
+                <p>Kontakte nou pou modernize ak Sagaloto</p>
+                <div style="margin-bottom: 15px;">
+                    <p style="font-size: 1.2rem; margin-bottom: 10px;">📞 +509 31-07-1890</p>
+                    <p style="font-size: 1.2rem;">📧 contact@sagaloto.com</p>
+                </div>
+                <a href="/contact" class="cta-btn">Kontakte nou</a>
             </div>
 
             <div class="related-articles">

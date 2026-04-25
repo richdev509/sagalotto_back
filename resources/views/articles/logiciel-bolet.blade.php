@@ -39,7 +39,7 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="/">Akèy</a></li>
                     <li class="nav-item"><a class="nav-link" href="/contact">Kontakte nou</a></li>
-                    <li class="nav-item"><a class="nav-link btn btn-primary text-white px-4" href="/register">Eseye gratis</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary text-white px-4" href="/contact">📞 +509 31-07-1890</a></li>
                 </ul>
             </div>
         </div>
@@ -72,9 +72,13 @@
             </section>
 
             <div class="cta-section">
-                <h3>Eseye Sagaloto gratis jodi a</h3>
-                <p>Enskri kounye a epi resevwa 14 jou gratis pou teste tout karakteristik yo</p>
-                <a href="/register" class="cta-btn">Eseye gratis</a>
+                <h3>Dekouvri Sagaloto jodi a</h3>
+                <p>Kontakte nou pou plis enfòmasyon sou lojisyèl la</p>
+                <div style="margin-bottom: 15px;">
+                    <p style="font-size: 1.2rem; margin-bottom: 10px;">📞 +509 31-07-1890</p>
+                    <p style="font-size: 1.2rem;">📧 contact@sagaloto.com</p>
+                </div>
+                <a href="/contact" class="cta-btn">Kontakte nou</a>
             </div>
 
             <div class="related-articles">

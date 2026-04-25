@@ -39,7 +39,7 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="/">Akèy</a></li>
                     <li class="nav-item"><a class="nav-link" href="/contact">Kontakte nou</a></li>
-                    <li class="nav-item"><a class="nav-link btn btn-primary text-white px-4" href="/register">Eseye gratis</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-primary text-white px-4" href="/contact">📞 +509 31-07-1890</a></li>
                 </ul>
             </div>
         </div>
@@ -73,8 +73,12 @@
 
             <div class="cta-section">
                 <h3>Jere bòlet ou fasil ak Sagaloto</h3>
-                <p>Enskri gratis kounye a epi kòmanse jere biznis ou pwofesyonèlman</p>
-                <a href="/register" class="cta-btn">Kòmanse kounye a</a>
+                <p>Kontakte nou pou kòmanse jere biznis ou pwofesyonèlman</p>
+                <div style="margin-bottom: 15px;">
+                    <p style="font-size: 1.2rem; margin-bottom: 10px;">📞 +509 31-07-1890</p>
+                    <p style="font-size: 1.2rem;">📧 contact@sagaloto.com</p>
+                </div>
+                <a href="/contact" class="cta-btn">Kontakte nou</a>
             </div>
 
             <div class="related-articles">

@@ -146,7 +146,7 @@
                         <a class="nav-link" href="/contact">Kontakte nou</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-white px-4" href="/register">Eseye gratis</a>
+                        <a class="nav-link btn btn-primary text-white px-4" href="/contact">📞 +509 31-07-1890</a>
                     </li>
                 </ul>
             </div>
@@ -179,8 +179,12 @@
             <!-- CTA Section -->
             <div class="cta-section">
                 <h3>Kòmanse avèk Sagaloto jodi a</h3>
-                <p>Enskri gratis epi modernize jesyon bòlet ou an 5 minit</p>
-                <a href="/register" class="cta-btn">Eseye gratis</a>
+                <p>Kontakte nou pou plis enfòmasyon sou Sagaloto</p>
+                <div style="margin-bottom: 15px;">
+                    <p style="font-size: 1.2rem; margin-bottom: 10px;">📞 +509 31-07-1890</p>
+                    <p style="font-size: 1.2rem;">📧 contact@sagaloto.com</p>
+                </div>
+                <a href="/contact" class="cta-btn">Kontakte nou</a>
             </div>
 
             <!-- Related Articles -->
