@@ -30,21 +30,29 @@
   <h4 class="card-title text-center w-100" style="margin-bottom:6px;">Rapo general pou chak bank</h4>
   <form method="get" action="raport2" id="search" class="row g-2 align-items-end">
         @csrf
-    <div class="col-4">
+    <div class="col-3">
             <label class="form-label">Komanse</label>
             <input type="date" class="form-control dateInput" name="date_debut" value="{{ $date_debut }}" required />
         </div>
-    <div class="col-4">
+    <div class="col-3">
             <label class="form-label">Fini</label>
             <input type="date" class="form-control dateInput" name="date_fin" value="{{ $date_fin }}" required />
         </div>
-    <div class="col-4">
+    <div class="col-3">
             <label class="form-label">Branch</label>
             <select class="form-control" name="branch">
                 <option value="tout">Tout</option>
                 @foreach ($branch as $row)
                   <option value="{{ $row->id }}">{{ $row->name }}</option>
                 @endforeach
+            </select>
+        </div>
+    <div class="col-3">
+            <label class="form-label">Peryod</label>
+            <select class="form-control" name="periode">
+                <option value="tout" {{ ($periode ?? 'tout') === 'tout' ? 'selected' : '' }}>Tout</option>
+                <option value="midi" {{ ($periode ?? 'tout') === 'midi' ? 'selected' : '' }}>Midi 00:00:00-14:30:00</option>
+                <option value="soir" {{ ($periode ?? 'tout') === 'soir' ? 'selected' : '' }}>Soir 14:30:00-23:59:00</option>
             </select>
         </div>
     <div class="col-12 text-center mt-1">

@@ -151,8 +151,15 @@ class adminController extends Controller
          * 1️⃣ DAILY TOTALS (OPTIMIZED JOIN)
          * =================================================
          */
+        // Deduplicated ticket_code: one row per code, prevents duplicate
+        // codes from multiplying ticket_vendu rows through the JOIN
+        $tcDedup = DB::table('ticket_code')
+            ->select('code', 'branch_id')
+            ->selectRaw('MIN(created_at) as created_at')
+            ->groupBy('code', 'branch_id');
+
         $data = DB::table('ticket_vendu as tv')
-            ->join('ticket_code as tc', 'tc.code', '=', 'tv.ticket_code_id')
+            ->joinSub($tcDedup, 'tc', 'tv.ticket_code_id', '=', 'tc.code')
             ->where('tc.branch_id', $branchId)
             ->whereBetween('tc.created_at', [$dateStart, $dateEnd])
             ->where([
@@ -220,7 +227,7 @@ class adminController extends Controller
                 $dateEnd = $boulGagnant->created_ . ' 23:59:59';
                 
                 $result = DB::table('ticket_vendu as tv')
-                    ->join('ticket_code as tc', 'tc.code', '=', 'tv.ticket_code_id')
+                    ->joinSub($tcDedup, 'tc', 'tv.ticket_code_id', '=', 'tc.code')
                     ->where('tc.branch_id', $branchId)
                     ->whereBetween('tc.created_at', [$dateStart, $dateEnd])
                     ->where('tv.tirage_record_id', $boulGagnant->tirage_id)
@@ -325,7 +332,114 @@ class adminController extends Controller
 
     public function create_rapport(Request $request)
     {
+        set_time_limit(90);
+        ini_set('max_execution_time', 90);
+
         if (Session('branchId')) {
+            $branchId = Session('branchId');
+            $branchData = branch::find($branchId);
+            $compagnieId = $branchData?->compagnie_id;
+
+            if (!$branchData || !$compagnieId) {
+                return view('superviseur.login');
+            }
+
+            $vendeurs = User::where('compagnie_id', $compagnieId)
+                ->where('branch_id', $branchId)
+                ->where('is_delete', 0)
+                ->select('id', 'name', 'bank_name', 'percent')
+                ->get();
+            $tirages = tirage_record::where('compagnie_id', $compagnieId)
+                ->select('id', 'name')
+                ->get();
+            $branches = branch::where('id', $branchId)
+                ->where('is_delete', 0)
+                ->get();
+
+            if (!$request->filled(['date_debut', 'date_fin'])) {
+                return view('superviseur.rapport', [
+                    'vendeur' => $vendeurs,
+                    'tirage' => $tirages,
+                    'branch' => $branches,
+                    'is_calculated' => 0,
+                ]);
+            }
+
+            $dateDebut = $request->date_debut . ' 00:00:00';
+            $dateFin = $request->date_fin . ' 23:59:59';
+            $bankId = $request->input('bank');
+            $tirageId = $request->input('tirage');
+
+            // Deduplicated ticket_code: one row per code, prevents duplicate
+            // codes from multiplying ticket_vendu rows through the JOIN
+            $tcDedup = DB::table('ticket_code')
+                ->select('code', 'user_id', 'compagnie_id', 'branch_id')
+                ->selectRaw('MIN(created_at) as created_at')
+                ->groupBy('code', 'user_id', 'compagnie_id', 'branch_id');
+
+            $query = DB::table('ticket_vendu as tv')
+                ->joinSub($tcDedup, 'tc', 'tv.ticket_code_id', '=', 'tc.code')
+                ->leftJoin('users as u', 'u.id', '=', 'tc.user_id')
+                ->join('branches as b', 'b.id', '=', 'tc.branch_id')
+                ->where('tc.compagnie_id', $compagnieId)
+                ->where('tc.branch_id', $branchId)
+                ->whereBetween('tc.created_at', [$dateDebut, $dateFin])
+                ->where('tv.is_cancel', 0)
+                ->where('tv.is_delete', 0)
+                ->where('tv.pending', 0);
+
+            if ($bankId && $bankId !== 'Tout') {
+                $query->where('tc.user_id', $bankId);
+            }
+            if ($tirageId && $tirageId !== 'Tout') {
+                $query->where('tv.tirage_record_id', $tirageId);
+            }
+
+            $result = $query->selectRaw('
+                COALESCE(SUM(tv.amount), 0) as total_vente,
+                COALESCE(SUM(tv.winning), 0) as total_perte,
+                COALESCE(SUM(tv.commission), 0) as total_commission,
+                COALESCE(SUM(CASE WHEN tv.is_win = 1 THEN 1 ELSE 0 END), 0) as total_ticket_win,
+                COALESCE(SUM(CASE WHEN tv.is_win = 0 THEN 1 ELSE 0 END), 0) as total_ticket_lose,
+                COALESCE(SUM(CASE WHEN tv.is_payed = 1 THEN 1 ELSE 0 END), 0) as total_ticket_paye,
+                COALESCE(SUM(CASE
+                    WHEN b.percent_agent_only = 0
+                    THEN tv.amount * (GREATEST(0, b.percent - COALESCE(u.percent, 0)) / 100)
+                    ELSE tv.amount * (b.percent / 100)
+                END), 0) as total_branch_commission
+            ')->first();
+
+            $vente = $result->total_vente ?? 0;
+            $perte = $result->total_perte ?? 0;
+            $commission = $result->total_commission ?? 0;
+            $branchCommission = $result->total_branch_commission ?? 0;
+            $bankName = ($bankId && $bankId !== 'Tout')
+                ? ($vendeurs->firstWhere('id', $bankId)?->bank_name ?? 'Inconnu')
+                : 'Tout';
+            $tirageName = ($tirageId && $tirageId !== 'Tout')
+                ? ($tirages->firstWhere('id', $tirageId)?->name ?? 'Inconnu')
+                : 'Tout';
+
+            return view('superviseur.rapport', [
+                'vente' => round($vente, 2),
+                'perte' => round($perte, 2),
+                'commission' => round($commission, 2),
+                'ticket_win' => $result->total_ticket_win ?? 0,
+                'ticket_lose' => $result->total_ticket_lose ?? 0,
+                'ticket_paid' => $result->total_ticket_paye ?? 0,
+                'branch_commission' => round($branchCommission, 2),
+                'net_balance' => round($vente - $perte - $commission - $branchCommission, 2),
+                'date_debut' => $request->date_debut,
+                'date_fin' => $request->date_fin,
+                'bank' => $bankName,
+                'tirage_' => $tirageName,
+                'branch_' => $branchData->name,
+                'vendeur' => $vendeurs,
+                'tirage' => $tirages,
+                'branch' => $branches,
+                'is_calculated' => 1,
+            ]);
+
             if (!empty($request->input('date_debut') && !empty($request->input('date_fin')))) {
                 $date_debut = $request->input('date_debut');
                 $date_fin = $request->input('date_fin');
@@ -945,6 +1059,9 @@ class adminController extends Controller
     }
     public function create_rapport2(Request $request)
     {
+        set_time_limit(90);
+        ini_set('max_execution_time', 90);
+
         // Ensure branch session exists
         if (!Session('branchId')) {
             return view('superviseur.login');
@@ -960,10 +1077,19 @@ class adminController extends Controller
             $dateFin = $dateDebut;
         }
 
-        $dateDebut1 = $dateDebut . ' 00:00:00';
-        $dateFin1 = $dateFin . ' 23:59:59';
+        $periode = $request->input('periode') ?? 'tout';
 
-        $period = $request->input('period'); // 'matin', 'soir' or other
+        if ($periode === 'soir') {
+            $dateDebut1 = $dateDebut . ' 14:30:01';
+            $dateFin1 = $dateFin . ' 23:59:00';
+        } elseif ($periode === 'midi') {
+            $dateDebut1 = $dateDebut . ' 00:00:00';
+            $dateFin1 = $dateFin . ' 14:30:00';
+        } else {
+            $dateDebut1 = $dateDebut . ' 00:00:00';
+            $dateFin1 = $dateFin . ' 23:59:59';
+        }
+
         $data = collect();
 
         // Get branch data for commission calculations
@@ -974,12 +1100,6 @@ class adminController extends Controller
             ->where('branch_id', '=', $loginId)
             ->whereBetween('ticket_code.created_at', [$dateDebut1, $dateFin1]);
 
-        if ($period == 'matin') {
-            $userIdsQuery = $userIdsQuery->whereTime('ticket_code.created_at', '<=', '14:30:00');
-        } elseif ($period == 'soir') {
-            $userIdsQuery = $userIdsQuery->whereTime('ticket_code.created_at', '>', '14:30:00');
-        }
-
         $userIds = $userIdsQuery->distinct()->orderBy('user_id')->pluck('user_id');
 
         foreach ($userIds as $userId) {
@@ -988,12 +1108,6 @@ class adminController extends Controller
                 ->where('branch_id', '=', $loginId)
                 ->where('user_id', '=', $userId)
                 ->whereBetween('ticket_code.created_at', [$dateDebut1, $dateFin1]);
-
-            if ($period == 'matin') {
-                $fichQuery = $fichQuery->whereTime('ticket_code.created_at', '<=', '14:30:00');
-            } elseif ($period == 'soir') {
-                $fichQuery = $fichQuery->whereTime('ticket_code.created_at', '>', '14:30:00');
-            }
 
             $fichcode = $fichQuery->pluck('code');
 
@@ -1050,7 +1164,7 @@ class adminController extends Controller
             ->limit(50)
             ->get();
 
-        $periodLabel = $period == 'matin' ? 'Maten' : ($period == 'soir' ? 'Swa' : 'Tout');
+        $periodLabel = $periode == 'midi' ? 'Midi' : ($periode == 'soir' ? 'Soir' : 'Tout');
 
         return view('superviseur.secondrapport', [
             'bank' => $bank,
@@ -1058,6 +1172,7 @@ class adminController extends Controller
             'vendeur' => $data,
             'date_debut' => $dateDebut,
             'date_fin' => $dateFin,
+            'periode' => $periode,
             'period' => $periodLabel
         ]);
     }

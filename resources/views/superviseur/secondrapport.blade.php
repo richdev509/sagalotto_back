@@ -239,10 +239,10 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Peryod</label>
-                                    <select class="form-control" name="period" style="height: 47px; border: 1px solid black;">
-                                        <option value="tout">Tout</option>
-                                        <option value="matin">Matin (12H AM - 2H30 PM)</option>
-                                        <option value="soir">Soir (2H31 PM - 11H59 PM)</option>
+                                    <select class="form-control" name="periode" style="height: 47px; border: 1px solid black;">
+                                        <option value="tout" {{ ($periode ?? 'tout') === 'tout' ? 'selected' : '' }}>Tout</option>
+                                        <option value="midi" {{ ($periode ?? 'tout') === 'midi' ? 'selected' : '' }}>Midi 00:00:00-14:30:00</option>
+                                        <option value="soir" {{ ($periode ?? 'tout') === 'soir' ? 'selected' : '' }}>Soir 14:30:00-23:59:00</option>
                                     </select>
                                 </div>
                             </div>

@@ -41,6 +41,9 @@ class rapportController extends Controller
     }
     public function create_rapport(Request $request)
     {
+        set_time_limit(120);
+        ini_set('max_execution_time', 120);
+
         if (!session('loginId')) {
             return view('login');
         }
@@ -87,7 +90,7 @@ class rapportController extends Controller
             $request->branch
         ]));
 
-        $results = Cache::remember($cacheKey, 300, function () use ($compagnieId, $dateDebut, $dateFin, $request) {
+        $results = (function () use ($compagnieId, $dateDebut, $dateFin, $request) {
 
             // Build the SELECT part based on branch filter
             $selectRaw = '
@@ -112,10 +115,17 @@ class rapportController extends Controller
                 $selectRaw .= ', 0 as total_branch_commission';
             }
 
+            // Deduplicated ticket_code: one row per code, prevents duplicate
+            // codes from multiplying ticket_vendu rows through the JOIN
+            $tcDedup = DB::table('ticket_code')
+                ->select('code', 'user_id', 'compagnie_id', 'branch_id')
+                ->selectRaw('MIN(created_at) as created_at')
+                ->groupBy('code', 'user_id', 'compagnie_id', 'branch_id');
+
             // Base query
-            $query = DB::table('ticket_code as tc')
-                ->join('ticket_vendu as tv', 'tv.ticket_code_id', '=', 'tc.code')
-                ->join('users as u', 'u.id', '=', 'tc.user_id')
+            $query = DB::table('ticket_vendu as tv')
+                ->joinSub($tcDedup, 'tc', 'tv.ticket_code_id', '=', 'tc.code')
+                ->leftJoin('users as u', 'u.id', '=', 'tc.user_id')
                 ->where('tc.compagnie_id', $compagnieId)
                 ->whereBetween('tc.created_at', [$dateDebut, $dateFin])
                 ->where('tv.is_cancel', 0)
@@ -144,7 +154,7 @@ class rapportController extends Controller
             }
 
             return $query->selectRaw($selectRaw)->first();
-        });
+        })();
 
         // Extract values (all calculated in SQL already)
         $totalVente = $results->total_vente ?? 0;
@@ -200,6 +210,9 @@ class rapportController extends Controller
 
     public function create_rapport2(Request $request)
     {
+        set_time_limit(120);
+        ini_set('max_execution_time', 120);
+
         if (!session('loginId')) {
             return view('login');
         }
@@ -209,9 +222,18 @@ class rapportController extends Controller
         // Get date range or default to today
         $dateDebut = $request->input('date_debut') ?? now()->format('Y-m-d');
         $dateFin   = $request->input('date_fin')   ?? now()->format('Y-m-d');
+        $periode   = $request->input('periode') ?? 'tout';
 
-        $dateStart = $dateDebut . ' 00:00:00';
-        $dateEnd   = $dateFin . ' 23:59:59';
+        if ($periode === 'soir') {
+            $dateStart = $dateDebut . ' 14:30:01';
+            $dateEnd   = $dateFin . ' 23:59:59';
+        } elseif ($periode === 'midi') {
+            $dateStart = $dateDebut . ' 00:00:00';
+            $dateEnd   = $dateFin . ' 14:30:00';
+        } else {
+            $dateStart = $dateDebut . ' 00:00:00';
+            $dateEnd   = $dateFin . ' 23:59:59';
+        }
 
         // Treat null branch as "tout"
         $branchId = $request->input('branch') ?? 'tout';
@@ -229,7 +251,7 @@ class rapportController extends Controller
                 ->orderBy('user_id')
                 ->pluck('user_id');
 
-            foreach ($userIds->chunk(100) as $userChunk) {
+            foreach ($userIds->chunk(1000) as $userChunk) {
                 foreach ($userChunk as $userId) {
                     $codes = DB::table('ticket_code')
                         ->where('compagnie_id', $loginId)
@@ -275,15 +297,16 @@ class rapportController extends Controller
                 ->orderBy('user_id')
                 ->pluck('user_id');
 
-            foreach ($userIds->chunk(100) as $userChunk) {
+            foreach ($userIds->chunk(1000) as $userChunk) {
                 foreach ($userChunk as $userId) {
+                    // Pluck codes then whereIn: dedupes duplicate code values
+                    // so vendu rows are counted exactly once (same as vendor API)
                     $codes = DB::table('ticket_code')
                         ->where('compagnie_id', $loginId)
                         ->where('user_id', $userId)
                         ->whereBetween('created_at', [$dateStart, $dateEnd])
-                        ->pluck('code');
-
-                    if ($codes->isEmpty()) continue;
+                        ->pluck('code')
+                        ->unique();
 
                     $result = DB::table('ticket_vendu')
                         ->whereIn('ticket_code_id', $codes)
@@ -301,9 +324,9 @@ class rapportController extends Controller
 
                     $data->push([
                         'bank_name' => $userId,
-                        'vente' => $result->vente,
-                        'perte' => $result->perte,
-                        'commission' => $result->commission
+                        'vente' => $result->vente ?? 0,
+                        'perte' => $result->perte ?? 0,
+                        'commission' => $result->commission ?? 0
                     ]);
                 }
             }
@@ -331,6 +354,7 @@ class rapportController extends Controller
             'vendeur' => $data,
             'date_debut' => $dateDebut,
             'date_fin' => $dateFin,
+            'periode' => $periode,
             'branch' => $branchList,
             'show_branch_commission' => ($branchId !== 'tout'),
             'branch_name' => $branchId !== 'tout' ? $branchList->firstWhere('id', $branchId)?->name : null
@@ -397,8 +421,15 @@ class rapportController extends Controller
 
             //     ]);
             // }
-            $result = DB::table('ticket_code')
-                ->join('ticket_vendu', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
+            // Deduplicated ticket_code: one row per code, prevents duplicate
+            // codes from multiplying ticket_vendu rows through the JOIN
+            $tcDedup = DB::table('ticket_code')
+                ->select('code', 'user_id', 'compagnie_id')
+                ->selectRaw('MIN(created_at) as created_at')
+                ->groupBy('code', 'user_id', 'compagnie_id');
+
+            $result = DB::table('ticket_vendu')
+                ->joinSub($tcDedup, 'ticket_code', 'ticket_vendu.ticket_code_id', '=', 'ticket_code.code')
                 ->where('ticket_code.compagnie_id', Session('loginId'))
                 ->where('ticket_code.user_id', $user_id)
                 ->where('ticket_vendu.is_cancel', 0)
@@ -406,7 +437,6 @@ class rapportController extends Controller
                 ->where('ticket_vendu.pending', 0)
                 ->whereBetween('ticket_code.created_at', [$date_debut . ' 00:00:00', $date_fin . ' 23:59:59'])
                 ->selectRaw('SUM(ticket_vendu.commission) as commission, SUM(ticket_vendu.amount) as amount , SUM(ticket_vendu.winning) as perte')
-                ->groupBy('ticket_code.user_id')
                 ->first();
             if ($result) {
                 $montant = $result->amount - ($result->perte + $result->commission);

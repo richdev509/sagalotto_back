@@ -14,7 +14,7 @@
             $plan = 6;
         }
     } else {
-        $plan = $compagnie->plan;
+        $plan = $data->plan;
     }
     
                             ?>
@@ -78,46 +78,55 @@
                 </div>
             </div>
 
-            <!-- ...existing code... -->
+            <!-- Latest Invoices Section -->
             <div class="card mb-4">
                 <div class="p-4 bg-white card-header">
-                    <h4 class="mb-0">Plan ki aktive</h4>
+                    <h4 class="mb-0">Dernières factures</h4>
                 </div>
 
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-xl-8 col-lg-6 col-md-12 col-12">
-                            <div class="mb-2">
-                                <p class="text-muted mb-0">Pos aktif</p>
-                                <p>Nombre pos: <span class="fw-bold">{{ $vendeur}}</span></p>
-                                <h5 class="mt-2 mb-3 fw-bold">Demare le -
-                                    {{ \Carbon\Carbon::parse($data->dateplan)->format('j M Y') }} </h5>
-                                <p>Fini {{ \Carbon\Carbon::parse($data->dateexpiration)->format('j M Y') }},<span
-                                        class="text-danger"> NB: apre plan fini sistem nan ap bow 5 jou delai apresa lap
-                                        blokew otomatik</span></p>
-                                <p>
-                                    Wap gen pou peye nan lel expire:
-                                    <span class="text-primary">${{$plan * $vendeur}} USD </span>
-                                    <span class="text-dark fw-bold">
-                                        {{ \Carbon\Carbon::parse($data->dateexpiration)->format('j M Y') }} </span>
-                                </p>
-                                <p>
-                                    Ou rete <span class="fw-bold">{{ $nombre }}</span> Jour(s)
-                                <div class="progress mt-2" style="height: 8px;">
-                                    <div class="progress-bar bg-gradient-danger" role="progressbar"
-                                        style="width: {{ max(0, min(100, round($nombre * 100 / 30))) }}%"
-                                        aria-valuenow="{{ $nombre }}" aria-valuemin="0" aria-valuemax="30"></div>
-                                </div>
-                                </p>
-                            </div>
+                    @if($factures->isEmpty())
+                        <div class="alert alert-info text-center">
+                            <i class="bi bi-info-circle"></i> Aucune facture disponible
                         </div>
-
-                        <div class="col-xl-4 col-lg-6 col-md-12 col-12">
-                            <div><small class="text-muted">Peye pa Mwa</small>
-                                <h1 class="fw-bold text-primary">$ {{$plan * $vendeur}} USD</h1>
-                            </div>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Date d'échéance</th>
+                                        <th>Montant</th>
+                                        <th>Payé</th>
+                                        <th>Statut</th>
+                                        <th>Description</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($factures as $facture)
+                                        <tr>
+                                            <td><strong>#{{ $facture->id }}</strong></td>
+                                            <td>{{ $facture->due_date ? \Carbon\Carbon::parse($facture->due_date)->format('j M Y') : 'N/A' }}</td>
+                                            <td>${{ number_format($facture->amount, 2) }}</td>
+                                            <td>${{ number_format($facture->paid_amount, 2) }}</td>
+                                            <td>
+                                                @if($facture->is_paid == 1)
+                                                    <span class="badge bg-success"><i class="bi bi-check-circle"></i> Payée</span>
+                                                @else
+                                                    <span class="badge bg-warning"><i class="bi bi-clock"></i> En attente</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $facture->description ?? '-' }}</td>
+                                            <td>
+                                                <a href="{{ route('facture.receipt', $facture->id) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -199,6 +199,7 @@ Route::middleware(['web', 'verify.session'])->group(function () {
 
     Route::get('/plan', [parametreController::class, 'viewinfo']);
     Route::post('/plan', [parametreController::class, 'viewinfo']);
+    Route::get('/facture/{id}/voir', [parametreController::class, 'viewFactureReceipt'])->name('facture.receipt');
     Route::post('/up-g', [parametreController::class, 'update_general'])->name('up-g');
 
 
@@ -237,6 +238,7 @@ Route::middleware(['web', 'chekadmin'])->group(function () {
 
 
     Route::get('/wp-admin/admin', [SystemController::class, 'viewadmin']);
+    Route::get('/wp-admin/compagnies-expirees-anciennes', [SystemController::class, 'viewAllExpiredAncien'])->name('oldest_companies');
     Route::get('/wp-admin/add-compagnie', function () {
         $reference = DB::table('reference')->get();
         return view('superadmin.ajouter_compagnie',['reference'=>$reference]);
@@ -259,6 +261,7 @@ Route::middleware(['web', 'chekadmin'])->group(function () {
     Route::post('/wp-admin/V-bu', [SystemController::class, 'blockUnblock'])->name('blockunlock');
     Route::post('/wp-admin/V-update', [SystemController::class, 'updateVendeur'])->name('update_vendeur2');
     Route::post('/wp-admin/add_vendeur', [SystemController::class, 'addVendeur'])->name('addvendeur');
+    Route::post('/wp-admin/C-send-facture-whatsapp', [SystemController::class, 'sendFactureWhatsapp'])->name('send_facture_whatsapp');
 
     Route::post('/wp-admin/C-abonnement', [abonnementController::class, 'addabonement'])->name('add_abonnement');
     Route::get('/wp-admin/C-abonnementView', function () {

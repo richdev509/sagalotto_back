@@ -218,7 +218,7 @@ class ticketController extends Controller
 
             if ($i == '0') {
                 $created_at = Carbon::now();
-                $ticketId = time() . '-' . auth()->user()->id;
+                $ticketId = time() . '-' . auth()->user()->id . '-' . substr(uniqid(), -5);
                 $query = DB::table('ticket_code')->insertGetId([
                     'code' => $ticketId,
                     'user_id' => auth()->user()->id,
@@ -489,7 +489,7 @@ class ticketController extends Controller
 
             if ($i == '0') {
                 $created_at = Carbon::now();
-                $ticketId = time() . '-' . auth()->user()->id;
+                $ticketId = time() . '-' . auth()->user()->id . '-' . substr(uniqid(), -5);
                 $query = DB::table('ticket_code')->insertGetId([
                     'code' => $ticketId,
                     'user_id' => auth()->user()->id,
@@ -913,11 +913,19 @@ class ticketController extends Controller
 
                 ], 200,);
             }
-            if ($request->input('tirage') == "Tout" || $request->input('tirage') == "") {
+            if ($request->input('tirage') == "Tout" || $request->input('tirage') == "" || $request->input('tirage') == "Period Midi" || $request->input('tirage') == "Period Soir") {
 
 
-                $startDate = $request->input('date_debut') . ' 00:00:00';
-                $endDate = $request->input('date_fin') . ' 23:59:59';
+                if ($request->input('tirage') == "Period Midi") {
+                    $startDate = $request->input('date_debut') . ' 00:00:00';
+                    $endDate = $request->input('date_fin') . ' 14:30:00';
+                } elseif ($request->input('tirage') == "Period Soir") {
+                    $startDate = $request->input('date_debut') . ' 14:30:01';
+                    $endDate = $request->input('date_fin') . ' 23:59:59';
+                } else {
+                    $startDate = $request->input('date_debut') . ' 00:00:00';
+                    $endDate = $request->input('date_fin') . ' 23:59:59';
+                }
                 $ticketCodes = ticket_Code::where('compagnie_id', auth()->user()->compagnie_id)
                     ->where('user_id', auth()->user()->id)
                     ->whereBetween('created_at', [$startDate, $endDate])
@@ -959,8 +967,8 @@ class ticketController extends Controller
                     "ticket_gain" => $ticket_win,
                     "ticket_perte" => $ticket_lose,
                     "ticket_total" => $ticket_win + $ticket_lose,
-                    "vente" => $vente,
-                    "perte" => $perte,
+                    "vente" => round($vente, 2),
+                    "perte" => round($perte, 2),
                     'commission' => round($commission, 2),
                     "balance" => round($vente - ($perte + $commission), 2)
 
@@ -1033,8 +1041,8 @@ class ticketController extends Controller
                     "ticket_gain" => $ticket_win,
                     "ticket_perte" => $ticket_lose,
                     "ticket_total" => $ticket_win + $ticket_lose,
-                    "vente" => $vente,
-                    "perte" => $perte,
+                    "vente" => round($vente, 2),
+                    "perte" => round($perte, 2),
                     "commission" => round($commission, 2),
                     "balance" => round($vente - ($perte + $commission), 2)
                 ], 200,);

@@ -18,6 +18,7 @@ use App\Models\tirage_record;
 use App\Models\limit_auto;
 use App\Models\rules_vendeur;
 use App\Models\seting;
+use App\Models\facture;
 
 class parametreController extends Controller
 {
@@ -803,8 +804,41 @@ class parametreController extends Controller
             ->pluck('user_id')
             ->count();
 
-        return view('plan', compact('data', 'nombre', 'vendeur'));
+        // Fetch the 5 latest factures for the current company
+        $factures = facture::where('compagnie_id', session('loginId'))
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        return view('plan', compact('data', 'nombre', 'vendeur', 'factures'));
         }
+    }
+
+    public function viewFactureReceipt($id)
+    {
+        $facture = facture::find($id);
+        if (!$facture) {
+            notify()->error('Facture introuvable');
+            return redirect('/plan');
+        }
+
+        if ($facture->compagnie_id != session('loginId')) {
+            notify()->error('Accès refusé');
+            return redirect('/plan');
+        }
+
+        if (!$facture->is_paid) {
+            notify()->warning('Le reçu est disponible uniquement après paiement de la facture.');
+            return redirect('/plan');
+        }
+
+        $compagnie = company::find($facture->compagnie_id);
+        if (!$compagnie) {
+            notify()->error('Compagnie introuvable');
+            return redirect('/plan');
+        }
+
+        return view('facture_receipt', compact('facture', 'compagnie'));
     }
 
     function getDaysRemaining($dateplan, $datefin)

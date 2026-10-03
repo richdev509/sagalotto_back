@@ -249,6 +249,9 @@ class AuthController extends Controller
                 ->select('name')
                 ->get();
 
+            $tirage_record->push((object) ['name' => 'Period Midi']);
+            $tirage_record->push((object) ['name' => 'Period Soir']);
+
             return response()->json([
                 "status" => 'true',
                 "code" => "200",

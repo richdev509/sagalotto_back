@@ -52,7 +52,40 @@ class SystemController extends Controller
                 ->count();
             $Compagnieinactive = DB::table('companies')->where('type', 'production')->where('actionuser', session('id'))->where('is_active', 0)->count();
         }
-        return view('superadmin.admin', compact('nombreCompagnie', 'nombrePos', 'Compagnieinactive', 'actifPos'));
+
+        $today = Carbon::today()->toDateString();
+        $todayDay = Carbon::today()->day;
+        $expiredToday = DB::table('companies')
+            ->whereRaw('DAY(dateexpiration) = ?', [$todayDay])
+            ->whereDate('dateexpiration', '<=', $today)
+            ->where('is_block', 0)
+            ->where('is_delete', 0)
+            ->orderBy('dateexpiration', 'desc')
+            ->get();
+
+        $upcomingExpiring = DB::table('companies')
+            ->whereDate('dateexpiration', '<', $today)
+            ->where('is_block', 0)
+            ->where('is_delete', 0)
+            ->orderBy('dateexpiration', 'asc')
+            ->limit(5)
+            ->get();
+
+        return view('superadmin.admin', compact('nombreCompagnie', 'nombrePos', 'Compagnieinactive', 'actifPos', 'expiredToday', 'upcomingExpiring'));
+    }
+
+    public function viewAllExpiredAncien()
+    {
+        $today = Carbon::today()->toDateString();
+
+        $companies = DB::table('companies')
+            ->whereDate('dateexpiration', '<', $today)
+            ->where('is_block', 0)
+            ->where('is_delete', 0)
+            ->orderBy('dateexpiration', 'asc')
+            ->get();
+
+        return view('superadmin.oldest_companies', compact('companies'));
     }
 
     public function viewajoutelo(Request $request)
@@ -159,7 +192,9 @@ class SystemController extends Controller
     {
         if (session('role') == "admin" || session('role') == "comptable") {
             $data = DB::table('companies')
-                ->where("is_delete", "=", "0")
+                ->leftJoin('reference', 'companies.id_reference', '=', 'reference.id')
+                ->select('companies.*', 'reference.name as reference_name')
+                ->where("companies.is_delete", "=", "0")
                 ->get();
 
             if ($data) {
@@ -173,8 +208,11 @@ class SystemController extends Controller
 
 
         if (session('role') == "admin2") {
-            $data = DB::table('companies')->where('actionUser', session('id'))
-                ->where("is_delete", "=", "0")
+            $data = DB::table('companies')
+                ->leftJoin('reference', 'companies.id_reference', '=', 'reference.id')
+                ->select('companies.*', 'reference.name as reference_name')
+                ->where('companies.actionUser', session('id'))
+                ->where("companies.is_delete", "=", "0")
                 ->get();
 
             if ($data) {
@@ -828,5 +866,27 @@ class SystemController extends Controller
             $block_list = blockCompagnie::all();
             return view('superadmin.bloquer', compact('compagnie', 'block_list'));
         }
+    }
+
+    /**
+     * Manually trigger facture WhatsApp send for a company.
+     */
+    public function sendFactureWhatsapp(Request $request)
+    {
+        if (!in_array(session('role'), ['admin', 'comptable', 'admin2'])) {
+            return response()->json(['status' => false, 'message' => 'Accès refusé'], 403);
+        }
+
+        $companyId = $request->input('company_id');
+        if (!$companyId) {
+            return response()->json(['status' => false, 'message' => 'Compagnie requise'], 400);
+        }
+
+        $result = \App\Jobs\genereFacture::sendFactureForCompany($companyId);
+
+        return response()->json([
+            'status'  => $result['success'],
+            'message' => $result['message'],
+        ], $result['success'] ? 200 : 422);
     }
 }

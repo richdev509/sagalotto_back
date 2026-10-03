@@ -163,6 +163,66 @@
         font-size: 0.8rem;
     }
 
+    /* WhatsApp action button */
+    .btn-whatsapp {
+        background-color: #25D366;
+        border-color: #25D366;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-whatsapp:hover {
+        background-color: #128C7E;
+        border-color: #128C7E;
+        color: white;
+    }
+
+    .btn-whatsapp:disabled {
+        background-color: #a8e6c1;
+        border-color: #a8e6c1;
+        cursor: not-allowed;
+    }
+
+    .dropdown-item-whatsapp {
+        color: #128C7E;
+    }
+
+    .dropdown-item-whatsapp:hover {
+        background-color: #e8f5ee;
+        color: #075e54;
+    }
+
+    .card-header-custom {
+        background: linear-gradient(135deg, #113d8e 0%, #1e5cc5 100%);
+        color: white;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .company-logo {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        background-color: #f0f2f5;
+        border: 2px solid #e9ecef;
+    }
+
+    .company-logo-placeholder {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: #f0f2f5;
+        border: 2px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+        font-size: 16px;
+    }
+
     /* Responsive adjustments - Only font size changes */
     @media (max-width: 767.98px) {
         .custom-table {
@@ -187,7 +247,15 @@
     }
 </style>
 
-<div class="card shadow-sm border-0">
+<div id="toastContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 1080;"></div>
+
+<div class="card shadow border-0 rounded-3 overflow-hidden">
+    <div class="card-header card-header-custom p-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-white">
+            <i class="fas fa-building me-2"></i>Liste des Compagnies
+        </h5>
+        <span class="badge bg-white text-primary rounded-pill">{{ count($data) }} compagnie(s)</span>
+    </div>
     <div class="card-body p-4">
         <div class="tab-content">
             <div role="tabpanel" id="react-aria-292-tabpane-design" aria-labelledby="react-aria-292-tab-design"
@@ -234,7 +302,6 @@
                         <tbody id="tableBody">
                             @foreach ($data as $donnee)
                                 @php
-                                    $ref = DB::table('reference')->where('id', $donnee->id_reference)->first();
                                     $expirationDate = \Carbon\Carbon::parse($donnee->dateexpiration);
                                     $currentDate = \Carbon\Carbon::now();
                                     $isExpired = $expirationDate->lessThan($currentDate);
@@ -293,6 +360,12 @@
                                                     </form>
                                                 </li>
                                                 <li>
+                                                    <button type="button" class="dropdown-item dropdown-item-whatsapp"
+                                                        onclick="sendFactureWhatsapp({{ $donnee->id }}, this)">
+                                                        <i class="fab fa-whatsapp text-success"></i> Envoyer WhatsApp
+                                                    </button>
+                                                </li>
+                                                <li>
                                                     @if (session('role') == 'admin' || session('role') == 'comptable')
                                                         <form action="{{ route('add_abonnement2') }}" method="POST">
                                                             @csrf
@@ -318,7 +391,20 @@
                                         </div>
                                     </td>
 
-                                    <td class="fw-medium">{{ Str::limit($donnee->name, 15) }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            @if($donnee->logo && file_exists(public_path($donnee->logo)))
+                                                <img src="{{ asset($donnee->logo) }}" 
+                                                     alt="{{ $donnee->name }}" 
+                                                     class="company-logo">
+                                            @else
+                                                <div class="company-logo-placeholder">
+                                                    <i class="fas fa-building"></i>
+                                                </div>
+                                            @endif
+                                            <span class="fw-medium">{{ Str::limit($donnee->name, 18) }}</span>
+                                        </div>
+                                    </td>
                                     <td><span class="badge bg-light text-dark">{{ $donnee->code }}</span></td>
                                     <td>{{ $donnee->phone }}</td>
                                     <td><span class="badge bg-primary">{{ $donnee->plan }}</span></td>
@@ -341,7 +427,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-dark">{{ $ref ? $ref->name : 'N/A' }}</span>
+                                        <span class="badge bg-light text-dark">{{ $donnee->reference_name ?? 'N/A' }}</span>
                                     </td>
                                 </tr>
                             @endforeach
@@ -393,6 +479,71 @@
             });
         });
     });
+
+    async function sendFactureWhatsapp(companyId, btn) {
+        if (!confirm('Voulez-vous envoyer la facture WhatsApp pour cette compagnie ?')) return;
+
+        btn.disabled = true;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi...';
+
+        try {
+            const response = await fetch('{{ route('send_facture_whatsapp') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ company_id: companyId })
+            });
+
+            let message = 'Réponse inattendue du serveur';
+            try {
+                const text = await response.text();
+                try {
+                    const data = JSON.parse(text);
+                    message = data.message || message;
+                } catch (parseError) {
+                    message = text ? text.substring(0, 200) : message;
+                }
+            } catch (readError) {
+                message = readError.message || 'Erreur lors de la lecture de la réponse';
+            }
+
+            showToast(response.ok ? 'success' : 'danger', message);
+        } catch (error) {
+            showToast('danger', 'Erreur réseau: ' + error.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    }
+
+    function showToast(type, message) {
+        const toastContainer = document.getElementById('toastContainer');
+        if (!toastContainer) return;
+
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type} alert-dismissible fade show`;
+        toast.role = 'alert';
+
+        const messageSpan = document.createElement('span');
+        messageSpan.textContent = message;
+        toast.appendChild(messageSpan);
+
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'btn-close';
+        closeBtn.setAttribute('data-bs-dismiss', 'alert');
+        closeBtn.setAttribute('aria-label', 'Close');
+        toast.appendChild(closeBtn);
+
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 5000);
+    }
 
     function filterTable() {
         const input = document.getElementById("searchInput");
